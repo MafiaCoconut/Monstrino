@@ -1,0 +1,6 @@
+[submodule "monstrino-collections"]
+	path = monstrino-collections
+	url = git@coconut:MafiaCoconut/monstrino-collections.git
+[submodule "monstrino-core"]
+	path = monstrino-core
+	url = git@coconut:MafiaCoconut/monstrino-core.git
