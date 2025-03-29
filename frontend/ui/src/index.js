@@ -4,11 +4,17 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import PersonalPage from "./pages/PersonalPage";
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+
+const router = createBrowserRouter([
+  {path: '/', element: <App />},
+  {path: '/users/:id', element: <PersonalPage />}
+]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <PersonalPage />
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
 

@@ -17,8 +17,9 @@ const PostCard = (props) => {
     const {
         username = "",
         avatar = "",
-
+        content = "",
     } = props
+
     const [liked, setLiked] = useState(false);
     const [expanded, setExpanded] = useState(false);
 
@@ -31,7 +32,7 @@ const PostCard = (props) => {
     };
 
     return (
-        <Card sx={{ maxWidth: 600, margin: 'auto', marginBottom: 2 }}>
+        <Card sx={{ maxWidth: 600, margin: 'auto', marginBottom: 2, borderRadius: 2}}>
             <CardHeader
                 avatar={<Avatar src={avatar} alt={username} />}
                 title={username}
@@ -40,18 +41,18 @@ const PostCard = (props) => {
 
             {/*/!* Медиа (например, изображение поста) *!/*/}
             {/*{props.image && (*/}
-                <CardMedia
+                {/* <CardMedia
                     component="img"
                     height="300"
                     // image={props.image}
                     alt="Изображение поста"
-                />
+                /> */}
             {/*)}*/}
 
             {/*/!* Основной контент поста *!/*/}
             <CardContent>
                 <Typography variant="body2" color="text.secondary">
-                    {/*{props.content}*/}
+                    {content}
                 </Typography>
             </CardContent>
 

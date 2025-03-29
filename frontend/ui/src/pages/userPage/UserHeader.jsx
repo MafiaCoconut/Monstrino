@@ -18,7 +18,7 @@ const UserHeader = (props) => {
                     <Grid container direction="row" sx={{ position: 'relative' }}>
                         <Grid item size={2}>
                             <Avatar src={avatarUrl} 
-                                    sx={{ width: 100, height: 100, top: '-50px', position: 'absolute',}}    
+                                    sx={{ width: 100, height: 100, top: '-50px', left: '10px', position: 'absolute',}}    
                             />
                         </Grid>
                         <Grid item size={6}>
@@ -32,7 +32,7 @@ const UserHeader = (props) => {
                             </Grid>
                         </Grid>
                         <Grid item size="auto">
-                            <Button variant="contained" >
+                            <Button variant="contained" sx={{marginTop: "5%"}} >
                                 Edit profile
                             </Button>
                         </Grid>
