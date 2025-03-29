@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-
+import PersonalPage from "./pages/PersonalPage";
 function App() {
   return (
     <div className="App">
@@ -17,6 +17,7 @@ function App() {
         >
           Learn React
         </a>
+        <PersonalPage></PersonalPage>
       </header>
     </div>
   );

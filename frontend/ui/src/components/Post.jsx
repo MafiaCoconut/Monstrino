@@ -13,7 +13,12 @@ import {
 } from '@mui/material';
 import { Favorite, FavoriteBorder, Comment } from '@mui/icons-material';
 
-const PostCard = (post) => {
+const PostCard = (props) => {
+    const {
+        username = "",
+        avatar = "",
+
+    } = props
     const [liked, setLiked] = useState(false);
     const [expanded, setExpanded] = useState(false);
 
@@ -27,29 +32,26 @@ const PostCard = (post) => {
 
     return (
         <Card sx={{ maxWidth: 600, margin: 'auto', marginBottom: 2 }}>
-            {/* Заголовок с информацией о пользователе */}
             <CardHeader
-                avatar={
-                    <Avatar src={post.userAvatar} alt={post.username} />
-                }
-                title={post.username}
-                subheader={post.timestamp}
+                avatar={<Avatar src={avatar} alt={username} />}
+                title={username}
+                // subheader={props.timestamp}
             />
 
-            {/* Медиа (например, изображение поста) */}
-            {post.image && (
+            {/*/!* Медиа (например, изображение поста) *!/*/}
+            {/*{props.image && (*/}
                 <CardMedia
                     component="img"
                     height="300"
-                    image={post.image}
+                    // image={props.image}
                     alt="Изображение поста"
                 />
-            )}
+            {/*)}*/}
 
-            {/* Основной контент поста */}
+            {/*/!* Основной контент поста *!/*/}
             <CardContent>
                 <Typography variant="body2" color="text.secondary">
-                    {post.content}
+                    {/*{props.content}*/}
                 </Typography>
             </CardContent>
 
