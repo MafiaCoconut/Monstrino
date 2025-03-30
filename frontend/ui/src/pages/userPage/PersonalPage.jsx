@@ -8,7 +8,7 @@ import UserPosts from "./UserPosts";
 const PersonalPage = (props) => {
     const user = {
         username: "test username",
-        avatar: "https://avatars1.githubusercontent.com/u/55?v=4",
+        avatar: `${process.env.PUBLIC_URL}/defaultImages/avatar.png`,
         description: "test description",
         firstName: "firstName",
         lastName: "lastName",
@@ -21,6 +21,8 @@ const PersonalPage = (props) => {
             {id: 5, content: "Post 5"},
         ],
     }
+    console.log(user.avatar)
+
     return (
         <div>
             <CommonHeader/>
