@@ -12,7 +12,7 @@ const UserPosts = (props) => {
         <Box>
             {posts.map((post) => (
                 <PostCard avatar={avatar} username={username} content={post.content}/>
-                    
+                
                 
             ))}
         </Box>

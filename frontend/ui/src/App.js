@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
-import PersonalPage from "./pages/PersonalPage";
+import PersonalPage from './pages/userPage/PersonalPage';
+
 function App() {
   return (
     <div className="App">

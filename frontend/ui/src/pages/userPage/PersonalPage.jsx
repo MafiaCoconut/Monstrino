@@ -1,9 +1,9 @@
-import PostCard from "../components/Post";
+import PostCard from "../../components/Post";
 import {AppBar, Button, Container, Paper, Toolbar, Typography, Grid, Box, Avatar, avatarClasses} from "@mui/material";
-import Header from "../components/layouts/header/Header";
-import Footer from "../components/layouts/Footer";
-import UserHeader from "./userPage/UserHeader";
-import UserPosts from "./userPage/UserPosts";
+import CommonHeader from "../../components/headers/commonHeader/CommonHeader";
+import Footer from "../../components/layouts/Footer";
+import UserHeader from "../../components/headers/UserHeader";
+import UserPosts from "./UserPosts";
 
 const PersonalPage = (props) => {
     const user = {
@@ -23,13 +23,13 @@ const PersonalPage = (props) => {
     }
     return (
         <div>
-            <Header/>
+            <CommonHeader/>
             <div style={{ marginTop: "0.6%"}}>
                 <Grid container spacing={2} justifyContent="center" >
                     {/* Левый отступ */}
                     <Grid item xs={12} md={3} size="grow"/>
 
-                    {/* Левая менюшка */}
+                    {/* Левое меню */}
                     <Grid item xs={12} md={3} size={2}>
                         <Paper sx={{p:2}}>
                             <Typography variant="h6">Меню пользователя</Typography>
@@ -51,7 +51,7 @@ const PersonalPage = (props) => {
                         </Grid>
                     </Grid>
 
-                    {/* Правый оступ */}
+                    {/* Правый отступ */}
                     <Grid item xs={12} md={3} size="grow"/>
                 </Grid>
             </div>

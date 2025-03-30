@@ -3,12 +3,15 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import PersonalPage from "./pages/PersonalPage";
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import CollectionOverviewPage from "./pages/collectionPage/CollectionOverviewPage";
+import PersonalPage from './pages/userPage/PersonalPage';
+
 
 const router = createBrowserRouter([
-  {path: '/', element: <App />},
-  {path: '/users/:id', element: <PersonalPage />}
+  { path: '/', element: <App /> },
+  { path: '/users/:id', element: <PersonalPage /> },
+  { path: '/users/:id/collection', element: <CollectionOverviewPage />}
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

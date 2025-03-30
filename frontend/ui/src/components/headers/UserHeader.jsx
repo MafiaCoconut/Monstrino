@@ -1,5 +1,5 @@
 import {Avatar, Box, Button, Grid, Typography} from "@mui/material";
-import PostCard from "../../components/Post";
+import PostCard from "../Post";
 
 const UserHeader = (props) => {
     const {
