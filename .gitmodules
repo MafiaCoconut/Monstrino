@@ -1,6 +1,0 @@
-[submodule "backend/monstrino-collections"]
-	path = backend/monstrino-collections
-	url = git@coconut:MafiaCoconut/monstrino-collections.git
-[submodule "backend/monstrino-core"]
-	path = backend/monstrino-core
-	url = git@coconut:MafiaCoconut/monstrino-core.git
