@@ -1,0 +1,3 @@
+from infrastructure.interfaces_impl.website_bricklick_interface import WebsiteBricklinkInterface
+
+bricklink_gateway = WebsiteBricklinkInterface()
