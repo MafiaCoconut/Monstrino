@@ -1,4 +1,4 @@
-from infrastructure.repositories_impl.UsersRepositoryImpl import UsersRepositoryImpl
+from infrastructure.repositories_impl.users_repository_impl import UsersRepositoryImpl
 
 
-usersRepository = UsersRepositoryImpl()
+users_repository = UsersRepositoryImpl()

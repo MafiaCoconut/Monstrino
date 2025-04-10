@@ -18,6 +18,7 @@ error_logger = logging.getLogger("error_logger")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    system_logger.info("Start configuration users-service")
     scheduler_service = get_scheduler_service()
     await scheduler_service.set_all_jobs()
     # ic(await scheduler_service.get_all_jobs())

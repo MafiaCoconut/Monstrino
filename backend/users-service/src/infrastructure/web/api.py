@@ -6,10 +6,12 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from application.services.CoreService import CoreService
+from application.services.core_service import CoreService
+from domain.new_user import NewUser
+from domain.user import User
 # from application.services.scheduler_service import SchedulerService
 from infrastructure.config.logs_config import log_api_decorator
-from infrastructure.config.services_config import getCoreService
+from infrastructure.config.services_config import get_core_service
 from infrastructure.config.fastapi_app_config import app
 from infrastructure.web.response_models import responsesCodes
 # from infrastructure.web.setup import setup
@@ -58,23 +60,35 @@ async def empty(response: Response, background_tasks: BackgroundTasks):
     return await get_success_json_response(data={'message': "API is working"})
 
 @log_api_decorator()
-@app.get("/restartDB", tags=["Iternal"], responses=responsesCodes)
-async def setDB(response: Response, background_tasks: BackgroundTasks,
-                coreService: CoreService = Depends(getCoreService)
-    ):
-    await coreService.restartDB()
+@app.post("/restartDB", tags=["Iternal"], responses=responsesCodes)
+async def set_db(response: Response, background_tasks: BackgroundTasks,
+                 core_service: CoreService = Depends(get_core_service)
+                 ):
+    await core_service.restart_db()
     return await get_success_json_response(data={'message': "DB is restarted"})
 
 @log_api_decorator()
-@app.post('/users/registerNewUset')
-async def registerNewUser(
-        user: dict, background_tasks: BackgroundTasks,
-        coreService: CoreService = Depends(getCoreService)
+@app.post('/users/registerNewUser')
+async def register_new_user(
+        user: NewUser, background_tasks: BackgroundTasks,
+        core_service: CoreService = Depends(get_core_service)
     ):
     if user is not None:
-        await coreService.saveUser(user=user)
+        await core_service.register_new_user(user=user)
     else:
         await raise_validation_error(detail="Users data is not valid")
+
+@log_api_decorator()
+@app.post('/users/{user_id}/changeUsername')
+async def users_change_username(
+        user_id: int, new_username: str, background_tasks: BackgroundTasks,
+        core_service: CoreService = Depends(get_core_service)
+    ):
+    if new_username is not None:
+        await core_service.change_username(user_id=user_id, new_username=new_username)
+    else:
+        await raise_validation_error(detail="Users data is not valid")
+
 
 
 """
@@ -86,7 +100,7 @@ TODO
 """
 
 
-print(float(input())*100)
+# print(float(input())*100)
 
 
 

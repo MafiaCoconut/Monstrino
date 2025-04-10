@@ -1,4 +1,4 @@
-from domain.User import User
+from domain.user import User
 
 
 class UserValidator:
