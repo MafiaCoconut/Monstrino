@@ -2,7 +2,7 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 
-class DollsCollection(BaseModel):
+class UsersCollection(BaseModel):
     id: int
     ownerId: int
 

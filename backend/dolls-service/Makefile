@@ -1,5 +1,5 @@
 run:
-	cd src/ && uvicorn main:app --reload
+	cd src/ && uvicorn main:app --reload --port 8001
 
 
 run\:ngrok:

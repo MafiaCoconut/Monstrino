@@ -7,12 +7,11 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from application.services.core_service import CoreService
-from domain.new_user import NewUser
-from domain.user import User
+from domain.new_doll import NewDoll
 # from application.services.scheduler_service import SchedulerService
 from infrastructure.config.logs_config import log_api_decorator
-from infrastructure.config.services_config import get_core_service
 from infrastructure.config.fastapi_app_config import app
+from infrastructure.config.services_config import get_core_service
 from infrastructure.web.response_models import responsesCodes
 # from infrastructure.web.setup import setup
 #
@@ -58,6 +57,36 @@ async def custom_http_exception_handler(request, exc: HTTPException):
 @log_api_decorator()
 async def empty(response: Response, background_tasks: BackgroundTasks):
     return await get_success_json_response(data={'message': "API is working"})
+
+
+@log_api_decorator()
+@app.get('/createDB')
+async def create_db(response: Response, background_tasks: BackgroundTasks,
+                    core_service: CoreService = Depends(get_core_service)):
+    await core_service.create_db()
+
+@log_api_decorator()
+@app.post('/dolls/registerNewDoll', tags=["Dolls"], responses=responsesCodes)
+async def register_new_doll(
+        new_doll: NewDoll,
+        response: Response, background_tasks: BackgroundTasks,
+        core_service: CoreService = Depends(get_core_service),
+
+):
+    await core_service.register_new_doll(new_doll=new_doll)
+
+
+@log_api_decorator()
+@app.get('/dolls/{doll_id}/getData', tags=["Dolls"], responses=responsesCodes)
+async def register_new_doll(
+        doll_id: int,
+        response: Response, background_tasks: BackgroundTasks,
+        core_service: CoreService = Depends(get_core_service),
+
+):
+    return await core_service.get_doll(doll_id=doll_id)
+
+
 
 
 async def raise_internal_server_error() -> None:
