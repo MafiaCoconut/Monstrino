@@ -2,7 +2,7 @@
 from datetime import datetime
 
 from application.interfaces.scheduler_interface import SchedulerInterface
-from application.use_cases.set_all_scheduler_jobs_use_case import SetAllSchedulerJobsUseCase
+from application.use_сases.set_all_scheduler_jobs_use_case import SetAllSchedulerJobsUseCase
 from domain.job import Job
 
 # from application.scheduler.interfaces.scheduler_interface import SchedulerInterface

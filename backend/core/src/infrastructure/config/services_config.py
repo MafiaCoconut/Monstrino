@@ -1,6 +1,8 @@
 from application.services.core_service import CoreService
 from application.services.scheduler_service import SchedulerService
-from infrastructure.config.interfaces_config import scheduler_interface, search_api_interface, google_interface
+from application.services.users_service import UsersService
+from infrastructure.config.gateways_config import users_gateway
+from infrastructure.config.interfaces_config import scheduler_interface
 
 
 def get_scheduler_service() -> SchedulerService:
@@ -8,7 +10,12 @@ def get_scheduler_service() -> SchedulerService:
         scheduler_interface=scheduler_interface,
     )
 
-def get_core_service() -> CoreService:
-    return CoreService(
+# def get_core_service() -> CoreService:
+#     return CoreService(
+#     )
+
+def get_users_service() -> UsersService:
+    return UsersService(
+        users_gateway=users_gateway,
 
     )

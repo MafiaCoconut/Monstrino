@@ -3,7 +3,7 @@ from watchfiles import awatch
 from domain.user import User, NewUser
 import re
 
-from src.application.exceptions.invalid_user_data import InvalidUserData
+from application.exceptions.invalid_user_data import InvalidUserData
 
 class UserValidation:
 

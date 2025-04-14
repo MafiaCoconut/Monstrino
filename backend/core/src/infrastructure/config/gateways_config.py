@@ -1,3 +1,3 @@
-from infrastructure.interfaces_impl.website_bricklick_interface import WebsiteBricklinkInterface
+from infrastructure.gateways_impl.user_gateway_impl import UsersGatewayImpl
 
-bricklink_gateway = WebsiteBricklinkInterface()
+users_gateway = UsersGatewayImpl()

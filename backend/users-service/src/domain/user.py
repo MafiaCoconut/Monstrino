@@ -10,5 +10,4 @@ class User(BaseModel):
     lastName:  str | None = Field(default=None)
 
     updatedAt: datetime | None = Field(default=None)
-    # createdAt: datetime | None = Field(default_factory=datetime.now)
     createdAt: datetime | None = Field(default=None)

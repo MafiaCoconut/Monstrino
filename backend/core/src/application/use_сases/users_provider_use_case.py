@@ -9,12 +9,12 @@ from infrastructure.config.logs_config import log_decorator
 system_logger = logging.getLogger('system_logger')
 error_logger = logging.getLogger('error_logger')
 
-class UserProviderUseCase:
+class UsersProviderUseCase:
     def __init__(
             self,
-            user_gateway: UsersGateway,
+            users_gateway: UsersGateway,
             ):
-        self.user_gateway = user_gateway
+        self.users_gateway = users_gateway
         self.user_validation = UserValidation()
 
     @log_decorator()
@@ -24,4 +24,4 @@ class UserProviderUseCase:
         except InvalidUserData as e:
             system_logger.error(f"Exception captured by register new user: {e}")
 
-        await self.user_gateway.register_new_user(user=user)
+        await self.users_gateway.register_new_user(user=user)
