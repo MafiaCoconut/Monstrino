@@ -19,7 +19,7 @@ class CoreService:
         self.dbUseCase = DBUseCase()
     
     async def register_new_user(self, user: NewUser):
-        await self.users_provider_use_case.register_new_user(user)
+        await self.users_provider_use_case.register_new_user(user=user)
 
     async def restart_db(self):
         await self.dbUseCase.restartDB()

@@ -73,7 +73,8 @@ async def register_new_user(
         user: NewUser, background_tasks: BackgroundTasks,
         core_service: CoreService = Depends(get_core_service)
     ):
-    if user is not None:
+    print(user)
+    if user:
         await core_service.register_new_user(user=user)
     else:
         await raise_validation_error(detail="Users data is not valid")
