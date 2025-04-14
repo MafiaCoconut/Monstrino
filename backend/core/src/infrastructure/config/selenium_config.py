@@ -23,7 +23,7 @@ async def get_selenium_driver() -> webdriver.Firefox:
         '--no-sandbox',
         '--accept-cookies'
         '--disable-xss-auditor',
-        '--disable-web-security',
+        '--disable-endpoints-security',
         '--ignore-certificate-errors',
         '--log-level=1',
         '--disable-notifications'
