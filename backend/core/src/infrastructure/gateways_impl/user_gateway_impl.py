@@ -1,6 +1,8 @@
 import aiohttp
 import os
 import dotenv
+from icecream import ic
+
 from application.gateways.user_gateway import UsersGateway
 from domain.user import NewUser
 
@@ -12,9 +14,11 @@ class UsersGatewayImpl(UsersGateway):
 
     async def register_new_user(self, user: NewUser):
         async with aiohttp.ClientSession() as session:
-            async with session.get(
+            async with session.post(
                     url=self.users_service_address + f"/users/registerNewUser",
+                    json={'user': user.model_dump()}
             ) as resp:
+                ic(resp)
                 match resp.status:
                     case "200":
                         pass

@@ -12,7 +12,7 @@ class UserValidation:
     FIRST_NAME_REGEX = re.compile(r"^[A-Za-z ]+$")
     LAST_NAME_REGEX  = re.compile(r"^[A-Za-z ]+$")
 
-    PASSWORD_REGEX = re.compile(r"^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*+\-])[A-Za-z\d!@#$%^&*+\-]{6,15}$"
+    PASSWORD_REGEX = re.compile(r"^(?=.*[A-Z])(?=.*\d)(?=.*[_!@#$%^&*+\-])[A-Za-z\d_!@#$%^&*+\-]{6,15}$"
 )
 
 

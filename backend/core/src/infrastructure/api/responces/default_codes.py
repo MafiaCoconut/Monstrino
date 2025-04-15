@@ -1,11 +1,11 @@
 from fastapi import HTTPException
 
-from infrastructure.api.api import ResponseModel
+from infrastructure.api.responces.models import ResponseModel
 
 responses = {
     '200': {"model": ResponseModel, 'description': "OK"},
     '201': {"model": ResponseModel, 'description': "Created"},
-    '204': {"model": ResponseModel, 'description': "No content"},
+    '204': {'description': "No content"},
     '400': {"model": ResponseModel, 'description': "Bad Request"},
     '401': {"model": ResponseModel, 'description': "Unauthorized"},
     '403': {"model": ResponseModel, 'description': "Forbidden"},

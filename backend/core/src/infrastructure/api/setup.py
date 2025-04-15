@@ -1,12 +1,17 @@
-# from infrastructure.config.fastapi_app_config import app
-#
-#
-# @app.middleware("http")
-# async def add_ngrok_skip_header(request, call_next):
-#     response = await call_next(request)
-#     response.headers["ngrok-skip-browser-warning"] = "any value"
-#     return response
-#
-#
-# def setup():
-#     pass
+import uvicorn
+import logging
+import os
+
+from infrastructure.api.endpoints.users_api import UsersApi
+
+from contextlib import asynccontextmanager
+from fastapi.middleware.cors import CORSMiddleware
+
+from infrastructure.config.services_config import get_scheduler_service
+
+
+def endpoints_activate():
+    pass
+
+
+
