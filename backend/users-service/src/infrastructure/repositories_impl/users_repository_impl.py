@@ -5,6 +5,7 @@ from sqlalchemy import select, delete, text, update, func, cast
 from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime, timezone
 from application.repositories.users_repository import UsersRepository
+from domain.new_user import NewUser
 from domain.user import User
 
 from infrastructure.config.logs_config import log_decorator
@@ -14,7 +15,7 @@ from infrastructure.db.models.user_orm import UserORM
 
 class UsersRepositoryImpl(UsersRepository):
     @staticmethod
-    async def _getSession():
+    async def _get_session():
         return AsyncSession(bind=async_engine, expire_on_commit=False)
 
     @staticmethod
@@ -39,20 +40,28 @@ class UsersRepositoryImpl(UsersRepository):
             createdAt  = user.createdAt.astimezone(timezone.utc).replace(tzinfo=None) if user.updatedAt else None,
         )
 
-    async def set_user(self, user: User):
-        session = await self._getSession()
+    @staticmethod
+    async def _refactor_new_user_pydantic_to_orm(new_user: NewUser):
+        return UserORM(
+            username = new_user.username,
+            firstName = new_user.firstName,
+            lastName = new_user.lastName,
+        )
+
+    async def set_user(self, user: NewUser):
+        session = await self._get_session()
         async with session.begin():
-            user_orm = await self._refactor_pydantic_to_orm(user)
+            user_orm = await self._refactor_new_user_pydantic_to_orm(user)
             session.add(user_orm)
             await session.commit()
 
     async def get_user(self, user_id: int):
-        session = await self._getSession()
+        session = await self._get_session()
         async with session.begin():
             pass
 
     async def update_username(self, user_id: int, new_username: str):
-        session = await self._getSession()
+        session = await self._get_session()
         async with session.begin():
             query = update(UserORM).where(UserORM.id == user_id).values(username=new_username)
             await session.execute(query)

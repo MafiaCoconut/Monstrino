@@ -18,6 +18,6 @@ class UsersDataUseCase:
     async def change_username(self, user_id: int, new_username: str):
         await self.users_repository.update_username(user_id=user_id, new_username=new_username)
 
-    async def register_new_user(self, user: NewUser):
-        new_user = User(**user.model_dump())
+    async def register_new_user(self, new_user: NewUser):
+        # new_user = User(**user.model_dump())
         await self.user_save_use_case.execute(user=new_user)
