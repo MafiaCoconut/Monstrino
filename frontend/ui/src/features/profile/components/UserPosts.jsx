@@ -1,5 +1,5 @@
 import { Box } from "@mui/material"
-import PostCard from "../../components/Post"
+import PostCard from "../../../components/Post"
 
 const UserPosts = (props) => {
     const {
@@ -11,7 +11,7 @@ const UserPosts = (props) => {
     return (
         <Box>
             {posts.map((post) => (
-                <PostCard avatar={avatar} username={username} content={post.content}/>
+                <PostCard avatar={avatar} username={username} content={post.content} />
             ))}
         </Box>
     )

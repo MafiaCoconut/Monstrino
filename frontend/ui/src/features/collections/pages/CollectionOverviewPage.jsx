@@ -1,12 +1,12 @@
 import { Grid } from "@mui/material";
-import UserHeader from "../../components/headers/UserHeader";
-import ListOfPages from "../../components/layouts/ListOfPages";
-import CommonHeader from "../../components/headers/commonHeader/CommonHeader";
+import UserHeader from "../../../components/headers/UserHeader";
+import ListOfPages from "../../../components/ListOfPages";
+import CommonHeader from "../../../components/headers/commonHeader/CommonHeader";
 import CollectionItemsList from "./CollectionItemsList";
 
 const CollectionOverviewPage = () => {
     const items = [
-        { id: 1, name: "Item 1", series: "Series 1", image: `${process.env.PUBLIC_URL}/defaultImages/avatar.png`},
+        { id: 1, name: "Item 1", series: "Series 1", image: `${process.env.PUBLIC_URL}/defaultImages/avatar.png` },
         { id: 2, name: "Item 2", series: "Series 2", image: `${process.env.PUBLIC_URL}/defaultImages/avatar.png` },
         { id: 3, name: "Item 3", series: "Series 3", image: `${process.env.PUBLIC_URL}/defaultImages/avatar.png` },
         { id: 4, name: "Item 4", series: "Series 4", image: `${process.env.PUBLIC_URL}/defaultImages/avatar.png` },
@@ -35,7 +35,7 @@ const CollectionOverviewPage = () => {
                             <Grid item size={4}>
 
                             </Grid>
-                                
+
                         </Grid>
                     </Grid>
                     <Grid item size="grow" />

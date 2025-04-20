@@ -1,5 +1,5 @@
 import { Box, Grid } from "@mui/material";
-import CollectionItemCard from "../../components/CollectionItemCard";
+import CollectionItemCard from "../../../components/CollectionItemCard";
 
 const CollectionItemsList = (props) => {
     const {
