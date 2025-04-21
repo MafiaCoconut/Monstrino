@@ -2,7 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Homepage from './features/homepage/Homepage';
-import RegisterForm from './features/auth/pages/RegisterForm';
+import RegisterForm from './modules/Auth/Register/RegisterForm';
 
 function App() {
 

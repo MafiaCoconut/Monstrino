@@ -1,9 +1,9 @@
 import './index.css'
 import App from './App.tsx'
-import React, {createContext} from 'react';
+import React, { createContext } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import UserStore from './stores/UserStore';
+import UserStore from './modules/Auth/store/UserStore.ts';
 
 interface UserState {
   userStore: UserStore,
