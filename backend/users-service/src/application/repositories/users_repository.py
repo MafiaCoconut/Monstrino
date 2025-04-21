@@ -1,7 +1,7 @@
 from abc import abstractmethod, ABC
 
 from domain.new_user import NewUser
-from domain.user import User, UserRegistration
+from domain.user import User, UserRegistration, UserBaseInfo
 
 
 class UsersRepository(ABC):
@@ -11,6 +11,10 @@ class UsersRepository(ABC):
 
     @abstractmethod
     async def get_user(self, user_id: int):
+        pass
+
+    @abstractmethod
+    async def get_user_base_info(self, user_id: int) -> UserBaseInfo:
         pass
 
     @abstractmethod

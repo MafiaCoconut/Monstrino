@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime, timezone
 from application.repositories.users_repository import UsersRepository
 from domain.new_user import NewUser
-from domain.user import User, UserRegistration
+from domain.user import User, UserRegistration, UserBaseInfo
 
 from infrastructure.config.logs_config import log_decorator
 from infrastructure.db.base import async_engine
@@ -48,17 +48,38 @@ class UsersRepositoryImpl(UsersRepository):
             password = new_user.password,
         )
 
-    async def set_user(self, user: UserRegistration):
+    async def set_user(self, user: UserRegistration) -> int:
         session = await self._get_session()
         async with session.begin():
             user_orm = await self._refactor_new_user_pydantic_to_orm(user)
             session.add(user_orm)
+            await session.flush()  # ⬅️ ID будет доступен после этого
+            user_id = user_orm.id
             await session.commit()
+            return user_id
 
     async def get_user(self, user_id: int):
         session = await self._get_session()
         async with session.begin():
             pass
+
+    async def get_user_base_info(self, user_id: int) -> UserBaseInfo | None:
+        session = await self._get_session()
+        async with session.begin():
+            query = select(UserORM).where(UserORM.id == user_id)
+            result = await session.execute(query)
+            user_orm: UserORM = result.scalars().first()
+            if user_orm:
+                user = UserBaseInfo(
+                    id = user_orm.id,
+                    username = user_orm.username,
+                    email = user_orm.email,
+                    updatedAt = user_orm.updatedAt,
+                    createdAt = user_orm.createdAt,
+                )
+                return user
+            return None
+
 
     async def update_username(self, user_id: int, new_username: str):
         session = await self._get_session()

@@ -22,3 +22,11 @@ class UserRegistration(BaseModel):
 
     # firstName: str | None = Field(default=None)
     # lastName:  str | None = Field(default=None)
+
+class UserBaseInfo(BaseModel):
+    id:             int  = Field()
+    username:       str = Field()
+    email:          str = Field()
+
+    updatedAt: datetime | str = Field()
+    createdAt: datetime | str = Field()

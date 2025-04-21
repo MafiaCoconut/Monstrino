@@ -67,17 +67,23 @@ async def set_db(response: Response, background_tasks: BackgroundTasks,
     await core_service.restart_db()
     return await get_success_json_response(data={'message': "DB is restarted"})
 
-@log_api_decorator()
 @app.post('/users/registerNewUser')
+@log_api_decorator()
 async def register_new_user(
         user: UserRegistration, background_tasks: BackgroundTasks,
         core_service: CoreService = Depends(get_core_service)
     ):
-    print(user)
     if user:
-        await core_service.register_new_user(user=user)
+        user_base_info = await core_service.register_new_user(user=user)
+        system_logger.info(f"user_base_info: {user_base_info}")
+        if user_base_info:
+            return await get_success_json_response(data=user_base_info.model_dump())
+        else:
+            await raise_validation_error(detail="Users data is not valid")
+
     else:
         await raise_validation_error(detail="Users data is not valid")
+
 
 @log_api_decorator()
 @app.post('/users/{user_id}/changeUsername')
