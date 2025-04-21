@@ -1,3 +1,4 @@
+from application.services.auth_service import AuthService
 from application.services.core_service import CoreService
 from application.services.scheduler_service import SchedulerService
 from application.services.users_service import UsersService
@@ -14,8 +15,15 @@ def get_scheduler_service() -> SchedulerService:
 #     return CoreService(
 #     )
 
+
+
 def get_users_service() -> UsersService:
     return UsersService(
         users_gateway=users_gateway,
 
+    )
+
+def get_auth_service() -> AuthService:
+    return AuthService(
+        users_service=get_users_service()
     )

@@ -1,6 +1,6 @@
 from watchfiles import awatch
 
-from domain.user import User, NewUser
+from domain.user import User, UserRegistration
 import re
 
 from application.exceptions.invalid_user_data import InvalidUserData
@@ -16,13 +16,13 @@ class UserValidation:
 )
 
 
-    def validate_new_user(self, user: NewUser):
+    def validate_new_user(self, user: UserRegistration):
         self.validate_username(user.username)
-        self.validate_first_name(user.firstName)
-        self.validate_last_name(user.lastName)
+        # self.validate_first_name(user.firstName)
+        # self.validate_last_name(user.lastName)
         self.validate_password(user.password)
 
-    def validate_user(self, user: NewUser):
+    def validate_user(self, user: UserRegistration):
         self.validate_username(user.username)
         self.validate_first_name(user.firstName)
         self.validate_last_name(user.lastName)
