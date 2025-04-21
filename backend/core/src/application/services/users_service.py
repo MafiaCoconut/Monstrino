@@ -1,6 +1,6 @@
 from application.gateways.user_gateway import UsersGateway
 from application.use_сases.users_provider_use_case import UsersProviderUseCase
-from domain.user import UserRegistration
+from domain.user import UserRegistration, UserBaseInfo
 
 
 class UsersService:
@@ -14,4 +14,5 @@ class UsersService:
         )
 
     async def register_new_user(self, user: UserRegistration):
-        user_id = await self.users_provider.register_new_user(user=user)
+        user_base_info: UserBaseInfo = await self.users_provider.register_new_user(user=user)
+        return user_base_info

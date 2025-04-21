@@ -2,6 +2,8 @@ from fastapi import APIRouter, Response, BackgroundTasks, FastAPI
 from fastapi.params import Depends
 import logging
 
+from icecream import ic
+
 from application.services.auth_service import AuthService
 from application.services.core_service import CoreService
 from application.services.users_service import UsersService
@@ -21,10 +23,10 @@ system_logger = logging.getLogger('system_logger')
 def config(app: FastAPI):
     app.include_router(router)
 
-@log_api_decorator()
 @router.post("/api/v1/auth/registration",
              # responses=responses,
              response_model=RegistrationResponse)
+@log_api_decorator()
 async def registration(
         user_credentials: UserRegistration,
         response: Response, background_tasks: BackgroundTasks,
@@ -32,5 +34,9 @@ async def registration(
     ):
     system_logger.info(f"credentials: {user_credentials}")
     if user_credentials:
-        await auth_service.registration(user=user_credentials)
-    return await get_success_json_response(data={"success": True})
+        result = await auth_service.registration(user=user_credentials)
+        ic(result)
+        ic(type(result))
+        return await get_success_json_response(data=result)
+    else:
+        return await get_success_json_response(data={"data": "It was called successfully"})
