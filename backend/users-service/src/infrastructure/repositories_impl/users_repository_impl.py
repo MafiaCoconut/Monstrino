@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime, timezone
 from application.repositories.users_repository import UsersRepository
 from domain.new_user import NewUser
-from domain.user import User
+from domain.user import User, UserRegistration
 
 from infrastructure.config.logs_config import log_decorator
 from infrastructure.db.base import async_engine
@@ -41,14 +41,14 @@ class UsersRepositoryImpl(UsersRepository):
         )
 
     @staticmethod
-    async def _refactor_new_user_pydantic_to_orm(new_user: NewUser):
+    async def _refactor_new_user_pydantic_to_orm(new_user: UserRegistration):
         return UserORM(
             username = new_user.username,
-            firstName = new_user.firstName,
-            lastName = new_user.lastName,
+            email = new_user.email,
+            password = new_user.password,
         )
 
-    async def set_user(self, user: NewUser):
+    async def set_user(self, user: UserRegistration):
         session = await self._get_session()
         async with session.begin():
             user_orm = await self._refactor_new_user_pydantic_to_orm(user)

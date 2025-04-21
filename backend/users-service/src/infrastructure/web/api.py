@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from application.services.core_service import CoreService
 from domain.new_user import NewUser
-from domain.user import User
+from domain.user import User, UserRegistration
 # from application.services.scheduler_service import SchedulerService
 from infrastructure.config.logs_config import log_api_decorator
 from infrastructure.config.services_config import get_core_service
@@ -70,7 +70,7 @@ async def set_db(response: Response, background_tasks: BackgroundTasks,
 @log_api_decorator()
 @app.post('/users/registerNewUser')
 async def register_new_user(
-        user: NewUser, background_tasks: BackgroundTasks,
+        user: UserRegistration, background_tasks: BackgroundTasks,
         core_service: CoreService = Depends(get_core_service)
     ):
     print(user)

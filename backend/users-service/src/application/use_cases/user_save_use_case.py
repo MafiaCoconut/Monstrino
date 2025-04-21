@@ -1,6 +1,6 @@
 from application.repositories.users_repository import UsersRepository
 from domain.new_user import NewUser
-from domain.user import User
+from domain.user import User, UserRegistration
 
 
 class UserSaveUseCase:
@@ -10,5 +10,5 @@ class UserSaveUseCase:
     ):
         self.users_repository = users_repository
 
-    async def execute(self, user: NewUser):
+    async def execute(self, user: UserRegistration):
         await self.users_repository.set_user(user)

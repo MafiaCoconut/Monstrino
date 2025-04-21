@@ -2,7 +2,7 @@ from application.repositories.users_repository import UsersRepository
 from application.use_cases.db_use_case import DBUseCase
 from application.use_cases.user_provider_use_case import UserProviderUseCase
 from domain.new_user import NewUser
-from domain.user import User
+from domain.user import User, UserRegistration
 
 
 class CoreService:
@@ -18,7 +18,7 @@ class CoreService:
 
         self.dbUseCase = DBUseCase()
     
-    async def register_new_user(self, user: NewUser):
+    async def register_new_user(self, user: UserRegistration):
         await self.users_provider_use_case.register_new_user(user=user)
 
     async def restart_db(self):

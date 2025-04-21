@@ -5,5 +5,8 @@ from pydantic import BaseModel, Field
 
 class NewUser(BaseModel):
     username:  str | None = Field(default=None)
-    firstName: str | None = Field(default=None)
-    lastName:  str | None = Field(default=None)
+    email:     str | None = Field(default=None)
+    password:  str | None = Field(default=None)
+
+    # firstName: str | None = Field(default=None)
+    # lastName:  str | None = Field(default=None)

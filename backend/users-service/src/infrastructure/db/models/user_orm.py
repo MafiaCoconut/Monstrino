@@ -11,8 +11,10 @@ class UserORM(Base):
 
     id:            Mapped[int]             = mapped_column(INTEGER, primary_key=True)
     username:      Mapped[str]             = mapped_column(String, default="", nullable=False)
-    firstName:     Mapped[str]             = mapped_column(String, default="", nullable=False)
-    lastName:      Mapped[str]             = mapped_column(String, default="", nullable=False)
+    firstName:     Mapped[str | None]      = mapped_column(String, default="", nullable=False)
+    lastName:      Mapped[str | None]      = mapped_column(String, default="", nullable=False)
+    email:         Mapped[str]             = mapped_column(String, default="", nullable=False)
+    password:      Mapped[str]             = mapped_column(String, default="", nullable=False)
 
     updatedAt:     Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"), onupdate=datetime.now(UTC).replace(tzinfo=None), nullable=True)
     createdAt:     Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"))

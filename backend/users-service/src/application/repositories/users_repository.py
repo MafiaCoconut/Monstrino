@@ -1,12 +1,12 @@
 from abc import abstractmethod, ABC
 
 from domain.new_user import NewUser
-from domain.user import User
+from domain.user import User, UserRegistration
 
 
 class UsersRepository(ABC):
     @abstractmethod
-    async def set_user(self, user: NewUser):
+    async def set_user(self, user: UserRegistration):
         pass
 
     @abstractmethod
