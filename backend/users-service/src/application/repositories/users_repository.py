@@ -21,4 +21,8 @@ class UsersRepository(ABC):
     async def update_username(self, user_id: int, new_username: str):
         pass
 
+    @abstractmethod
+    async def update_refresh_token(self, user_id: int, new_refresh_token: str) -> None:
+        pass
+
     

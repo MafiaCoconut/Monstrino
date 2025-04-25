@@ -6,7 +6,9 @@ from icecream import ic
 
 from application.services.core_service import CoreService
 from domain.user import UserRegistration
+from infrastructure.api.requests.auth_requests import SetRefreshTokenRequest
 from infrastructure.api.responces.auth_responces.responces import RegisterUserResponse
+from infrastructure.api.responces.models import ResponseModel
 from infrastructure.api.responces.templates import get_success_json_response
 # from application.services.scheduler_service import SchedulerService
 from infrastructure.config.logs_config import log_api_decorator
@@ -23,7 +25,7 @@ def config(app: FastAPI):
 @router.post("/api/v1/auth/registerNewUser", tags=["Auth"],
              response_model=RegisterUserResponse,)
 @log_api_decorator()
-async def registerNewUser(
+async def register_new_user(
         user_credentials: UserRegistration,
         response: Response, background_tasks: BackgroundTasks,
         core_service: CoreService = Depends(get_core_service)
@@ -39,3 +41,16 @@ async def registerNewUser(
     else:
         await raise_validation_error(detail="Users data is not valid")
 
+
+@router.post("/api/v1/auth/setRefreshToken", tags=["Auth"], response_model=ResponseModel)
+async def set_refresh_token(
+        request: SetRefreshTokenRequest,
+        core_service: CoreService = Depends(get_core_service)
+    ):
+    user_id = request.user_id
+    refresh_token = request.refresh_token
+    if user_id and refresh_token:
+        await core_service.set_refresh_token(user_id=user_id, new_refresh_token=refresh_token)
+        return await get_success_json_response(data={'message': "Refresh token is set"})
+    else:
+        return await raise_validation_error(detail="Users data is not valid")

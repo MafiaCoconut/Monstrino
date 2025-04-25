@@ -19,3 +19,6 @@ class UserProviderUseCase:
 
     async def change_username(self, user_id: int, new_username: str):
         await self.users_data_use_case.change_username(user_id=user_id, new_username=new_username)
+
+    async def set_refresh_token(self, user_id: int, new_refresh_token: str):
+        await self.users_data_use_case.set_refresh_token(user_id=user_id, new_refresh_token=new_refresh_token)

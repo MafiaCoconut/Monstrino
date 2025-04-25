@@ -34,10 +34,10 @@ class UsersRepositoryImpl(UsersRepository):
         return UserORM(
             id         = user.id,
             username   = user.username,
-            firstName  = user.firstName,
-            lastName   = user.lastName,
-            updatedAt  = user.updatedAt.astimezone(timezone.utc).replace(tzinfo=None) if user.updatedAt else None,
-            createdAt  = user.createdAt.astimezone(timezone.utc).replace(tzinfo=None) if user.updatedAt else None,
+            first_name  = user.firstName,
+            last_name   = user.lastName,
+            updated_at  = user.updated_at.astimezone(timezone.utc).replace(tzinfo=None) if user.updatedAt else None,
+            created_at  = user.created_at.astimezone(timezone.utc).replace(tzinfo=None) if user.updatedAt else None,
         )
 
     @staticmethod
@@ -74,8 +74,8 @@ class UsersRepositoryImpl(UsersRepository):
                     id = user_orm.id,
                     username = user_orm.username,
                     email = user_orm.email,
-                    updatedAt = user_orm.updatedAt,
-                    createdAt = user_orm.createdAt,
+                    updated_at = user_orm.updated_at,
+                    created_at = user_orm.created_at,
                 )
                 return user
             return None
@@ -87,4 +87,10 @@ class UsersRepositoryImpl(UsersRepository):
             query = update(UserORM).where(UserORM.id == user_id).values(username=new_username)
             await session.execute(query)
             await session.commit()
-        
+
+    async def update_refresh_token(self, user_id: int, new_refresh_token: str) -> None:
+        session = await self._get_session()
+        async with session.begin():
+            query = update(UserORM).where(UserORM.id == user_id).values(refresh_token=new_refresh_token)
+            await session.execute(query)
+            await session.commit()

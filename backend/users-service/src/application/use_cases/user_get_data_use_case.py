@@ -22,8 +22,8 @@ class UserGetDataUseCase:
         """
         Так как в БД формат данных для дней и времени отличается от текста, эта функция переводит даты в текст
         """
-        if user.updatedAt:
-            user.updatedAt = user.updatedAt.isoformat()
-        if user.createdAt:
-            user.createdAt = user.createdAt.isoformat()
+        if user.updated_at:
+            user.updated_at = user.updated_at.isoformat()
+        if user.created_at:
+            user.created_at = user.created_at.isoformat()
 

@@ -6,14 +6,14 @@ from pydantic import BaseModel, Field
 class User(BaseModel):
     id:        int        = Field()
     username:  str        = Field(default=None)
-    firstName: str | None = Field(default=None)
-    lastName:  str | None = Field(default=None)
+    first_name: str | None = Field(default=None)
+    last_name:  str | None = Field(default=None)
     email: str | None = Field(default=None)
     password: str | None = Field(default=None)
 
 
-    updatedAt: datetime | None = Field(default=None)
-    createdAt: datetime | None = Field(default=None)
+    updated_at: datetime | None = Field(default=None)
+    created_at: datetime | None = Field(default=None)
 
 class UserRegistration(BaseModel):
     username: str  = Field()
@@ -28,5 +28,5 @@ class UserBaseInfo(BaseModel):
     username:       str = Field()
     email:          str = Field()
 
-    updatedAt: datetime | str = Field()
-    createdAt: datetime | str = Field()
+    updated_at: datetime | str = Field()
+    created_at: datetime | str = Field()
