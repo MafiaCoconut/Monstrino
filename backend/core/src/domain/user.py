@@ -27,5 +27,5 @@ class UserBaseInfo(BaseModel):
     username:       str = Field()
     email:          str = Field()
 
-    updatedAt: datetime | str = Field()
-    createdAt: datetime | str = Field()
+    updated_at: datetime | str = Field()
+    created_at: datetime | str = Field()

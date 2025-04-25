@@ -22,6 +22,9 @@ class AuthService:
         try:
             access_token = await self.jwt_use_case.get_new_access_token(user_id=str(user_base_info.id))
             refresh_token = await self.jwt_use_case.get_new_refresh_token(user_id=str(user_base_info.id))
+
+            await self.users_service.update_refresh_token(user_id=user_base_info.id, refresh_token=refresh_token)
+
             system_logger.info(f"access_token: {access_token}")
             system_logger.info(f"refresh_token: {refresh_token}")
             return {"access_token": access_token, "refresh_token": refresh_token, "user": user_base_info}
@@ -30,3 +33,4 @@ class AuthService:
             system_logger.error(f"Exception by creating jwt: {e}")
 
         return None
+

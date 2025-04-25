@@ -7,6 +7,7 @@ from icecream import ic
 
 from application.gateways.user_gateway import UsersGateway
 from domain.user import UserRegistration, UserBaseInfo
+from infrastructure.config.logs_config import log_decorator
 
 dotenv.load_dotenv()
 system_logger = logging.getLogger("system_logger")
@@ -19,7 +20,7 @@ class UsersGatewayImpl(UsersGateway):
         system_logger.info(f"{user.model_dump()}")
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                    url=self.users_service_address + f"/users/registerNewUser",
+                    url=self.users_service_address + f"/api/v1/auth/registerNewUser",
                     json=user.model_dump()
             ) as resp:
                 result = await resp.json()
@@ -37,3 +38,21 @@ class UsersGatewayImpl(UsersGateway):
 
     async def get_user_by_username(self, username: str):
         pass
+
+    @log_decorator()
+    async def set_refresh_token(self, user_id: int, refresh_token: str) -> None:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                    url=self.users_service_address + f"/api/v1/auth/setRefreshToken",
+                    json={"user_id": user_id, "refresh_token": refresh_token}
+            ) as resp:
+                result = await resp.json()
+                system_logger.info(f"set_refresh_token result: {result}")
+                match resp.status:
+                    case 200:
+                        return None
+                    case 401:
+                        return None
+
+                return None
+

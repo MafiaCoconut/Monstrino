@@ -16,3 +16,6 @@ class UsersGateway(ABC):
     async def get_user_by_username(self, username: str):
         pass
 
+    @abstractmethod
+    async def set_refresh_token(self, user_id: int, refresh_token: str) -> None:
+        pass
