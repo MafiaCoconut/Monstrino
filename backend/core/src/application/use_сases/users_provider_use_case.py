@@ -28,8 +28,8 @@ class UsersProviderUseCase:
         return user_base_info
 
     @log_decorator()
-    async def set_refresh_token(self, user_id: int, refresh_token: str):
-        await self.users_gateway.set_refresh_token(user_id=user_id, refresh_token=refresh_token)
+    async def set_refresh_token(self, user_email: str, refresh_token: str):
+        await self.users_gateway.set_refresh_token(user_email=user_email, refresh_token=refresh_token)
 
     @log_decorator()
     async def login(self, user: UserLogin) -> bool:

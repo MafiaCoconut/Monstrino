@@ -28,8 +28,9 @@ error_handler.setFormatter(formatter)
 
 logger = logging.getLogger(__name__)
 def config():
-    coloredlogs.install(level="DEBUG", logger=None, fmt=fmt, datefmt=datefmt)
+    # coloredlogs.install(level="DEBUG", logger=None, fmt=fmt, datefmt=datefmt)
     # logger.warning("sdfsdfsdfsd")
+    pass
 
 def config1():
     """

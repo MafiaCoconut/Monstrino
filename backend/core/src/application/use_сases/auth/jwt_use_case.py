@@ -6,17 +6,23 @@ class JwtUseCase:
     def __init__(self):
         pass
 
-    async def get_new_access_token(self, user_id: str) -> str:
+    async def get_new_tokens(self, user_email: str) -> dict:
+        return {
+            "access_token": await self.get_new_access_token(user_email),
+            "refresh_token": await self.get_new_refresh_token(user_email),
+        }
+
+    async def get_new_access_token(self, user_email: str) -> str:
         return auth.create_access_token(
-            uid=user_id,
+            uid=user_email,
             # ait=self._get_ait(),
             # exp=self._get_exp_access_token(),
             role="user",
         )
 
-    async def get_new_refresh_token(self, user_id: str) -> str:
+    async def get_new_refresh_token(self, user_email: str) -> str:
         return auth.create_refresh_token(
-            uid=user_id,
+            uid=user_email,
             # ait=self._get_ait(),
             # exp=self._get_exp_refresh_token(),
             role="user",

@@ -41,11 +41,11 @@ class UsersGatewayImpl(UsersGateway):
         pass
 
     @log_decorator()
-    async def set_refresh_token(self, user_id: int, refresh_token: str) -> None:
+    async def set_refresh_token(self, user_email: str, refresh_token: str) -> None:
         async with aiohttp.ClientSession() as session:
             async with session.post(
                     url=self.users_service_address + f"/api/v1/auth/setRefreshToken",
-                    json={"user_id": user_id, "refresh_token": refresh_token}
+                    json={"user_email": user_email, "refresh_token": refresh_token}
             ) as resp:
                 result = await resp.json()
                 system_logger.info(f"set_refresh_token result: {result}")

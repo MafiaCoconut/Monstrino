@@ -17,8 +17,8 @@ class UsersService:
         user_base_info: UserBaseInfo = await self.users_provider.register_new_user(user=user)
         return user_base_info
 
-    async def update_refresh_token(self, user_id: int, refresh_token: str):
-        await self.users_provider.set_refresh_token(user_id=user_id, refresh_token=refresh_token)
+    async def update_refresh_token(self, user_email: str, refresh_token: str):
+        await self.users_provider.set_refresh_token(user_email=user_email, refresh_token=refresh_token)
 
     async def login(self, user: UserLogin) -> bool:
         return await self.users_provider.login(user=user)
