@@ -32,12 +32,7 @@ async def registration(
     logger.info(f"credentials: {user_credentials}")
     if user_credentials:
         result = await auth_service.registration(user=user_credentials)
-        logger.info(auth_config_class.JWT_ACCESS_COOKIE_NAME)
-        response.set_cookie(
-            key=auth_config_class.JWT_ACCESS_COOKIE_NAME,
-            value=result.get('access_token'),
-            httponly=True, secure=False, samesite="lax", path="/"
-        )
+        await set_refresh_token_in_cookie(response=response, refresh_token=result.get('refresh_token'))
         return await get_success_json_response(response=response, data=result)
     else:
         return await raise_validation_error()
@@ -52,5 +47,22 @@ async def login(
     logger.info(f"credentials: {user_credentials}")
     if user_credentials:
         result = await auth_service.login(user=user_credentials)
-        return await get_success_json_response(response=response, data=result)
+        if result:
+            await set_refresh_token_in_cookie(response=response, refresh_token=result.get('refresh_token'))
+            return await get_success_json_response(response=response, data=result)
+        else:
+            return await raise_validation_error()
     return await raise_validation_error()
+
+
+async def set_refresh_token_in_cookie(response: Response, refresh_token: str):
+    _httponly = True
+    _secure = False
+    _samesite = "lax"
+    _path = "/"
+    response.set_cookie(
+        key=auth_config_class.JWT_REFRESH_COOKIE_NAME,
+        value=refresh_token,
+        httponly=_httponly, secure=_secure, samesite=_samesite, path=_path
+    )
+

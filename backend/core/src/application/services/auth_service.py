@@ -20,8 +20,7 @@ class AuthService:
         user_base_info: UserBaseInfo = await self.users_service.register_new_user(user=user)
         logger.info(f"user_base_info in auth service: {user_base_info}")
         try:
-            tokens = await self.jwt_use_case.get_new_tokens(user_email=user.email)
-            await self.users_service.update_refresh_token(user_email=user.email, refresh_token=tokens.get('refresh_token'))
+            tokens = await self.update_tokens(user_email=user.email)
             return tokens | {"user": user_base_info}
 
         except Exception as e:
@@ -32,7 +31,15 @@ class AuthService:
     @log_decorator()
     async def login(self, user: UserLogin):
         if await self.users_service.login(user=user):
-            tokens = await self.jwt_use_case.get_new_tokens(user_email=user.email)
+            tokens = await self.update_tokens(user_email=user.email)
             logger.info("Login success")
+            return tokens
         else:
             logger.info("Login failed")
+            return None
+
+
+    async def update_tokens(self, user_email: str) -> dict:
+        tokens = await self.jwt_use_case.get_new_tokens(user_email=user_email)
+        await self.users_service.update_refresh_token(user_email=user_email, refresh_token=tokens.get('refresh_token'))
+        return tokens
