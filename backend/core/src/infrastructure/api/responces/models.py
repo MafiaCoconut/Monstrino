@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Any, Dict, List
 
 class Meta(BaseModel):
-    code: str
+    code: int
     message: str
     description: str
 

@@ -14,7 +14,7 @@ from infrastructure.api.responces.templates import get_success_json_response
 from infrastructure.config.logs_config import log_api_decorator
 from infrastructure.api.responces.default_codes import responses, raise_validation_error, raise_item_not_found, raise_created, raise_internal_server_error
 from infrastructure.config.services_config import get_auth_service
-
+from infrastructure.config.auth_config import auth, config as auth_config_class
 
 router = APIRouter()
 
@@ -26,7 +26,6 @@ def config(app: FastAPI):
 @router.post("/api/v1/auth/registration",
              # responses=responses,
              response_model=RegistrationResponse)
-@log_api_decorator()
 async def registration(
         user_credentials: UserRegistration,
         response: Response, background_tasks: BackgroundTasks,
@@ -35,6 +34,15 @@ async def registration(
     system_logger.info(f"credentials: {user_credentials}")
     if user_credentials:
         result = await auth_service.registration(user=user_credentials)
-        return await get_success_json_response(data=result)
+        system_logger.info(auth_config_class.JWT_ACCESS_COOKIE_NAME)
+        response.set_cookie(
+            key=auth_config_class.JWT_ACCESS_COOKIE_NAME,
+            value = result.get('access_token'),
+            httponly=True,
+            secure=False,
+            samesite="lax",
+            path="/"
+        )
+        return await get_success_json_response(response=response, data=result)
     else:
-        return await get_success_json_response(data={"data": "It was called successfully"})
+        return await raise_validation_error()
