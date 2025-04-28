@@ -4,7 +4,6 @@ from contextlib import asynccontextmanager
 from infrastructure.api import api_config, cors
 from infrastructure.config import logs_config
 from infrastructure.config.services_config import get_scheduler_service
-
 app = FastAPI()
 
 cors.config(app=app)

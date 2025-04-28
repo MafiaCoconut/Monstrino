@@ -35,8 +35,6 @@ async def registration(
     system_logger.info(f"credentials: {user_credentials}")
     if user_credentials:
         result = await auth_service.registration(user=user_credentials)
-        ic(result)
-        ic(type(result))
         return await get_success_json_response(data=result)
     else:
         return await get_success_json_response(data={"data": "It was called successfully"})

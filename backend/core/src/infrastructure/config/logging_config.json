@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "disable_existing_loggers": false,
+  "formatters": {
+    "default": {
+      "format": "%(asctime)s | %(levelname)-8s | %(name)-25s | %(message)s",
+      "datefmt": "%d.%m.%Y-%H:%M"
+    }
+  },
+  "handlers": {
+    "console": {
+      "class": "logging.StreamHandler",
+      "formatter": "default",
+      "level": "DEBUG",
+      "stream": "ext://sys.stdout"
+    },
+    "system_file": {
+      "class": "logging.FileHandler",
+      "formatter": "default",
+      "filename": "logs/system_data.log",
+      "mode": "a",
+      "level": "INFO"
+    },
+    "error_file": {
+      "class": "logging.FileHandler",
+      "formatter": "default",
+      "filename": "logs/error_data.log",
+      "mode": "a",
+      "level": "ERROR"
+    }
+  },
+  "loggers": {
+
+    "uvicorn": {
+      "handlers": ["system_file", "console"],
+      "level": "INFO",
+      "propagate": true
+    },
+    "uvicorn.error": {
+      "handlers": ["system_file", "console"],
+      "level": "ERROR",
+      "propagate": true
+    },
+    "uvicorn.access": {
+      "handlers": ["system_file", "console"],
+      "level": "INFO",
+      "propagate": true
+    }
+  },
+  "root": {
+    "handlers": ["console"],
+    "level": "INFO"
+  }
+}
