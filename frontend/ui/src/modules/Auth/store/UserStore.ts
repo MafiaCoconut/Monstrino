@@ -27,9 +27,10 @@ export default class UserStore {
         try {
             const response = await AuthService.login(email, password);
             console.log(response);
-            localStorage.setItem("token", response.data.accessToken);
             this.setAuth(true);
             this.setUser(response.data.user);
+            console.log('user:')
+            console.log(this.user);
         } catch (e: any) {
             console.log(e.response?.data?.message);
         }
@@ -40,9 +41,18 @@ export default class UserStore {
         try {
             const response = await AuthService.registration(username, email, password);
             console.log(response);
-            localStorage.setItem("token", response.data.accessToken);
             this.setAuth(true);
             this.setUser(response.data.user);
+        } catch (e: any) {
+            console.log(e.response?.data?.message);
+        }
+    }
+
+    async checkAuth(){
+        console.log("start refresh")
+        try {
+            const response = await AuthService.checkAuth();
+            console.log(response);
         } catch (e: any) {
             console.log(e.response?.data?.message);
         }

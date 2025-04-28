@@ -13,7 +13,7 @@ export default class AuthService {
         return $api.post('/auth/logout');
     }
     static async checkAuth() {
-        return $api.get('/auth/refresh');
+        return $api.post<AuthResponse>('/auth/refresh');
     }
     static async getUser() {
         return $api.get('/auth/user');
