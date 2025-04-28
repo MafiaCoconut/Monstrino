@@ -3,14 +3,21 @@ import inspect
 from dotenv import load_dotenv
 import os
 from functools import wraps
+import coloredlogs
 
 load_dotenv()
 system_logger = logging.getLogger("system_logger")
 error_logger = logging.getLogger("error_logger")
 apscheduler_logger = logging.getLogger("apscheduler")
 
+fmt =  "%(asctime)s | %(levelname)-8s | %(name)-40s | %(message)s"
+datefmt = "%d.%m.%Y-%H:%M"
 
 def config():
+    coloredlogs.install(level="DEBUG", logger=None, fmt=fmt, datefmt=datefmt)
+
+
+def config1():
     """
     Функция первичной настройки логов
 

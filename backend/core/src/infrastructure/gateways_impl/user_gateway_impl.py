@@ -4,9 +4,10 @@ import aiohttp
 import os
 import dotenv
 from icecream import ic
+from pydantic import ValidationError
 
 from application.gateways.user_gateway import UsersGateway
-from domain.user import UserRegistration, UserBaseInfo
+from domain.user import UserRegistration, UserBaseInfo, UserLogin
 from infrastructure.config.logs_config import log_decorator
 
 dotenv.load_dotenv()
@@ -55,4 +56,19 @@ class UsersGatewayImpl(UsersGateway):
                         return None
 
                 return None
+
+    @log_decorator()
+    async def is_user_exists(self, user: UserLogin) -> bool:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                url=self.users_service_address + "/api/v1/auth/login",
+                json={'email': user.email, 'password': user.password}
+            ) as resp:
+                result = await resp.json()
+                match resp.status:
+                    case 200:
+                        return True
+                    case 404:
+                        return False
+                raise ValidationError(result)
 

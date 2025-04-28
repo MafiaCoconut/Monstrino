@@ -25,4 +25,6 @@ class UsersRepository(ABC):
     async def update_refresh_token(self, user_id: int, new_refresh_token: str) -> None:
         pass
 
-    
+    @abstractmethod
+    async def is_exists(self, email: str, password: str) -> bool:
+        pass

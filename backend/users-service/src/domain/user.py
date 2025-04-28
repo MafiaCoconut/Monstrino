@@ -30,3 +30,7 @@ class UserBaseInfo(BaseModel):
 
     updated_at: datetime | str = Field()
     created_at: datetime | str = Field()
+
+class UserLogin(BaseModel):
+    email: str = Field()
+    password: str = Field()

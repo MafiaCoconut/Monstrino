@@ -2,7 +2,7 @@ from application.repositories.users_repository import UsersRepository
 from application.use_cases.user_save_use_case import UserSaveUseCase
 from application.use_cases.users_data_use_case import UsersDataUseCase
 from domain.new_user import NewUser
-from domain.user import User, UserRegistration, UserBaseInfo
+from domain.user import User, UserRegistration, UserBaseInfo, UserLogin
 
 
 class UserProviderUseCase:
@@ -22,3 +22,4 @@ class UserProviderUseCase:
 
     async def set_refresh_token(self, user_id: int, new_refresh_token: str):
         await self.users_data_use_case.set_refresh_token(user_id=user_id, new_refresh_token=new_refresh_token)
+

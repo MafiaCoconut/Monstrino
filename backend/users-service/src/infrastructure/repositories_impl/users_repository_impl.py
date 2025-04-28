@@ -94,3 +94,14 @@ class UsersRepositoryImpl(UsersRepository):
             query = update(UserORM).where(UserORM.id == user_id).values(refresh_token=new_refresh_token)
             await session.execute(query)
             await session.commit()
+
+    async def is_exists(self, email: str, password: str) -> bool:
+        session = await self._get_session()
+        async with session.begin():
+            query = select(UserORM).where(UserORM.email == email, UserORM.password == password)
+            result = await session.execute(query)
+            user_orm = result.scalars().first()
+            if user_orm:
+                return True
+            else:
+                return False

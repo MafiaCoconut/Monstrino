@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from domain.user import UserRegistration
+from domain.user import UserRegistration, UserLogin
 
 
 class UsersGateway(ABC):
@@ -18,4 +18,8 @@ class UsersGateway(ABC):
 
     @abstractmethod
     async def set_refresh_token(self, user_id: int, refresh_token: str) -> None:
+        pass
+
+    @abstractmethod
+    async def is_user_exists(self, user: UserLogin):
         pass

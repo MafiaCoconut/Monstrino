@@ -11,3 +11,7 @@ class UsersTokensResult(BaseModel):
 class RegistrationResponse(ResponseModel):
     meta: Meta
     result: UsersTokensResult
+
+class LoginResponse(ResponseModel):
+    meta: Meta
+    result: UsersTokensResult

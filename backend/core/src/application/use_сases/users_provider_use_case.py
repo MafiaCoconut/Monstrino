@@ -3,7 +3,7 @@ import logging
 from application.exceptions.invalid_user_data import InvalidUserData
 from application.gateways.user_gateway import UsersGateway
 from application.validations.user_validation import UserValidation
-from domain.user import UserRegistration, UserBaseInfo
+from domain.user import UserRegistration, UserBaseInfo, UserLogin
 from infrastructure.config.logs_config import log_decorator
 
 system_logger = logging.getLogger('system_logger')
@@ -30,3 +30,7 @@ class UsersProviderUseCase:
     @log_decorator()
     async def set_refresh_token(self, user_id: int, refresh_token: str):
         await self.users_gateway.set_refresh_token(user_id=user_id, refresh_token=refresh_token)
+
+    @log_decorator()
+    async def login(self, user: UserLogin) -> bool:
+        return await self.users_gateway.is_user_exists(user=user)
