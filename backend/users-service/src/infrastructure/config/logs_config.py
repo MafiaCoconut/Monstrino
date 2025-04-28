@@ -14,7 +14,8 @@ fmt =  "%(asctime)s | %(levelname)-8s | %(name)-40s | %(message)s"
 datefmt = "%d.%m.%Y-%H:%M"
 
 def config():
-    coloredlogs.install(level="DEBUG", logger=None, fmt=fmt, datefmt=datefmt)
+    # coloredlogs.install(level="DEBUG", logger=None, fmt=fmt, datefmt=datefmt)
+    pass
 
 
 def config1():

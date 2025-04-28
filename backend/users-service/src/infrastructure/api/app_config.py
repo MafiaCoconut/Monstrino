@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
@@ -9,9 +11,12 @@ app = FastAPI()
 
 cors.config(app=app)
 
+logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    logger.info('-------------------------------------------------------')
+    logger.info('Start configuration users-service')
     scheduler_service = get_scheduler_service()
     await scheduler_service.set_all_jobs()
 

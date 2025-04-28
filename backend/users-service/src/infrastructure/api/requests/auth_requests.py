@@ -2,5 +2,5 @@ from pydantic import BaseModel
 
 
 class SetRefreshTokenRequest(BaseModel):
-    user_id: int
+    user_email: str
     refresh_token: str

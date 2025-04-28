@@ -47,10 +47,10 @@ async def set_refresh_token(
         request: SetRefreshTokenRequest,
         core_service: CoreService = Depends(get_core_service)
     ):
-    user_id = request.user_id
+    user_email = request.user_email
     refresh_token = request.refresh_token
-    if user_id and refresh_token:
-        await core_service.set_refresh_token(user_id=user_id, new_refresh_token=refresh_token)
+    if user_email and refresh_token:
+        await core_service.set_refresh_token(user_email=user_email, new_refresh_token=refresh_token)
         return await get_success_json_response(data={'message': "Refresh token is set"})
     else:
         return await raise_validation_error(detail="Users data is not valid")

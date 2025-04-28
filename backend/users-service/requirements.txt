@@ -26,6 +26,7 @@ starlette~=0.37.2
 pytz~=2025.2
 
 coloredlogs==15.0.1
+colorlog==6.9.0
 
 
 

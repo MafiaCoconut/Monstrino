@@ -22,7 +22,7 @@ class UsersRepository(ABC):
         pass
 
     @abstractmethod
-    async def update_refresh_token(self, user_id: int, new_refresh_token: str) -> None:
+    async def update_refresh_token(self, user_email: str, new_refresh_token: str) -> None:
         pass
 
     @abstractmethod
