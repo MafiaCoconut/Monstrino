@@ -43,3 +43,8 @@ class AuthService:
         tokens = await self.jwt_use_case.get_new_tokens(user_email=user_email)
         await self.users_service.update_refresh_token(user_email=user_email, refresh_token=tokens.get('refresh_token'))
         return tokens
+
+
+    @log_decorator()
+    async def check_access_token(self, access_token: str):
+        pass
