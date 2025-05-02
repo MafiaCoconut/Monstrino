@@ -19,9 +19,11 @@ class AuthJWT:
             algorithm=self.algorithm
         )
 
-    def decode_token(self, token: str) -> dict:
+    def decode_token(self, token: str | bytes) -> dict:
         return jwt.decode(
             jwt=token,
             key=self.public_key_path.read_text(),
-            algorithms=[self.algorithm]
+            algorithms=[self.algorithm],
+            audience="frontend",
+            issuer="core",
         )

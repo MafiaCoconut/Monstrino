@@ -21,6 +21,9 @@ async def raise_created() -> None:
 async def raise_item_not_found() -> None:
     raise HTTPException(status_code=404, detail="Item not found")
 
+async def raise_unauthorized() -> None:
+    raise HTTPException(status_code=401, detail="Unauthorized")
+
 async def raise_validation_error(detail: str = "") -> None:
     raise HTTPException(status_code=422, detail="Validation error" + ("" if detail == "" else f": {detail}"))
 

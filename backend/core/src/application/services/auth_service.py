@@ -1,6 +1,7 @@
 import logging
 
 from application.services.users_service import UsersService
+from application.use_сases.auth.jwt_refresh_use_case import JwtRefreshUseCase
 from application.use_сases.auth.jwt_use_case import JwtUseCase
 from domain.user import UserRegistration, User, UserBaseInfo, UserLogin
 from infrastructure.config.logs_config import log_decorator
@@ -14,6 +15,7 @@ class AuthService:
                  ):
         self.users_service = users_service
         self.jwt_use_case = JwtUseCase()
+        self.jwt_refresh_use_case = JwtRefreshUseCase(jwt_use_case=self.jwt_use_case)
 
     @log_decorator()
     async def registration(self, user: UserRegistration) -> dict | None:
@@ -46,9 +48,5 @@ class AuthService:
 
 
     @log_decorator()
-    async def check_access_token(self, access_token: str):
-        pass
-
-    @log_decorator()
-    async def refresh(self, refresh_token: str, access_token: str):
-        pass
+    async def refresh(self, refresh_token: str, access_token: str) -> dict:
+        return await self.jwt_refresh_use_case.refresh(access_token=access_token, refresh_token=refresh_token)

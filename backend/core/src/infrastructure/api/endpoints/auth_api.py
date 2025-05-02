@@ -15,7 +15,8 @@ from infrastructure.api.responces.auth_responces.responses import RegistrationRe
 from infrastructure.api.responces.templates import get_success_json_response
 from infrastructure.config.jwt_config import REFRESH_TOKE_COOKIE_NAME
 from infrastructure.config.logs_config import log_api_decorator
-from infrastructure.api.responces.default_codes import responses, raise_validation_error, raise_item_not_found, raise_created, raise_internal_server_error
+from infrastructure.api.responces.default_codes import responses, raise_validation_error, raise_item_not_found, \
+    raise_created, raise_internal_server_error, raise_unauthorized
 from infrastructure.config.services_config import get_auth_service
 
 
@@ -36,7 +37,7 @@ async def registration(
     if user_credentials:
         result = await auth_service.registration(user=user_credentials)
         await set_refresh_token_in_cookie(response=response, refresh_token=result.get('refresh_token'))
-        return await get_success_json_response(response=response, data=result)
+        return await get_success_json_response(response=response, data=result.get('access_token'))
     else:
         return await raise_validation_error()
 
@@ -52,7 +53,7 @@ async def login(
         result = await auth_service.login(user=user_credentials)
         if result:
             await set_refresh_token_in_cookie(response=response, refresh_token=result.get('refresh_token'))
-            return await get_success_json_response(response=response, data=result)
+            return await get_success_json_response(response=response, data=result.get('access_token'))
         else:
             return await raise_validation_error()
     return await raise_validation_error()
@@ -64,17 +65,20 @@ async def refresh_tokens(
         request: Request,
         response: Response, background_tasks: BackgroundTasks,
         auth_service: AuthService = Depends(get_auth_service),
-        access_token: str | None = None,
+        access_token: str | bytes | None = None,
 ):
     refresh_token = request.cookies.get(REFRESH_TOKE_COOKIE_NAME)
-    if access_token:
-        ic(access_token)
-    else:
-        ic('there is no access token')
     if refresh_token:
-        ic(refresh_token)
+        result = await auth_service.refresh(refresh_token=refresh_token, access_token=access_token)
+        match (result.get('code')):
+            case 200:
+                await set_refresh_token_in_cookie(response=response, refresh_token=result.get('refresh_token'))
+                return await get_success_json_response(response=response, data=result.get('access_token'))
+
+            case 401:
+                return await raise_unauthorized()
     else:
-        ic('there is no refresh token')
+        return await raise_unauthorized()
 
     # try:
     #     payload = auth.verify_token(token)
