@@ -16,7 +16,6 @@ async def lifespan(app: FastAPI):
 
     logs_config.config()
     api_config.config(app=app)
-
     # ic(await scheduler_service.get_all_jobs())
     yield
 

@@ -164,3 +164,5 @@ src/test1.txt
 src/test2.txt
 
 .DS_Store
+
+./src/certs/jwt-private.pem

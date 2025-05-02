@@ -48,3 +48,7 @@ class AuthService:
     @log_decorator()
     async def check_access_token(self, access_token: str):
         pass
+
+    @log_decorator()
+    async def refresh(self, refresh_token: str, access_token: str):
+        pass
