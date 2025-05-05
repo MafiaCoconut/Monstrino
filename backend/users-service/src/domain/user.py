@@ -27,6 +27,8 @@ class UserBaseInfo(BaseModel):
     id:             int  = Field()
     username:       str = Field()
     email:          str = Field()
+    first_name:     str = Field()
+    last_name:      str = Field()
 
     updated_at: datetime | str = Field()
     created_at: datetime | str = Field()

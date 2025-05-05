@@ -58,7 +58,7 @@ class UsersGatewayImpl(UsersGateway):
                 return None
 
     @log_decorator()
-    async def is_user_exists(self, user: UserLogin) -> bool:
+    async def login(self, user: UserLogin) -> UserBaseInfo | None:
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 url=self.users_service_address + "/api/v1/auth/login",
@@ -67,8 +67,9 @@ class UsersGatewayImpl(UsersGateway):
                 result = await resp.json()
                 match resp.status:
                     case 200:
-                        return True
+                        user_base_info = UserBaseInfo(**result.get('result'))
+                        return user_base_info
                     case 404:
-                        return False
+                        return None
                 raise ValidationError(result)
 

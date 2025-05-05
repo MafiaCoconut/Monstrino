@@ -24,6 +24,7 @@ export default class UserStore {
     }
 
     async login(email: string, password: string) {
+        console.log("Start login")
         try {
             const response = await AuthService.login(email, password);
             console.log(response);

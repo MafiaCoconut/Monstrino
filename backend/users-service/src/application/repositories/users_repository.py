@@ -26,5 +26,5 @@ class UsersRepository(ABC):
         pass
 
     @abstractmethod
-    async def is_exists(self, email: str, password: str) -> bool:
+    async def login(self, email: str, password: str) -> UserBaseInfo | None:
         pass

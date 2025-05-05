@@ -7,7 +7,7 @@ from icecream import ic
 from application.services.core_service import CoreService
 from domain.user import UserRegistration, UserLogin
 from infrastructure.api.requests.auth_requests import SetRefreshTokenRequest
-from infrastructure.api.responces.auth_responces.responces import RegisterUserResponse
+from infrastructure.api.responces.auth_responces.responces import RegisterUserResponse, LoginResponse
 from infrastructure.api.responces.models import ResponseModel
 from infrastructure.api.responces.templates import get_success_json_response
 # from application.services.scheduler_service import SchedulerService
@@ -36,10 +36,10 @@ async def register_new_user(
         if user_base_info:
             return await get_success_json_response(data=user_base_info.model_dump())
         else:
-            await raise_validation_error(detail="Users data is not valid")
+            return await raise_validation_error(detail="Users data is not valid")
 
     else:
-        await raise_validation_error(detail="Users data is not valid")
+        return await raise_validation_error(detail="Users data is not valid")
 
 
 @router.post("/api/v1/auth/setRefreshToken", tags=["Auth"], response_model=ResponseModel)
@@ -55,16 +55,17 @@ async def set_refresh_token(
     else:
         return await raise_validation_error(detail="Users data is not valid")
 
-@router.post("/api/v1/auth/login", tags=["Auth"], response_model=ResponseModel)
+@router.post("/api/v1/auth/login", tags=["Auth"], response_model=LoginResponse)
 async def login(
         user_credentials: UserLogin,
         response: Response, background_tasks: BackgroundTasks,
         core_service: CoreService = Depends(get_core_service)
     ):
     if user_credentials:
-        if await core_service.login(user=user_credentials):
+        result = await core_service.login(user=user_credentials)
+        if result:
             logger.info(f"Login for {user_credentials.email} was successful")
-            return await get_success_json_response(data={'message': "Login successful"})
+            return await get_success_json_response(data=result.model_dump())
         else:
             logger.info(f"Login for {user_credentials.email} was not successful")
             return await raise_item_not_found()

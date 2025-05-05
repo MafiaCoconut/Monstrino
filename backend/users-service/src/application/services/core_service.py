@@ -3,7 +3,7 @@ from application.use_cases.db_use_case import DBUseCase
 from application.use_cases.user_auth_use_case import UserAuthUseCase
 from application.use_cases.user_provider_use_case import UserProviderUseCase
 from domain.new_user import NewUser
-from domain.user import User, UserRegistration, UserLogin
+from domain.user import User, UserRegistration, UserLogin, UserBaseInfo
 
 
 class CoreService:
@@ -25,7 +25,7 @@ class CoreService:
     async def register_new_user(self, user: UserRegistration):
         return await self.user_auth_use_case.register_new_user(user=user)
 
-    async def login(self, user: UserLogin):
+    async def login(self, user: UserLogin) -> UserBaseInfo | None:
         return await self.user_auth_use_case.login(user=user)
 
     async def restart_db(self):

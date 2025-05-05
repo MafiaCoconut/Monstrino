@@ -7,18 +7,22 @@ class JwtTokensModel(BaseModel):
     access_token: str
     refresh_token: str
 
-class UsersTokensResult(BaseModel):
+class UsersTokensModel(BaseModel):
     access_token: str
     refresh_token: str
     user: UserBaseInfo
 
+class LoginModel(BaseModel):
+    access_token: str
+    user: UserBaseInfo
+
 class RegistrationResponse(ResponseModel):
     meta: Meta
-    result: UsersTokensResult
+    result: UsersTokensModel
 
 class LoginResponse(ResponseModel):
     meta: Meta
-    result: UsersTokensResult
+    result: LoginModel
 
 class RefreshResponse(ResponseModel):
     meta: Meta

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from domain.user import UserRegistration, UserLogin
+from domain.user import UserRegistration, UserLogin, UserBaseInfo
 
 
 class UsersGateway(ABC):
@@ -21,5 +21,5 @@ class UsersGateway(ABC):
         pass
 
     @abstractmethod
-    async def is_user_exists(self, user: UserLogin):
+    async def login(self, user: UserLogin) -> UserBaseInfo | None:
         pass

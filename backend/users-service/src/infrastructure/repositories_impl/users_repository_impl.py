@@ -12,46 +12,18 @@ from infrastructure.config.logs_config import log_decorator
 from infrastructure.db.base import async_engine
 from infrastructure.db.models.dolls_collection_orm import DollsCollectionORM
 from infrastructure.db.models.user_orm import UserORM
+from infrastructure.db.models_reformater import models_reformater
+
 
 class UsersRepositoryImpl(UsersRepository):
     @staticmethod
     async def _get_session():
         return AsyncSession(bind=async_engine, expire_on_commit=False)
 
-    @staticmethod
-    async def _refactor_orm_to_pydantic(user_orm: UserORM):
-        return User(
-            id         =user_orm.id,
-            username   =user_orm.username,
-            firstName  =user_orm.firstName,
-            lastName   =user_orm.lastName,
-            updatedAt  =user_orm.updatedAt,
-            createdAt  =user_orm.createdAt,
-        )
-
-    @staticmethod
-    async def _refactor_pydantic_to_orm(user: User):
-        return UserORM(
-            id         = user.id,
-            username   = user.username,
-            first_name  = user.firstName,
-            last_name   = user.lastName,
-            updated_at  = user.updated_at.astimezone(timezone.utc).replace(tzinfo=None) if user.updatedAt else None,
-            created_at  = user.created_at.astimezone(timezone.utc).replace(tzinfo=None) if user.updatedAt else None,
-        )
-
-    @staticmethod
-    async def _refactor_new_user_pydantic_to_orm(new_user: UserRegistration):
-        return UserORM(
-            username = new_user.username,
-            email = new_user.email,
-            password = new_user.password,
-        )
-
     async def set_user(self, user: UserRegistration) -> int:
         session = await self._get_session()
         async with session.begin():
-            user_orm = await self._refactor_new_user_pydantic_to_orm(user)
+            user_orm = await models_reformater.refactor_new_user_pydantic_to_orm(user)
             session.add(user_orm)
             await session.flush()  # ⬅️ ID будет доступен после этого
             user_id = user_orm.id
@@ -70,16 +42,9 @@ class UsersRepositoryImpl(UsersRepository):
             result = await session.execute(query)
             user_orm: UserORM = result.scalars().first()
             if user_orm:
-                user = UserBaseInfo(
-                    id = user_orm.id,
-                    username = user_orm.username,
-                    email = user_orm.email,
-                    updated_at = user_orm.updated_at,
-                    created_at = user_orm.created_at,
-                )
+                user = await models_reformater.refactor_orm_to_base_user_info(user_orm=user_orm)
                 return user
             return None
-
 
     async def update_username(self, user_id: int, new_username: str):
         session = await self._get_session()
@@ -95,13 +60,13 @@ class UsersRepositoryImpl(UsersRepository):
             await session.execute(query)
             await session.commit()
 
-    async def is_exists(self, email: str, password: str) -> bool:
+    async def login(self, email: str, password: str) -> UserBaseInfo | None:
         session = await self._get_session()
         async with session.begin():
             query = select(UserORM).where(UserORM.email == email, UserORM.password == password)
             result = await session.execute(query)
             user_orm = result.scalars().first()
             if user_orm:
-                return True
+                return await models_reformater.refactor_orm_to_base_user_info(user_orm=user_orm)
             else:
-                return False
+                return None

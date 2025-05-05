@@ -31,11 +31,12 @@ class AuthService:
         return None
 
     @log_decorator()
-    async def login(self, user: UserLogin):
-        if await self.users_service.login(user=user):
+    async def login(self, user: UserLogin) -> dict | None:
+        result = await self.users_service.login(user=user)
+        if result:
             tokens = await self.update_tokens(user_email=user.email)
             logger.info("Login success")
-            return tokens
+            return tokens | {"user": result}
         else:
             logger.info("Login failed")
             return None

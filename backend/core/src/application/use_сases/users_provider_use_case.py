@@ -32,5 +32,5 @@ class UsersProviderUseCase:
         await self.users_gateway.set_refresh_token(user_email=user_email, refresh_token=refresh_token)
 
     @log_decorator()
-    async def login(self, user: UserLogin) -> bool:
-        return await self.users_gateway.is_user_exists(user=user)
+    async def login(self, user: UserLogin) -> UserBaseInfo | None:
+        return await self.users_gateway.login(user=user)

@@ -52,8 +52,13 @@ async def login(
     if user_credentials:
         result = await auth_service.login(user=user_credentials)
         if result:
-            # await set_refresh_token_in_cookie(response=response, refresh_token=result.get('refresh_token'))
-            return await get_success_json_response(data=result.get('access_token'), cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('refresh_token')}])
+            return await get_success_json_response(
+                data={
+                    "access_token": result.get('access_token'),
+                    "user": result.get('user')
+                },
+               cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('refresh_token')}]
+            )
         else:
             return await raise_validation_error()
     return await raise_validation_error()
