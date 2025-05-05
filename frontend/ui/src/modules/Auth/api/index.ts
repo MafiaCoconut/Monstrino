@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AuthResponse } from '../../../models/responses/AuthResponse';
+import { AuthResponse } from './responses/authResponses';
 
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
@@ -17,22 +17,22 @@ $api.interceptors.request.use((config) => {
 })
 
 
-$api.interceptors.response.use((config) => {
-    return config;
-},async (error) => {
-    const originalRequest = error.config;
-    if (error.response.status == 401 && error.config && !error.config._isRetry) {
-        originalRequest._isRetry = true;
-        try {
-            const response = await axios.post<AuthResponse>(`${API_URL}/auth/refresh`, {withCredentials: true})
-            localStorage.setItem('token', response.data.accessToken);
-            return $api.request(originalRequest);
-        } catch (e) {
-            console.log('НЕ АВТОРИЗОВАН')
-        }
-    }
-    throw error;
-})
+// $api.interceptors.response.use((config) => {
+//     return config;
+// }, async (error) => {
+//     const originalRequest = error.config;
+//     if (error.response.status == 401 && error.config && !error.config._isRetry) {
+//         originalRequest._isRetry = true;
+//         try {
+//             const response = await axios.post<AuthResponse>(`${API_URL}/auth/refresh`, { withCredentials: true })
+//             localStorage.setItem('token', response.data.accessToken);
+//             return $api.request(originalRequest);
+//         } catch (e) {
+//             console.log('НЕ АВТОРИЗОВАН')
+//         }
+//     }
+//     throw error;
+// })
 
 
 export default $api;

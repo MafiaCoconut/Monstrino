@@ -20,6 +20,14 @@ class AuthJWT:
         )
 
     def decode_token(self, token: str | bytes) -> dict:
+        # TODO: есть ошибка которая может автоматически чекать expiren токен
+        """
+        self._validate_exp(payload, now, leeway)
+        File "/home/coconut/Projects/Monstrino/backend/core/.venv/lib/python3.12/site-packages/jwt/api_jwt.py", line 363, in _validate_exp
+            raise ExpiredSignatureError("Signature has expired")
+        jwt.exceptions.ExpiredSignatureError: Signature has expired
+        """
+
         return jwt.decode(
             jwt=token,
             key=self.public_key_path.read_text(),

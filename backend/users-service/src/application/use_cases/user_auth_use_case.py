@@ -19,5 +19,4 @@ class UserAuthUseCase:
         return await self.users_data_use_case.register_new_user(new_user=user)
 
     async def login(self, user: UserLogin) -> UserBaseInfo | None:
-        ic(await self.user_repository.login(email=user.email, password=user.password))
         return await self.user_repository.login(email=user.email, password=user.password)

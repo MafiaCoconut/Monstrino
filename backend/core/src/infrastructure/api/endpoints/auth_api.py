@@ -60,8 +60,8 @@ async def login(
                cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('refresh_token')}]
             )
         else:
-            return await raise_validation_error()
-    return await raise_validation_error()
+            return await raise_unauthorized()
+    return await raise_unauthorized()
 
 
 @router.post("/refresh", response_model=RefreshResponse)

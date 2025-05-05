@@ -1,9 +1,10 @@
 import { makeAutoObservable } from "mobx";
 import AuthService from "../services/AuthService";
 import { IUser } from "../../../models/IUser";
+import { UserBaseInfo } from "../../../models/userModels/UserBaseInfo";
 
 export default class UserStore {
-    user = {} as IUser;
+    user = {} as UserBaseInfo;
     isAuth = false;
     isLoading = false;
 
@@ -15,7 +16,7 @@ export default class UserStore {
         this.isAuth = bool;
     }
 
-    setUser(user: IUser) {
+    setUser(user: UserBaseInfo) {
         this.user = user;
     }
 
@@ -28,12 +29,24 @@ export default class UserStore {
         try {
             const response = await AuthService.login(email, password);
             console.log(response);
-            this.setAuth(true);
-            this.setUser(response.data.user);
-            console.log('user:')
-            console.log(this.user);
+            switch (response.status) {
+                case 200:
+                    console.log("Login success");
+                    this.setAuth(true);
+                    console.log("Auth:" + this.isAuth);
+
+                    this.setUser(response.data.result.user);
+                    console.log("User:")
+                    console.log(this.user);
+                    break;
+                case 401:
+                    console.log("Login failed");
+                    break;
+            };
+
         } catch (e: any) {
-            console.log(e.response?.data?.message);
+            console.log("Login error");
+            console.log(e);
         }
     }
 
