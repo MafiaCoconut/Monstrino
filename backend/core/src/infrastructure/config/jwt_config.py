@@ -4,7 +4,7 @@ import jwt
 # from authx import AuthX, AuthXConfi
 
 BASE_DIR = Path(__file__).parent.parent.parent
-REFRESH_TOKE_COOKIE_NAME = "refresh_token_cookie"
+REFRESH_TOKEN_COOKIE_NAME = "refresh_token_cookie"
 
 class AuthJWT:
     private_key_path: Path = BASE_DIR / "certs" / "jwt-private.pem"

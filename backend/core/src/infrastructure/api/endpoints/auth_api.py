@@ -11,9 +11,10 @@ from application.services.auth_service import AuthService
 from application.services.core_service import CoreService
 from application.services.users_service import UsersService
 from domain.user import UserRegistration, UserLogin
-from infrastructure.api.responces.auth_responces.responses import RegistrationResponse, LoginResponse
+from infrastructure.api.responces.auth_responces.responses import RegistrationResponse, LoginResponse, RefreshResponse, \
+    StatusResponse
 from infrastructure.api.responces.templates import get_success_json_response
-from infrastructure.config.jwt_config import REFRESH_TOKE_COOKIE_NAME
+from infrastructure.config.jwt_config import REFRESH_TOKEN_COOKIE_NAME
 from infrastructure.config.logs_config import log_api_decorator
 from infrastructure.api.responces.default_codes import responses, raise_validation_error, raise_item_not_found, \
     raise_created, raise_internal_server_error, raise_unauthorized
@@ -36,8 +37,7 @@ async def registration(
     logger.info(f"credentials: {user_credentials}")
     if user_credentials:
         result = await auth_service.registration(user=user_credentials)
-        await set_refresh_token_in_cookie(response=response, refresh_token=result.get('refresh_token'))
-        return await get_success_json_response(response=response, data=result.get('access_token'))
+        return await get_success_json_response(data=result.get('access_token'), cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('refresh_token')}])
     else:
         return await raise_validation_error()
 
@@ -52,57 +52,48 @@ async def login(
     if user_credentials:
         result = await auth_service.login(user=user_credentials)
         if result:
-            await set_refresh_token_in_cookie(response=response, refresh_token=result.get('refresh_token'))
-            return await get_success_json_response(response=response, data=result.get('access_token'))
+            # await set_refresh_token_in_cookie(response=response, refresh_token=result.get('refresh_token'))
+            return await get_success_json_response(data=result.get('access_token'), cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('refresh_token')}])
         else:
             return await raise_validation_error()
     return await raise_validation_error()
 
 
-@router.post("/refresh")
+@router.post("/refresh", response_model=RefreshResponse)
 async def refresh_tokens(
-        # TODO Нужно еще передавать access_token если он есть
         request: Request,
         response: Response, background_tasks: BackgroundTasks,
         auth_service: AuthService = Depends(get_auth_service),
         access_token: str | bytes | None = None,
-):
-    refresh_token = request.cookies.get(REFRESH_TOKE_COOKIE_NAME)
+    ):
+    refresh_token = request.cookies.get(REFRESH_TOKEN_COOKIE_NAME)
     if refresh_token:
         result = await auth_service.refresh(refresh_token=refresh_token, access_token=access_token)
         match (result.get('code')):
             case 200:
-                await set_refresh_token_in_cookie(response=response, refresh_token=result.get('refresh_token'))
-                return await get_success_json_response(response=response, data=result.get('access_token'))
+                # await set_refresh_token_in_cookie(response=response, refresh_token=result.get('refresh_token'))
+                return await get_success_json_response(data=result.get('access_token'), cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('refresh_token')}])
 
             case 401:
                 return await raise_unauthorized()
     else:
         return await raise_unauthorized()
 
-    # try:
-    #     payload = auth.verify_token(token)
-    #     return {"user": payload.sub}
-    # except Exception as e:
-    #     raise raise_validation_error()
-    # if refresh_token_cookie:
-    #     await auth_service.refresh()
-    #     # TODO если refresh токен есть, проверяем что access токен еще валиден или нет, и если нет, то выдаем новый, если рефреш токен еще валиден
-    #     pass
-    # else:
-    #     # TODO так как refresh токен не найден, то ничего не делаем
-    #     pass
+@router.get("/status", response_model=StatusResponse)
+async def status(
+        request: Request,
+        response: Response, background_tasks: BackgroundTasks,
+        auth_service: AuthService = Depends(get_auth_service),
+        access_token: str | bytes | None = None,
+    ):
+    if access_token:
+        result = await auth_service.status(access_token=access_token)
+        if result:
+            return await get_success_json_response(data={"result": result})
+        else:
+            return await raise_unauthorized()
+    else:
+        return await raise_unauthorized()
 
 
-
-async def set_refresh_token_in_cookie(response: Response, refresh_token: str):
-    _httponly = True
-    _secure = False
-    _samesite = "lax"
-    _path = "/"
-    response.set_cookie(
-        key=REFRESH_TOKE_COOKIE_NAME,
-        value=refresh_token,
-        httponly=_httponly, secure=_secure, samesite=_samesite, path=_path
-    )
 

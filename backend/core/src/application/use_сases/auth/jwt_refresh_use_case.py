@@ -25,3 +25,9 @@ class JwtRefreshUseCase:
             return {"code": 401, "message": "Refresh token is invalid"}
         else:
             return {"code": 401, "message": "Refresh token is not provided"}
+
+    async def status(self, access_token: str) -> bool:
+        if await self.jwt_use_case.check_access_token(access_token=access_token):
+            return True
+        else:
+            return False

@@ -50,3 +50,7 @@ class AuthService:
     @log_decorator()
     async def refresh(self, refresh_token: str, access_token: str) -> dict:
         return await self.jwt_refresh_use_case.refresh(access_token=access_token, refresh_token=refresh_token)
+
+    @log_decorator()
+    async def status(self, access_token: str) -> bool:
+        return await self.jwt_refresh_use_case.status(access_token=access_token)
