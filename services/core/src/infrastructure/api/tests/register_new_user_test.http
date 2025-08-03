@@ -1,0 +1,11 @@
+### GET request to example server
+POST http://127.0.0.1:8000/api/v1/users/registerNewUser
+
+{
+    "username": "test_username",
+    "firstName": "firstname",
+    "lastName": "lastname",
+    "password": "Test_password1"
+}
+
+###
