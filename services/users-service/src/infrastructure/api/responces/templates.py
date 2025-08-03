@@ -7,12 +7,35 @@ response_router = APIRouter()
 async def get_success_json_response(data: dict):
     response = ResponseModel(
         meta=Meta(
-            code="200",
+            code=200,
             message="OK",
             description="Item fetched successfully"
         ),
         result=data
     )
     return JSONResponse(content=response.model_dump(), status_code=200)
+
+async def get_error_json_response(status_code: int, description: str, data: dict):
+    response = ResponseModel(
+        meta=Meta(
+            code=status_code,
+            message="ERROR",
+            description=description
+        ),
+        result=data
+    )
+    return JSONResponse(content=response.model_dump(), status_code=status_code)
+
+async def get_json_response(status_code: int, message: str, description: str, data: dict):
+    response = ResponseModel(
+        meta=Meta(
+            code=status_code,
+            message=message,
+            description=description
+        ),
+        result=data
+    )
+    return JSONResponse(content=response.model_dump(), status_code=status_code)
+
 
 

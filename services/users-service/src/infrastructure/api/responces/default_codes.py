@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 
 from infrastructure.api.responces.models import ResponseModel
+from infrastructure.api.responces.templates import get_error_json_response, get_json_response
 
 responses = {
     '200': {"model": ResponseModel, 'description': "OK"},
@@ -15,20 +16,21 @@ responses = {
     '500': {"model": ResponseModel, 'description': "Internal Server Error"},
 }
 
-async def raise_created() -> None:
-    raise HTTPException(status_code=201, detail="Created")
+async def return_created_status_code() -> None:
+    return await get_json_response(status_code=201, message="Created", description="Created", data={})
 
-async def raise_item_not_found() -> None:
-    raise HTTPException(status_code=404, detail="Item not found")
+async def return_item_not_found_status_code() -> None:
+    return await get_json_response(status_code=404, message="Item not found", description="Item not found", data={})
 
-async def raise_validation_error(detail: str = "") -> None:
-    raise HTTPException(status_code=422, detail="Validation error" + ("" if detail == "" else f": {detail}"))
+async def return_conflict_error_status_code(description: str = "", data: dict = None) -> None:
+    return await get_json_response(status_code=409, message="Conflict", description=description, data=data)
 
-async def raise_internal_server_error() -> None:
-    raise HTTPException(status_code=500, detail="Internal server error")
+async def return_validation_error_status_code(description: str = "") -> None:
+    return await get_json_response(status_code=422, message="Validation error", description=description, data={})
 
-async def raise_conflict_error(detail: str = "") -> None:
-    raise HTTPException(status_code=409, detail=detail)
+async def return_internal_server_error_status_code() -> None:
+    return await get_json_response(status_code=500, message="Internal server error", description="Internal server error", data={})
+
 
 """
 200 OK – Запрос успешно выполнен, и сервер возвращает запрашиваемые данные.

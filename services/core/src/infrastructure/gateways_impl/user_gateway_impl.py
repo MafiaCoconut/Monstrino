@@ -25,12 +25,15 @@ class UsersGatewayImpl(UsersGateway):
                     json=user.model_dump()
             ) as resp:
                 result = await resp.json()
+                system_logger.info(f"Result after /registerNewUser: {result}")
                 match resp.status:
                     case 200:
                         user_base_info = UserBaseInfo(**result.get('result'))
                         return user_base_info
                     case 401:
                         return None
+                    case 409:
+                        return result.get('result').get('error')
 
                 return None
 

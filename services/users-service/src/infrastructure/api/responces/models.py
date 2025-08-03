@@ -5,7 +5,7 @@ from domain.user import UserBaseInfo
 
 
 class Meta(BaseModel):
-    code: str
+    code: int
     message: str
     description: str
 
