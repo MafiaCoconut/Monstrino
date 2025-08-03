@@ -5,7 +5,7 @@ from domain.user import UserRegistration, UserLogin, UserBaseInfo
 
 class UsersGateway(ABC):
     @abstractmethod
-    async def register_new_user(self, user: UserRegistration):
+    async def register_new_user(self, user: UserRegistration) -> dict:
         pass
 
     @abstractmethod

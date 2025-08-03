@@ -1,8 +1,8 @@
 import logging
 
 from application.services.users_service import UsersService
-from application.use_сases.auth.jwt_refresh_use_case import JwtRefreshUseCase
-from application.use_сases.auth.jwt_use_case import JwtUseCase
+from application.use_cases.auth.jwt_refresh_use_case import JwtRefreshUseCase
+from application.use_cases.auth.jwt_use_case import JwtUseCase
 from domain.user import UserRegistration, User, UserBaseInfo, UserLogin
 from infrastructure.config.logs_config import log_decorator
 
@@ -19,14 +19,17 @@ class AuthService:
 
     @log_decorator()
     async def registration(self, user: UserRegistration) -> dict | None:
-        user_base_info: UserBaseInfo = await self.users_service.register_new_user(user=user)
-        logger.info(f"user_base_info in auth service: {user_base_info}")
-        try:
-            tokens = await self.update_tokens(user_email=user.email)
-            return tokens | {"user": user_base_info}
+        result = await self.users_service.register_new_user(user=user)
+        logger.info(f"Result of registration of new user: {result}")
+        if result.get('error') is not None:
+            return result
+        else:
+            try:
+                tokens = await self.update_tokens(user_email=user.email)
+                return tokens
 
-        except Exception as e:
-            logger.error(f"Exception by creating jwt: {e}")
+            except Exception as e:
+                logger.error(f"Exception by creating jwt: {e}")
 
         return None
 

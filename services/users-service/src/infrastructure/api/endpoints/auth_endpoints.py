@@ -34,7 +34,7 @@ async def register_new_user(
     if user_credentials:
         result = await core_service.register_new_user(user=user_credentials)
         if result.get('error') != "":
-            return await return_conflict_error_status_code(description="User with this credentials already exists",data=result)
+            return await return_conflict_error_status_code(description="User with this credentials already exists", data=result.get('error'))
         logger.info(f"user_base_info: {result.get('user')}")
         return await get_success_json_response(data=result.get('user').model_dump())
     else:

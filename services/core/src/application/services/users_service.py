@@ -1,5 +1,5 @@
 from application.gateways.user_gateway import UsersGateway
-from application.use_сases.users_provider_use_case import UsersProviderUseCase
+from application.use_cases.users_provider_use_case import UsersProviderUseCase
 from domain.user import UserRegistration, UserBaseInfo, UserLogin
 
 
@@ -13,9 +13,8 @@ class UsersService:
             users_gateway=users_gateway,
         )
 
-    async def register_new_user(self, user: UserRegistration):
-        user_base_info: UserBaseInfo = await self.users_provider.register_new_user(user=user)
-        return user_base_info
+    async def register_new_user(self, user: UserRegistration) -> dict:
+        return await self.users_provider.register_new_user(user=user)
 
     async def update_refresh_token(self, user_email: str, refresh_token: str):
         await self.users_provider.set_refresh_token(user_email=user_email, refresh_token=refresh_token)

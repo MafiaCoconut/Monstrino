@@ -17,25 +17,27 @@ class UsersGatewayImpl(UsersGateway):
     def __init__(self):
         self.users_service_address = os.getenv('USERS_SERVICE_ADDRESS')
 
-    async def register_new_user(self, user: UserRegistration):
+    async def register_new_user(self, user: UserRegistration) -> dict:
         system_logger.info(f"{user.model_dump()}")
         async with aiohttp.ClientSession() as session:
             async with session.post(
                     url=self.users_service_address + f"/api/v1/auth/registerNewUser",
                     json=user.model_dump()
             ) as resp:
-                result = await resp.json()
-                system_logger.info(f"Result after /registerNewUser: {result}")
+                resp_json = await resp.json()
+                result = {}
+                system_logger.info(f"Result after /registerNewUser: {resp_json}")
                 match resp.status:
                     case 200:
-                        user_base_info = UserBaseInfo(**result.get('result'))
-                        return user_base_info
+                        result['user'] = UserBaseInfo(**resp_json.get('result'))
                     case 401:
-                        return None
+                        result['error'] = 401
                     case 409:
-                        return result.get('result').get('error')
+                        result['error'] =  resp_json.get('result')
+                    case 500:
+                        result['error'] = 500
+                return result
 
-                return None
 
     async def get_user_by_id(self, user_id: int):
         pass

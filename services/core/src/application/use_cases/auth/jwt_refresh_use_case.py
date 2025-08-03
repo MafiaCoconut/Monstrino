@@ -1,4 +1,4 @@
-from application.use_сases.auth.jwt_use_case import JwtUseCase
+from application.use_cases.auth.jwt_use_case import JwtUseCase
 
 
 class JwtRefreshUseCase:

@@ -1,7 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Response, BackgroundTasks, FastAPI, Cookie, Request
-from fastapi.params import Depends
+
 import logging
 
 from fastapi.security import OAuth2PasswordBearer
@@ -10,6 +9,8 @@ from icecream import ic
 from application.services.auth_service import AuthService
 from application.services.core_service import CoreService
 from application.services.users_service import UsersService
+from application.use_cases.auth.fastapi_jwt_bearer import JWTBearer
+
 from domain.user import UserRegistration, UserLogin
 from infrastructure.api.responces.auth_responces.responses import RegistrationResponse, LoginResponse, RefreshResponse, \
     StatusResponse
@@ -20,7 +21,11 @@ from infrastructure.api.responces.default_codes import responses, raise_validati
     raise_created, raise_internal_server_error, raise_unauthorized
 from infrastructure.config.services_config import get_auth_service
 
+from fastapi import APIRouter, Response, BackgroundTasks, FastAPI, Cookie, Request
+from fastapi.params import Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
+auth_scheme = HTTPBearer()
 router = APIRouter(prefix='/api/v1/auth', tags=["Auth"])
 
 logger = logging.getLogger(__name__)
@@ -32,11 +37,13 @@ def config(app: FastAPI):
 async def registration(
         user_credentials: UserRegistration,
         response: Response, background_tasks: BackgroundTasks,
-        auth_service: AuthService = Depends(get_auth_service)
+        auth_service: AuthService = Depends(get_auth_service),
     ):
     logger.info(f"credentials: {user_credentials}")
     if user_credentials:
         result = await auth_service.registration(user=user_credentials)
+        "not-valid-credentials" "user-with-this-email-already-exist" "user-with-this-username-already-exist"
+
         return await get_success_json_response(data=result.get('access_token'), cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('refresh_token')}])
     else:
         return await raise_validation_error()
@@ -101,4 +108,11 @@ async def status(
         return await raise_unauthorized()
 
 
+@router.get("/test")
+async def test(
+        request: Request,
+        response: Response, background_tasks: BackgroundTasks,
+        user_id: int = Depends(JWTBearer()),
+):
+    print(user_id)
 

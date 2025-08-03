@@ -25,24 +25,24 @@ class JwtUseCase:
     async def get_new_access_token(self, user_email: str) -> str:
         return self.auth.encode_token(
             {
-                "sub": user_email,
-                "role": "user",
-                "ait": self._get_ait(),
-                "exp": self._get_exp_access_token(),
-                "iss": "core",
-                "aud": "frontend"
+                "sub": user_email,                    # Subject
+                "role": "user",                       # Role
+                "iat": self._get_iat(),               # Issued at
+                "exp": self._get_exp_access_token(),  # Expiration Time
+                "iss": "core",                        # Issuer (Which services create token)
+                "aud": "frontend"                     # Audience
             }
         )
 
     async def get_new_refresh_token(self, user_email: str) -> str:
         return self.auth.encode_token(
             {
-                "sub": user_email,
-                "role": "user",
-                "ait": self._get_ait(),
-                "exp": self._get_exp_access_token(),
-                "iss": "core",
-                "aud": "frontend"
+                "sub": user_email,                    # Subject
+                "role": "user",                       # Role
+                "iat": self._get_iat(),               # Issued at
+                "exp": self._get_exp_refresh_token(), # Expiration Time
+                "iss": "core",                        # Issuer (Which services create token)
+                "aud": "frontend"                     # Audience
             }
         )
 
@@ -50,7 +50,7 @@ class JwtUseCase:
         return self.auth.decode_token(token)
 
     @staticmethod
-    def _get_ait():
+    def _get_iat():
         return int(datetime.now(UTC).timestamp())
 
     @staticmethod
@@ -63,17 +63,14 @@ class JwtUseCase:
 
     async def check_access_token(self, access_token: str) -> bool:
         payload = await self.decode_token(access_token)
-        if payload["exp"] <= self._get_ait():
+        if payload["exp"] <= self._get_iat():
             return True
         else:
             return False
 
     async def check_refresh_token(self, refresh_token: str) -> bool:
         payload = await self.decode_token(refresh_token)
-        if payload["exp"] > self._get_ait():
+        if payload["exp"] > self._get_iat():
             return True
         else:
             return False
-
-
-

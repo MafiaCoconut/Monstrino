@@ -6,8 +6,7 @@ from application.validations.user_validation import UserValidation
 from domain.user import UserRegistration, UserBaseInfo, UserLogin
 from infrastructure.config.logs_config import log_decorator
 
-system_logger = logging.getLogger('system_logger')
-error_logger = logging.getLogger('error_logger')
+system_logger = logging.getLogger(__name__)
 
 class UsersProviderUseCase:
     def __init__(
@@ -19,13 +18,16 @@ class UsersProviderUseCase:
 
     @log_decorator()
     async def register_new_user(self, user: UserRegistration):
+        result = {}
         try:
             self.user_validation.validate_new_user(user=user)
         except InvalidUserData as e:
             system_logger.error(f"Exception captured by register new user: {e}")
+            result['error'] = 'not-valid-credentials'
+            return result
 
-        user_base_info: UserBaseInfo = await self.users_gateway.register_new_user(user=user)
-        return user_base_info
+        response = await self.users_gateway.register_new_user(user=user)
+        return response
 
     @log_decorator()
     async def set_refresh_token(self, user_email: str, refresh_token: str):
