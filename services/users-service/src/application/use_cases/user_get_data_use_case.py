@@ -14,7 +14,7 @@ class UserGetDataUseCase:
 
     async def get_user_base_info(self, user_id: int) -> UserBaseInfo:
         user = await self.users_repository.get_user_base_info(user_id)
-        await self.validate_datetime_values(user=user)
+        # await self.validate_datetime_values(user=user)
         return user
 
     @staticmethod

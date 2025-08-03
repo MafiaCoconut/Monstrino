@@ -6,7 +6,13 @@ from domain.user import User, UserRegistration, UserBaseInfo
 
 class UsersRepository(ABC):
     @abstractmethod
-    async def set_user(self, user: UserRegistration):
+    async def set_user(self, user: UserRegistration)-> int:
+        """
+        Register new user
+
+        :return: user id
+        :rtype: int
+        """
         pass
 
     @abstractmethod
@@ -27,4 +33,15 @@ class UsersRepository(ABC):
 
     @abstractmethod
     async def login(self, email: str, password: str) -> UserBaseInfo | None:
+        pass
+
+    @abstractmethod
+    async def check_user_exist(self, username: str = None, email: str = None) -> bool:
+        """
+        Function can check if a user with the same username or with the same email already exists in db
+        Can be provided only 1 or 2 parameters at the same time
+
+        :return: If user exists return True, if user does not exist return False
+        :rtype: bool
+        """
         pass

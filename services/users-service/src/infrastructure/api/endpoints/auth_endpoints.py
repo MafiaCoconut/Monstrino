@@ -12,7 +12,8 @@ from infrastructure.api.responces.models import ResponseModel
 from infrastructure.api.responces.templates import get_success_json_response
 # from application.services.scheduler_service import SchedulerService
 from infrastructure.config.logs_config import log_api_decorator
-from infrastructure.api.responces.default_codes import responses, raise_validation_error, raise_item_not_found, raise_created, raise_internal_server_error
+from infrastructure.api.responces.default_codes import responses, raise_validation_error, raise_item_not_found, \
+    raise_created, raise_internal_server_error, raise_conflict_error
 from infrastructure.config.services_config import get_core_service
 
 router = APIRouter()
@@ -31,13 +32,16 @@ async def register_new_user(
         core_service: CoreService = Depends(get_core_service)
     ):
     if user_credentials:
-        user_base_info = await core_service.register_new_user(user=user_credentials)
-        logger.info(f"user_base_info: {user_base_info}")
-        if user_base_info:
-            return await get_success_json_response(data=user_base_info.model_dump())
-        else:
-            return await raise_validation_error(detail="Users data is not valid")
-
+        result = await core_service.register_new_user(user=user_credentials)
+        if result.get('error') != "":
+            return await raise_conflict_error(detail=result.get('error'))
+            # if "user-with-this-username-already-exist" in result.get("error"):
+            #     pass
+            # if "user-with-this-email-already-exist" in result.get("error"):
+            #     pass
+        # user_base_info = await core_service.register_new_user(user=user_credentials)
+        logger.info(f"user_base_info: {result.get('user')}")
+        return await get_success_json_response(data=result.get('user').model_dump())
     else:
         return await raise_validation_error(detail="Users data is not valid")
 

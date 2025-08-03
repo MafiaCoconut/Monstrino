@@ -27,6 +27,8 @@ async def raise_validation_error(detail: str = "") -> None:
 async def raise_internal_server_error() -> None:
     raise HTTPException(status_code=500, detail="Internal server error")
 
+async def raise_conflict_error(detail: str = "") -> None:
+    raise HTTPException(status_code=409, detail=detail)
 
 """
 200 OK – Запрос успешно выполнен, и сервер возвращает запрашиваемые данные.

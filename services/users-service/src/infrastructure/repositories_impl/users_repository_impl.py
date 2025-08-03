@@ -1,7 +1,7 @@
 from icecream import ic
 from pydantic.v1 import NoneIsNotAllowedError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete, text, update, func, cast
+from sqlalchemy import select, delete, text, update, func, cast, or_
 from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime, timezone
 from application.repositories.users_repository import UsersRepository
@@ -70,3 +70,18 @@ class UsersRepositoryImpl(UsersRepository):
                 return await models_reformater.refactor_orm_to_base_user_info(user_orm=user_orm)
             else:
                 return None
+
+    async def check_user_exist(self, username: str = None, email: str = None) -> bool:
+        session = await self._get_session()
+        async with session.begin():
+            query = select(UserORM).where(
+                or_(
+                    (UserORM.email == email) if email is not None else False,
+                    (UserORM.username == username) if username is not None else False,
+                )
+            )
+            result = await session.execute(query)
+            user_orm: UserORM = result.scalars().first()
+            if user_orm:
+                return True
+            return False
