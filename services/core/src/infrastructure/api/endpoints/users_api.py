@@ -7,7 +7,7 @@ from domain.user import UserRegistration
 from infrastructure.api.responces.templates import get_success_json_response
 # from application.services.scheduler_service import SchedulerService
 from infrastructure.config.logs_config import log_api_decorator
-from infrastructure.api.responces.default_codes import responses, raise_validation_error, raise_item_not_found, raise_created, raise_internal_server_error
+from infrastructure.api.responces.default_codes import responses, return_validation_error_status_code, return_item_not_found_status_code, return_created_status_code, return_internal_server_error_status_code
 from infrastructure.config.services_config import get_users_service
 
 router = APIRouter()

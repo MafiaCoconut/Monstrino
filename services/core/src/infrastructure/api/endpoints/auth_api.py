@@ -17,8 +17,11 @@ from infrastructure.api.responces.auth_responces.responses import RegistrationRe
 from infrastructure.api.responces.templates import get_success_json_response
 from infrastructure.config.jwt_config import REFRESH_TOKEN_COOKIE_NAME
 from infrastructure.config.logs_config import log_api_decorator
-from infrastructure.api.responces.default_codes import responses, raise_validation_error, raise_item_not_found, \
-    raise_created, raise_internal_server_error, raise_unauthorized
+from infrastructure.api.responces.default_codes import return_validation_error_status_code, \
+    return_item_not_found_status_code, \
+    return_created_status_code, return_internal_server_error_status_code, \
+    return_unauthorized_found_status_code, return_conflict_error_status_code
+from infrastructure.api.responces.default_codes import responses as default_responses
 from infrastructure.config.services_config import get_auth_service
 
 from fastapi import APIRouter, Response, BackgroundTasks, FastAPI, Cookie, Request
@@ -33,7 +36,7 @@ logger = logging.getLogger(__name__)
 def config(app: FastAPI):
     app.include_router(router)
 
-@router.post("/registration", response_model=RegistrationResponse)
+@router.post("/registration", response_model=RegistrationResponse, responses=default_responses)
 async def registration(
         user_credentials: UserRegistration,
         response: Response, background_tasks: BackgroundTasks,
@@ -42,11 +45,22 @@ async def registration(
     logger.info(f"credentials: {user_credentials}")
     if user_credentials:
         result = await auth_service.registration(user=user_credentials)
-        "not-valid-credentials" "user-with-this-email-already-exist" "user-with-this-username-already-exist"
-
-        return await get_success_json_response(data=result.get('access_token'), cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('refresh_token')}])
+        if result.get('error'):
+            error: str = result.get('error')
+            match error:
+                case str() if "not-valid" in error:
+                    return await return_validation_error_status_code(data=error[error.rfind('-')+1:]) # 422
+                case str() if "user-with-this-email-already-exist" in error:
+                    return await return_conflict_error_status_code(data='email') # 409
+                case str() if "user-with-this-username-already-exist" in error:
+                    return await return_conflict_error_status_code(data='username') # 409
+                case "internal-error":
+                    return await return_internal_server_error_status_code() # 500
+            return await return_internal_server_error_status_code() # 500
+        else:
+            return await get_success_json_response(data=result.get('access_token'), cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('refresh_token')}]) # 200
     else:
-        return await raise_validation_error()
+        return await return_validation_error_status_code() # 422
 
 
 @router.post("/login", response_model=LoginResponse)
@@ -67,8 +81,8 @@ async def login(
                cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('refresh_token')}]
             )
         else:
-            return await raise_unauthorized()
-    return await raise_unauthorized()
+            return await return_unauthorized_found_status_code()
+    return await return_unauthorized_found_status_code()
 
 
 @router.post("/refresh", response_model=RefreshResponse)
@@ -87,9 +101,9 @@ async def refresh_tokens(
                 return await get_success_json_response(data=result.get('access_token'), cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('refresh_token')}])
 
             case 401:
-                return await raise_unauthorized()
+                return await return_unauthorized_found_status_code()
     else:
-        return await raise_unauthorized()
+        return await return_unauthorized_found_status_code()
 
 @router.get("/status", response_model=StatusResponse)
 async def status(
@@ -103,9 +117,9 @@ async def status(
         if result:
             return await get_success_json_response(data={"result": result})
         else:
-            return await raise_unauthorized()
+            return await return_unauthorized_found_status_code()
     else:
-        return await raise_unauthorized()
+        return await return_unauthorized_found_status_code()
 
 
 @router.get("/test")

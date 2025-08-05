@@ -9,23 +9,23 @@ class JwtUseCase:
     def __init__(self):
         self.auth = AuthJWT()
 
-    async def get_new_tokens(self, user_email: str) -> dict:
+    async def get_new_tokens(self, user_id: int) -> dict:
         return {
-            "access_token": await self.get_new_access_token(user_email),
-            "refresh_token": await self.get_new_refresh_token(user_email),
+            "access_token": await self.get_new_access_token(user_id),
+            "refresh_token": await self.get_new_refresh_token(user_id),
         }
 
     async def regenerate_tokens_by_refresh_token(self, refresh_token: str) -> dict:
         payload = await self.decode_token(refresh_token)
         return {
-            "access_token": await self.get_new_access_token(user_email=payload["sub"]),
-            "refresh_token": await self.get_new_refresh_token(user_email=payload["sub"]),
+            "access_token": await self.get_new_access_token(user_id=payload["sub"]),
+            "refresh_token": await self.get_new_refresh_token(user_id=payload["sub"]),
         }
 
-    async def get_new_access_token(self, user_email: str) -> str:
+    async def get_new_access_token(self, user_id: int) -> str:
         return self.auth.encode_token(
             {
-                "sub": user_email,                    # Subject
+                "sub": user_id,                    # Subject
                 "role": "user",                       # Role
                 "iat": self._get_iat(),               # Issued at
                 "exp": self._get_exp_access_token(),  # Expiration Time
@@ -34,10 +34,10 @@ class JwtUseCase:
             }
         )
 
-    async def get_new_refresh_token(self, user_email: str) -> str:
+    async def get_new_refresh_token(self, user_id: int) -> str:
         return self.auth.encode_token(
             {
-                "sub": user_email,                    # Subject
+                "sub": user_id,                    # Subject
                 "role": "user",                       # Role
                 "iat": self._get_iat(),               # Issued at
                 "exp": self._get_exp_refresh_token(), # Expiration Time

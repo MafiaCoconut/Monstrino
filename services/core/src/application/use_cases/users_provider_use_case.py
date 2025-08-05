@@ -23,15 +23,15 @@ class UsersProviderUseCase:
             self.user_validation.validate_new_user(user=user)
         except InvalidUserData as e:
             system_logger.error(f"Exception captured by register new user: {e}")
-            result['error'] = 'not-valid-credentials'
+            result['error'] = f'not-valid-{e.invalid_type_of_data}'
             return result
 
         response = await self.users_gateway.register_new_user(user=user)
         return response
 
     @log_decorator()
-    async def set_refresh_token(self, user_email: str, refresh_token: str):
-        await self.users_gateway.set_refresh_token(user_email=user_email, refresh_token=refresh_token)
+    async def set_refresh_token(self, user_id: int, refresh_token: str):
+        await self.users_gateway.set_refresh_token(user_id=user_id, refresh_token=refresh_token)
 
     @log_decorator()
     async def login(self, user: UserLogin) -> UserBaseInfo | None:

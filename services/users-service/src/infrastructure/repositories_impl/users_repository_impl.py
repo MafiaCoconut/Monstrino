@@ -53,10 +53,10 @@ class UsersRepositoryImpl(UsersRepository):
             await session.execute(query)
             await session.commit()
 
-    async def update_refresh_token(self, user_email: str, new_refresh_token: str) -> None:
+    async def update_refresh_token(self, user_id: int, new_refresh_token: str) -> None:
         session = await self._get_session()
         async with session.begin():
-            query = update(UserORM).where(UserORM.email == user_email).values(refresh_token=new_refresh_token)
+            query = update(UserORM).where(UserORM.id == user_id).values(refresh_token=new_refresh_token)
             await session.execute(query)
             await session.commit()
 

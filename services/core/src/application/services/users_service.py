@@ -16,8 +16,8 @@ class UsersService:
     async def register_new_user(self, user: UserRegistration) -> dict:
         return await self.users_provider.register_new_user(user=user)
 
-    async def update_refresh_token(self, user_email: str, refresh_token: str):
-        await self.users_provider.set_refresh_token(user_email=user_email, refresh_token=refresh_token)
+    async def update_refresh_token(self, user_id: int, refresh_token: str):
+        await self.users_provider.set_refresh_token(user_id=user_id, refresh_token=refresh_token)
 
     async def login(self, user: UserLogin) -> UserBaseInfo | None:
         return await self.users_provider.login(user=user)

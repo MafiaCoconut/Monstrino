@@ -6,7 +6,7 @@ from fastapi import APIRouter, Response
 
 response_router = APIRouter()
 
-async def get_success_json_response(data: dict, cookies: list[dict] | None = None):
+async def get_success_json_response(data: dict | str, cookies: list[dict] | None = None):
     body = ResponseModel(
         meta=Meta(
             code=200,
@@ -18,6 +18,7 @@ async def get_success_json_response(data: dict, cookies: list[dict] | None = Non
     response = JSONResponse(content=body.model_dump(), status_code=200, )
     if cookies:
         await set_cookies(response=response, cookies=cookies)
+    response.headers["Content-Type"] = "application/json"
     return response
 
 
@@ -35,4 +36,18 @@ async def set_cookies(response: JSONResponse, cookies: list[dict]):
                 value=cookie.get("value"),
                 httponly=_httponly, secure=_secure, samesite=_samesite, path=_path
             )
+
+
+async def get_json_response(status_code: int, message: str, description: str, data: dict | str):
+    response = ResponseModel(
+        meta=Meta(
+            code=status_code,
+            message=message,
+            description=description
+        ),
+        result=data
+    )
+    response = JSONResponse(content=response.model_dump(), status_code=status_code)
+    response.headers["Content-Type"] = "application/json"
+    return response
 

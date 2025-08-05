@@ -9,8 +9,6 @@ class JwtTokensModel(BaseModel):
 
 class UsersTokensModel(BaseModel):
     access_token: str
-    refresh_token: str
-    user: UserBaseInfo
 
 class LoginModel(BaseModel):
     access_token: str

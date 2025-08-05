@@ -22,7 +22,7 @@ async def return_created_status_code() -> None:
 async def return_item_not_found_status_code() -> None:
     return await get_json_response(status_code=404, message="Item not found", description="Item not found", data={})
 
-async def return_conflict_error_status_code(description: str = "", data: dict = None) -> None:
+async def return_conflict_error_status_code(description: str = "", data: dict | str = None) -> None:
     return await get_json_response(status_code=409, message="Conflict", description=description, data=data)
 
 async def return_validation_error_status_code(description: str = "") -> None:

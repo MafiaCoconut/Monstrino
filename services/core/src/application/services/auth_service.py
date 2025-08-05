@@ -25,19 +25,20 @@ class AuthService:
             return result
         else:
             try:
-                tokens = await self.update_tokens(user_email=user.email)
+                user_id = result.get('user').id
+                tokens = await self.update_tokens(user_id=user_id)
                 return tokens
 
             except Exception as e:
                 logger.error(f"Exception by creating jwt: {e}")
-
-        return None
+                result['error'] = "internal-error"
+        return result
 
     @log_decorator()
     async def login(self, user: UserLogin) -> dict | None:
         result = await self.users_service.login(user=user)
         if result:
-            tokens = await self.update_tokens(user_email=user.email)
+            tokens = await self.update_tokens(user_id=user.email)
             logger.info("Login success")
             return tokens | {"user": result}
         else:
@@ -45,9 +46,9 @@ class AuthService:
             return None
 
 
-    async def update_tokens(self, user_email: str) -> dict:
-        tokens = await self.jwt_use_case.get_new_tokens(user_email=user_email)
-        await self.users_service.update_refresh_token(user_email=user_email, refresh_token=tokens.get('refresh_token'))
+    async def update_tokens(self, user_id: int) -> dict:
+        tokens = await self.jwt_use_case.get_new_tokens(user_id=user_id)
+        await self.users_service.update_refresh_token(user_id=user_id, refresh_token=tokens.get('refresh_token'))
         return tokens
 
 

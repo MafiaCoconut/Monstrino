@@ -46,13 +46,13 @@ async def set_refresh_token(
         request: SetRefreshTokenRequest,
         core_service: CoreService = Depends(get_core_service)
     ):
-    user_email = request.user_email
+    user_id = request.user_id
     refresh_token = request.refresh_token
-    if user_email and refresh_token:
-        await core_service.set_refresh_token(user_email=user_email, new_refresh_token=refresh_token)
+    if user_id and refresh_token:
+        await core_service.set_refresh_token(user_id=user_id, new_refresh_token=refresh_token)
         return await get_success_json_response(data={'message': "Refresh token is set"})
     else:
-        return await return_validation_error_status_code(detail="Users data is not valid")
+        return await return_validation_error_status_code(description="Users data is not valid")
 
 @router.post("/api/v1/auth/login", tags=["Auth"], response_model=LoginResponse)
 async def login(

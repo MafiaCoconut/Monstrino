@@ -30,5 +30,5 @@ class UsersDataUseCase:
     async def get_user_base_info(self, user_id: int) -> UserBaseInfo:
         return await self.user_get_data_use_case.get_user_base_info(user_id=user_id)
 
-    async def set_refresh_token(self, user_email: str, new_refresh_token: str):
-        await self.users_repository.update_refresh_token(user_email=user_email, new_refresh_token=new_refresh_token)
+    async def set_refresh_token(self, user_id: int, new_refresh_token: str):
+        await self.users_repository.update_refresh_token(user_id=user_id, new_refresh_token=new_refresh_token)
