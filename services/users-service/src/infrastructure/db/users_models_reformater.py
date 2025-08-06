@@ -3,7 +3,7 @@ from infrastructure.db.models.user_orm import UserORM
 from datetime import datetime, timezone
 
 
-class ModelsReformater:
+class UsersModelsReformater:
     @staticmethod
     async def refactor_orm_to_pydantic(user_orm: UserORM):
         return User(
@@ -54,4 +54,4 @@ class ModelsReformater:
 
 
 
-models_reformater = ModelsReformater()
+users_models_reformater = UsersModelsReformater()

@@ -12,7 +12,7 @@ from infrastructure.config.logs_config import log_decorator
 from infrastructure.db.base import async_engine
 from infrastructure.db.models.dolls_collection_orm import DollsCollectionORM
 from infrastructure.db.models.user_orm import UserORM
-from infrastructure.db.models_reformater import models_reformater
+from infrastructure.db.users_models_reformater import users_models_reformater
 
 
 class UsersRepositoryImpl(UsersRepository):
@@ -23,9 +23,9 @@ class UsersRepositoryImpl(UsersRepository):
     async def set_user(self, user: UserRegistration) -> int:
         session = await self._get_session()
         async with session.begin():
-            user_orm = await models_reformater.refactor_new_user_pydantic_to_orm(user)
+            user_orm = await users_models_reformater.refactor_new_user_pydantic_to_orm(user)
             session.add(user_orm)
-            await session.flush()  # ⬅️ ID будет доступен после этого
+            await session.flush()
             user_id = user_orm.id
             await session.commit()
             return user_id
@@ -42,7 +42,7 @@ class UsersRepositoryImpl(UsersRepository):
             result = await session.execute(query)
             user_orm: UserORM = result.scalars().first()
             if user_orm:
-                user = await models_reformater.refactor_orm_to_base_user_info(user_orm=user_orm)
+                user = await users_models_reformater.refactor_orm_to_base_user_info(user_orm=user_orm)
                 return user
             return None
 
@@ -67,7 +67,7 @@ class UsersRepositoryImpl(UsersRepository):
             result = await session.execute(query)
             user_orm = result.scalars().first()
             if user_orm:
-                return await models_reformater.refactor_orm_to_base_user_info(user_orm=user_orm)
+                return await users_models_reformater.refactor_orm_to_base_user_info(user_orm=user_orm)
             else:
                 return None
 

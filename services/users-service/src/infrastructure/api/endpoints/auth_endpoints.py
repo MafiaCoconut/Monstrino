@@ -41,6 +41,7 @@ async def register_new_user(
         return await return_validation_error_status_code(description="Users data is not valid")
 
 
+#TODO: need a refactor regarding new db
 @router.post("/api/v1/auth/setRefreshToken", tags=["Auth"], response_model=ResponseModel)
 async def set_refresh_token(
         request: SetRefreshTokenRequest,
@@ -48,11 +49,21 @@ async def set_refresh_token(
     ):
     user_id = request.user_id
     refresh_token = request.refresh_token
+    ip = request.ip
     if user_id and refresh_token:
-        await core_service.set_refresh_token(user_id=user_id, new_refresh_token=refresh_token)
+        await core_service.set_refresh_token(user_id=user_id, new_refresh_token=refresh_token, ip=ip)
         return await get_success_json_response(data={'message': "Refresh token is set"})
     else:
         return await return_validation_error_status_code(description="Users data is not valid")
+
+
+@router.get("/api/v1/auth/checkRefreshToken", tags=["Auth"], response_model=ResponseModel)
+async def check_refresh_token(
+        request: SetRefreshTokenRequest,
+        core_service: CoreService = Depends(get_core_service)
+    ):
+    return None
+
 
 @router.post("/api/v1/auth/login", tags=["Auth"], response_model=LoginResponse)
 async def login(
