@@ -15,7 +15,6 @@ class UserORM(Base):
     last_name:      Mapped[str | None]      = mapped_column(String, default="", nullable=False)
     email:          Mapped[str]             = mapped_column(String, default="", nullable=False)
     password:       Mapped[str]             = mapped_column(String, default="", nullable=False)
-    refresh_token:  Mapped[str | None]      = mapped_column(String, default="", nullable=True)
 
     updated_at:     Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"), onupdate=datetime.now(UTC).replace(tzinfo=None), nullable=True)
     created_at:     Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"))

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react'
+import { useState, useRef, useEffect, useContext } from 'react'
 import './App.css'
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Homepage from './features/homepage/Homepage';
@@ -9,9 +9,15 @@ import { Context } from './main';
 function App() {
     const {userStore} = useContext(Context);
 
+    const didRun = useRef(false);
+    // useEffect(() => {
+    //   userStore.checkAuth();
+    // }, [])
     useEffect(() => {
+      if (didRun.current) return;
+      didRun.current = true;
       userStore.checkAuth();
-    }, [])
+    }, []);
 
 
   return (

@@ -11,6 +11,9 @@ class TokensService:
     async def set_refresh_token(self, user_id: int, refresh_token: str, ip: str):
         await self.refresh_tokens_provider_use_case.set_token(user_id=user_id, token=refresh_token, ip=ip)
 
+    async def update_refresh_token(self, user_id: int, refresh_token: str, ip: str):
+        await self.refresh_tokens_provider_use_case.update_token(user_id=user_id, token=refresh_token, ip=ip)
+
     async def delete_token(self, refresh_token: str) -> None:
         await self.refresh_tokens_provider_use_case.delete_token(token=refresh_token)
 

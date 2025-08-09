@@ -17,9 +17,17 @@ class UsersGateway(ABC):
         pass
 
     @abstractmethod
-    async def set_refresh_token(self, user_id: int, refresh_token: str) -> None:
+    async def set_refresh_token(self, user_id: int, refresh_token: str, ip: str) -> None:
+        pass
+
+    @abstractmethod
+    async def update_refresh_token(self, user_id: int, refresh_token: str, ip: str) -> None:
         pass
 
     @abstractmethod
     async def login(self, user: UserLogin) -> UserBaseInfo | None:
+        pass
+
+    @abstractmethod
+    async def check_refresh_token(self, refresh_token: str) -> bool:
         pass

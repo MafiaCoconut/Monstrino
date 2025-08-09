@@ -7,6 +7,7 @@ export default class UserStore {
     user = {} as UserBaseInfo;
     isAuth = false;
     isLoading = false;
+    accessToken: string | null = null;
 
     constructor() {
         makeAutoObservable(this);
@@ -22,6 +23,11 @@ export default class UserStore {
 
     setLoading(bool: boolean) {
         this.isLoading = bool;
+    }
+
+    setAccessToken(token: string) {
+        console.log('new accessToken: ' + token);
+        this.accessToken = token;
     }
 
     async login(email: string, password: string): Promise<boolean> {
@@ -59,19 +65,28 @@ export default class UserStore {
             const response = await AuthService.registration(username, email, password);
             console.log(response);
             this.setAuth(true);
-            this.setUser(response.data.user);
+            console.log("accessToken before: " + this.accessToken);
+            this.setAccessToken(response.data.result);
+
         } catch (e: any) {
             console.log(e.response?.data?.message);
         }
     }
 
     async checkAuth(){
+        console.log(this.accessToken)
+        console.log(this.isAuth)
+        
         console.log("start refresh")
         try {
-            const response = await AuthService.checkAuth();
+            const response = await AuthService.status();
             console.log(response);
         } catch (e: any) {
             console.log(e.response?.data?.message);
+            // if (e.response.status === 405){
+            //     const response_refresh = await AuthService.refreshTokens();
+            //     console.log(response_refresh);
+            // }
         }
     }
 

@@ -15,7 +15,10 @@ class AuthService:
                  ):
         self.users_service = users_service
         self.jwt_use_case = JwtUseCase()
-        self.jwt_refresh_use_case = JwtRefreshUseCase(jwt_use_case=self.jwt_use_case)
+        self.jwt_refresh_use_case = JwtRefreshUseCase(
+            jwt_use_case=self.jwt_use_case,
+            users_service=users_service,
+        )
 
     @log_decorator()
     async def registration(self, user: UserRegistration) -> dict | None:
@@ -26,7 +29,7 @@ class AuthService:
         else:
             try:
                 user_id = result.get('user').id
-                tokens = await self.update_tokens(user_id=user_id)
+                tokens = await self.update_tokens(user_id=user_id, ip=user.ip)
                 return tokens
 
             except Exception as e:
@@ -34,27 +37,27 @@ class AuthService:
                 result['error'] = "internal-error"
         return result
 
-    @log_decorator()
-    async def login(self, user: UserLogin) -> dict | None:
-        result = await self.users_service.login(user=user)
-        if result:
-            tokens = await self.update_tokens(user_id=user.email)
-            logger.info("Login success")
-            return tokens | {"user": result}
-        else:
-            logger.info("Login failed")
-            return None
+    # @log_decorator()
+    # async def login(self, user: UserLogin) -> dict | None:
+    #     result = await self.users_service.login(user=user)
+    #     if result:
+    #         tokens = await self.update_tokens(user_id=user.email)
+    #         logger.info("Login success")
+    #         return tokens | {"user": result}
+    #     else:
+    #         logger.info("Login failed")
+    #         return None
 
 
-    async def update_tokens(self, user_id: int) -> dict:
+    async def update_tokens(self, user_id: int, ip: str) -> dict:
         tokens = await self.jwt_use_case.get_new_tokens(user_id=user_id)
-        await self.users_service.update_refresh_token(user_id=user_id, refresh_token=tokens.get('refresh_token'))
+        await self.users_service.update_refresh_token(user_id=user_id, refresh_token=tokens.get('refresh_token'), ip=ip)
         return tokens
 
 
     @log_decorator()
-    async def refresh(self, refresh_token: str, access_token: str) -> dict:
-        return await self.jwt_refresh_use_case.refresh(access_token=access_token, refresh_token=refresh_token)
+    async def refresh(self, refresh_token: str) -> dict:
+        return await self.jwt_refresh_use_case.refresh(refresh_token=refresh_token)
 
     @log_decorator()
     async def status(self, access_token: str) -> bool:

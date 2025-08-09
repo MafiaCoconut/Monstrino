@@ -8,6 +8,9 @@ class RefreshTokensProviderUseCase:
     async def set_token(self, user_id: int, token: str, ip: str) -> None:
         await self.refresh_tokens_repository.set_token(user_id=user_id, refresh_token=token, ip=ip)
 
+    async def update_token(self, user_id: int, token: str, ip: str) -> None:
+        await self.refresh_tokens_repository.update_token(user_id=user_id, refresh_token=token, ip=ip)
+
     async def delete_token(self, token: str) -> None:
         await self.refresh_tokens_repository.delete_token(refresh_token=token)
 

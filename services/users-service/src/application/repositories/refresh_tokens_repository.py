@@ -10,6 +10,13 @@ class RefreshTokensRepository(ABC):
         pass
 
     @abstractmethod
+    async def update_token(self, user_id: int, refresh_token: str, ip: str = "") -> None:
+        """
+        Function update already exist refresh token with a new generated from him
+        """
+        pass
+
+    @abstractmethod
     async def validate_token(self, refresh_token: str) -> bool:
         """
         Function check if a refresh token is valid

@@ -29,14 +29,16 @@ from fastapi.params import Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 auth_scheme = HTTPBearer()
-router = APIRouter(prefix='/api/v1/auth', tags=["Auth"])
+private = APIRouter(prefix='/api/v1/auth', tags=["Auth"], dependencies=[Depends(JWTBearer())])
+public = APIRouter(prefix='/api/v1/auth', tags=["Public"])
 
 logger = logging.getLogger(__name__)
 
 def config(app: FastAPI):
-    app.include_router(router)
+    app.include_router(private)
+    app.include_router(public)
 
-@router.post("/registration", response_model=RegistrationResponse, responses=default_responses)
+@public.post("/registration", response_model=RegistrationResponse, responses=default_responses)
 async def registration(
         user_credentials: UserRegistration,
         response: Response, background_tasks: BackgroundTasks,
@@ -63,7 +65,7 @@ async def registration(
         return await return_validation_error_status_code() # 422
 
 
-@router.post("/login", response_model=LoginResponse)
+@public.post("/login", response_model=LoginResponse)
 async def login(
         user_credentials: UserLogin,
         response: Response, background_tasks: BackgroundTasks,
@@ -85,44 +87,44 @@ async def login(
     return await return_unauthorized_found_status_code()
 
 
-@router.post("/refresh", response_model=RefreshResponse)
+@public.get("/refresh", response_model=RefreshResponse)
 async def refresh_tokens(
         request: Request,
         response: Response, background_tasks: BackgroundTasks,
         auth_service: AuthService = Depends(get_auth_service),
-        access_token: str | bytes | None = None,
     ):
     refresh_token = request.cookies.get(REFRESH_TOKEN_COOKIE_NAME)
     if refresh_token:
-        result = await auth_service.refresh(refresh_token=refresh_token, access_token=access_token)
+        result = await auth_service.refresh(refresh_token=refresh_token)
         match (result.get('code')):
             case 200:
                 # await set_refresh_token_in_cookie(response=response, refresh_token=result.get('refresh_token'))
                 return await get_success_json_response(data=result.get('access_token'), cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('refresh_token')}])
 
             case 401:
+                print(result)
                 return await return_unauthorized_found_status_code()
     else:
         return await return_unauthorized_found_status_code()
 
-@router.get("/status", response_model=StatusResponse)
+@private.get("/status", response_model=StatusResponse)
 async def status(
         request: Request,
         response: Response, background_tasks: BackgroundTasks,
-        auth_service: AuthService = Depends(get_auth_service),
-        access_token: str | bytes | None = None,
     ):
-    if access_token:
-        result = await auth_service.status(access_token=access_token)
-        if result:
-            return await get_success_json_response(data={"result": result})
-        else:
-            return await return_unauthorized_found_status_code()
-    else:
-        return await return_unauthorized_found_status_code()
+    print(request.state.user_id)
+    return await get_success_json_response(data={'result': True})
+    # if access_token:
+    #     result = await auth_service.status(access_token=access_token)
+    #     if result:
+    #         return await get_success_json_response(data={"result": result})
+    #     else:
+    #         return await return_unauthorized_found_status_code()
+    # else:
+    #     return await return_unauthorized_found_status_code()
 
 
-@router.get("/test")
+@private.get("/test")
 async def test(
         request: Request,
         response: Response, background_tasks: BackgroundTasks,

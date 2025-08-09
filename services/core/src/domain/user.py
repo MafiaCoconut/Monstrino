@@ -21,6 +21,8 @@ class UserRegistration(BaseModel):
     # lastName:  str | None = Field(default=None)
     email:     str | None = Field(default=None)
     password:  str | None = Field(default=None)
+    ip:        str        = Field(default="")
+
 
 class UserBaseInfo(BaseModel):
     id:             int  = Field()

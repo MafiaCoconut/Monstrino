@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete, text, update, func, cast, or_
+from sqlalchemy import select, delete, text, update, func, cast, or_, and_
 
 from application.repositories.refresh_tokens_repository import RefreshTokensRepository
 from infrastructure.db.base import async_engine
@@ -16,6 +16,21 @@ class RefreshTokensRepositoryImpl(RefreshTokensRepository):
             token_orm = RefreshTokensORM(user_id=user_id, token=refresh_token, ip_address=ip)
             session.add(token_orm)
             await session.commit()
+
+    async def update_token(self, user_id: int, refresh_token: str, ip: str = "") -> None:
+        session = await self._get_session()
+        async with session.begin():
+            query = update(RefreshTokensORM).where(
+                and_(
+                    RefreshTokensORM.user_id == user_id,
+                    RefreshTokensORM.ip_address == ip,
+                )
+            ).values(token=refresh_token)
+
+            # token_orm = RefreshTokensORM(user_id=user_id, token=refresh_token, ip_address=ip)
+            await session.execute(query)
+            await session.commit()
+        pass
 
 
 

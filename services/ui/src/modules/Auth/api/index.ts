@@ -1,40 +1,51 @@
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { AuthResponse } from './responses/authResponses';
+import { Context } from "../../../main";
+import UserStore from '../store/UserStore';
+import { RefreshTokensResponse } from './responses/RefreshTokensResponse';
 
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 export const API_URL = `${BACKEND_URL}/api/v1`
 console.log('API_URL: ', API_URL)
 
-const $api = axios.create({
+export function createApi(userStore: UserStore): AxiosInstance {
+
+    const api = axios.create({
+    baseURL: API_URL,
     withCredentials: true,
-    baseURL: API_URL
-})
-
-$api.interceptors.request.use((config) => {
-    config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
-    config.headers['Content-Type'] = 'application/json';
-    config.headers['Accept'] = 'application/json';
-    return config;
-})
+    });
 
 
-// $api.interceptors.response.use((config) => {
-//     return config;
-// }, async (error) => {
-//     const originalRequest = error.config;
-//     if (error.response.status == 401 && error.config && !error.config._isRetry) {
-//         originalRequest._isRetry = true;
-//         try {
-//             const response = await axios.post<AuthResponse>(`${API_URL}/auth/refresh`, { withCredentials: true })
-//             localStorage.setItem('token', response.data.accessToken);
-//             return $api.request(originalRequest);
-//         } catch (e) {
-//             console.log('НЕ АВТОРИЗОВАН')
-//         }
-//     }
-//     throw error;
-// })
+
+    api.interceptors.request.use((config) => {
+        config.headers.Authorization = `Bearer ${userStore.accessToken}`
+        config.headers['Content-Type'] = 'application/json';
+        config.headers['Accept'] = 'application/json';
+        return config;
+    })
 
 
-export default $api;
+    api.interceptors.response.use((config) => {
+        return config;
+    }, async (error) => {
+        const originalRequest = error.config;
+        if (error.response.status == 401 && error.config && !error.config._isRetry) {
+            originalRequest._isRetry = true;
+            try {
+                const response = await axios.get<RefreshTokensResponse>(`${API_URL}/auth/refresh`, { withCredentials: true })
+                console.log(response)
+                console.log(response.data.result)
+                userStore.setAccessToken(response.data.result);
+                return api.request(originalRequest);
+            } catch (e) {
+                console.log('НЕ АВТОРИЗОВАН')
+            }
+        }
+        throw error;
+    })
+    return api;
+}
+
+
+// export default $api;

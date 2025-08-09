@@ -39,3 +39,10 @@ class CoreService:
     async def set_refresh_token(self, user_id: int, new_refresh_token: str, ip: str):
         await self.tokens_service.set_refresh_token(user_id=user_id, refresh_token=new_refresh_token, ip=ip)
 
+    async def update_refresh_token(self, user_id: int, new_refresh_token: str, ip: str):
+        await self.tokens_service.update_refresh_token(user_id=user_id, refresh_token=new_refresh_token, ip=ip)
+
+
+    async def check_refresh_token(self, refresh_token: str) -> bool:
+        return await self.tokens_service.validate_token(refresh_token=refresh_token)
+

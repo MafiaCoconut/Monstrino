@@ -30,9 +30,17 @@ class UsersProviderUseCase:
         return response
 
     @log_decorator()
-    async def set_refresh_token(self, user_id: int, refresh_token: str):
-        await self.users_gateway.set_refresh_token(user_id=user_id, refresh_token=refresh_token)
+    async def set_refresh_token(self, user_id: int, refresh_token: str, ip: str) -> None:
+        await self.users_gateway.set_refresh_token(user_id=user_id, refresh_token=refresh_token, ip=ip)
+
+    @log_decorator()
+    async def update_refresh_token(self, user_id: int, refresh_token: str, ip: str):
+        await self.users_gateway.update_refresh_token(user_id=user_id, refresh_token=refresh_token, ip=ip)
 
     @log_decorator()
     async def login(self, user: UserLogin) -> UserBaseInfo | None:
         return await self.users_gateway.login(user=user)
+
+    @log_decorator()
+    async def check_refresh_token(self, refresh_token: str) -> bool | None:
+        return await self.users_gateway.check_refresh_token(refresh_token=refresh_token)

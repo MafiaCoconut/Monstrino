@@ -10,9 +10,9 @@ from fastapi import Request
 import coloredlogs
 
 load_dotenv()
-system_logger = logging.getLogger("system_logger")
-error_logger = logging.getLogger("error_logger")
-apscheduler_logger = logging.getLogger("apscheduler")
+system_logger = logging.getLogger(__name__)
+error_logger = logging.getLogger(__name__)
+apscheduler_logger = logging.getLogger(__name__)
 
 
 fmt =  "%(asctime)s | %(levelname)-8s | %(name)-40s | %(message)s"
