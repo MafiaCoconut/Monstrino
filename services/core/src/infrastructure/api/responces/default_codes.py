@@ -17,26 +17,33 @@ responses = {
 }
 
 async def return_created_status_code() -> None:
+    """Return 201 status code"""
     return await get_json_response(status_code=201, message="Created", description="Created", data={})
 
 
 async def return_unauthorized_found_status_code() -> None:
+    """Return 401 status code"""
     return await get_json_response(status_code=401, message="Unauthorized", description="Unauthorized", data={})
 
 async def return_forbidden_found_status_code() -> None:
-    return await get_json_response(status_code=401, message="Forbidden", description="Forbidden", data={})
+    """Return 403 status code"""
+    return await get_json_response(status_code=403, message="Forbidden", description="Forbidden", data={})
 
 
 async def return_item_not_found_status_code() -> None:
+    """Return 404 status code"""
     return await get_json_response(status_code=404, message="Item not found", description="Item not found", data={})
 
 async def return_conflict_error_status_code(description: str = "", data: dict | str = None) -> None:
+    """Return 409 status code"""
     return await get_json_response(status_code=409, message="Conflict", description=description, data=data)
 
 async def return_validation_error_status_code(description: str = "", data: dict | str = None) -> None:
+    """Return 422 status code"""
     return await get_json_response(status_code=422, message="Validation error", description=description, data=data)
 
 async def return_internal_server_error_status_code() -> None:
+    """Return 500 status code"""
     return await get_json_response(status_code=500, message="Internal server error", description="Internal server error", data={})
 
 

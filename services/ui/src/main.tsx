@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import UserStore from './modules/Auth/store/UserStore.ts';
 import { createApi } from './modules/Auth/api/index.ts';
+import './i18n.ts';
 
 interface UserState {
   userStore: UserStore,

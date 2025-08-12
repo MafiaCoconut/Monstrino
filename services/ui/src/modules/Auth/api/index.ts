@@ -4,7 +4,6 @@ import { Context } from "../../../main";
 import UserStore from '../store/UserStore';
 import { RefreshTokensResponse } from './responses/RefreshTokensResponse';
 
-
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 export const API_URL = `${BACKEND_URL}/api/v1`
 console.log('API_URL: ', API_URL)
@@ -34,12 +33,10 @@ export function createApi(userStore: UserStore): AxiosInstance {
             originalRequest._isRetry = true;
             try {
                 const response = await axios.get<RefreshTokensResponse>(`${API_URL}/auth/refresh`, { withCredentials: true })
-                console.log(response)
-                console.log(response.data.result)
                 userStore.setAccessToken(response.data.result);
                 return api.request(originalRequest);
             } catch (e) {
-                console.log('НЕ АВТОРИЗОВАН')
+                console.log('Not authorized');
             }
         }
         throw error;

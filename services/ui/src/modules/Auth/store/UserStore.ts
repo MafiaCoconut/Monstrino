@@ -2,6 +2,8 @@ import { makeAutoObservable } from "mobx";
 import AuthService from "../services/AuthService";
 import { IUser } from "../../../models/IUser";
 import { UserBaseInfo } from "../../../models/userModels/UserBaseInfo";
+import { AxiosResponse } from "axios";
+import { UserRegistrationResponse } from "../api/responses/UserRegistrationResponse";
 
 export default class UserStore {
     user = {} as UserBaseInfo;
@@ -59,17 +61,27 @@ export default class UserStore {
         return false;
     }
 
-    async registration(username: string, email: string, password: string) { 
+    async registration(username: string, email: string, password: string): Promise<AxiosResponse<UserRegistrationResponse>> { 
         console.log("start registration")
         try {
             const response = await AuthService.registration(username, email, password);
-            console.log(response);
             this.setAuth(true);
-            console.log("accessToken before: " + this.accessToken);
             this.setAccessToken(response.data.result);
-
+            return response as AxiosResponse<UserRegistrationResponse>;
         } catch (e: any) {
-            console.log(e.response?.data?.message);
+            console.log(e.response?.data?.meta);
+            switch (e.response.status) {
+                case 409:
+                    console.log("Registration failed");
+                    break;
+                case 422:
+                    console.log("Validation error");
+                    let result = e.response.data.result
+                    console.log(result)
+                    break;
+
+            }
+            return e.response as AxiosResponse<UserRegistrationResponse>
         }
     }
 
@@ -79,14 +91,9 @@ export default class UserStore {
         
         console.log("start refresh")
         try {
-            const response = await AuthService.status();
-            console.log(response);
+            await AuthService.status();
         } catch (e: any) {
             console.log(e.response?.data?.message);
-            // if (e.response.status === 405){
-            //     const response_refresh = await AuthService.refreshTokens();
-            //     console.log(response_refresh);
-            // }
         }
     }
 

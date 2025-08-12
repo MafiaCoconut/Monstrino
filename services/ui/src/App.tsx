@@ -16,7 +16,7 @@ function App() {
     useEffect(() => {
       if (didRun.current) return;
       didRun.current = true;
-      userStore.checkAuth();
+      // userStore.checkAuth();
     }, []);
 
 

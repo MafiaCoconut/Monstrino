@@ -3,44 +3,111 @@ import { ErrorOutline, Visibility, VisibilityOff } from "@mui/icons-material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import React, { useContext, useState } from "react";
 import { Context } from "../../../main";
+import i18n from '../../../i18n';
 
 
 const RegisterForm = () => {
     const [errors, setErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
+    
     const [username, setUsername] = useState("");
     const [isUsernameInvalid, setIsUsernameInvalid] = useState(false);
+    const [usernameHelperText, setUsernameHelperText] = useState("");
+
     const [email, setEmail] = useState("");
     const [isEmailInvalid, setIsEmailInvalid] = useState(false);
+    const [emailHelperText, setemailHelperText] = useState("");
+
+
     const [password, setPassword] = useState("");
     const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
+    const [passwordHelperText, setPasswordHelperText] = useState("");
+
     const {userStore} = useContext(Context);
+
+    const USERNAME_REGEX = /^[A-Za-z0-9_-]{3,20}$/;
+    const EMAIL_REGEX = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
+    const FIRST_NAME_REGEX = /^[A-Za-z ]+$/
+    const LAST_NAME_REGEX  = /^[A-Za-z ]+$/
+
+    const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*\d)(?=.*[_!@#$%^&*+\-:{}'])[A-Za-z\d_!@#$%^&*+\-:{}']{6,15}$/;
+
     const labelsExtraInfo = {
-        "name": "Available characters: 0-9, a-z, A-Z, _ -",
+        "test": i18n.t(""),
+        "name": "Length: 3-20 Available characters: 0-9, a-z, A-Z, _ -",
         "email": "It must be a valid email address",
         "password": "Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character",
     }
 
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async(e: any) => {
         e.preventDefault(); 
         console.log(username, email, password)
         console.log(isUsernameInvalid, isEmailInvalid, isPasswordInvalid)
         if (!isUsernameInvalid && !isEmailInvalid && !isPasswordInvalid) {
-            userStore.registration(username, email, password);
+            const response = await userStore.registration(username, email, password);
+            switch (response.status) {
+                case 200: {
+                    console.log("Registration success");
+                    break;
+                }
+                case 409:{
+                    let conflictValue = response.data.result;
+                    switch (conflictValue) {
+                        case "username":
+                            setIsUsernameInvalid(true)
+                            break;
+                        case "email":
+                            setIsEmailInvalid(true)
+                            break;
+                    }
+                    break;
+                }
+                case 422: {
+                    let notValidValue = response.data.result;
+                    switch (notValidValue) {
+                        case "username":
+                            setIsUsernameInvalid(true)
+                            break;
+                        case "email":
+                            setIsEmailInvalid(true)
+                            break;
+                        case "password":
+                            setIsPasswordInvalid(true)
+                            break; 
+                    }
+                    break;
+                }
+
+            }
         }
     }
 
     const handleChangeUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
         setUsername(event.target.value);
+        if (!USERNAME_REGEX.test(event.target.value)) {
+            setIsUsernameInvalid(true);
+        } else {
+            setIsUsernameInvalid(false);
+        }
     }
 
     const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(event.target.value);
+        if (!EMAIL_REGEX.test(event.target.value)) {
+            setIsEmailInvalid(true);
+        } else {
+            setIsEmailInvalid(false);
+        }
     }
 
     const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(event.target.value);
+        if (!PASSWORD_REGEX.test(event.target.value)) {
+            setIsPasswordInvalid(true);
+        } else {
+            setIsPasswordInvalid(false);
+        }
     }
 
     return (
@@ -56,11 +123,13 @@ const RegisterForm = () => {
         alignItems="center"
     >
         <Typography variant="subtitle1" mb={2}>
-            Create your Account
+            {i18n.t("registerPage.title")}
         </Typography>
 
         <TextField
-        fullWidth label="Name" margin="normal"
+        fullWidth label={i18n.t("registerPage.username.label")} 
+        placeholder={i18n.t("registerPage.username.placeholder")} 
+        margin="normal"
         value={username}
         onChange={handleChangeUsername}
         error={isUsernameInvalid}
@@ -79,7 +148,8 @@ const RegisterForm = () => {
         value={email}
         onChange={handleChangeEmail}
         error={isEmailInvalid}
-        helperText={labelsExtraInfo.email}
+        helperText={
+            <span>{emailHelperText}</span>}
         InputProps={{
             endAdornment: isEmailInvalid && (
             <InputAdornment position="end">
