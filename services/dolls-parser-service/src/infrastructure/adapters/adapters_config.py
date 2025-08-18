@@ -5,6 +5,6 @@ from infrastructure.logging.logger_adapter import LoggerAdapter
 
 def build_adapters(logger: LoggerAdapter) -> Adapters:
     return Adapters(
-        MHArchive=MHArchiveAdapter(),
+        MHArchive=MHArchiveAdapter(logger),
         logger=logger
     )

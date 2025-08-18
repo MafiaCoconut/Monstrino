@@ -12,3 +12,10 @@ run:
 
 run\:ngrok:
 	ngrok http --url=accurately-apparent-cobra.ngrok-free.app 8000
+
+run-chrome:
+	google-chrome \
+  --remote-debugging-port=9222 \
+  --user-data-dir="$HOME/chrome-remote" \
+  --profile-directory="Default" \
+  --no-first-run --no-default-browser-check

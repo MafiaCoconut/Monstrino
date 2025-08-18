@@ -9,7 +9,8 @@ class ParseWebsiteUseCase:
         self._r = registry
         self._l = logger
 
+
     async def by_year(self, site: WebsiteKey, year: int):
-        port = self._r.get(site, WebsiteCatalogPort)
-        product = await port.get_year(year)
+        port: WebsiteCatalogPort = self._r.get(site, WebsiteCatalogPort)
+        product = await port.get_by_link()
         return None
