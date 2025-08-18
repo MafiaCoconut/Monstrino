@@ -8,5 +8,5 @@ from infrastructure.db.models.product_types_orm import ProductTypesORM
 from infrastructure.db.models.relations_orm import RelationsORM
 
 
-Base.metadata.drop_all(sync_engine)
-Base.metadata.create_all(sync_engine)
+# Base.metadata.drop_all(sync_engine)
+# Base.metadata.create_all(sync_engine)

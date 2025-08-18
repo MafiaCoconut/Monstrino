@@ -1,12 +1,14 @@
 from fastapi import FastAPI
 
-from infrastructure.api import cors
-from infrastructure.api.responces.exceptions import rewrite_http_exception_response
+from presentation import cors
+from presentation.responces.exceptions import rewrite_http_exception_response
+from presentation.endpoints import parser_endpoints
 
 
 def configure_endpoints(app: FastAPI):
     # users_api.config(app=app)
     # auth_api.config(app=app)
+    parser_endpoints.config(app=app)
     pass
 
 

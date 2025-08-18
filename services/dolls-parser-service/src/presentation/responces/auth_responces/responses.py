@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 from domain.user import UserBaseInfo
-from infrastructure.api.responces.models import ResponseModel, Meta
+from presentation.responces.models import ResponseModel, Meta
 
 class JwtTokensModel(BaseModel):
     access_token: str

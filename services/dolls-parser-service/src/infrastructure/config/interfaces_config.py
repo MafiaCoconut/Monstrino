@@ -1,3 +1,12 @@
-from infrastructure.interfaces_impl.scheduler_interface_impl import SchedulerInterfaceImpl
+from dataclasses import dataclass
 
-scheduler_interface = SchedulerInterfaceImpl()
+
+
+# @dataclass
+# class Interfaces:
+#     scheduler: SchedulerInterface
+#
+# def build_interfaces() -> Interfaces:
+#     return Interfaces(
+#         scheduler=SchedulerInterfaceImpl()
+#     )
