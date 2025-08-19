@@ -1,7 +1,5 @@
-from icecream import ic
-
 from application.repositories.users_repository import UsersRepository
-from domain.user import UserBaseInfo
+from domain.entities.user import UserBaseInfo
 
 
 class UserGetDataUseCase:

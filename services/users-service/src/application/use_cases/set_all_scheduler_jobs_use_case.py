@@ -1,17 +1,13 @@
-from application.interfaces.scheduler_interface import SchedulerInterface
-from infrastructure.config.logs_config import log_decorator
+from application.ports.scheduler_port import SchedulerPort
+from infrastructure.logging.logs_config import log_decorator
 
 
 class SetAllSchedulerJobsUseCase:
     def __init__(self,
-                 scheduler_interface: SchedulerInterface,
+                 scheduler: SchedulerPort,
                  ):
-        self.scheduler_interface = scheduler_interface
+        self.scheduler = scheduler
 
     @log_decorator(print_args=False, print_kwargs=False)
     async def execute(self):
-        """
-        Функция ставит scheduler работы для всех типов задач
-        """
-
-        await self.scheduler_interface.start()
+        await self.scheduler.start()

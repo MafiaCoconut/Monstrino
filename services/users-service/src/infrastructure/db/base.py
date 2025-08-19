@@ -1,17 +1,13 @@
-import asyncio
-
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
-from infrastructure.config.db_config import db_settings
+from infrastructure.db.db_config import get_db_settings
 from dotenv import load_dotenv
 
-import os
 load_dotenv()
 
 sync_engine = create_engine(
-    url=db_settings.DATABASE_URL_psycopg,
+    url=get_db_settings().DATABASE_URL_psycopg,
     # echo=True,
     pool_size=10,
     max_overflow=20,
@@ -21,7 +17,7 @@ sync_engine = create_engine(
 )
 
 async_engine = create_async_engine(
-    url=db_settings.DATABASE_URL_asyncpg,
+    url=get_db_settings().DATABASE_URL_asyncpg,
     # echo=True,
     pool_size=10,
     max_overflow=20,

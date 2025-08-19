@@ -1,7 +1,5 @@
 from pydantic import BaseModel
-from typing import Any, Dict, List
-
-from domain.user import UserBaseInfo
+from typing import Any
 
 
 class Meta(BaseModel):

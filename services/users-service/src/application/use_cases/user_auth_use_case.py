@@ -1,9 +1,8 @@
 import logging
-from icecream import ic
 
 from application.repositories.users_repository import UsersRepository
 from application.use_cases.users_data_use_case import UsersDataUseCase
-from domain.user import UserLogin, UserRegistration, UserBaseInfo
+from domain.entities.user import UserLogin, UserRegistration, UserBaseInfo
 
 logger = logging.getLogger(__name__)
 

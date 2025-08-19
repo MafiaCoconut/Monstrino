@@ -1,7 +1,6 @@
 from abc import abstractmethod, ABC
 
-from domain.new_user import NewUser
-from domain.user import User, UserRegistration, UserBaseInfo
+from domain.entities.user import UserRegistration, UserBaseInfo
 
 
 class UsersRepository(ABC):

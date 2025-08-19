@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from infrastructure.api.responces.models import ResponseModel, Meta
+from presentation.responces.models import ResponseModel, Meta
 from fastapi.responses import JSONResponse
 
 

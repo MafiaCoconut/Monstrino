@@ -1,6 +1,6 @@
-from domain.user import User, UserRegistration, UserBaseInfo
+from domain.entities.user import User, UserRegistration, UserBaseInfo
 from infrastructure.db.models.user_orm import UserORM
-from datetime import datetime, timezone
+from datetime import timezone
 
 
 class UsersModelsReformater:
@@ -45,13 +45,5 @@ class UsersModelsReformater:
             updated_at=user_orm.updated_at.isoformat(),
             created_at=user_orm.created_at.isoformat(),
         )
-
-# async def _handle_created_updated_orm_to_pydantic(user):
-#     if user.created_at:
-#         user.created_at = user.created_at.isoformat()
-#     if user.updated_at:
-#         user.updated_at = user.updated_at.isoformat()
-
-
 
 users_models_reformater = UsersModelsReformater()

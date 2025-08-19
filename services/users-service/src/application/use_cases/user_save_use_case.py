@@ -1,6 +1,5 @@
 from application.repositories.users_repository import UsersRepository
-from domain.new_user import NewUser
-from domain.user import User, UserRegistration
+from domain.entities.user import UserRegistration
 
 
 class UserSaveUseCase:

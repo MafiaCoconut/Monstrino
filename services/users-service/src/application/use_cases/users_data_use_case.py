@@ -1,8 +1,7 @@
 from application.repositories.users_repository import UsersRepository
 from application.use_cases.user_get_data_use_case import UserGetDataUseCase
 from application.use_cases.user_save_use_case import UserSaveUseCase
-from domain.new_user import NewUser
-from domain.user import User, UserRegistration, UserBaseInfo
+from domain.entities.user import UserRegistration, UserBaseInfo
 
 
 class UsersDataUseCase:

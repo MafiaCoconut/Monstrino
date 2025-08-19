@@ -1,16 +1,9 @@
-from icecream import ic
-from pydantic.v1 import NoneIsNotAllowedError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete, text, update, func, cast, or_
-from sqlalchemy.dialects.postgresql import JSONB
-from datetime import datetime, timezone
+from sqlalchemy import select, update, or_
 from application.repositories.users_repository import UsersRepository
-from domain.new_user import NewUser
-from domain.user import User, UserRegistration, UserBaseInfo
+from domain.entities.user import UserRegistration, UserBaseInfo
 
-from infrastructure.config.logs_config import log_decorator
 from infrastructure.db.base import async_engine
-from infrastructure.db.models.dolls_collection_orm import DollsCollectionORM
 from infrastructure.db.models.user_orm import UserORM
 from infrastructure.db.users_models_reformater import users_models_reformater
 

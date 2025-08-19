@@ -2,19 +2,16 @@ from fastapi import APIRouter, Response, BackgroundTasks, FastAPI
 from fastapi.params import Depends
 import logging
 
-from icecream import ic
-
 from application.services.core_service import CoreService
-from domain.user import UserRegistration, UserLogin
-from infrastructure.api.requests.auth_requests import SetRefreshTokenRequest, CheckRefreshTokenRequest
-from infrastructure.api.responces.auth_responces.responces import RegisterUserResponse, LoginResponse
-from infrastructure.api.responces.models import ResponseModel
-from infrastructure.api.responces.templates import get_success_json_response
+from domain.entities.user import UserRegistration, UserLogin
+from presentation.deps import get_core_service
+from presentation.requests.auth_requests import SetRefreshTokenRequest, CheckRefreshTokenRequest
+from presentation.responces.auth_responces.responces import RegisterUserResponse, LoginResponse
+from presentation.responces.models import ResponseModel
+from presentation.responces.templates import get_success_json_response
 # from application.services.scheduler_service import SchedulerService
-from infrastructure.config.logs_config import log_api_decorator
-from infrastructure.api.responces.default_codes import responses, return_validation_error_status_code, return_item_not_found_status_code, \
-    return_created_status_code, return_internal_server_error_status_code, return_conflict_error_status_code
-from infrastructure.config.services_config import get_core_service
+from presentation.responces.default_codes import return_validation_error_status_code, return_item_not_found_status_code, \
+    return_conflict_error_status_code
 
 router = APIRouter()
 
@@ -25,7 +22,6 @@ def config(app: FastAPI):
 
 @router.post("/api/v1/auth/registerNewUser", tags=["Auth"],
              response_model=RegisterUserResponse,)
-@log_api_decorator()
 async def register_new_user(
         user_credentials: UserRegistration,
         response: Response, background_tasks: BackgroundTasks,

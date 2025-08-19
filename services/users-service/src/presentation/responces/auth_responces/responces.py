@@ -1,7 +1,5 @@
-from pydantic import BaseModel
-
-from domain.user import UserBaseInfo
-from infrastructure.api.responces.models import ResponseModel, Meta
+from domain.entities.user import UserBaseInfo
+from presentation.responces.models import ResponseModel, Meta
 
 
 class RegisterUserResponse(ResponseModel):
