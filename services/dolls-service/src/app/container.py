@@ -2,24 +2,26 @@ from dataclasses import dataclass
 
 from application.ports.logger_port import LoggerPort
 from application.ports.scheduler_port import SchedulerPort
-from application.ports.website_catalog_port import WebsiteCatalogPort
-from application.registries.ports_registry import PortsRegistry
-from application.services.parser_service import ParserService
+from application.repositories.dolls_repository import DollsRepository
+from application.services.core_service import CoreService
 from application.services.scheduler_service import SchedulerService
 
 
 @dataclass
 class Services:
-    parser: ParserService
+    core: CoreService
     scheduler: SchedulerService
 
 @dataclass
 class Adapters:
-    MHArchive: WebsiteCatalogPort
     logger: LoggerPort
 
 @dataclass
+class Repositories:
+    dolls: DollsRepository
+
+@dataclass
 class AppContainer:
-    registry: PortsRegistry
     adapters: Adapters
     services: Services
+

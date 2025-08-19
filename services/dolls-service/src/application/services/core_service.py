@@ -1,8 +1,8 @@
 from application.repositories.dolls_repository import DollsRepository
 from application.use_cases.db_use_case import DBUseCase
 from application.use_cases.dolls_provider_use_case import DollsProviderUseCase
-from domain.doll import Doll
-from domain.new_doll import NewDoll
+from domain.entities.doll import Doll
+from domain.entities.new_doll import NewDoll
 
 
 class CoreService:

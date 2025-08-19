@@ -1,6 +1,6 @@
 from application.repositories.dolls_repository import DollsRepository
-from domain.doll import Doll
-from domain.new_doll import NewDoll
+from domain.entities.doll import Doll
+from domain.entities.new_doll import NewDoll
 
 
 class DollDataUseCase:

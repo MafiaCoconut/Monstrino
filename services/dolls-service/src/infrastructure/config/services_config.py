@@ -1,15 +1,13 @@
+from app.container import Services, Repositories
+from application.ports.scheduler_port import SchedulerPort
 from application.services.core_service import CoreService
 from application.services.scheduler_service import SchedulerService
-from infrastructure.config.interfaces_config import scheduler_interface
 from infrastructure.config.repositories_config import dolls_repository
 
 
-def get_core_service():
-    return CoreService(
-        dolls_repository=dolls_repository
-    )
+def build_services(repositories: Repositories, scheduler: SchedulerPort) -> Services:
+    return Services(
+        scheduler=SchedulerService(scheduler),
+        core=CoreService(dolls_repository=repositories.dolls)
 
-def get_scheduler_service() -> SchedulerService:
-    return SchedulerService(
-        scheduler_interface=scheduler_interface,
     )

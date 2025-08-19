@@ -1,13 +1,9 @@
-import asyncio
-
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
-from infrastructure.config.db_config import db_settings
+from infrastructure.db.db_config import db_settings
 from dotenv import load_dotenv
 
-import os
 load_dotenv()
 
 sync_engine = create_engine(

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from domain.new_doll import NewDoll
+from domain.entities.new_doll import NewDoll
 
 
 class DollsRepository(ABC):

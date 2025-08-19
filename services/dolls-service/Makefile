@@ -1,5 +1,12 @@
 run:
-	cd src/ && uvicorn main:app --reload --port 8001
+SHELL := /bin/bash
+
+DOTENV := .env
+
+.PHONY: run
+
+run:
+	cd src && poetry run uvicorn main:app --reload --port 8001 --log-config infrastructure/logging/logging_config.json
 
 
 run\:ngrok:

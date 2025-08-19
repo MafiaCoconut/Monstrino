@@ -1,13 +1,11 @@
 import logging
-from typing import Any, Dict
-import re
-from fastapi import Depends, APIRouter, Path, Response, status, BackgroundTasks, HTTPException
+from typing import Any
+from fastapi import Depends, Response, BackgroundTasks, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
 
 from application.services.core_service import CoreService
-from domain.new_doll import NewDoll
+from domain.entities.new_doll import NewDoll
 # from application.services.scheduler_service import SchedulerService
 from infrastructure.config.logs_config import log_api_decorator
 from infrastructure.config.fastapi_app_config import app

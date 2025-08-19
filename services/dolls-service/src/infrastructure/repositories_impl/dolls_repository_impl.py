@@ -1,12 +1,10 @@
 from application.repositories.dolls_repository import DollsRepository
-from domain.doll import Doll
-from domain.new_doll import NewDoll
+from domain.entities.doll import Doll
+from domain.entities.new_doll import NewDoll
 from infrastructure.db.base import async_engine
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete, text, update, func, cast
-from sqlalchemy.dialects.postgresql import JSONB
-from datetime import datetime, timezone
+from sqlalchemy import select
 
 from infrastructure.db.models.dolls_orm import DollsORM
 
