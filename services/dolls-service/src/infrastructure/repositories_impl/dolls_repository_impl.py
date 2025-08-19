@@ -1,5 +1,5 @@
 from application.repositories.dolls_repository import DollsRepository
-from domain.entities.doll import Doll
+from domain.entities.dolls.doll import Doll
 from domain.entities.new_doll import NewDoll
 from infrastructure.db.base import async_engine
 
