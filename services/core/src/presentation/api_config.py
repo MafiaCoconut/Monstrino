@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 
-from infrastructure.api.endpoints import users_api, auth_api
-from infrastructure.api import cors
-from infrastructure.api.responces.exceptions import rewrite_http_exception_response
+from presentation.endpoints import users_api, auth_api
+from presentation import cors
+from presentation.responces.exceptions import rewrite_http_exception_response
 
 
 def configure_endpoints(app: FastAPI):

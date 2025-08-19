@@ -3,8 +3,7 @@ import logging
 from application.services.users_service import UsersService
 from application.use_cases.auth.jwt_refresh_use_case import JwtRefreshUseCase
 from application.use_cases.auth.jwt_use_case import JwtUseCase
-from domain.user import UserRegistration, User, UserBaseInfo, UserLogin
-from infrastructure.config.logs_config import log_decorator
+from domain.entities.user import UserRegistration
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +19,6 @@ class AuthService:
             users_service=users_service,
         )
 
-    @log_decorator()
     async def registration(self, user: UserRegistration) -> dict | None:
         result = await self.users_service.register_new_user(user=user)
         logger.info(f"Result of registration of new user: {result}")
@@ -55,10 +53,8 @@ class AuthService:
         return tokens
 
 
-    @log_decorator()
     async def refresh(self, refresh_token: str) -> dict:
         return await self.jwt_refresh_use_case.refresh(refresh_token=refresh_token)
 
-    @log_decorator()
     async def status(self, access_token: str) -> bool:
         return await self.jwt_refresh_use_case.status(access_token=access_token)

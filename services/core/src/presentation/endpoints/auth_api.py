@@ -1,32 +1,23 @@
-from typing import Annotated
-
-
 import logging
 
-from fastapi.security import OAuth2PasswordBearer
-from icecream import ic
-
 from application.services.auth_service import AuthService
-from application.services.core_service import CoreService
-from application.services.users_service import UsersService
 from application.use_cases.auth.fastapi_jwt_bearer import JWTBearer
 
-from domain.user import UserRegistration, UserLogin
-from infrastructure.api.responces.auth_responces.responses import RegistrationResponse, LoginResponse, RefreshResponse, \
+from domain.entities.user import UserRegistration, UserLogin
+from presentation.deps import get_auth_service
+from presentation.responces.auth_responces.responses import RegistrationResponse, LoginResponse, RefreshResponse, \
     StatusResponse
-from infrastructure.api.responces.templates import get_success_json_response
+from presentation.responces.templates import get_success_json_response
 from infrastructure.config.jwt_config import REFRESH_TOKEN_COOKIE_NAME
-from infrastructure.config.logs_config import log_api_decorator
-from infrastructure.api.responces.default_codes import return_validation_error_status_code, \
+from presentation.responces.default_codes import return_validation_error_status_code, \
     return_item_not_found_status_code, \
     return_created_status_code, return_internal_server_error_status_code, \
     return_unauthorized_found_status_code, return_conflict_error_status_code
-from infrastructure.api.responces.default_codes import responses as default_responses
-from infrastructure.config.services_config import get_auth_service
+from presentation.responces.default_codes import responses as default_responses
 
-from fastapi import APIRouter, Response, BackgroundTasks, FastAPI, Cookie, Request
+from fastapi import APIRouter, Response, BackgroundTasks, FastAPI, Request
 from fastapi.params import Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPBearer
 
 auth_scheme = HTTPBearer()
 private = APIRouter(prefix='/api/v1/auth', tags=["Auth"], dependencies=[Depends(JWTBearer())])

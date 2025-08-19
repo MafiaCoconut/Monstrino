@@ -21,7 +21,6 @@ cors.config(app=app)
 async def lifespan(app: FastAPI):
     logger.info('Starting core-service')
     app.state.container = build_app()
-    logs_config.config()
     api_config.config(app=app)
     # ic(await scheduler_service.get_all_jobs())
     yield

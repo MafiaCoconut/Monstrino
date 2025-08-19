@@ -1,6 +1,6 @@
 from application.gateways.user_gateway import UsersGateway
 from application.use_cases.users_provider_use_case import UsersProviderUseCase
-from domain.user import UserRegistration, UserBaseInfo, UserLogin
+from domain.entities.user import UserRegistration, UserBaseInfo, UserLogin
 
 
 class UsersService:

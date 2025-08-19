@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from domain.user import UserRegistration, UserLogin, UserBaseInfo
+from domain.entities.user import UserRegistration, UserLogin, UserBaseInfo
 
 
 class UsersGateway(ABC):

@@ -1,6 +1,4 @@
-from watchfiles import awatch
-
-from domain.user import User, UserRegistration
+from domain.entities.user import UserRegistration
 import re
 
 from application.exceptions.invalid_user_data import InvalidUserData

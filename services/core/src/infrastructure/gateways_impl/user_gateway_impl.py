@@ -3,12 +3,9 @@ import logging
 import aiohttp
 import os
 import dotenv
-from icecream import ic
-from pydantic import ValidationError
 
 from application.gateways.user_gateway import UsersGateway
-from domain.user import UserRegistration, UserBaseInfo, UserLogin
-from infrastructure.config.logs_config import log_decorator
+from domain.entities.user import UserRegistration, UserBaseInfo, UserLogin
 
 dotenv.load_dotenv()
 logger = logging.getLogger(__name__)
@@ -46,7 +43,6 @@ class UsersGatewayImpl(UsersGateway):
     async def get_user_by_username(self, username: str):
         pass
 
-    @log_decorator()
     async def set_refresh_token(self, user_id: int, refresh_token: str, ip: str) -> None:
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -62,7 +58,6 @@ class UsersGatewayImpl(UsersGateway):
                         return None
                 return None
 
-    @log_decorator()
     async def update_refresh_token(self, user_id: int, refresh_token: str, ip: str) -> None:
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -80,7 +75,6 @@ class UsersGatewayImpl(UsersGateway):
                         return None
                 return None
 
-    @log_decorator()
     async def login(self, user: UserLogin) -> UserBaseInfo | None:
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -97,7 +91,6 @@ class UsersGatewayImpl(UsersGateway):
                 return None
                 # raise ValidationError(result)
 
-    @log_decorator()
     async def check_refresh_token(self, refresh_token: str) -> bool | None:
         async with aiohttp.ClientSession() as session:
             async with session.get(
