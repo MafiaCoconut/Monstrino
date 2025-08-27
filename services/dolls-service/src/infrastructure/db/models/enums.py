@@ -1,12 +1,5 @@
 from enum import Enum
 
-class ReleaseStatus(str, Enum):
-    rumored = "rumored"
-    announced = "announced"
-    released = "released"
-    retired = "retired"
-    cancelled = "cancelled"
-
 
 class RelationType(str, Enum):
     bundle_includes    = "bundle_includes"

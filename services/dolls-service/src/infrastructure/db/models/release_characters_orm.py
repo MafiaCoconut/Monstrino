@@ -8,9 +8,9 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from infrastructure.db.base import Base
-from infrastructure.db.models.characters_orm import CharactersORM
+from infrastructure.db.models.original_mh_characters_orm import OriginalMHCharactersORM
 from infrastructure.db.models.enums import CharacterRole
-from infrastructure.db.models.releases_orm import ReleasesORM
+from infrastructure.db.models.dolls_releases_orm import DollsReleasesORM
 
 
 class ReleaseCharactersORM(Base):
@@ -20,14 +20,15 @@ class ReleaseCharactersORM(Base):
         Index("ix_rc_character_role", "character_id", "role"),
     )
 
-    release_id: Mapped[int] = mapped_column(ForeignKey("releases.id"), primary_key=True)
-    character_id: Mapped[int] = mapped_column(ForeignKey("characters.id"), primary_key=True)
+    release_id: Mapped[int] = mapped_column(ForeignKey("dolls_releases.id"), primary_key=True)
+    character_id: Mapped[int] = mapped_column(ForeignKey("original_mh_characters.id"), primary_key=True)
     role: Mapped[CharacterRole] = mapped_column(SAEnum(CharacterRole), default=CharacterRole.primary, nullable=False)
     position: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
-    # relationships:
-    release: Mapped[ReleasesORM] = relationship(back_populates="character_links")
-    character: Mapped[CharactersORM] = relationship()
-
     updated_at: Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"), onupdate=text("TIMEZONE('utc', now())"), nullable=True)
     created_at: Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"))
+
+    # relationships:
+    release: Mapped["DollsReleasesORM"] = relationship(back_populates="character_links")
+    character: Mapped["OriginalMHCharactersORM"] = relationship()
+
