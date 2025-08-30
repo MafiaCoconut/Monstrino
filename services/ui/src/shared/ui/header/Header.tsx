@@ -1,98 +1,190 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import {
+  AppBar,
+  Toolbar,
+  Container,
+  Box,
+  Typography,
+  Stack,
+  Button,
+  IconButton,
+  Collapse,
+  Divider,
+} from '@mui/material';
+import { alpha } from '@mui/material/styles';
 
 const Header = (props: any) => {
-    const { 
-        onOpenAuth = ""
-    } = props;
+  const { onOpenAuth = "" } = props;
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const C = {
+    black: '#0a0a0a',
+    white: '#ffffff',
+    purple: '#8b5fbf',
+    pink: '#ff69b4',
+  };
 
-    return (
-    <header className="fixed top-0 w-full bg-monstrino-black/90 backdrop-blur-md border-b border-monstrino-purple/20 z-50">
-        <div className="container mx-auto px-4 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-20">
-            {/* Logo */}
-            <div className="flex items-center space-x-2">
-            <div className="text-2xl lg:text-3xl font-display font-bold text-monstrino-pink">
-                MONSTRINO
-            </div>
-            <div className="hidden sm:block text-sm text-monstrino-purple font-mono tracking-wide">
-                MONSTER HIGH SOCIAL
-            </div>
-            </div>
+  const linkSX = {
+    color: C.pink,
+    fontFamily: 'Inter, sans-serif',
+    textTransform: 'none',
+    fontSize: 14,
+    '&:hover': { color: C.white, backgroundColor: 'transparent' },
+  };
 
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="nav-link text-monstrino-pink hover:text-monstrino-white transition-colors duration-150">
-                Features
-            </a>
-            <a href="#community" className="nav-link text-monstrino-pink hover:text-monstrino-white transition-colors duration-150">
-                Community
-            </a>
-            <a href="#about" className="nav-link text-monstrino-pink hover:text-monstrino-white transition-colors duration-150">
-                About
-            </a>
-            </nav>
+  const ctaSX = {
+    borderRadius: 999,
+    px: 3,
+    py: 1,
+    fontFamily: 'Fira Code, monospace',
+    fontSize: 12,
+    letterSpacing: '0.09em',
+    textTransform: 'uppercase',
+    bgcolor: C.purple,
+    color: C.white,
+    border: `1px solid ${C.purple}`,
+    '&:hover': { bgcolor: alpha(C.purple, 0.9), borderColor: C.purple },
+  };
 
-            {/* Desktop Auth Buttons */}
-            <div className="hidden md:flex items-center space-x-4">
-            <button
-                onClick={() => onOpenAuth('login')}
-                className="nav-link text-monstrino-pink hover:text-monstrino-white transition-colors duration-150"
+  return (
+    <AppBar
+      position="fixed"
+      elevation={0}
+      sx={{
+        top: 0,
+        bgcolor: alpha(C.black, 0.9),
+        color: C.white,
+        backdropFilter: 'blur(8px)',
+        borderBottom: `1px solid ${alpha(C.purple, 0.2)}`,
+        zIndex: (t) => t.zIndex.appBar,
+      }}
+    >
+      <Container maxWidth="lg">
+        <Toolbar sx={{ height: { xs: 64, lg: 80 }, px: { xs: 0 } }}>
+          {/* Logo */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography
+              sx={{
+                fontFamily: 'Inter, Helvetica Neue, Arial, sans-serif',
+                fontWeight: 800,
+                textTransform: 'uppercase',
+                letterSpacing: '-0.02em',
+                color: C.pink,
+                fontSize: { xs: '1.25rem', lg: '1.5rem' },
+                lineHeight: 1,
+              }}
             >
-                Login
-            </button>
-            <button
-                onClick={() => onOpenAuth('register')}
-                className="cta-button bg-monstrino-purple hover:bg-monstrino-purple/90 text-monstrino-white border-monstrino-purple px-6 py-2 rounded-full font-mono text-xs uppercase tracking-wide transition-all duration-300"
+              MONSTRINO
+            </Typography>
+            <Typography
+              sx={{
+                display: { xs: 'none', sm: 'block' },
+                fontFamily: 'Fira Code, monospace',
+                color: C.purple,
+                letterSpacing: '0.1em',
+                fontSize: 12,
+              }}
             >
-                Join Now
-            </button>
-            </div>
+              MONSTER HIGH SOCIAL
+            </Typography>
+          </Box>
 
-            {/* Mobile Menu Button */}
-            <button
+          <Box sx={{ flex: 1 }} />
+
+          {/* Desktop Navigation */}
+          <Stack
+            direction="row"
+            spacing={3}
+            alignItems="center"
+            sx={{ display: { xs: 'none', md: 'flex' } }}
+          >
+            <Button component="a" href="#features" sx={linkSX}>
+              Features
+            </Button>
+            <Button component="a" href="#community" sx={linkSX}>
+              Community
+            </Button>
+            <Button component="a" href="#about" sx={linkSX}>
+              About
+            </Button>
+          </Stack>
+
+          {/* Desktop Auth Buttons */}
+          <Stack
+            direction="row"
+            spacing={1.5}
+            alignItems="center"
+            sx={{ display: { xs: 'none', md: 'flex' }, ml: 3 }}
+          >
+            <Button
+              onClick={() => onOpenAuth && onOpenAuth('login')}
+              sx={linkSX}
+            >
+              Login
+            </Button>
+            <Button
+              onClick={() => onOpenAuth && onOpenAuth('register')}
+              sx={ctaSX}
+            >
+              Join Now
+            </Button>
+          </Stack>
+
+          {/* Mobile Menu Button */}
+          <IconButton
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-monstrino-pink hover:text-monstrino-white transition-colors duration-150"
-            >
+            sx={{
+              display: { xs: 'inline-flex', md: 'none' },
+              ml: 1,
+              color: C.pink,
+              '&:hover': { color: C.white },
+            }}
+          >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-        </div>
+          </IconButton>
+        </Toolbar>
+      </Container>
 
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-            <div className="md:hidden border-t border-monstrino-purple/20 py-4">
-            <nav className="flex flex-col space-y-4">
-                <a href="#features" className="nav-link text-monstrino-pink hover:text-monstrino-white transition-colors duration-150">
+      {/* Mobile Menu */}
+      <Collapse in={isMobileMenuOpen} unmountOnExit timeout={200}>
+        <Container maxWidth="lg" sx={{ display: { md: 'none' } }}>
+          <Box
+            sx={{
+              borderTop: `1px solid ${alpha(C.purple, 0.2)}`,
+              py: 2,
+            }}
+          >
+            <Stack component="nav" spacing={1.5}>
+              <Button component="a" href="#features" sx={{ ...linkSX, justifyContent: 'flex-start' }}>
                 Features
-                </a>
-                <a href="#community" className="nav-link text-monstrino-pink hover:text-monstrino-white transition-colors duration-150">
+              </Button>
+              <Button component="a" href="#community" sx={{ ...linkSX, justifyContent: 'flex-start' }}>
                 Community
-                </a>
-                <a href="#about" className="nav-link text-monstrino-pink hover:text-monstrino-white transition-colors duration-150">
+              </Button>
+              <Button component="a" href="#about" sx={{ ...linkSX, justifyContent: 'flex-start' }}>
                 About
-                </a>
-                <div className="flex flex-col space-y-2 pt-4 border-t border-monstrino-purple/20">
-                <button
-                    onClick={() => onOpenAuth('login')}
-                    className="nav-link text-monstrino-pink hover:text-monstrino-white text-left transition-colors duration-150"
-                >
-                  Login
-                </button>
-                <button
-                  onClick={() => onOpenAuth('register')}
-                  className="cta-button bg-monstrino-purple hover:bg-monstrino-purple/90 text-monstrino-white border-monstrino-purple px-6 py-2 rounded-full font-mono text-xs uppercase tracking-wide transition-all duration-300 self-start"
-                >
-                  Join Now
-                </button>
-              </div>
-            </nav>
-          </div>
-        )}
-      </div>
-    </header>
+              </Button>
+
+              <Divider sx={{ my: 1.5, borderColor: alpha(C.purple, 0.2) }} />
+
+              <Button
+                onClick={() => onOpenAuth && onOpenAuth('login')}
+                sx={{ ...linkSX, justifyContent: 'flex-start' }}
+              >
+                Login
+              </Button>
+              <Button
+                onClick={() => onOpenAuth && onOpenAuth('register')}
+                sx={{ ...ctaSX, alignSelf: 'flex-start' }}
+              >
+                Join Now
+              </Button>
+            </Stack>
+          </Box>
+        </Container>
+      </Collapse>
+    </AppBar>
   );
 };
 

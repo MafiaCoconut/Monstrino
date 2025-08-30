@@ -1,5 +1,21 @@
 import React, { useState } from 'react';
 import { X, Eye, EyeOff, User, Mail, Lock } from 'lucide-react';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  IconButton,
+  Box,
+  Stack,
+  Typography,
+  TextField,
+  InputAdornment,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Link,
+} from '@mui/material';
+import { alpha } from '@mui/material/styles';
 
 const AuthModal = ({ isOpen, onClose, mode }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -11,6 +27,13 @@ const AuthModal = ({ isOpen, onClose, mode }) => {
     agreeToTerms: false
   });
 
+  const C = {
+    black: '#0a0a0a',
+    white: '#ffffff',
+    purple: '#8b5fbf',
+    pink: '#ff69b4',
+  };
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -21,13 +44,11 @@ const AuthModal = ({ isOpen, onClose, mode }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Mock authentication logic
     console.log(`${mode} attempt:`, formData);
-    
-    // Simulate successful auth
+
     setTimeout(() => {
       alert(`${mode === 'login' ? 'Login' : 'Registration'} successful! Welcome to Monstrino!`);
-      onClose();
+      onClose && onClose();
       setFormData({
         email: '',
         password: '',
@@ -38,152 +59,320 @@ const AuthModal = ({ isOpen, onClose, mode }) => {
     }, 1000);
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-monstrino-black border border-monstrino-purple/30 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl shadow-monstrino-purple/20">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-monstrino-purple/20">
-          <h2 className="text-2xl font-display font-bold text-monstrino-pink">
-            {mode === 'login' ? 'Welcome Back, Ghoul!' : 'Join the Pack!'}
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-monstrino-white/60 hover:text-monstrino-white transition-colors duration-150"
-          >
-            <X className="w-6 h-6" />
-          </button>
-        </div>
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      fullWidth
+      maxWidth="sm"
+      slotProps={{
+        backdrop: {
+          sx: {
+            backgroundColor: 'rgba(0,0,0,.8)',
+            backdropFilter: 'blur(4px)',
+          },
+        },
+      }}
+      PaperProps={{
+        sx: {
+          bgcolor: C.black,
+          color: C.white,
+          border: `1px solid ${alpha(C.purple, 0.3)}`,
+          borderRadius: 2,
+          maxHeight: '90vh',
+        },
+      }}
+    >
+      {/* Header */}
+      <DialogTitle
+        sx={{
+          borderBottom: `1px solid ${alpha(C.purple, 0.2)}`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 2,
+          py: 2,
+        }}
+      >
+        <Typography
+          sx={{
+            fontFamily: 'Inter, Helvetica Neue, Arial, sans-serif',
+            fontWeight: 800,
+            color: C.pink,
+            fontSize: { xs: '1.25rem', md: '1.5rem' },
+          }}
+        >
+          {mode === 'login' ? 'Welcome Back, Ghoul!' : 'Join the Pack!'}
+        </Typography>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {mode === 'register' && (
-            <div className="space-y-2">
-              <label className="text-monstrino-white text-sm font-mono uppercase tracking-wide">
-                Monster Name
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-monstrino-purple w-5 h-5" />
-                <input
+        <IconButton
+          onClick={onClose}
+          sx={{
+            color: alpha(C.white, 0.7),
+            '&:hover': { color: C.white },
+          }}
+        >
+          <X size={22} />
+        </IconButton>
+      </DialogTitle>
+
+      {/* Form */}
+      <DialogContent dividers sx={{ borderColor: alpha(C.purple, 0.2) }}>
+        <Box component="form" onSubmit={handleSubmit}>
+          <Stack spacing={3}>
+            {mode === 'register' && (
+              <Box>
+                <Typography
+                  sx={{
+                    fontFamily: 'Fira Code, monospace',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.1em',
+                    fontSize: 12,
+                    mb: 1,
+                    color: C.white,
+                  }}
+                >
+                  Monster Name
+                </Typography>
+                <TextField
+                  fullWidth
                   type="text"
                   name="username"
                   value={formData.username}
                   onChange={handleInputChange}
                   placeholder="Choose your monster name"
-                  className="w-full bg-monstrino-white/10 border border-monstrino-purple/30 rounded-lg pl-12 pr-4 py-3 text-monstrino-white placeholder-monstrino-white/60 focus:outline-none focus:ring-2 focus:ring-monstrino-pink focus:border-transparent"
                   required
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <User size={18} color={C.purple} />
+                      </InputAdornment>
+                    ),
+                    sx: {
+                      bgcolor: alpha(C.white, 0.1),
+                      borderRadius: 1,
+                      color: C.white,
+                      '& fieldset': { borderColor: alpha(C.purple, 0.3) },
+                      '&:hover fieldset': { borderColor: alpha(C.purple, 0.5) },
+                      '&.Mui-focused fieldset': { borderColor: C.pink },
+                      '::placeholder': { color: alpha(C.white, 0.6) },
+                    },
+                  }}
                 />
-              </div>
-            </div>
-          )}
+              </Box>
+            )}
 
-          <div className="space-y-2">
-            <label className="text-monstrino-white text-sm font-mono uppercase tracking-wide">
-              Email
-            </label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-monstrino-purple w-5 h-5" />
-              <input
+            <Box>
+              <Typography
+                sx={{
+                  fontFamily: 'Fira Code, monospace',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                  fontSize: 12,
+                  mb: 1,
+                  color: C.white,
+                }}
+              >
+                Email
+              </Typography>
+              <TextField
+                fullWidth
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="your@email.com"
-                className="w-full bg-monstrino-white/10 border border-monstrino-purple/30 rounded-lg pl-12 pr-4 py-3 text-monstrino-white placeholder-monstrino-white/60 focus:outline-none focus:ring-2 focus:ring-monstrino-pink focus:border-transparent"
                 required
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Mail size={18} color={C.purple} />
+                    </InputAdornment>
+                  ),
+                  sx: {
+                    bgcolor: alpha(C.white, 0.1),
+                    borderRadius: 1,
+                    color: C.white,
+                    '& fieldset': { borderColor: alpha(C.purple, 0.3) },
+                    '&:hover fieldset': { borderColor: alpha(C.purple, 0.5) },
+                    '&.Mui-focused fieldset': { borderColor: C.pink },
+                    '::placeholder': { color: alpha(C.white, 0.6) },
+                  },
+                }}
               />
-            </div>
-          </div>
+            </Box>
 
-          <div className="space-y-2">
-            <label className="text-monstrino-white text-sm font-mono uppercase tracking-wide">
-              Password
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-monstrino-purple w-5 h-5" />
-              <input
+            <Box>
+              <Typography
+                sx={{
+                  fontFamily: 'Fira Code, monospace',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                  fontSize: 12,
+                  mb: 1,
+                  color: C.white,
+                }}
+              >
+                Password
+              </Typography>
+              <TextField
+                fullWidth
                 type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
                 placeholder="Enter your password"
-                className="w-full bg-monstrino-white/10 border border-monstrino-purple/30 rounded-lg pl-12 pr-12 py-3 text-monstrino-white placeholder-monstrino-white/60 focus:outline-none focus:ring-2 focus:ring-monstrino-pink focus:border-transparent"
                 required
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Lock size={18} color={C.purple} />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        edge="end"
+                        onClick={() => setShowPassword(!showPassword)}
+                        sx={{ color: C.purple, '&:hover': { color: C.pink } }}
+                      >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                  sx: {
+                    bgcolor: alpha(C.white, 0.1),
+                    borderRadius: 1,
+                    color: C.white,
+                    '& fieldset': { borderColor: alpha(C.purple, 0.3) },
+                    '&:hover fieldset': { borderColor: alpha(C.purple, 0.5) },
+                    '&.Mui-focused fieldset': { borderColor: C.pink },
+                    '::placeholder': { color: alpha(C.white, 0.6) },
+                  },
+                }}
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-monstrino-purple hover:text-monstrino-pink transition-colors duration-150"
-              >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
-            </div>
-          </div>
+            </Box>
 
-          {mode === 'register' && (
-            <div className="space-y-2">
-              <label className="text-monstrino-white text-sm font-mono uppercase tracking-wide">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-monstrino-purple w-5 h-5" />
-                <input
+            {mode === 'register' && (
+              <Box>
+                <Typography
+                  sx={{
+                    fontFamily: 'Fira Code, monospace',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.1em',
+                    fontSize: 12,
+                    mb: 1,
+                    color: C.white,
+                  }}
+                >
+                  Confirm Password
+                </Typography>
+                <TextField
+                  fullWidth
                   type={showPassword ? 'text' : 'password'}
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
                   placeholder="Confirm your password"
-                  className="w-full bg-monstrino-white/10 border border-monstrino-purple/30 rounded-lg pl-12 pr-4 py-3 text-monstrino-white placeholder-monstrino-white/60 focus:outline-none focus:ring-2 focus:ring-monstrino-pink focus:border-transparent"
                   required
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Lock size={18} color={C.purple} />
+                      </InputAdornment>
+                    ),
+                    sx: {
+                      bgcolor: alpha(C.white, 0.1),
+                      borderRadius: 1,
+                      color: C.white,
+                      '& fieldset': { borderColor: alpha(C.purple, 0.3) },
+                      '&:hover fieldset': { borderColor: alpha(C.purple, 0.5) },
+                      '&.Mui-focused fieldset': { borderColor: C.pink },
+                      '::placeholder': { color: alpha(C.white, 0.6) },
+                    },
+                  }}
                 />
-              </div>
-            </div>
-          )}
+              </Box>
+            )}
 
-          {mode === 'register' && (
-            <div className="flex items-start space-x-3">
-              <input
-                type="checkbox"
-                name="agreeToTerms"
-                checked={formData.agreeToTerms}
-                onChange={handleInputChange}
-                className="mt-1 w-4 h-4 rounded border-monstrino-purple/30 text-monstrino-pink focus:ring-monstrino-pink focus:ring-2"
-                required
+            {mode === 'register' && (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="agreeToTerms"
+                    checked={formData.agreeToTerms}
+                    onChange={handleInputChange}
+                    required
+                    sx={{
+                      color: alpha(C.purple, 0.6),
+                      '&.Mui-checked': { color: C.pink },
+                    }}
+                  />
+                }
+                label={
+                  <Typography sx={{ color: alpha(C.white, 0.8), fontSize: 14 }}>
+                    I agree to the{' '}
+                    <Link href="#terms" underline="hover" sx={{ color: C.pink }}>
+                      Terms of Service
+                    </Link>{' '}
+                    and{' '}
+                    <Link href="#privacy" underline="hover" sx={{ color: C.pink }}>
+                      Privacy Policy
+                    </Link>
+                  </Typography>
+                }
+                sx={{ alignItems: 'flex-start' }}
               />
-              <label className="text-monstrino-white/80 text-sm leading-relaxed">
-                I agree to the{' '}
-                <a href="#terms" className="text-monstrino-pink hover:underline">
-                  Terms of Service
-                </a>{' '}
-                and{' '}
-                <a href="#privacy" className="text-monstrino-pink hover:underline">
-                  Privacy Policy
-                </a>
-              </label>
-            </div>
-          )}
+            )}
 
-          <button
-            type="submit"
-            className="w-full cta-button bg-monstrino-pink hover:bg-monstrino-pink/90 text-monstrino-black px-6 py-3 rounded-full font-mono text-sm uppercase tracking-wide transition-all duration-300 hover:scale-105"
-          >
-            {mode === 'login' ? 'Sign In' : 'Create Monster Profile'}
-          </button>
-
-          <div className="text-center text-monstrino-white/60 text-sm">
-            {mode === 'login' ? "Don't have an account?" : "Already a monster?"}
-            <button
-              type="button"
-              onClick={() => {/* Switch mode logic would go here */}}
-              className="text-monstrino-pink hover:underline ml-1"
+            <Button
+              type="submit"
+              fullWidth
+              sx={{
+                mt: 1,
+                borderRadius: 999,
+                px: 3,
+                py: 1.5,
+                bgcolor: C.pink,
+                color: '#0a0a0a',
+                fontFamily: 'Fira Code, monospace',
+                fontSize: 12,
+                letterSpacing: '0.09em',
+                textTransform: 'uppercase',
+                transition: 'all .3s ease',
+                '&:hover': {
+                  bgcolor: alpha(C.pink, 0.9),
+                  transform: 'scale(1.02)',
+                  boxShadow: `0 10px 24px ${alpha(C.pink, 0.25)}`,
+                },
+              }}
             >
-              {mode === 'login' ? 'Join now' : 'Sign in'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+              {mode === 'login' ? 'Sign In' : 'Create Monster Profile'}
+            </Button>
+
+            <Typography
+              sx={{ textAlign: 'center', color: alpha(C.white, 0.6), fontSize: 14 }}
+            >
+              {mode === 'login' ? "Don't have an account?" : 'Already a monster?'}
+              <Button
+                type="button"
+                onClick={() => { /* Switch mode logic would go here */ }}
+                sx={{
+                  ml: 1,
+                  p: 0,
+                  minWidth: 0,
+                  color: C.pink,
+                  textTransform: 'none',
+                  '&:hover': { textDecoration: 'underline' },
+                }}
+              >
+                {mode === 'login' ? 'Join now' : 'Sign in'}
+              </Button>
+            </Typography>
+          </Stack>
+        </Box>
+      </DialogContent>
+    </Dialog>
   );
 };
 

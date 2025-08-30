@@ -6,6 +6,7 @@ import RegisterForm from './features/auth-register/ui/RegisterForm';
 import LoginForm from './features/auth-login/ui/LoginForm';
 import { Context } from './main';
 import LandingPage from './pages/home/Homepage';
+import MonstrinoProfilePage from './pages/user/profile/UserProfile';
 
 function App() {
   const { userStore } = useContext(Context);
@@ -27,6 +28,7 @@ function App() {
       <Route path="/register" element={<RegisterForm />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="*" element={<Navigate to="/" />} />
+      <Route path="/users/-1" element={<MonstrinoProfilePage />} />
     </Routes>
   )
 

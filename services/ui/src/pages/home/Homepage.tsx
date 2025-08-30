@@ -26,13 +26,13 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-monstrino-black text-monstrino-white">
-      {/* <Header onOpenAuth={handleOpenAuth} /> */}
+      <Header onOpenAuth={handleOpenAuth} />
       <HeroSection
         onOpenAuth={handleOpenAuth}
         onSubscribe={handleSubscribe}
         isSubscribed={isSubscribed}
       />
-      {/* <FeaturesSection features={mockData.features} />
+      <FeaturesSection features={mockData.features} />
       <CTASection onOpenAuth={handleOpenAuth} />
       <Footer />
       
@@ -40,7 +40,7 @@ const LandingPage = () => {
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         mode={authMode}
-      /> */}
+      />
     </div>
   );
 };

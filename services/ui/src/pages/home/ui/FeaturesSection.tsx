@@ -1,12 +1,22 @@
 import React from 'react';
-import { 
-  Users, 
-  Heart, 
-  Zap, 
-  Calendar, 
-  ShoppingBag, 
-  MessageCircle 
+import {
+  Users,
+  Heart,
+  Zap,
+  Calendar,
+  ShoppingBag,
+  MessageCircle,
 } from 'lucide-react';
+import {
+  Box,
+  Container,
+  Grid,
+  Stack,
+  Typography,
+  Button,
+  Chip,
+} from '@mui/material';
+import { alpha, keyframes } from '@mui/material/styles';
 
 const iconMap = {
   Users,
@@ -14,89 +24,213 @@ const iconMap = {
   Zap,
   Calendar,
   ShoppingBag,
-  MessageCircle
+  MessageCircle,
+};
+
+const C = {
+  black: '#0a0a0a',
+  white: '#ffffff',
+  purple: '#8b5fbf',
+  pink: '#ff69b4',
+  blue: '#4a90e2',
+  green: '#66cc66',
+  yellow: '#ffd93d',
+  orange: '#ff8c42',
 };
 
 const FeatureCard = ({ feature }) => {
   const Icon = iconMap[feature.icon];
-  
-  const bgColorClasses = {
-    'mid-purple': 'bg-monstrino-purple text-monstrino-white',
-    'light-pink': 'bg-monstrino-pink text-monstrino-black',
-    'light-yellow': 'bg-monstrino-yellow text-monstrino-black',
-    'mid-blue': 'bg-monstrino-blue text-monstrino-white',
-    'mid-green': 'bg-monstrino-green text-monstrino-white',
-    'mid-orange': 'bg-monstrino-orange text-monstrino-white'
+
+  const bgStyleMap = {
+    'mid-purple': { bg: C.purple, fg: C.white, chipBg: alpha(C.white, 0.15) },
+    'light-pink': { bg: C.pink, fg: '#0a0a0a', chipBg: alpha('#000', 0.2) },
+    'light-yellow': { bg: C.yellow, fg: '#0a0a0a', chipBg: alpha('#000', 0.2) },
+    'mid-blue': { bg: C.blue, fg: C.white, chipBg: alpha(C.white, 0.15) },
+    'mid-green': { bg: C.green, fg: C.white, chipBg: alpha(C.white, 0.15) },
+    'mid-orange': { bg: C.orange, fg: C.white, chipBg: alpha(C.white, 0.15) },
   };
 
+  const palette =
+    bgStyleMap[feature.bgColor] || { bg: C.pink, fg: '#0a0a0a', chipBg: alpha('#000', 0.2) };
+
   return (
-    <div className={`project-card ${bgColorClasses[feature.bgColor] || 'bg-monstrino-pink text-monstrino-black'} rounded-lg p-6 h-full transition-all duration-300 hover:scale-105 hover:shadow-xl`}>
-      <div className="flex items-center mb-4">
-        {Icon && <Icon className="w-8 h-8 mr-3" />}
-        <h3 className="card-heading text-xl font-semibold">{feature.title}</h3>
-      </div>
-      
-      <p className="body-medium mb-6 opacity-80 leading-relaxed">
-        {feature.description}
-      </p>
-      
-      <div className="flex flex-wrap gap-2 mt-auto">
-        {feature.tags.map((tag, index) => (
-          <span 
-            key={index}
-            className="service-button bg-black/20 text-current px-3 py-1 rounded-full font-mono text-xs uppercase tracking-wide"
+    <Box
+      sx={{
+        bgcolor: palette.bg,
+        color: palette.fg,
+        borderRadius: 2,
+        p: 3,
+        minHeight: 300,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        transition: 'transform .2s ease, box-shadow .2s ease',
+        cursor: 'pointer',
+        overflow: 'hidden',
+        '&:hover': {
+          transform: 'translateY(-4px) scale(1.02)',
+          boxShadow: '0 12px 32px rgba(0,0,0,.35)',
+        },
+      }}
+    >
+      <Box>
+        <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 1.5 }}>
+          {Icon && <Icon size={32} />}
+          <Typography
+            sx={{
+              fontFamily: 'Inter, Helvetica Neue, Arial, sans-serif',
+              fontWeight: 600,
+              fontSize: '1.25rem',
+              lineHeight: 1.375,
+            }}
           >
-            {tag}
-          </span>
+            {feature.title}
+          </Typography>
+        </Stack>
+
+        <Typography
+          sx={{
+            opacity: 0.85,
+            lineHeight: 1.6,
+            mb: 2.5,
+            fontSize: '1rem',
+          }}
+        >
+          {feature.description}
+        </Typography>
+      </Box>
+
+      <Stack direction="row" flexWrap="wrap" gap={1}>
+        {feature.tags.map((tag, index) => (
+          <Chip
+            key={index}
+            label={tag}
+            sx={{
+              bgcolor: palette.chipBg,
+              color: 'inherit',
+              borderRadius: 999,
+              fontFamily: 'Fira Code, Menlo, Monaco, Consolas, monospace',
+              fontSize: 11,
+              letterSpacing: '0.09em',
+              textTransform: 'uppercase',
+              px: 1.5,
+            }}
+          />
         ))}
-      </div>
-    </div>
+      </Stack>
+    </Box>
   );
 };
 
+const slideInUp = keyframes`
+  0% { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+`;
+
 const FeaturesSection = ({ features }) => {
   return (
-    <section id="features" className="py-16 lg:py-24 bg-monstrino-black">
-      <div className="container mx-auto px-4 lg:px-8">
+    <Box component="section" id="features" sx={{ py: { xs: 8, lg: 12 }, bgcolor: C.black }}>
+      <Container maxWidth="lg">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="section-heading text-4xl md:text-5xl lg:text-6xl font-display font-bold text-monstrino-pink mb-6">
+        <Box sx={{ textAlign: 'center', mb: 6 }}>
+          <Typography
+            sx={{
+              fontFamily: 'Inter, Helvetica Neue, Arial, sans-serif',
+              fontWeight: 800,
+              textTransform: 'uppercase',
+              letterSpacing: '-0.02em',
+              color: C.pink,
+              fontSize: { xs: '2.25rem', md: '3rem', lg: '3.75rem' },
+              mb: 1.5,
+            }}
+          >
             Freaky Features
-          </h2>
-          <p className="body-large text-xl text-monstrino-white/80 max-w-2xl mx-auto">
+          </Typography>
+
+          <Typography
+            sx={{
+              color: alpha(C.white, 0.8),
+              maxWidth: 720,
+              mx: 'auto',
+              fontSize: { xs: '1.1rem', md: '1.25rem' },
+              lineHeight: 1.6,
+            }}
+          >
             Discover all the clawsome ways to connect, share, and embrace your monster side
-          </p>
-        </div>
+          </Typography>
+        </Box>
 
         {/* Features Grid */}
-        <div className="portfolio-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        <Grid container spacing={{ xs: 2, md: 3 }}>
           {features.map((feature, index) => (
-            <div 
+            <Grid
               key={feature.id}
-              className="stagger-item"
-              style={{ animationDelay: `${index * 0.1}s` }}
+              item
+              xs={12}
+              md={6}
+              lg={4}
+              sx={{
+                animation: `${slideInUp} .5s ease-out forwards`,
+                opacity: 0,
+                animationDelay: `${index * 0.1}s`,
+              }}
             >
               <FeatureCard feature={feature} />
-            </div>
+            </Grid>
           ))}
-        </div>
+        </Grid>
 
         {/* Additional CTA */}
-        <div className="text-center mt-16">
-          <p className="text-monstrino-white/60 mb-6">
+        <Box sx={{ textAlign: 'center', mt: 8 }}>
+          <Typography sx={{ color: alpha(C.white, 0.6), mb: 2 }}>
             Ready to unleash your inner monster?
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="cta-button bg-monstrino-pink hover:bg-monstrino-pink/90 text-monstrino-black px-8 py-3 rounded-full font-mono text-sm uppercase tracking-wide transition-all duration-300 hover:scale-105">
+          </Typography>
+
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
+            <Button
+              sx={{
+                px: 4,
+                py: 1.25,
+                borderRadius: 999,
+                bgcolor: C.pink,
+                color: C.black,
+                fontFamily: 'Fira Code, monospace',
+                fontSize: 12,
+                letterSpacing: '0.09em',
+                textTransform: 'uppercase',
+                transition: 'all .3s ease',
+                '&:hover': {
+                  bgcolor: alpha(C.pink, 0.9),
+                  transform: 'scale(1.03)',
+                  boxShadow: `0 16px 32px ${alpha(C.pink, 0.25)}`,
+                },
+              }}
+            >
               Explore Features
-            </button>
-            <button className="cta-button bg-transparent hover:bg-monstrino-white/10 text-monstrino-white border border-monstrino-white px-8 py-3 rounded-full font-mono text-sm uppercase tracking-wide transition-all duration-300">
+            </Button>
+
+            <Button
+              variant="outlined"
+              sx={{
+                px: 4,
+                py: 1.25,
+                borderRadius: 999,
+                color: C.white,
+                borderColor: C.white,
+                fontFamily: 'Fira Code, monospace',
+                fontSize: 12,
+                letterSpacing: '0.09em',
+                textTransform: 'uppercase',
+                transition: 'all .3s ease',
+                '&:hover': { bgcolor: alpha(C.white, 0.1), borderColor: C.white },
+              }}
+            >
               Watch Demo
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
+            </Button>
+          </Stack>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 
