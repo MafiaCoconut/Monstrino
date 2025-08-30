@@ -17,6 +17,7 @@
     "axios": "^1.8.4",
     "i18next": "^25.3.2",
     "i18next-http-backend": "^3.0.2",
+    "lucide-react": "^0.542.0",
     "mobx": "^6.13.7",
     "mobx-react-lite": "^4.1.0",
     "react": "^19.0.0",

@@ -1,9 +1,8 @@
 import { makeAutoObservable } from "mobx";
-import AuthService from "../services/AuthService";
-import { IUser } from "../../../models/IUser";
-import { UserBaseInfo } from "../../../models/userModels/UserBaseInfo";
 import { AxiosResponse } from "axios";
-import { UserRegistrationResponse } from "../api/responses/UserRegistrationResponse";
+import AuthService from "../../shared/api/AuthService";
+import { UserRegistrationResponse } from "../../shared/api/responses/UserRegistrationResponse";
+import { UserBaseInfo } from "./types";
 
 export default class UserStore {
     user = {} as UserBaseInfo;
@@ -47,11 +46,11 @@ export default class UserStore {
                     console.log("User:")
                     console.log(this.user);
                     return true;
-                    // break;
+                // break;
                 case 401:
                     console.log("Login failed");
                     return false;
-                    // break;
+                // break;
             };
 
         } catch (e: any) {
@@ -61,7 +60,7 @@ export default class UserStore {
         return false;
     }
 
-    async registration(username: string, email: string, password: string): Promise<AxiosResponse<UserRegistrationResponse>> { 
+    async registration(username: string, email: string, password: string): Promise<AxiosResponse<UserRegistrationResponse>> {
         console.log("start registration")
         try {
             const response = await AuthService.registration(username, email, password);
@@ -85,10 +84,10 @@ export default class UserStore {
         }
     }
 
-    async checkAuth(){
+    async checkAuth() {
         console.log(this.accessToken)
         console.log(this.isAuth)
-        
+
         console.log("start refresh")
         try {
             await AuthService.status();

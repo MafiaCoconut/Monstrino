@@ -3,9 +3,9 @@ import App from './App.tsx'
 import React, { createContext } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import UserStore from './modules/Auth/store/UserStore.ts';
-import { createApi } from './modules/Auth/api/index.ts';
+import { createApi } from './shared/api/http.ts';
 import './i18n.ts';
+import UserStore from './entities/user/UserStore.ts';
 
 interface UserState {
   userStore: UserStore,

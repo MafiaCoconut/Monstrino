@@ -1,8 +1,8 @@
 import { AxiosResponse } from 'axios';
-import { AuthResponse } from '../api/responses/authResponses';
-import { LoginResponseData } from '../api/responses/LoginResponse';
-import { api } from '../../../main';
-import { UserRegistrationResponse } from '../api/responses/UserRegistrationResponse';
+import { AuthResponse } from './responses/authResponses';
+import { LoginResponseData } from './responses/LoginResponse';
+import { api } from '../../main';
+import { UserRegistrationResponse } from './responses/UserRegistrationResponse';
 
 export default class AuthService {
     static async login(email: string, password: string) {

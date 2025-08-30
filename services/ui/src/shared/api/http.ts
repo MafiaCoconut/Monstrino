@@ -1,8 +1,8 @@
 import axios, { AxiosInstance } from 'axios';
 import { AuthResponse } from './responses/authResponses';
-import { Context } from "../../../main";
-import UserStore from '../store/UserStore';
+import { Context } from "../../main";
 import { RefreshTokensResponse } from './responses/RefreshTokensResponse';
+import UserStore from '../../entities/user/UserStore';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 export const API_URL = `${BACKEND_URL}/api/v1`
@@ -11,8 +11,8 @@ console.log('API_URL: ', API_URL)
 export function createApi(userStore: UserStore): AxiosInstance {
 
     const api = axios.create({
-    baseURL: API_URL,
-    withCredentials: true,
+        baseURL: API_URL,
+        withCredentials: true,
     });
 
 
