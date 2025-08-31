@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env
+  namespace: monstrino-test
+  labels:
+    project: monstrino
+    env: test
+data:
+  MODE: "TEST"

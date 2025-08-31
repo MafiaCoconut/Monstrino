@@ -164,11 +164,7 @@ const FeaturesSection = ({ features }) => {
         <Grid container spacing={{ xs: 2, md: 3 }}>
           {features.map((feature, index) => (
             <Grid
-              key={feature.id}
-              item
-              xs={12}
-              md={6}
-              lg={4}
+              size={{ xs: 12, md: 6, lg: 4}}
               sx={{
                 animation: `${slideInUp} .5s ease-out forwards`,
                 opacity: 0,

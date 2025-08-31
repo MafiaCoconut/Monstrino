@@ -204,7 +204,7 @@ function ProfileHeader() {
       }}
     >
       <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs:12, md: 8 }}>
           <Stack direction="row" spacing={2} alignItems="center">
             <Avatar sx={{ width: 56, height: 56, bgcolor: alpha(C.pink, 0.2), color: C.pink }}>GF</Avatar>
             <Box>
@@ -215,7 +215,7 @@ function ProfileHeader() {
             </Box>
           </Stack>
         </Grid>
-        <Grid item xs={12} md={4}>
+       <Grid size={{ xs:12, md: 8 }}>
           <Stack direction="row" justifyContent={{ xs: 'flex-start', md: 'flex-end' }} spacing={3}>
             <StatChip value={12} label="Collections" />
             <StatChip value={47} label="Dolls" />
@@ -239,7 +239,7 @@ function QuickActions() {
   return (
     <Grid container spacing={2}>
       {items.map((it) => (
-        <Grid key={it.label} item xs={12} sm={6} md={3}>
+        <Grid size={{ xs:12, sm: 6, md: 3 }}>
           <Paper
             variant="outlined"
             sx={{
@@ -407,24 +407,24 @@ export default function MonstrinoProfilePage() {
         <Container maxWidth="lg">
           <Grid container spacing={2}>
             {/* Sidebar */}
-            <Grid item xs={12} md={3}>
+            <Grid size={{ xs:12, md: 3 }}>
               <SidebarNav open={sidebarOpen && !mdUp} onClose={() => setSidebarOpen(false)} />
             </Grid>
 
             {/* Main content */}
-            <Grid item xs={12} md={9}>
+            <Grid size={{ xs:12, md: 9 }}>
               <Stack spacing={2}>
                 <ProfileHeader />
 
                 <QuickActions />
 
                 <Grid container spacing={2}>
-                  <Grid item xs={12} md={7}>
+                  <Grid size={{ xs:12, md: 7 }}>
                     <Typography sx={{ fontWeight: 700, mb: 1, color: C.pink }}>Recent Posts</Typography>
                     <RecentPosts />
                   </Grid>
 
-                  <Grid item xs={12} md={5}>
+                  <Grid size={{ xs:12, md: 5 }}>
                     <FeaturedCollections />
                   </Grid>
                 </Grid>

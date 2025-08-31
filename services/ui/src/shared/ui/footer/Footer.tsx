@@ -3,13 +3,13 @@ import { Heart, Github, Twitter, Instagram, Mail } from 'lucide-react';
 import {
   Box,
   Container,
-  Grid,
   Stack,
   Typography,
   IconButton,
   Link,
   Divider,
 } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import { alpha } from '@mui/material/styles';
 
 const Footer = () => {
@@ -52,7 +52,7 @@ const Footer = () => {
       <Container maxWidth="lg" sx={{ px: { xs: 2, lg: 4 } }}>
         <Grid container spacing={{ xs: 3, md: 4, lg: 6 }}>
           {/* Brand Section */}
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs:12, md: 6 }}>
             <Stack spacing={2}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Typography
@@ -115,7 +115,7 @@ const Footer = () => {
           </Grid>
 
           {/* Quick Links */}
-          <Grid item xs={12} md={3}>
+          <Grid size={{ xs:12, md: 6 }}>
             <Typography sx={sectionTitleSX}>Quick Links</Typography>
             <Stack component="ul" spacing={1.25} sx={{ listStyle: 'none', p: 0, m: 0 }}>
               {[
@@ -134,7 +134,7 @@ const Footer = () => {
           </Grid>
 
           {/* Support */}
-          <Grid item xs={12} md={3}>
+          <Grid size={{ xs:12, md: 6 }}>
             <Typography sx={sectionTitleSX}>Support</Typography>
             <Stack component="ul" spacing={1.25} sx={{ listStyle: 'none', p: 0, m: 0 }}>
               {[

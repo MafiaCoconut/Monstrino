@@ -112,7 +112,7 @@ const CTASection = ({ onOpenAuth }) => {
             { t: '50K+', s: 'Active monsters' },
             { t: '24/7', s: 'Monster support' },
           ].map(({ t, s }) => (
-            <Grid item xs={12} md={4} key={t}>
+            <Grid size={{ xs:12, md: 4 }}>
               <Box
                 sx={{
                   bgcolor: alpha(C.white, 0.1),
