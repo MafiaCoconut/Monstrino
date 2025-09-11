@@ -1,3 +1,5 @@
+import ssl
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
@@ -6,8 +8,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+ctx = ssl.create_default_context()
+ctx.minimum_version = ssl.TLSVersion.TLSv1_3
+
+
 sync_engine = create_engine(
-    url=get_db_settings().DATABASE_URL_psycopg,
+    url=f"{get_db_settings().DATABASE_URL_psycopg}?sslmode=require",
     # echo=True,
     pool_size=10,
     max_overflow=20,
@@ -18,6 +24,7 @@ sync_engine = create_engine(
 
 async_engine = create_async_engine(
     url=get_db_settings().DATABASE_URL_asyncpg,
+    connect_args={"ssl": ctx},
     # echo=True,
     pool_size=10,
     max_overflow=20,
