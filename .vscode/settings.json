@@ -1,0 +1,12 @@
+{
+    "folder-color.pathColors": [
+        {
+            "folderPath": "Monstrino/monstrino-configurations/kubernetes/.prod/",
+            "color": "foldercolorizer.color_00cc00"
+        },
+        {
+            "folderPath": "Monstrino/monstrino-configurations/kubernetes/.prod/postgresql/momental-backup.yaml/",
+            "color": "foldercolorizer.color_006699"
+        }
+    ]
+}
