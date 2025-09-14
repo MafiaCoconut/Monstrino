@@ -22,6 +22,7 @@ import { ContactPage } from './pages/static/contact';
 import { PrivacyPage } from './pages/static/privacy';
 import { SupportPage } from './pages/static/support';
 import { TermsPage } from './pages/static/terms';
+import { UserLayout } from './layouts';
 function App() {
   const { userStore } = useContext(Context);
 
@@ -45,30 +46,22 @@ function App() {
       <Route path="collections" element={<UserCollectionsPage />} />
 
       {/* Users pages */}
-      <Route path="/users/:username">
-        {/* /users/:username */}
-        <Route index element={<MonstrinoProfilePage />} />
-        {/* /users/:username/posts */}
-        {/* <Route path="posts" element={<MonstrinoProfilePage />} /> */}
-        {/* /users/:username/collections */}
-        <Route path="collections" element={<UserCollectionsPage />} />
-        {/* /users/:username/collections/:collectionId */}
+      <Route path="/users/:username"            element={<UserLayout />}>
+        <Route index                            element={<MonstrinoProfilePage />} />
+        <Route path="posts"                     element={<MonstrinoProfilePage />} />
+        <Route path="collections"               element={<UserCollectionsPage />} />
         <Route path="collections/:collectionId" element={<CollectionPage />} />
-        {/* /users/:username/friends */}
-        <Route path="friends" element={<FriendsPage />} />
-        {/* /users/:username/groups */}
-        <Route path="groups" element={<GroupsPage />} />
-        {/* /users/:username/wishlist */}
-        <Route path="wishlist" element={<WishlistPage />} />
-
+        <Route path="friends"                   element={<FriendsPage />} />
+        <Route path="groups"                    element={<GroupsPage />} />
+        <Route path="wishlist"                  element={<WishlistPage />} />
       </Route>
 
       {/* Static pages */}
-      <Route path="/about"   element={<AboutPage   />} />
-      <Route path="/contact" element={<ContactPage />} />
-      <Route path="/privacy" element={<PrivacyPage />} />
-      <Route path="/support" element={<SupportPage />} />
-      <Route path="/terms"   element={<TermsPage   />} />
+      <Route path="/about"    element={<AboutPage   />} />
+      <Route path="/contact"  element={<ContactPage />} />
+      <Route path="/privacy"  element={<PrivacyPage />} />
+      <Route path="/support"  element={<SupportPage />} />
+      <Route path="/terms"    element={<TermsPage   />} />
       
       <Route path="/settings" element={<SettingsPage />} />
 

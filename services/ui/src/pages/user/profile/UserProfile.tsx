@@ -76,28 +76,6 @@ const UserPage = () => {
 
   return (
     <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
-      <Header />
-
-      {/* Mobile Menu Toggle */}
-      {isMobile && (
-        <IconButton
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          sx={{
-            position: 'fixed',
-            top: 70,
-            left: mobileMenuOpen ? 250 : 10, // Move button right when menu is open
-            zIndex: 1300,
-            bgcolor: 'background.paper',
-            color: 'primary.main',
-            transition: 'left 0.3s ease',
-            '&:hover': { bgcolor: 'rgba(255, 105, 180, 0.1)' }
-          }}
-        >
-          <MenuOpen sx={{ transform: mobileMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} />
-        </IconButton>
-      )}
-
-      <LeftMenu mobileOpen={mobileMenuOpen} onMobileClose={() => setMobileMenuOpen(false)} />
 
       {/* Main Content */}
       <Box
@@ -109,8 +87,14 @@ const UserPage = () => {
           minHeight: 'calc(100vh - 64px)',
           width: 'auto'
         }}
+        // sx={{ minWidth: 0, px: { xs: 2, md: 0 }, py: 3 }}
       >
-        <UserHeader userData={userData} onEditProfile={() => setIsEditProfileOpen(true)} />
+        <UserHeader 
+          data-component="UserProfile"
+          data-section="UserHeader"
+          userData={userData} 
+          onEditProfile={() => setIsEditProfileOpen(true)} 
+          />
 
         {/* Monster Status & Achievements */}
         <Paper sx={{
@@ -420,7 +404,7 @@ const UserPage = () => {
           </Grid>
         </Container>
 
-        <AppFooter />
+        {/* <AppFooter /> */}
       </Box>
 
       {/* Activity Feed Drawer */}
