@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+  		"folder-path-color.folders": [
+			// { "path": ".",              "color": "blue",    "symbol": "💻", "tooltip": "UI Root" },
+			{ "path": "src/components", "color": "green",    "symbol": "⚛", "tooltip": "Components" },
+			{ "path": "src/styles",     "color": "green",   "symbol": "🎨", "tooltip": "Styles" }
+		],
+		"workbench.colorCustomizations": {
+			"folderPathColor.blue": "#2196F3",
+			"folderPathColor.green": "#4CAF50"
+		}
+	}
+
+}

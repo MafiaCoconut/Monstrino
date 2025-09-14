@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Header from '../../shared/ui/header/Header';
+import Header from '../../widgets/headers/MainPageHeader';
 import HeroSection from './ui/HeroSection';
 import FeaturesSection from './ui/FeaturesSection';
 import CTASection from './ui/CTASection';
@@ -35,8 +35,8 @@ const LandingPage = () => {
       <FeaturesSection features={mockData.features} />
       <CTASection onOpenAuth={handleOpenAuth} />
       <Footer />
-      
-      <AuthModal 
+
+      <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         mode={authMode}

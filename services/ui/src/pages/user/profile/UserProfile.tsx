@@ -1,441 +1,436 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import {
-  AppBar,
-  Toolbar,
-  Container,
   Box,
-  Stack,
   Typography,
-  IconButton,
   Button,
   Grid,
+  Container,
+  Stack,
   Paper,
-  Avatar,
-  Divider,
   Chip,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Drawer,
+  Card,
+  CardMedia,
+  CardContent,
+  IconButton,
   useMediaQuery,
+  useTheme
 } from '@mui/material';
-import { alpha } from '@mui/material/styles';
-import {
-  Home,
-  LogOut,
-  Menu,
-  Heart,
-  MessageCircle,
-  Calendar as CalendarIcon,
-  Clock,
-  PencilLine,
-  Users,
-  MessageSquare,
-  Layers3,
-} from 'lucide-react';
+import { Edit, People, Forum, AccessTime, Settings, FavoriteOutlined, EmojiEvents, MenuOpen } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import Header from '../../../widgets/headers/AppHeader';
+import { mockUserData, mockActivities, mockAchievements } from '../../../data/mocAppData';
+import LeftMenu from '../../../widgets/LeftMenu';
+import UserHeader from '../../../widgets/headers/UserHeader';
+import AppFooter from '../../../widgets/footers/AppFooter';
+import PostCard from '../../../entities/post/ui/PostCard';
+import NewPostModal from '../../../entities/post/ui/NewPostModal';
+import ActivityFeed from '../../../widgets/activities/ActivityFeed';
+import FriendsModal from '../../../widgets/friends/FriendsModal';
+import GroupsModal from '../../../widgets/groups/GroupsModal';
+import EditUserProfileModal from '../../../widgets/EditUserProfileModal';
+import UserSettingsModal from '../../../widgets/settings/UserSettingsModal';
 
-// --- Color palette used across the page
-const C = {
-  black: '#0a0a0a',
-  white: '#ffffff',
-  purple: '#8b5fbf',
-  pink: '#ff69b4',
-  yellow: '#ffd93d',
-  green: '#66cc66',
-  blue: '#4a90e2',
-};
+const UserPage = () => {
+  const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
 
-// -------------------- HeaderBar --------------------
-function HeaderBar({ onOpenSidebar }: { onOpenSidebar: () => void }) {
-  return (
-    <AppBar
-      position="fixed"
-      elevation={0}
-      sx={{
-        bgcolor: alpha(C.black, 0.9),
-        color: C.white,
-        borderBottom: `1px solid ${alpha(C.purple, 0.25)}`,
-        backdropFilter: 'blur(8px)'
-      }}
-    >
-      <Toolbar sx={{ minHeight: { xs: 64, md: 72 } }}>
-        <Stack direction="row" alignItems="center" spacing={1} sx={{ mr: 2 }}>
-          <IconButton onClick={onOpenSidebar} sx={{ display: { md: 'none' }, color: C.pink }}>
-            <Menu size={22} />
-          </IconButton>
-          <Typography
-            sx={{
-              fontFamily: 'Inter, Helvetica Neue, Arial, sans-serif',
-              fontWeight: 800,
-              textTransform: 'uppercase',
-              letterSpacing: '-0.02em',
-              color: C.pink,
-              fontSize: { xs: '1.1rem', md: '1.35rem' },
-              lineHeight: 1,
-            }}
-          >
-            MONSTRINO
-          </Typography>
-          <Typography
-            sx={{
-              display: { xs: 'none', sm: 'block' },
-              ml: 1,
-              fontFamily: 'Fira Code, monospace',
-              color: C.purple,
-              letterSpacing: '0.12em',
-              fontSize: 12,
-            }}
-          >
-            MONSTER HIGH SOCIAL
-          </Typography>
-        </Stack>
+  const [posts, setPosts] = useState(mockUserData.posts);
+  const [userData, setUserData] = useState(mockUserData.currentUser);
+  const [collections, setCollections] = useState(mockUserData.collections);
+  const [favoriteDolls] = useState(mockUserData.dolls.slice(0, 6));
+  const [showActivityFeed, setShowActivityFeed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-        <Box sx={{ flex: 1 }} />
+  const [isWritePostModalOpen, setIsWritePostModalOpen] = useState(false);
+  const [isFriendsModalOpen, setIsFriendsModalOpen] = useState(false);
+  const [isGroupsModalOpen, setIsGroupsModalOpen] = useState(false);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-        <Stack direction="row" spacing={1} alignItems="center">
-          <Button
-            startIcon={<Home size={16} />}
-            sx={{
-              color: C.white,
-              textTransform: 'none',
-              fontSize: 14,
-              '&:hover': { color: C.pink }
-            }}
-          >
-            Home
-          </Button>
-          <Button
-            startIcon={<LogOut size={16} />}
-            sx={{
-              color: C.white,
-              textTransform: 'none',
-              fontSize: 14,
-              '&:hover': { color: C.pink }
-            }}
-          >
-            Logout
-          </Button>
-        </Stack>
-      </Toolbar>
-    </AppBar>
-  );
-}
+  const handleCreatePost = (postData) => {
+    const newPost = {
+      ...postData,
+      id: Date.now(),
+      date: new Date().toISOString(),
+      likes: 0,
+      comments: 0,
+      tags: postData.tags || []
+    };
+    setPosts([newPost, ...posts]);
+    setIsWritePostModalOpen(false);
+  };
 
-// -------------------- SidebarNav --------------------
-function SidebarNav({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const nav = [
-    { icon: <Home size={18} />, label: 'My Page', href: '#' },
-    { icon: <Layers3 size={18} />, label: 'My Collections', href: '#' },
-    { icon: <Users size={18} />, label: 'My Friends', href: '#' },
-    { icon: <MessageSquare size={18} />, label: 'My Groups', href: '#' },
-  ];
-
-  const content = (
-    <Box
-      sx={{
-        width: 260,
-        bgcolor: C.black,
-        color: C.white,
-        height: '100%',
-        borderRight: `1px solid ${alpha(C.purple, 0.2)}`,
-        pt: { xs: 1, md: 10 },
-      }}
-    >
-      <List>
-        {nav.map((item) => (
-          <ListItemButton
-            key={item.label}
-            component="a"
-            href={item.href}
-            sx={{
-              borderRadius: 2,
-              mx: 1,
-              my: 0.5,
-              color: alpha(C.white, 0.85),
-              '&:hover': { bgcolor: alpha(C.white, 0.06), color: C.pink },
-            }}
-          >
-            <ListItemIcon sx={{ color: C.pink, minWidth: 36 }}>{item.icon}</ListItemIcon>
-            <ListItemText
-              primary={item.label}
-              primaryTypographyProps={{ fontSize: 14, fontFamily: 'Inter, sans-serif' }}
-            />
-          </ListItemButton>
-        ))}
-      </List>
-    </Box>
-  );
+  const handleUpdateProfile = (newData) => {
+    setUserData({ ...userData, ...newData });
+    setIsEditProfileOpen(false);
+  };
 
   return (
-    <>
-      {/* Permanent on md+, drawer on mobile */}
-      <Box sx={{ display: { xs: 'none', md: 'block' } }}>{content}</Box>
-      <Drawer
-        open={open}
-        onClose={onClose}
-        sx={{ display: { xs: 'block', md: 'none' } }}
-        PaperProps={{ sx: { bgcolor: C.black } }}
+    <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
+      <Header />
+
+      {/* Mobile Menu Toggle */}
+      {isMobile && (
+        <IconButton
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          sx={{
+            position: 'fixed',
+            top: 70,
+            left: mobileMenuOpen ? 250 : 10, // Move button right when menu is open
+            zIndex: 1300,
+            bgcolor: 'background.paper',
+            color: 'primary.main',
+            transition: 'left 0.3s ease',
+            '&:hover': { bgcolor: 'rgba(255, 105, 180, 0.1)' }
+          }}
+        >
+          <MenuOpen sx={{ transform: mobileMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} />
+        </IconButton>
+      )}
+
+      <LeftMenu mobileOpen={mobileMenuOpen} onMobileClose={() => setMobileMenuOpen(false)} />
+
+      {/* Main Content */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          ml: { xs: 0, md: '200px', lg: '220px' },
+          mt: 8,
+          minHeight: 'calc(100vh - 64px)',
+          width: 'auto'
+        }}
       >
-        {content}
-      </Drawer>
-    </>
-  );
-}
+        <UserHeader userData={userData} onEditProfile={() => setIsEditProfileOpen(true)} />
 
-// -------------------- ProfileHeader --------------------
-function StatChip({ value, label }: { value: number | string; label: string }) {
-  return (
-    <Stack alignItems="center" spacing={0.5} sx={{ minWidth: 88 }}>
-      <Typography sx={{ color: C.pink, fontWeight: 700 }}>{value}</Typography>
-      <Typography sx={{ fontSize: 12, color: alpha(C.white, 0.7) }}>{label}</Typography>
-    </Stack>
-  );
-}
-
-function ProfileHeader() {
-  return (
-    <Paper
-      variant="outlined"
-      sx={{
-        p: 2,
-        borderColor: alpha(C.purple, 0.25),
-        bgcolor: alpha(C.white, 0.02),
-      }}
-    >
-      <Grid container spacing={2} alignItems="center">
-        <Grid size={{ xs:12, md: 8 }}>
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Avatar sx={{ width: 56, height: 56, bgcolor: alpha(C.pink, 0.2), color: C.pink }}>GF</Avatar>
-            <Box>
-              <Typography sx={{ fontWeight: 700 }}>GhoulishFashionista</Typography>
-              <Typography sx={{ color: alpha(C.white, 0.75), mt: 0.5 }}>
-                Living my best afterlife! 💖 Fashion lover, vampire extraordinaire, and collector of all things pink and fabulous!
+        {/* Monster Status & Achievements */}
+        <Paper sx={{
+          m: { xs: 1, md: 2 },
+          p: { xs: 1.5, md: 2 },
+          bgcolor: 'rgba(139, 95, 191, 0.1)'
+        }}>
+          <Grid container spacing={2} alignItems="center">
+            <Grid size={{ xs: 12, lg: 6 }}>
+              <Typography variant="h6" sx={{ color: 'primary.main', mb: 1, fontSize: { xs: '1rem', md: '1.25rem' } }}>
+                Monster Status
               </Typography>
-            </Box>
-          </Stack>
-        </Grid>
-       <Grid size={{ xs:12, md: 8 }}>
-          <Stack direction="row" justifyContent={{ xs: 'flex-start', md: 'flex-end' }} spacing={3}>
-            <StatChip value={12} label="Collections" />
-            <StatChip value={47} label="Dolls" />
-            <StatChip value={23} label="Friends" />
-          </Stack>
-        </Grid>
-      </Grid>
-    </Paper>
-  );
-}
+              <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                <Chip label="Vampire Crew" color="primary" size="small" />
+                <Chip label="Active" color="success" size="small" />
+                <Chip label="Level 15" color="secondary" size="small" />
+              </Stack>
+            </Grid>
+            <Grid size={{ xs: 12, lg: 5 }}>
+              <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+                <EmojiEvents sx={{ color: 'warning.main' }} />
+                <Typography variant="h6" sx={{ color: 'warning.main', fontSize: { xs: '1rem', md: '1.25rem' } }}>
+                  Achievements
+                </Typography>
+              </Stack>
+              <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                {mockAchievements.slice(0, isMobile ? 2 : 3).map((achievement) => (
+                  <Chip
+                    key={achievement.id}
+                    label={achievement.name}
+                    size="small"
+                    sx={{
+                      bgcolor: achievement.color,
+                      color: 'white',
+                      fontSize: { xs: '0.65rem', md: '0.75rem' }
+                    }}
+                    onClick={() => navigate('/achievements')}
+                  />
+                ))}
+                <Button
+                  variant="text"
+                  size="small"
+                  onClick={() => navigate('/achievements')}
+                  sx={{ color: 'warning.main', fontSize: '0.7rem', minWidth: 'auto', p: 0.5 }}
+                >
+                  View All
+                </Button>
+              </Stack>
+            </Grid>
+            <Grid size={{ xs: 12, lg: 1 }} sx={{ textAlign: 'right' }}>
+              <IconButton onClick={() => setIsSettingsOpen(true)} sx={{ color: 'primary.main' }} size="small">
+                <Settings />
+              </IconButton>
+            </Grid>
+          </Grid>
+        </Paper>
 
-// -------------------- QuickActions --------------------
-function QuickActions() {
-  const items = [
-    { icon: <PencilLine size={20} />, label: 'Write Post' },
-    { icon: <Users size={20} />, label: 'Friends' },
-    { icon: <MessageSquare size={20} />, label: 'Messages' },
-    { icon: <Clock size={20} />, label: 'Hours' },
-  ];
+        <Container maxWidth={false} sx={{ py: { xs: 1, md: 2 }, px: { xs: 1, md: 3 }, maxWidth: 'none', width: '100%' }}>
+          {/* Action Buttons */}
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ mb: 2, flexWrap: 'wrap', gap: 1 }}
+            useFlexGap
+          >
+            <Button
+              variant="outlined"
+              startIcon={<People />}
+              onClick={() => setIsFriendsModalOpen(true)}
+              size={isMobile ? "small" : "medium"}
+              sx={{ minWidth: { xs: 'auto', md: 120 } }}
+            >
+              {isMobile ? '' : 'Friends'}
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<Forum />}
+              onClick={() => setIsGroupsModalOpen(true)}
+              size={isMobile ? "small" : "medium"}
+              sx={{ minWidth: { xs: 'auto', md: 120 } }}
+            >
+              {isMobile ? '' : 'Groups'}
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<AccessTime />}
+              size={isMobile ? "small" : "medium"}
+              sx={{ minWidth: { xs: 'auto', md: 120 } }}
+            >
+              {isMobile ? '' : 'Hours'}
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => setShowActivityFeed(true)}
+              size={isMobile ? "small" : "medium"}
+              sx={{
+                bgcolor: 'secondary.main',
+                minWidth: { xs: 'auto', md: 140 },
+                fontSize: { xs: '0.7rem', md: '0.875rem' }
+              }}
+            >
+              Activity Feed
+            </Button>
+          </Stack>
 
-  return (
-    <Grid container spacing={2}>
-      {items.map((it) => (
-        <Grid size={{ xs:12, sm: 6, md: 3 }}>
-          <Paper
-            variant="outlined"
-            sx={{
-              p: 2,
-              borderColor: alpha(C.purple, 0.25),
-              bgcolor: alpha(C.white, 0.02),
-              height: 120,
+          {/* Favorite Dolls Horizontal Scroller */}
+          <Box sx={{ mb: 3 }}>
+            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+              <FavoriteOutlined sx={{ color: 'primary.main' }} />
+              <Typography variant="h6" sx={{ color: 'primary.main', fontSize: { xs: '1rem', md: '1.25rem' } }}>
+                Favorite Dolls
+              </Typography>
+            </Stack>
+            <Box sx={{
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textAlign: 'center',
-              transition: 'transform .2s ease',
-              '&:hover': { transform: 'translateY(-4px)' },
-            }}
-          >
-            <Stack alignItems="center" spacing={1}>
-              <Box sx={{ color: C.pink }}>{it.icon}</Box>
-              <Typography sx={{ fontFamily: 'Fira Code, monospace', letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: 12 }}>
-                {it.label}
-              </Typography>
-            </Stack>
-          </Paper>
-        </Grid>
-      ))}
-    </Grid>
-  );
-}
+              overflowX: 'auto',
+              gap: 2,
+              pb: 1,
+              '&::-webkit-scrollbar': { height: 6 },
+              '&::-webkit-scrollbar-track': { bgcolor: 'rgba(139, 95, 191, 0.1)' },
+              '&::-webkit-scrollbar-thumb': { bgcolor: 'rgba(139, 95, 191, 0.5)', borderRadius: 3 }
+            }}>
+              {favoriteDolls.map((doll) => (
+                <Card
+                  key={doll.id}
+                  sx={{
+                    minWidth: { xs: 100, sm: 120, md: 140, lg: 160 },
+                    maxWidth: { xs: 100, sm: 120, md: 140, lg: 160 },
+                    bgcolor: 'rgba(255, 105, 180, 0.1)',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s',
+                    '&:hover': { transform: 'scale(1.05)' }
+                  }}
+                  onClick={() => navigate(`/doll/${doll.id}`)}
+                >
+                  <CardMedia
+                    component="img"
+                    height={isMobile ? 80 : 120}
+                    image={doll.image || 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=160&h=120&fit=crop'}
+                    alt={doll.name}
+                  />
+                  <CardContent sx={{ p: { xs: 0.5, md: 1 }, '&:last-child': { pb: { xs: 0.5, md: 1 } } }}>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: 'white',
+                        fontWeight: 600,
+                        display: 'block',
+                        fontSize: { xs: '0.6rem', md: '0.75rem' }
+                      }}
+                    >
+                      {doll.name}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: 'primary.main',
+                        fontSize: { xs: '0.55rem', md: '0.65rem' }
+                      }}
+                    >
+                      {doll.character}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              ))}
+            </Box>
+          </Box>
 
-// -------------------- PostCard & RecentPosts --------------------
-interface Post {
-  id: string;
-  date: string; // e.g., 'Apr 1'
-  title: string;
-  content: string;
-  likes: number;
-  comments: number;
-}
+          {/* Content Layout */}
+          <Grid container spacing={{ xs: 2, md: 3 }}>
+            {/* Posts Section */}
+            <Grid size={{ xs: 12, lg: 8 }}>
+              {/* Write Post */}
+              <Paper sx={{ p: 2, mb: 2, bgcolor: 'rgba(255, 255, 255, 0.05)' }}>
+                <Stack direction="row" alignItems="center" spacing={2}>
+                  <Typography sx={{ flexGrow: 1, color: 'text.secondary', fontSize: { xs: '0.8rem', md: '1rem' } }}>
+                    What's on your mind, {userData.username}?
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    startIcon={<Edit />}
+                    onClick={() => setIsWritePostModalOpen(true)}
+                    size={isMobile ? "small" : "medium"}
+                  >
+                    Post
+                  </Button>
+                </Stack>
+              </Paper>
 
-function PostCard({ post }: { post: Post }) {
-  return (
-    <Paper
-      variant="outlined"
-      sx={{ p: 2, borderColor: alpha(C.purple, 0.25), bgcolor: 'transparent' }}
-    >
-      <Stack spacing={1}>
-        <Stack direction="row" spacing={1} alignItems="center" sx={{ color: C.pink }}>
-          <CalendarIcon size={16} />
-          <Typography sx={{ fontSize: 13, color: alpha(C.white, 0.8) }}>{post.date}</Typography>
-        </Stack>
-
-        <Typography sx={{ fontWeight: 700 }}>{post.title}</Typography>
-
-        <Typography sx={{ color: alpha(C.white, 0.85), lineHeight: 1.7 }}>{post.content}</Typography>
-
-        <Divider sx={{ my: 1.5, borderColor: alpha(C.white, 0.12) }} />
-
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Stack direction="row" spacing={2} alignItems="center" sx={{ color: alpha(C.white, 0.8) }}>
-            <Stack direction="row" spacing={0.75} alignItems="center">
-              <Heart size={16} color={C.pink} />
-              <Typography sx={{ fontSize: 13 }}>{post.likes}</Typography>
-            </Stack>
-            <Stack direction="row" spacing={0.75} alignItems="center">
-              <MessageCircle size={16} color={C.pink} />
-              <Typography sx={{ fontSize: 13 }}>{post.comments}</Typography>
-            </Stack>
-          </Stack>
-          <Button sx={{ color: C.pink, textTransform: 'none', fontSize: 13 }}>View Post</Button>
-        </Stack>
-      </Stack>
-    </Paper>
-  );
-}
-
-function RecentPosts() {
-  const posts: Post[] = [
-    {
-      id: '1',
-      date: 'Apr 1',
-      title: 'New Collection Alert! 🎉',
-      content:
-        'Just added my Holiday Specials collection! So excited to share these festive ghouls with everyone. The winter wonderland Draculaura is absolutely divine! 🦇💖',
-      likes: 23,
-      comments: 5,
-    },
-    {
-      id: '2',
-      date: 'Mar 28',
-      title: '',
-      content:
-        "Can we talk about how gorgeous the new vampire collection pieces are? The detail work on their outfits is incredible! Monster High really outdid themselves this time. 🧛✨",
-      likes: 31,
-      comments: 8,
-    },
-    {
-      id: '3',
-      date: 'Mar 25',
-      title: 'Doll Photography Tips',
-      content:
-        'Been experimenting with lighting for my doll photos. Natural window light + soft reflectors are a killer combo! 📸',
-      likes: 18,
-      comments: 3,
-    },
-  ];
-
-  return (
-    <Stack spacing={2}>
-      {posts.map((p) => (
-        <PostCard key={p.id} post={p} />
-      ))}
-    </Stack>
-  );
-}
-
-// -------------------- Featured Collections --------------------
-function FeaturedCollections() {
-  return (
-    <Stack spacing={2}>
-      <Typography sx={{ fontWeight: 700, color: C.pink }}>Featured Collections</Typography>
-
-      <Paper
-        variant="outlined"
-        sx={{ borderColor: alpha(C.purple, 0.25), overflow: 'hidden' }}
-      >
-        <Box sx={{ height: 260, bgcolor: alpha(C.white, 0.06) /* image placeholder */ }} />
-        <Box sx={{ p: 2 }}>
-          <Typography sx={{ fontWeight: 700 }}>Original Ghouls</Typography>
-          <Typography sx={{ color: alpha(C.white, 0.7), fontSize: 13 }}>
-            The iconic first wave of Monster High dolls that started it all!
-          </Typography>
-
-          <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 1.5 }}>
-            <Chip
-              size="small"
-              label="8 Dolls"
-              sx={{ bgcolor: alpha(C.white, 0.1), color: C.white, borderRadius: 1 }}
-            />
-            <Chip
-              size="small"
-              label="Collection"
-              sx={{ bgcolor: alpha(C.pink, 0.15), color: C.pink, borderRadius: 1 }}
-            />
-            <Box sx={{ flex: 1 }} />
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ color: alpha(C.white, 0.7) }}>
-              <CalendarIcon size={16} />
-              <Typography sx={{ fontSize: 12 }}>Feb 1, 2024</Typography>
-            </Stack>
-          </Stack>
-        </Box>
-      </Paper>
-    </Stack>
-  );
-}
-
-// -------------------- Page --------------------
-export default function MonstrinoProfilePage() {
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
-  const mdUp = useMediaQuery('(min-width:900px)');
-
-  return (
-    <Box sx={{ bgcolor: C.black, color: C.white, minHeight: '100vh' }}>
-      <HeaderBar onOpenSidebar={() => setSidebarOpen(true)} />
-
-      <Box sx={{ pt: { xs: 8, md: 9 } }}>
-        <Container maxWidth="lg">
-          <Grid container spacing={2}>
-            {/* Sidebar */}
-            <Grid size={{ xs:12, md: 3 }}>
-              <SidebarNav open={sidebarOpen && !mdUp} onClose={() => setSidebarOpen(false)} />
+              {/* Posts */}
+              <Box sx={{ mb: 4 }}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+                  <Typography variant="h6" sx={{ color: 'primary.main', fontSize: { xs: '1rem', md: '1.25rem' } }}>
+                    Recent Posts
+                  </Typography>
+                  <Button
+                    variant="text"
+                    onClick={() => navigate('/posts')}
+                    sx={{ color: 'secondary.main', fontSize: { xs: '0.7rem', md: '0.875rem' } }}
+                    size="small"
+                  >
+                    View All Posts
+                  </Button>
+                </Stack>
+                <Stack spacing={2}>
+                  {posts.slice(0, 3).map((post) => (
+                    <PostCard key={post.id} post={post} />
+                  ))}
+                </Stack>
+              </Box>
             </Grid>
 
-            {/* Main content */}
-            <Grid size={{ xs:12, md: 9 }}>
-              <Stack spacing={2}>
-                <ProfileHeader />
+            {/* Collections Section */}
+            <Grid size={{ xs: 12, lg: 8 }}>
+              <Typography variant="h6" sx={{ color: 'primary.main', mb: 2, fontSize: { xs: '1rem', md: '1.25rem' } }}>
+                My Collections
+              </Typography>
+              <Stack spacing={1} sx={{ maxHeight: { lg: '600px' }, overflowY: 'auto' }}>
+                {collections.slice(0, 4).map((collection) => (
+                  <Paper
+                    key={collection.id}
+                    sx={{
+                      bgcolor: 'rgba(139, 95, 191, 0.1)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      p: 1,
+                      '&:hover': {
+                        bgcolor: 'rgba(139, 95, 191, 0.2)',
+                        transform: 'translateY(-1px)'
+                      }
+                    }}
+                    onClick={() => navigate(`/collection/${collection.id}`)}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      {/* Image on the left */}
+                      <Box
+                        component="img"
+                        src={collection.coverImage}
+                        alt={collection.name}
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: 1,
+                          objectFit: 'cover',
+                          flexShrink: 0
+                        }}
+                      />
 
-                <QuickActions />
+                      {/* Title and description in the center */}
+                      <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                        <Typography
+                          variant="subtitle2"
+                          sx={{
+                            color: 'white',
+                            fontSize: { xs: '0.8rem', md: '0.875rem' },
+                            fontWeight: 600,
+                            mb: 0.25,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap'
+                          }}
+                        >
+                          {collection.name}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: 'text.secondary',
+                            fontSize: { xs: '0.65rem', md: '0.7rem' },
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            display: 'block'
+                          }}
+                        >
+                          {collection.description || 'No description available'}
+                        </Typography>
+                      </Box>
 
-                <Grid container spacing={2}>
-                  <Grid size={{ xs:12, md: 7 }}>
-                    <Typography sx={{ fontWeight: 700, mb: 1, color: C.pink }}>Recent Posts</Typography>
-                    <RecentPosts />
-                  </Grid>
-
-                  <Grid size={{ xs:12, md: 5 }}>
-                    <FeaturedCollections />
-                  </Grid>
-                </Grid>
+                      {/* Doll count on the right */}
+                      <Box sx={{ textAlign: 'right', flexShrink: 0 }}>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: 'primary.main',
+                            fontSize: { xs: '0.75rem', md: '0.875rem' },
+                            fontWeight: 600
+                          }}
+                        >
+                          {collection.dollsCount}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: 'text.secondary',
+                            fontSize: { xs: '0.6rem', md: '0.65rem' }
+                          }}
+                        >
+                          dolls
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Paper>
+                ))}
               </Stack>
             </Grid>
           </Grid>
         </Container>
+
+        <AppFooter />
       </Box>
 
-      {/* tiny footer spacer for aesthetics */}
-      <Box sx={{ height: 24 }} />
+      {/* Activity Feed Drawer */}
+      <ActivityFeed
+        open={showActivityFeed}
+        onClose={() => setShowActivityFeed(false)}
+        activities={mockActivities}
+      />
+
+      {/* Modals */}
+      <NewPostModal isOpen={isWritePostModalOpen} onClose={() => setIsWritePostModalOpen(false)} onSubmit={handleCreatePost} />
+      <FriendsModal isOpen={isFriendsModalOpen} onClose={() => setIsFriendsModalOpen(false)} friends={mockUserData.friends} />
+      <GroupsModal isOpen={isGroupsModalOpen} onClose={() => setIsGroupsModalOpen(false)} groups={mockUserData.groups} />
+      <EditUserProfileModal isOpen={isEditProfileOpen} onClose={() => setIsEditProfileOpen(false)} userData={userData} onSubmit={handleUpdateProfile} />
+      <UserSettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
     </Box>
   );
-}
+};
+
+export default UserPage;

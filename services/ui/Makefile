@@ -30,13 +30,15 @@ push-ui: build
 
 # --------------------- Deploy section --------------------
 
-deploy-ui-test: use-tc-m70q-context push-ui
-	kubectl apply -f ../../configurations/kubernetes/ui-deployment.yaml -n $(NAMESPACE_TEST)
-	kubectl apply -f ../../configurations/kubernetes/ui-service.yaml    -n $(NAMESPACE_TEST)
+#deploy-ui-test: use-tc-m70q-context push-ui
+deploy-ui-test: use-tc-m70q-context
+	kubectl apply -f ../../monstrino-configurations/kubernetes/.test/ui/deployment.yaml -n $(NAMESPACE_TEST)
+	kubectl apply -f ../../monstrino-configurations/kubernetes/.test/ui/service.yaml    -n $(NAMESPACE_TEST)
 
-deploy-ui-prod: use-tc-m70q-context push-ui
-	kubectl apply -f ../../configurations/kubernetes/ui-deployment.yaml -n $(NAMESPACE_PROD)
-	kubectl apply -f ../../configurations/kubernetes/ui-service.yaml    -n $(NAMESPACE_PROD)
+deploy-ui-prod: use-tc-m70q-context
+# deploy-ui-prod: use-tc-m70q-context push-ui
+	kubectl apply -f ../../monstrino-configurations/kubernetes/.prod/ui/deployment.yaml -n $(NAMESPACE_PROD)
+	kubectl apply -f ../../monstrino-configurations/kubernetes/.prod/ui/service.yaml    -n $(NAMESPACE_PROD)
 
 # --------------------- Local run section --------------------
 

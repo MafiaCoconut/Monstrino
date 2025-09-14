@@ -2,7 +2,6 @@ import './index.css'
 import App from './App.tsx'
 import React, { createContext } from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
 import { createApi } from './shared/api/http.ts';
 import './i18n.ts';
 import UserStore from './entities/user/UserStore.ts';
@@ -19,8 +18,6 @@ export const api = createApi(userStore);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <App />
   </React.StrictMode>
 );
