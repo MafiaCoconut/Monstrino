@@ -13,7 +13,14 @@ import {
   useMediaQuery,
   useTheme
 } from '@mui/material';
-import { Person, FolderOpen, People, Forum, Settings, Article, EmojiEvents, FavoriteOutlined } from '@mui/icons-material';
+import Person from '@mui/icons-material/Person';
+import FolderOpen from '@mui/icons-material/FolderOpen';
+import People from '@mui/icons-material/People';
+import Forum from '@mui/icons-material/Forum';
+import Settings from '@mui/icons-material/Settings';
+import Article from '@mui/icons-material/Article';
+import EmojiEvents from '@mui/icons-material/EmojiEvents';
+import FavoriteOutlined from '@mui/icons-material/FavoriteOutlined';
 
 const LeftMenu = ({ mobileOpen, onMobileClose }) => {
   const navigate = useNavigate();

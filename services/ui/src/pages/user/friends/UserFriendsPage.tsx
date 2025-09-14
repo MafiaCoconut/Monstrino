@@ -15,7 +15,10 @@ import {
   useTheme,
   Chip
 } from '@mui/material';
-import { Search, PersonAdd, Message, MenuOpen } from '@mui/icons-material';
+import Search from '@mui/icons-material/Search';
+import PersonAdd from '@mui/icons-material/PersonAdd';
+import Message from '@mui/icons-material/Message';
+import MenuOpen from '@mui/icons-material/MenuOpen';
 import { mockUserData } from '../../../data/mocAppData';
 import AppHeader from '../../../widgets/headers/AppHeader';
 import LeftMenu from '../../../widgets/LeftMenu';

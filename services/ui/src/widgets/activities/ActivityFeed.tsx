@@ -9,7 +9,10 @@ import {
   Paper,
   Chip
 } from '@mui/material';
-import { Close, Add, Favorite, Comment } from '@mui/icons-material';
+import Close from '@mui/icons-material/Close';
+import Add from '@mui/icons-material/Add';
+import Favorite from '@mui/icons-material/Favorite';
+import Comment from '@mui/icons-material/Comment';
 
 const ActivityFeed = ({ open, onClose, activities }) => {
   const getActivityIcon = (type) => {

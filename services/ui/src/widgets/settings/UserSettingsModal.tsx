@@ -14,7 +14,11 @@ import {
   Divider,
   Alert
 } from '@mui/material';
-import { Close, Settings, Security, Notifications, Palette } from '@mui/icons-material';
+import Close from '@mui/icons-material/Close';
+import Settings from '@mui/icons-material/Settings';
+import Security from '@mui/icons-material/Security';
+import Notifications from '@mui/icons-material/Notifications';
+import Palette from '@mui/icons-material/Palette';
 
 const UserSettingsModal = ({ isOpen, onClose }) => {
   const [settings, setSettings] = useState({

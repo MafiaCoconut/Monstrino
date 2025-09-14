@@ -16,7 +16,11 @@ import {
   Card,
   CardContent
 } from '@mui/material';
-import { Close, Forum, Add, Search, People } from '@mui/icons-material';
+import Close from '@mui/icons-material/Close';
+import Forum from '@mui/icons-material/Forum';
+import Add from '@mui/icons-material/Add';
+import Search from '@mui/icons-material/Search';
+import People from '@mui/icons-material/People';
 
 const GroupsModal = ({ isOpen, onClose, groups }) => {
   const [searchTerm, setSearchTerm] = useState('');

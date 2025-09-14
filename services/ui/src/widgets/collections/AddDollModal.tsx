@@ -12,7 +12,9 @@ import {
   Stack,
   Grid
 } from '@mui/material';
-import { Close, Add, CloudUpload } from '@mui/icons-material';
+import Close from '@mui/icons-material/Close';
+import Add from '@mui/icons-material/Add';
+import CloudUpload from '@mui/icons-material/CloudUpload';
 
 const AddDollModal = ({ isOpen, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({

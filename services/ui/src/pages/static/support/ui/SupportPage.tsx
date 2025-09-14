@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Container, Paper, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
-import { ExpandMore } from '@mui/icons-material';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 import AppHeader from '@/widgets/headers/AppHeader';
 import LeftMenu from '@/widgets/LeftMenu';
 import AppFooter from '@/widgets/footers/AppFooter';

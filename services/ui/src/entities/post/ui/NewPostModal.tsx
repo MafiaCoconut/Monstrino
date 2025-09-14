@@ -11,9 +11,10 @@ import {
   IconButton,
   Stack
 } from '@mui/material';
-import { Close, Edit } from '@mui/icons-material';
+import Close from '@mui/icons-material/Close';
+import Edit from '@mui/icons-material/Edit';
 
-const NewPostModal = ({ isOpen, onClose, onSubmit }) => {
+export const NewPostModal = ({ isOpen, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
     title: '',
     text: ''
@@ -154,5 +155,3 @@ const NewPostModal = ({ isOpen, onClose, onSubmit }) => {
     </Dialog>
   );
 };
-
-export default NewPostModal;

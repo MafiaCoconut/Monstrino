@@ -6,7 +6,11 @@ import {
   Stack,
   IconButton
 } from '@mui/material';
-import { Favorite, GitHub, Twitter, Instagram, Email } from '@mui/icons-material';
+import Favorite from '@mui/icons-material/Favorite';
+import GitHub from '@mui/icons-material/GitHub';
+import Twitter from '@mui/icons-material/Twitter';
+import Instagram from '@mui/icons-material/Instagram';
+import Email from '@mui/icons-material/Email';
 
 const AppFooter = () => {
   const navigate = useNavigate();

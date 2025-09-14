@@ -21,17 +21,16 @@ import {
   useMediaQuery,
   useTheme
 } from '@mui/material';
-import { 
-  Security, 
-  Notifications, 
-  Palette, 
-  Person, 
-  Shield,
-  Delete,
-  Visibility,
-  VisibilityOff,
-  MenuOpen
-} from '@mui/icons-material';
+import Security from '@mui/icons-material/Security';
+import Notifications from '@mui/icons-material/Notifications'
+import Palette from '@mui/icons-material/Palette'
+import Person from '@mui/icons-material/Person'
+import Shield from '@mui/icons-material/Shield'
+import Delete from '@mui/icons-material/Delete'
+import Visibility from '@mui/icons-material/Visibility'
+import VisibilityOff from '@mui/icons-material/VisibilityOff'
+import MenuOpen from '@mui/icons-material/MenuOpen'
+
 import LeftMenu from '@/widgets/LeftMenu';
 import UserHeader from '@/widgets/headers/UserHeader';
 import AppHeader from '@/widgets/headers/AppHeader';

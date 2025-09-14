@@ -5,6 +5,9 @@ import ReactDOM from 'react-dom/client';
 import { createApi } from './shared/api/http.ts';
 import './i18n.ts';
 import UserStore from './entities/user/UserStore.ts';
+import { Routes, Route, Navigate, BrowserRouter } from 'react-router-dom';
+import { AppThemeProvider } from '@/app/providers/ThemeProvider';
+
 
 interface UserState {
   userStore: UserStore,
@@ -18,6 +21,12 @@ export const api = createApi(userStore);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <Context.Provider value={{ userStore}}>
+        <AppThemeProvider>
+          <App />
+        </AppThemeProvider>
+      </Context.Provider>
+    </BrowserRouter>
   </React.StrictMode>
 );

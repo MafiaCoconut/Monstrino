@@ -1,0 +1,27 @@
+export default function transformer(file, api) {
+  const j = api.jscodeshift;
+  const root = j(file.source);
+
+  root.find(j.ImportDeclaration, { source: { value: '@mui/icons-material' } })
+    .forEach(path => {
+      const specifiers = path.node.specifiers || [];
+      const newDecls = [];
+
+      specifiers.forEach(s => {
+        if (s.type !== 'ImportSpecifier') return;
+        const imported = s.imported.name;            // оригинальное имя иконки
+        const localName = (s.local && s.local.name) || imported; // локальное имя оставляем как было
+        newDecls.push(
+          j.importDeclaration(
+            [j.importDefaultSpecifier(j.identifier(localName))],
+            j.literal(`@mui/icons-material/${imported}`)
+          )
+        );
+      });
+
+      // заменить единственный import на несколько
+      j(path).replaceWith(newDecls);
+    });
+
+  return root.toSource({ quote: 'single' });
+}

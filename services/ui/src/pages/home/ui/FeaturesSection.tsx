@@ -17,6 +17,7 @@ import {
   Chip,
 } from '@mui/material';
 import { alpha, keyframes } from '@mui/material/styles';
+import { useNavigate } from "react-router-dom";
 
 const iconMap = {
   Users,
@@ -128,6 +129,7 @@ const slideInUp = keyframes`
 `;
 
 const FeaturesSection = ({ features }) => {
+  const navigate = useNavigate()
   return (
     <Box component="section" id="features" sx={{ py: { xs: 8, lg: 12 }, bgcolor: C.black }}>
       <Container maxWidth="lg">
@@ -207,6 +209,7 @@ const FeaturesSection = ({ features }) => {
 
             <Button
               variant="outlined"
+              onClick={ () => {navigate("/users/-1")}}
               sx={{
                 px: 4,
                 py: 1.25,

@@ -10,9 +10,11 @@ import {
   Chip,
   Stack
 } from '@mui/material';
-import { Delete, Visibility, Favorite } from '@mui/icons-material';
+import Delete from '@mui/icons-material/Delete';
+import Visibility from '@mui/icons-material/Visibility';
+import Favorite from '@mui/icons-material/Favorite';
 
-const DollCard = ({ doll, onRemove, size = 'medium' }) => {
+export const DollCard = ({ doll, onRemove, size = 'medium' }) => {
   const navigate = useNavigate();
   
   const handleRemoveClick = (e) => {
@@ -193,5 +195,3 @@ const DollCard = ({ doll, onRemove, size = 'medium' }) => {
     </Card>
   );
 };
-
-export default DollCard;

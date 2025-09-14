@@ -10,14 +10,15 @@ import {
     useMediaQuery,
     useTheme
 } from '@mui/material';
-import { Add, MenuOpen } from '@mui/icons-material';
+import Add from '@mui/icons-material/Add';
+import MenuOpen from '@mui/icons-material/MenuOpen';
 import AppHeader from '../../../widgets/headers/AppHeader';
 import LeftMenu from '../../../widgets/LeftMenu';
 import UserHeader from '../../../widgets/headers/UserHeader';
 import { mockUserData } from '../../../data/mocAppData';
-import CollectionCard from '../../../entities/collection/CollectionCard';
 import AppFooter from '../../../widgets/footers/AppFooter';
 import CreateCollectionModal from '../../../widgets/collections/CreateCollectionModal';
+import { CollectionCard } from '@/entities/collection';
 
 const UserCollectionsPage = () => {
     const theme = useTheme();

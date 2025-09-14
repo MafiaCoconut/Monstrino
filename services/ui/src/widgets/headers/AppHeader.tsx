@@ -17,7 +17,13 @@ import {
   useMediaQuery,
   useTheme
 } from '@mui/material';
-import { Home, Logout, Search, Notifications, Person, Settings, Dashboard } from '@mui/icons-material';
+import Home from '@mui/icons-material/Home';
+import Logout from '@mui/icons-material/Logout';
+import Search from '@mui/icons-material/Search';
+import Notifications from '@mui/icons-material/Notifications';
+import Person from '@mui/icons-material/Person';
+import Settings from '@mui/icons-material/Settings';
+import Dashboard from '@mui/icons-material/Dashboard';
 // import NotificationsModal from '../modals/NotificationsModal';
 import { mockUserData } from '../../data/mocAppData';
 

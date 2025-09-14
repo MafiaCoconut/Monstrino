@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Container, Paper, TextField, Button, Alert } from '@mui/material';
-import { Send } from '@mui/icons-material';
+import Send from '@mui/icons-material/Send';
 import AppHeader from '@/widgets/headers/AppHeader';
 import LeftMenu from '@/widgets/LeftMenu';
 import AppFooter from '@/widgets/footers/AppFooter';

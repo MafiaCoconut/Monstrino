@@ -15,7 +15,10 @@ import {
   useMediaQuery,
   useTheme
 } from '@mui/material';
-import { Search, Add, People, MenuOpen } from '@mui/icons-material';
+import Search from '@mui/icons-material/Search';
+import Add from '@mui/icons-material/Add';
+import People from '@mui/icons-material/People';
+import MenuOpen from '@mui/icons-material/MenuOpen';
 import AppHeader from '../../../widgets/headers/AppHeader';
 import LeftMenu from '../../../widgets/LeftMenu';
 import UserHeader from '../../../widgets/headers/UserHeader';

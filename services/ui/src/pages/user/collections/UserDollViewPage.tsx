@@ -1,7 +1,10 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, Card, CardMedia, CardContent, Button, Chip, Stack, Paper } from '@mui/material';
-import { ArrowBack, Favorite, Share, Add } from '@mui/icons-material';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+import Favorite from '@mui/icons-material/Favorite';
+import Share from '@mui/icons-material/Share';
+import Add from '@mui/icons-material/Add';
 import { mockUserData } from '@/data/mocAppData';
 import UserHeader from '@/widgets/headers/UserHeader';
 import LeftMenu from '@/widgets/LeftMenu';

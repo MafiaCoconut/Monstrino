@@ -8,7 +8,7 @@ import {
   Stack,
   IconButton
 } from '@mui/material';
-import { Edit } from '@mui/icons-material';
+import Edit from '@mui/icons-material/Edit';
 
 const UserHeader = ({ userData, onEditProfile }) => {
 

@@ -12,7 +12,9 @@ import {
   Stack,
   Avatar
 } from '@mui/material';
-import { Close, Person, CloudUpload } from '@mui/icons-material';
+import Close from '@mui/icons-material/Close';
+import Person from '@mui/icons-material/Person';
+import CloudUpload from '@mui/icons-material/CloudUpload';
 
 const EditUserProfileModal = ({ isOpen, onClose, userData, onSubmit }) => {
   const [formData, setFormData] = useState({

@@ -11,7 +11,9 @@ import {
   Paper,
   Divider
 } from '@mui/material';
-import { Palette, Add, CreateNewFolder } from '@mui/icons-material';
+import Palette from '@mui/icons-material/Palette';
+import Add from '@mui/icons-material/Add';
+import CreateNewFolder from '@mui/icons-material/CreateNewFolder';
 
 const RightMenu = ({ onAddDoll }) => {
   const menuItems = [

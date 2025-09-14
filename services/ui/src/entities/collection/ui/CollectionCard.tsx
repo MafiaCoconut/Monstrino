@@ -9,9 +9,10 @@ import {
   Chip,
   Stack
 } from '@mui/material';
-import { FolderOpen, CalendarToday } from '@mui/icons-material';
+import FolderOpen from '@mui/icons-material/FolderOpen';
+import CalendarToday from '@mui/icons-material/CalendarToday';
 
-const CollectionCard = ({ collection, size = 'medium' }) => {
+export const CollectionCard = ({ collection, size = 'medium' }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -144,5 +145,3 @@ const CollectionCard = ({ collection, size = 'medium' }) => {
     </Card>
   );
 };
-
-export default CollectionCard;

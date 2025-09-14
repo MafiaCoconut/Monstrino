@@ -1,5 +1,7 @@
 import { Box, TextField, InputAdornment, IconButton, Typography, FormControlLabel, Checkbox, Button, Link, Avatar } from "@mui/material";
-import { ErrorOutline, Visibility, VisibilityOff } from "@mui/icons-material";
+import ErrorOutline from '@mui/icons-material/ErrorOutline';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import React, { useContext, useState } from "react";
 import { Context } from "../../../main";

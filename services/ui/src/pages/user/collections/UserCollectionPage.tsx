@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  Box, 
-  Typography, 
+import {
+  Box,
+  Typography,
   Container,
   Grid,
   Button,
@@ -10,7 +10,8 @@ import {
   Paper,
   Divider
 } from '@mui/material';
-import { ArrowBack, Add } from '@mui/icons-material';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+import Add from '@mui/icons-material/Add';
 import { mockUserData } from '../../../data/mocAppData';
 import AppHeader from '../../../widgets/headers/AppHeader';
 import LeftMenu from '../../../widgets/LeftMenu';
@@ -18,13 +19,13 @@ import UserHeader from '../../../widgets/headers/UserHeader';
 import AppFooter from '../../../widgets/footers/AppFooter';
 import RightMenu from '../../../widgets/RightMenu';
 import AddDollModal from '../../../widgets/collections/AddDollModal';
-import DollCard from '../../../entities/collection/DollCard';
+import { DollCard } from '@/entities/collection';
 
 const CollectionPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [isAddDollModalOpen, setIsAddDollModalOpen] = useState(false);
-  
+
   // Find collection by ID
   const collection = mockUserData.collections.find(c => c.id === parseInt(id));
   const [dolls, setDolls] = useState(
@@ -70,10 +71,10 @@ const CollectionPage = () => {
     <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
       <AppHeader />
       <LeftMenu mobileOpen={undefined} onMobileClose={undefined} />
-      
+
       <Box component="main" sx={{ flexGrow: 1, ml: '200px', mr: '200px', mt: 8 }}>
         <UserHeader userData={mockUserData.currentUser} onEditProfile={undefined} />
-        
+
         <Container maxWidth="xl" sx={{ py: 3 }}>
           {/* Back Button and Collection Info */}
           <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 3 }}>
@@ -85,9 +86,9 @@ const CollectionPage = () => {
               >
                 Back to Collections
               </Button>
-              <Typography 
-                variant="h4" 
-                sx={{ 
+              <Typography
+                variant="h4"
+                sx={{
                   color: 'primary.main',
                   fontWeight: 800,
                   mb: 1
@@ -99,7 +100,7 @@ const CollectionPage = () => {
                 {collection.description}
               </Typography>
             </Box>
-            
+
             <Paper sx={{ p: 2, textAlign: 'center', bgcolor: 'rgba(139, 95, 191, 0.1)' }}>
               <Typography variant="h5" sx={{ color: 'primary.main', fontWeight: 'bold' }}>
                 {dolls.length}
@@ -115,8 +116,8 @@ const CollectionPage = () => {
           {/* Dolls Grid - Smaller items */}
           <Grid container spacing={2}>
             {dolls.map((doll) => (
-              <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2}} key={doll.id}>
-                <DollCard 
+              <Grid size={{ xs: 6, sm: 4, md: 3, lg: 2 }} key={doll.id}>
+                <DollCard
                   doll={doll}
                   onRemove={handleRemoveDoll}
                   size="small"

@@ -8,9 +8,11 @@ import {
   Stack,
   Divider
 } from '@mui/material';
-import { Favorite, ChatBubbleOutline, CalendarToday } from '@mui/icons-material';
+import Favorite from '@mui/icons-material/Favorite';
+import ChatBubbleOutline from '@mui/icons-material/ChatBubbleOutline';
+import CalendarToday from '@mui/icons-material/CalendarToday';
 
-const PostCard = ({ post }) => {
+export const PostCard = ({ post }) => {
   const formatDate = (dateString: any) => {
     const date: any = new Date(dateString);
     const now: any = new Date();
@@ -145,5 +147,3 @@ const PostCard = ({ post }) => {
     </Card>
   );
 };
-
-export default PostCard;

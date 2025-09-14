@@ -15,7 +15,11 @@ import {
   Avatar,
   Chip
 } from '@mui/material';
-import { Close, People, PersonAdd, Search, Circle } from '@mui/icons-material';
+import Close from '@mui/icons-material/Close';
+import People from '@mui/icons-material/People';
+import PersonAdd from '@mui/icons-material/PersonAdd';
+import Search from '@mui/icons-material/Search';
+import Circle from '@mui/icons-material/Circle';
 
 const FriendsModal = ({ isOpen, onClose, friends }) => {
   const [searchTerm, setSearchTerm] = useState('');

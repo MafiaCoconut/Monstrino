@@ -15,20 +15,27 @@ import {
   useMediaQuery,
   useTheme
 } from '@mui/material';
-import { Edit, People, Forum, AccessTime, Settings, FavoriteOutlined, EmojiEvents, MenuOpen } from '@mui/icons-material';
+import Edit from '@mui/icons-material/Edit';
+import People from '@mui/icons-material/People';
+import Forum from '@mui/icons-material/Forum';
+import AccessTime from '@mui/icons-material/AccessTime';
+import Settings from '@mui/icons-material/Settings';
+import FavoriteOutlined from '@mui/icons-material/FavoriteOutlined';
+import EmojiEvents from '@mui/icons-material/EmojiEvents';
+import MenuOpen from '@mui/icons-material/MenuOpen';
+
 import { useNavigate } from 'react-router-dom';
 import Header from '../../../widgets/headers/AppHeader';
 import { mockUserData, mockActivities, mockAchievements } from '../../../data/mocAppData';
 import LeftMenu from '../../../widgets/LeftMenu';
 import UserHeader from '../../../widgets/headers/UserHeader';
 import AppFooter from '../../../widgets/footers/AppFooter';
-import PostCard from '../../../entities/post/ui/PostCard';
-import NewPostModal from '../../../entities/post/ui/NewPostModal';
 import ActivityFeed from '../../../widgets/activities/ActivityFeed';
 import FriendsModal from '../../../widgets/friends/FriendsModal';
 import GroupsModal from '../../../widgets/groups/GroupsModal';
 import EditUserProfileModal from '../../../widgets/EditUserProfileModal';
 import UserSettingsModal from '../../../widgets/settings/UserSettingsModal';
+import { NewPostModal, PostCard } from '@/entities/post';
 
 const UserPage = () => {
   const navigate = useNavigate();

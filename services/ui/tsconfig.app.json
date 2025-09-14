@@ -33,5 +33,5 @@
       "@shared/*": ["src/shared/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "scripts/codemods"]
 }

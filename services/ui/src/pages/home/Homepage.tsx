@@ -6,6 +6,7 @@ import CTASection from './ui/CTASection';
 import Footer from '../../shared/ui/footer/Footer';
 import AuthModal from '../../features/auth-login/AuthModal';
 import { mockData } from './mock';
+import { Box } from '@mui/material';
 
 const LandingPage = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -26,21 +27,27 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-monstrino-black text-monstrino-white">
-      <Header onOpenAuth={handleOpenAuth} />
-      <HeroSection
-        onOpenAuth={handleOpenAuth}
-        onSubscribe={handleSubscribe}
-        isSubscribed={isSubscribed}
-      />
-      <FeaturesSection features={mockData.features} />
-      <CTASection onOpenAuth={handleOpenAuth} />
-      <Footer />
+      <Box sx={{
+        minHeight: "100vh",
+        bgcolor: "monstrino.black",
+        color: "monstrino.white"
+       }}>
+        <Header onOpenAuth={handleOpenAuth} />
+        <HeroSection
+          onOpenAuth={handleOpenAuth}
+          onSubscribe={handleSubscribe}
+          isSubscribed={isSubscribed}
+        />
+        <FeaturesSection features={mockData.features} />
+        <CTASection onOpenAuth={handleOpenAuth} />
+        <Footer />
 
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-        mode={authMode}
-      />
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+          mode={authMode}
+        />
+      </Box>
     </div>
   );
 };

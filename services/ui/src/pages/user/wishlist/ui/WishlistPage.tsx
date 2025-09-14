@@ -20,14 +20,12 @@ import {
   useTheme,
   Paper
 } from '@mui/material';
-import { 
-  Delete, 
-  Edit, 
-  Add, 
-  FavoriteOutlined,
-  Star,
-  StarBorder
-} from '@mui/icons-material';
+import Delete from '@mui/icons-material/Delete';
+import Edit from '@mui/icons-material/Edit';
+import Add from '@mui/icons-material/Add';
+import FavoriteOutlined from '@mui/icons-material/FavoriteOutlined';
+import Star from '@mui/icons-material/Star';
+import StarBorder from '@mui/icons-material/StarBorder';
 import { useNavigate } from 'react-router-dom';
 import { mockUserData } from '@/data/mocAppData';
 import AppHeader from '@/widgets/headers/AppHeader';

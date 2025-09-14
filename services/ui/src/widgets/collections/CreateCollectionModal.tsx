@@ -11,7 +11,9 @@ import {
   IconButton,
   Stack
 } from '@mui/material';
-import { Close, FolderOpen, CloudUpload } from '@mui/icons-material';
+import Close from '@mui/icons-material/Close';
+import FolderOpen from '@mui/icons-material/FolderOpen';
+import CloudUpload from '@mui/icons-material/CloudUpload';
 
 const CreateCollectionModal = ({ isOpen, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
