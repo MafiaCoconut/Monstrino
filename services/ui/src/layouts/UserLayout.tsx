@@ -54,13 +54,15 @@ export function UserLayout() {
                 <MenuOpen sx={{ transform: mobileMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} />
             </IconButton>
         )}
-        <LeftMenu mobileOpen={false} onMobileClose={() => setMobileMenuOpen(false)} />
+        <Box display="flex">
+            <LeftMenu mobileOpen={false} onMobileClose={() => setMobileMenuOpen(false)} />
 
-        <Container maxWidth="lg" sx={{ py: 2 }}>
-            <React.Suspense fallback={<LinearProgress />}>
-                <Outlet />
-            </React.Suspense>
-        </Container>
+            <Container sx={{ py: 10 }}>
+                <React.Suspense fallback={<LinearProgress />}>
+                    <Outlet />
+                </React.Suspense>
+            </Container>
+        </Box>
         <AppFooter />
     </Box>
   );
