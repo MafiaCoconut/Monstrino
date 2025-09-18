@@ -30,7 +30,7 @@ export const UserStatus = () => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     return (
         <Paper sx={{
-          m: { xs: 1, md: 2 },
+          // m: { xs: 1, md: 2 },
           p: { xs: 1.5, md: 2 },
           bgcolor: 'rgba(139, 95, 191, 0.1)'
         }}>

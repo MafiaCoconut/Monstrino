@@ -79,7 +79,7 @@ const UserPage = () => {
   return (
     <Box sx={{ display: 'flex', bgcolor: 'background.default', justifyContent: 'center',}}>
       {/* Main Content */}
-      <Grid container spacing={2}>
+      <Grid container spacing={2} alignItems="center">
         {/* <Grid container spacing={{ xs: 8, md: 2 }}></Grid> */}
         <Grid size={12}>
           <UserHeader 
@@ -93,7 +93,7 @@ const UserPage = () => {
         <Grid size={12}>
           <UserStatus/>
         </Grid>
-        <Grid>
+        <Grid size={12} >
           <FavoriteDollsWidget favoriteDolls={favoriteDolls} isMobile={isMobile}/>
         </Grid>
       </Grid>

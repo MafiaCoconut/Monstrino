@@ -38,9 +38,10 @@ export const FavoriteDollsWidget = ({favoriteDolls, isMobile=false}: FavoriteDol
             </Stack>
             <Box sx={{
               display: 'flex',
-              overflowX: 'auto',
+            //   overflowY: 'auto',
               gap: 2,
               pb: 1,
+              minHeight: '700',
               '&::-webkit-scrollbar': { height: 6 },
               '&::-webkit-scrollbar-track': { bgcolor: 'rgba(139, 95, 191, 0.1)' },
               '&::-webkit-scrollbar-thumb': { bgcolor: 'rgba(139, 95, 191, 0.5)', borderRadius: 3 }
