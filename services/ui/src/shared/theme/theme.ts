@@ -85,21 +85,21 @@ export const makeTheme = (mode: "light" | "dark" = "dark") =>
         styleOverrides: {
           root: {
             borderRadius: tokens.radius.lg,
-            padding: tokens.spacing(3),
-            minHeight: 300,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            transition: "all .2s ease",
+            // legacy layout overrides:
+            // padding: tokens.spacing(3),
+            // minHeight: 300,
+            // display: "flex",
+            // flexDirection: "column",
+            // justifyContent: "space-between",
+            // transition: "all .2s ease",
+            // "&:hover": { transform: "translateY(-2px)", boxShadow: "0 8px 24px rgba(0,0,0,.3)" },
+            // ...((theme) => theme.applyStyles?.("dark", { "&:hover": { transform: "translateY(-4px)" } })),
+            backgroundImage: "none",
+            transition: "box-shadow 0.2s ease",
             cursor: "pointer",
             overflow: "hidden",
             position: "relative",
-            "&:hover": { transform: "translateY(-2px)", boxShadow: "0 8px 24px rgba(0,0,0,.3)" },
-            // Пример актуальной практики: стили для тёмной схемы через applyStyles()
-            // https://mui.com/material-ui/migration/upgrade-to-v6/#color-mode-theme-utility
-            // (в v7 тоже доступно)
-            // @ts-ignore
-            ...((theme) => theme.applyStyles?.("dark", { "&:hover": { transform: "translateY(-4px)" } })),
+            "&:hover": { boxShadow: "0 8px 24px rgba(0,0,0,.3)" },
           },
         },
       },

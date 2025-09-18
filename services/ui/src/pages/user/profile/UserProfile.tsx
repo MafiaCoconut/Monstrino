@@ -37,6 +37,7 @@ import EditUserProfileModal from '../../../widgets/EditUserProfileModal';
 import UserSettingsModal from '../../../widgets/settings/UserSettingsModal';
 import { NewPostModal, PostCard } from '@/entities/post';
 import { UserStatus } from '@/widgets/profile';
+import { FavoriteDollsWidget } from '@/widgets/dolls';
 
 const UserPage = () => {
   const navigate = useNavigate();
@@ -87,13 +88,14 @@ const UserPage = () => {
             userData={userData} 
             onEditProfile={() => setIsEditProfileOpen(true)} 
           />
-          
         </Grid>
         
         <Grid size={12}>
           <UserStatus/>
         </Grid>
-        
+        <Grid>
+          <FavoriteDollsWidget favoriteDolls={favoriteDolls} isMobile={isMobile}/>
+        </Grid>
       </Grid>
     </Box>
   ); 
@@ -109,117 +111,6 @@ const UserPage = () => {
 //         }}
 //         // sx={{ minWidth: 0, px: { xs: 2, md: 0 }, py: 3 }}
 //       >
-//         <UserHeader 
-//           data-component="UserProfile"
-//           data-section="UserHeader"
-//           userData={userData} 
-//           onEditProfile={() => setIsEditProfileOpen(true)} 
-//           />
-
-//         {/* Monster Status & Achievements */}
-//         <Paper sx={{
-//           m: { xs: 1, md: 2 },
-//           p: { xs: 1.5, md: 2 },
-//           bgcolor: 'rgba(139, 95, 191, 0.1)'
-//         }}>
-//           <Grid container spacing={2} alignItems="center">
-//             <Grid size={{ xs: 12, lg: 6 }}>
-//               <Typography variant="h6" sx={{ color: 'primary.main', mb: 1, fontSize: { xs: '1rem', md: '1.25rem' } }}>
-//                 Monster Status
-//               </Typography>
-//               <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-//                 <Chip label="Vampire Crew" color="primary" size="small" />
-//                 <Chip label="Active" color="success" size="small" />
-//                 <Chip label="Level 15" color="secondary" size="small" />
-//               </Stack>
-//             </Grid>
-//             <Grid size={{ xs: 12, lg: 5 }}>
-//               <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
-//                 <EmojiEvents sx={{ color: 'warning.main' }} />
-//                 <Typography variant="h6" sx={{ color: 'warning.main', fontSize: { xs: '1rem', md: '1.25rem' } }}>
-//                   Achievements
-//                 </Typography>
-//               </Stack>
-//               <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-//                 {mockAchievements.slice(0, isMobile ? 2 : 3).map((achievement) => (
-//                   <Chip
-//                     key={achievement.id}
-//                     label={achievement.name}
-//                     size="small"
-//                     sx={{
-//                       bgcolor: achievement.color,
-//                       color: 'white',
-//                       fontSize: { xs: '0.65rem', md: '0.75rem' }
-//                     }}
-//                     onClick={() => navigate('/achievements')}
-//                   />
-//                 ))}
-//                 <Button
-//                   variant="text"
-//                   size="small"
-//                   onClick={() => navigate('/achievements')}
-//                   sx={{ color: 'warning.main', fontSize: '0.7rem', minWidth: 'auto', p: 0.5 }}
-//                 >
-//                   View All
-//                 </Button>
-//               </Stack>
-//             </Grid>
-//             <Grid size={{ xs: 12, lg: 1 }} sx={{ textAlign: 'right' }}>
-//               <IconButton onClick={() => setIsSettingsOpen(true)} sx={{ color: 'primary.main' }} size="small">
-//                 <Settings />
-//               </IconButton>
-//             </Grid>
-//           </Grid>
-//         </Paper>
-
-//         <Container maxWidth={false} sx={{ py: { xs: 1, md: 2 }, px: { xs: 1, md: 3 }, maxWidth: 'none', width: '100%' }}>
-//           {/* Action Buttons */}
-//           <Stack
-//             direction="row"
-//             spacing={1}
-//             sx={{ mb: 2, flexWrap: 'wrap', gap: 1 }}
-//             useFlexGap
-//           >
-//             <Button
-//               variant="outlined"
-//               startIcon={<People />}
-//               onClick={() => setIsFriendsModalOpen(true)}
-//               size={isMobile ? "small" : "medium"}
-//               sx={{ minWidth: { xs: 'auto', md: 120 } }}
-//             >
-//               {isMobile ? '' : 'Friends'}
-//             </Button>
-//             <Button
-//               variant="outlined"
-//               startIcon={<Forum />}
-//               onClick={() => setIsGroupsModalOpen(true)}
-//               size={isMobile ? "small" : "medium"}
-//               sx={{ minWidth: { xs: 'auto', md: 120 } }}
-//             >
-//               {isMobile ? '' : 'Groups'}
-//             </Button>
-//             <Button
-//               variant="outlined"
-//               startIcon={<AccessTime />}
-//               size={isMobile ? "small" : "medium"}
-//               sx={{ minWidth: { xs: 'auto', md: 120 } }}
-//             >
-//               {isMobile ? '' : 'Hours'}
-//             </Button>
-//             <Button
-//               variant="contained"
-//               onClick={() => setShowActivityFeed(true)}
-//               size={isMobile ? "small" : "medium"}
-//               sx={{
-//                 bgcolor: 'secondary.main',
-//                 minWidth: { xs: 'auto', md: 140 },
-//                 fontSize: { xs: '0.7rem', md: '0.875rem' }
-//               }}
-//             >
-//               Activity Feed
-//             </Button>
-//           </Stack>
-
 //           {/* Favorite Dolls Horizontal Scroller */}
 //           <Box sx={{ mb: 3 }}>
 //             <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>

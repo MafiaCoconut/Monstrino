@@ -1,0 +1,1 @@
+export { FavoriteDollsWidget } from './FavoriteDollsWidget'

@@ -94,6 +94,7 @@ const LeftMenu = ({ mobileOpen, onMobileClose }) => {
           return (
             <ListItem key={item.path} disablePadding>
               <ListItemButton
+                disabled={true}
                 onClick={() => handleNavigation(item.path)}
                 sx={{
                   borderRadius: 1,
@@ -136,6 +137,7 @@ const LeftMenu = ({ mobileOpen, onMobileClose }) => {
           return (
             <ListItem key={item.path} disablePadding>
               <ListItemButton
+                disabled={true}
                 onClick={() => handleNavigation(item.path)}
                 sx={{
                   borderRadius: 1,

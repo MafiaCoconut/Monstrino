@@ -11,7 +11,12 @@ import {
 import Edit from '@mui/icons-material/Edit';
 import { UserAvatar, UserCollectionsButton, UserDollsButton, UserFriendsButton, UserStatus, UserUsername } from '@/entities/profile';
 
-const UserHeader = ({ userData, onEditProfile }) => {
+type UserHeaderProps = {
+  userData: {stats: {collections: string, dolls: string, friends: string}, avatar: string, username: string, bio: string};
+  onEditProfile?: () => void;
+}
+
+const UserHeader = ({ userData, onEditProfile }: UserHeaderProps) => {
 
   return (
     <Paper
@@ -35,7 +40,7 @@ const UserHeader = ({ userData, onEditProfile }) => {
         {/* User Info */}
         <Grid>
           <Stack direction="row" alignItems="center" spacing={1}>
-            <UserUsername username={userData.username}/>
+            <UserUsername username={userData.username} onEditProfile={onEditProfile}/>
           </Stack>
           <UserStatus bio={userData.bio}/>
         </Grid>
