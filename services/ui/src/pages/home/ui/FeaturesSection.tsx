@@ -198,7 +198,7 @@ const FeaturesSection = ({ features }: { features: FeatureData[] }) => {
           {features.map((feature, index) => (
             <Grid
               key={feature.id ?? feature.title}
-              size={{ xs: 12, md: 6, lg: 4}}
+              size={{ xs: 6, md: 6, lg: 4}}
               sx={{
                 animation: `${slideInUp} .5s ease-out forwards`,
                 opacity: 0,
