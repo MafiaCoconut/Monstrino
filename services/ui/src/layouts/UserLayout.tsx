@@ -55,7 +55,7 @@ export function UserLayout() {
             </IconButton>
         )}
         <Box display="flex">
-            <LeftMenu mobileOpen={false} onMobileClose={() => setMobileMenuOpen(false)} />
+            <LeftMenu mobileOpen={mobileMenuOpen} onMobileClose={() => setMobileMenuOpen(false)} />
 
             <Container sx={{ py: 10 }}>
                 <React.Suspense fallback={<LinearProgress />}>

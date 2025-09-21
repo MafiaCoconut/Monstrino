@@ -13,11 +13,12 @@ import {
   Divider,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 
 export const PublicHeader = (props: any) => {
   const { onOpenAuth = "" } = props;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+  const navigate = useNavigate();
   const C = {
     black: '#0a0a0a',
     white: '#ffffff',
@@ -48,6 +49,7 @@ export const PublicHeader = (props: any) => {
   };
 
   return (
+    
     <AppBar
       position="fixed"
       elevation={0}
@@ -65,6 +67,8 @@ export const PublicHeader = (props: any) => {
           {/* Logo */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Typography
+              onClick={() => {navigate('/')}}
+              
               sx={{
                 fontFamily: 'Inter, Helvetica Neue, Arial, sans-serif',
                 fontWeight: 800,
@@ -73,6 +77,7 @@ export const PublicHeader = (props: any) => {
                 color: C.pink,
                 fontSize: { xs: '1.25rem', lg: '1.5rem' },
                 lineHeight: 1,
+                cursor: 'pointer'
               }}
             >
               MONSTRINO
@@ -158,25 +163,25 @@ export const PublicHeader = (props: any) => {
             }}
           >
             <Stack component="nav" spacing={1.5}>
-              <Button component="a" href="#features" sx={{ ...linkSX, justifyContent: 'flex-start' }}>
+              <Button disabled={true} component="a" href="#features" sx={{ ...linkSX, justifyContent: 'flex-start' }}>
                 Features
               </Button>
-              <Button component="a" href="#community" sx={{ ...linkSX, justifyContent: 'flex-start' }}>
+              <Button disabled={true} component="a" href="#community" sx={{ ...linkSX, justifyContent: 'flex-start' }}>
                 Community
               </Button>
-              <Button component="a" href="#about" sx={{ ...linkSX, justifyContent: 'flex-start' }}>
+              <Button disabled={true} component="a" href="#about" sx={{ ...linkSX, justifyContent: 'flex-start' }}>
                 About
               </Button>
 
               <Divider sx={{ my: 1.5, borderColor: alpha(C.purple, 0.2) }} />
 
-              <Button
+              <Button disabled={true}
                 // onClick={() => onOpenAuth && onOpenAuth('login')}
                 sx={{ ...linkSX, justifyContent: 'flex-start' }}
               >
                 Login
               </Button>
-              <Button
+              <Button disabled={true} 
                 // onClick={() => onOpenAuth && onOpenAuth('register')}
                 sx={{ ...ctaSX, alignSelf: 'flex-start' }}
               >

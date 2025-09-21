@@ -221,6 +221,7 @@ const FeaturesSection = ({ features }: { features: FeatureData[] }) => {
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
             <Button
+              onClick={ () => {navigate("/users/-1")}}
               sx={{
                 px: 4,
                 py: 1.25,
@@ -239,10 +240,10 @@ const FeaturesSection = ({ features }: { features: FeatureData[] }) => {
                 },
               }}
             >
-              Explore Features
+              Watch Demo
             </Button>
 
-            <Button
+            {/* <Button
               variant="outlined"
               onClick={ () => {navigate("/users/-1")}}
               sx={{
@@ -260,7 +261,7 @@ const FeaturesSection = ({ features }: { features: FeatureData[] }) => {
               }}
             >
               Watch Demo
-            </Button>
+            </Button> */}
           </Stack>
         </Box>
       </Container>

@@ -4,7 +4,7 @@ import { Box, Typography, Container, Paper } from '@mui/material';
 export const PrivacyPage = () => {
   return (
     <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>      
-      <Box component="main" sx={{ flexGrow: 1, ml: '200px', mt: 8 }}>
+      <Box component="main" sx={{ flexGrow: 1, mt: 8 }}>
         <Container maxWidth="md" sx={{ py: 4 }}>
           <Typography variant="h3" sx={{ color: 'primary.main', mb: 4 }}>Privacy Policy</Typography>
           

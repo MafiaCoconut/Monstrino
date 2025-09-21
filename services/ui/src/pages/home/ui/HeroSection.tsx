@@ -65,6 +65,7 @@ const HeroSection = (props: any) => {
               size="large"
               onClick={() => onOpenAuth("register")}
               endIcon={<ArrowRight size={16} />}
+              disabled={true}
               sx={{
                 px: 4,
                 py: 1.5,
@@ -91,6 +92,7 @@ const HeroSection = (props: any) => {
               size="large"
               variant="outlined"
               onClick={() => onOpenAuth("login")}
+              disabled={true}
               sx={{
                 px: 4,
                 py: 1.5,
@@ -114,6 +116,7 @@ const HeroSection = (props: any) => {
           <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%", maxWidth: 520 }}>
             <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
               <TextField
+                disabled={true}
                 fullWidth
                 type="email"
                 required
@@ -136,7 +139,7 @@ const HeroSection = (props: any) => {
               />
               <Button
                 type="submit"
-                disabled={isSubscribed}
+                disabled={true}
                 sx={{
                   px: 3,
                   py: 1.5,

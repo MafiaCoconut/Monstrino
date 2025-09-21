@@ -28,7 +28,7 @@ export const SupportPage = () => {
 
   return (
     <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>      
-      <Box component="main" sx={{ flexGrow: 1, ml: '200px', mt: 8 }}>
+      <Box component="main" sx={{ flexGrow: 1, mt: 8 }}>
         <Container maxWidth="md" sx={{ py: 4 }}>
           <Typography variant="h3" sx={{ color: 'primary.main', mb: 4 }}>Help Center</Typography>
           
