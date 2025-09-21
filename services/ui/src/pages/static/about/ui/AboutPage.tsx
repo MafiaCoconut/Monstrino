@@ -1,13 +1,10 @@
 import React from 'react';
 import { Box, Typography, Container, Paper } from '@mui/material';
-import AppHeader from '../../../../widgets/headers/AppHeader';
 import LeftMenu from '../../../../widgets/LeftMenu';
-import AppFooter from '../../../../widgets/footers/AppFooter';
 
 export const AboutPage = () => {
   return (
     <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
-      <AppHeader />
       <LeftMenu mobileOpen={undefined} onMobileClose={undefined} />
       
       <Box component="main" sx={{ flexGrow: 1, ml: '200px', mt: 8 }}>
@@ -36,7 +33,6 @@ export const AboutPage = () => {
             </Typography>
           </Paper>
         </Container>
-        <AppFooter />
       </Box>
     </Box>
   );

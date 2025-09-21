@@ -12,7 +12,7 @@ import Twitter from '@mui/icons-material/Twitter';
 import Instagram from '@mui/icons-material/Instagram';
 import Email from '@mui/icons-material/Email';
 
-const AppFooter = () => {
+export const AppFooter = () => {
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
 
@@ -24,7 +24,8 @@ const AppFooter = () => {
         borderTop: 1,
         borderColor: 'rgba(139, 95, 191, 0.2)',
         py: 3,
-        mt: 'auto'
+        mt: 'auto',
+        zIndex: 9999,
       }}
     >
       <Container maxWidth="xl">
@@ -66,7 +67,7 @@ const AppFooter = () => {
           >
             <Typography 
               variant="caption" 
-              onClick={() => navigate('/help')}
+              onClick={() => navigate('/support')}
               sx={{ 
                 color: 'text.secondary',
                 cursor: 'pointer',
@@ -139,5 +140,3 @@ const AppFooter = () => {
     </Box>
   );
 };
-
-export default AppFooter;

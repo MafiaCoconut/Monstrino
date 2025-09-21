@@ -20,10 +20,7 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import Message from '@mui/icons-material/Message';
 import MenuOpen from '@mui/icons-material/MenuOpen';
 import { mockUserData } from '../../../data/mocAppData';
-import AppHeader from '../../../widgets/headers/AppHeader';
-import LeftMenu from '../../../widgets/LeftMenu';
-import UserHeader from '../../../widgets/headers/UserHeader';
-import AppFooter from '../../../widgets/footers/AppFooter';
+import { AppHeader, UserHeader } from '@/widgets/headers';
 
 const FriendsPage = () => {
   const theme = useTheme();
@@ -67,9 +64,7 @@ const FriendsPage = () => {
           <MenuOpen sx={{ transform: mobileMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} />
         </IconButton>
       )}
-      
-      <LeftMenu mobileOpen={mobileMenuOpen} onMobileClose={() => setMobileMenuOpen(false)} />
-      
+            
       <Box 
         component="main" 
         sx={{ 
@@ -315,8 +310,6 @@ const FriendsPage = () => {
             </Box>
           )}
         </Container>
-
-        <AppFooter />
       </Box>
     </Box>
   );

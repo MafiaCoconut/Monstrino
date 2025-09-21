@@ -9,10 +9,10 @@ import {
 } from '@mui/material';
 import LeftMenu from '@/widgets/LeftMenu';
 import MenuOpen from '@mui/icons-material/MenuOpen';
-import { AppHeader } from '@/widgets/headers';
+import { PublicHeader } from '@/widgets/headers';
 import { AppFooter } from '@/widgets/footers';
 
-export function UserLayout() {
+export function PublicLayout() {
     const { username = '' } = useParams<{ username: string }>();
     const location = useLocation();
     const base = `/users/${username}`;
@@ -34,29 +34,8 @@ export function UserLayout() {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column'}}>
-        <AppHeader />
-        
-        {/* Mobile Menu Toggle */}
-        {isMobile && (
-            <IconButton
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                sx={{
-                    position: 'fixed',
-                    top: 70,
-                    left: mobileMenuOpen ? 250 : 10, // Move button right when menu is open
-                    zIndex: 1300,
-                    bgcolor: 'background.paper',
-                    color: 'primary.main',
-                    transition: 'left 0.3s ease',
-                    '&:hover': { bgcolor: 'rgba(255, 105, 180, 0.1)' }
-                }}
-            >
-                <MenuOpen sx={{ transform: mobileMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} />
-            </IconButton>
-        )}
+        <PublicHeader />
         <Box display="flex">
-            <LeftMenu mobileOpen={false} onMobileClose={() => setMobileMenuOpen(false)} />
-
             <Container sx={{ py: 10 }}>
                 <React.Suspense fallback={<LinearProgress />}>
                     <Outlet />

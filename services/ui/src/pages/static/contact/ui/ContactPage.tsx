@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Container, Paper, TextField, Button, Alert } from '@mui/material';
 import Send from '@mui/icons-material/Send';
-import AppHeader from '@/widgets/headers/AppHeader';
-import LeftMenu from '@/widgets/LeftMenu';
-import AppFooter from '@/widgets/footers/AppFooter';
 
 export const ContactPage = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -16,10 +13,7 @@ export const ContactPage = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
-      <AppHeader />
-      <LeftMenu />
-      
+    <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>      
       <Box component="main" sx={{ flexGrow: 1, ml: '200px', mt: 8 }}>
         <Container maxWidth="md" sx={{ py: 4 }}>
           <Typography variant="h3" sx={{ color: 'primary.main', mb: 4 }}>Contact Us</Typography>
@@ -83,7 +77,6 @@ export const ContactPage = () => {
             </Box>
           </Paper>
         </Container>
-        <AppFooter />
       </Box>
     </Box>
   );

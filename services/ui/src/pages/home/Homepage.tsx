@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import Header from '../../widgets/headers/MainPageHeader';
 import HeroSection from './ui/HeroSection';
 import FeaturesSection from './ui/FeaturesSection';
 import CTASection from './ui/CTASection';
-import Footer from '../../shared/ui/footer/Footer';
 import AuthModal from '../../features/auth-login/AuthModal';
 import { mockData } from './mock';
 import { Box } from '@mui/material';
+import { PublicHeader } from '@/widgets/headers';
+import { AppFooter } from '@/widgets/footers';
 
 const LandingPage = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -32,15 +32,15 @@ const LandingPage = () => {
         bgcolor: "monstrino.black",
         color: "monstrino.white"
        }}>
-        <Header onOpenAuth={handleOpenAuth} />
+        <PublicHeader onOpenAuth={handleOpenAuth} />
         <HeroSection
           onOpenAuth={handleOpenAuth}
           onSubscribe={handleSubscribe}
           isSubscribed={isSubscribed}
         />
         <FeaturesSection features={mockData.features} />
-        <CTASection onOpenAuth={handleOpenAuth} />
-        <Footer />
+        {/* <CTASection onOpenAuth={handleOpenAuth} /> */}
+        <AppFooter />
 
         <AuthModal
           isOpen={isAuthModalOpen}

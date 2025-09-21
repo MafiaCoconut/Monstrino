@@ -31,10 +31,8 @@ import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import MenuOpen from '@mui/icons-material/MenuOpen'
 
-import LeftMenu from '@/widgets/LeftMenu';
-import UserHeader from '@/widgets/headers/UserHeader';
-import AppHeader from '@/widgets/headers/AppHeader';
 import { mockUserData } from '@/data/mocAppData';
+import { UserHeader } from '@/widgets/headers';
 
 export const SettingsPage = () => {
   const theme = useTheme();
@@ -90,30 +88,7 @@ export const SettingsPage = () => {
   );
 
   return (
-    <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
-      <AppHeader />
-      
-      {/* Mobile Menu Toggle */}
-      {isMobile && (
-        <IconButton
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          sx={{
-            position: 'fixed',
-            top: 70,
-            left: mobileMenuOpen ? 250 : 10,
-            zIndex: 1300,
-            bgcolor: 'background.paper',
-            color: 'primary.main',
-            transition: 'left 0.3s ease',
-            '&:hover': { bgcolor: 'rgba(255, 105, 180, 0.1)' }
-          }}
-        >
-          <MenuOpen sx={{ transform: mobileMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} />
-        </IconButton>
-      )}
-      
-      <LeftMenu mobileOpen={mobileMenuOpen} onMobileClose={() => setMobileMenuOpen(false)} />
-      
+    <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>      
       <Box 
         component="main" 
         sx={{ 
@@ -510,8 +485,6 @@ export const SettingsPage = () => {
             </Box>
           </Paper>
         </Container>
-
-        <AppFooter />
       </Box>
     </Box>
   );

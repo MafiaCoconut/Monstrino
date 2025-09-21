@@ -19,11 +19,8 @@ import Search from '@mui/icons-material/Search';
 import Add from '@mui/icons-material/Add';
 import People from '@mui/icons-material/People';
 import MenuOpen from '@mui/icons-material/MenuOpen';
-import AppHeader from '../../../widgets/headers/AppHeader';
-import LeftMenu from '../../../widgets/LeftMenu';
-import UserHeader from '../../../widgets/headers/UserHeader';
 import { mockUserData } from '../../../data/mocAppData';
-import AppFooter from '../../../widgets/footers/AppFooter';
+import { UserHeader } from '@/widgets/headers';
 
 const GroupsPage = () => {
   const theme = useTheme();
@@ -38,8 +35,6 @@ const GroupsPage = () => {
 
   return (
     <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
-      <AppHeader />
-
       {/* Mobile Menu Toggle */}
       {isMobile && (
         <IconButton
@@ -58,8 +53,6 @@ const GroupsPage = () => {
           <MenuOpen sx={{ transform: mobileMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} />
         </IconButton>
       )}
-
-      <LeftMenu mobileOpen={mobileMenuOpen} onMobileClose={() => setMobileMenuOpen(false)} />
 
       <Box
         component="main"
@@ -325,8 +318,6 @@ const GroupsPage = () => {
             </Box>
           )}
         </Container>
-
-        <AppFooter />
       </Box>
     </Box>
   );

@@ -38,7 +38,6 @@ export const FavoriteDollsWidget = ({favoriteDolls, isMobile=false}: FavoriteDol
             </Stack>
             <Box sx={{
               display: 'flex',
-            //   overflowY: 'auto',
               gap: 2,
               pb: 1,
               minHeight: '700',

@@ -27,7 +27,7 @@ import Dashboard from '@mui/icons-material/Dashboard';
 // import NotificationsModal from '../modals/NotificationsModal';
 import { mockUserData } from '../../data/mocAppData';
 
-const AppHeader = () => {
+export const AppHeader = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -239,5 +239,3 @@ const AppHeader = () => {
     </>
   );
 };
-
-export default AppHeader;

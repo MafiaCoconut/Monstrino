@@ -13,13 +13,11 @@ import {
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import Add from '@mui/icons-material/Add';
 import { mockUserData } from '../../../data/mocAppData';
-import AppHeader from '../../../widgets/headers/AppHeader';
 import LeftMenu from '../../../widgets/LeftMenu';
-import UserHeader from '../../../widgets/headers/UserHeader';
-import AppFooter from '../../../widgets/footers/AppFooter';
 import RightMenu from '../../../widgets/RightMenu';
 import AddDollModal from '../../../widgets/collections/AddDollModal';
 import { DollCard } from '@/entities/collection';
+import { UserHeader } from '@/widgets/headers';
 
 const CollectionPage = () => {
   const { id } = useParams();
@@ -69,9 +67,6 @@ const CollectionPage = () => {
 
   return (
     <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
-      <AppHeader />
-      <LeftMenu mobileOpen={undefined} onMobileClose={undefined} />
-
       <Box component="main" sx={{ flexGrow: 1, ml: '200px', mr: '200px', mt: 8 }}>
         <UserHeader userData={mockUserData.currentUser} onEditProfile={undefined} />
 
@@ -148,7 +143,6 @@ const CollectionPage = () => {
           )}
         </Container>
 
-        <AppFooter />
       </Box>
 
       {/* Right Menu */}

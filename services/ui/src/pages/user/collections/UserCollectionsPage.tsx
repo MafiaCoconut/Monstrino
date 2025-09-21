@@ -12,13 +12,11 @@ import {
 } from '@mui/material';
 import Add from '@mui/icons-material/Add';
 import MenuOpen from '@mui/icons-material/MenuOpen';
-import AppHeader from '../../../widgets/headers/AppHeader';
 import LeftMenu from '../../../widgets/LeftMenu';
-import UserHeader from '../../../widgets/headers/UserHeader';
 import { mockUserData } from '../../../data/mocAppData';
-import AppFooter from '../../../widgets/footers/AppFooter';
 import CreateCollectionModal from '../../../widgets/collections/CreateCollectionModal';
 import { CollectionCard } from '@/entities/collection';
+import { UserHeader } from '@/widgets/headers';
 
 const UserCollectionsPage = () => {
     const theme = useTheme();
@@ -41,7 +39,6 @@ const UserCollectionsPage = () => {
 
     return (
         <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
-            <AppHeader />
 
             {/* Mobile Menu Toggle */}
             {isMobile && (
@@ -225,8 +222,6 @@ const UserCollectionsPage = () => {
                         </Box>
                     )}
                 </Container>
-
-                <AppFooter />
             </Box>
 
             <CreateCollectionModal

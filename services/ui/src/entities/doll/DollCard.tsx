@@ -18,18 +18,22 @@ export const DollCard = ({dollId, image, name, character, onClick, isMobile=fals
         <Card
             key={dollId}
             sx={{
-                minWidth: { xs: 100, sm: 120, md: 140, lg: 131 },
-                maxWidth: { xs: 100, sm: 120, md: 140, lg: 85 },
+                minWidth: { xs: 70, sm: 90, md: 110, lg: 130 },
+                maxWidth: { xs: 100, sm: 90, md: 110, lg: 130 },
                 bgcolor: 'rgba(255, 105, 180, 0.1)',
                 cursor: 'pointer',
                 transition: 'transform 0.2s ease',
                 '&:hover': { transform: 'scale(1.05)' }
             }}
-            onClick={() => navigate(`/users/${username}/dolls/${dollId}`)}
+            // onClick={() => navigate(`/users/${username}/dolls/${dollId}`)}
         >
             <CardMedia
             component="img"
-            height={isMobile ? 80 : 300}
+            sx={{
+                height: { xs: 150, sm: 280, md: 300, lg: 300 }
+            }}
+            
+            // height={isMobile ? 150 : 300}
             image={image || 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=160&h=120&fit=crop'}
             alt={name}
             />

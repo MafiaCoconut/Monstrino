@@ -16,7 +16,7 @@ type UserHeaderProps = {
   onEditProfile?: () => void;
 }
 
-const UserHeader = ({ userData, onEditProfile }: UserHeaderProps) => {
+export const UserHeader = ({ userData, onEditProfile }: UserHeaderProps) => {
 
   return (
     <Paper
@@ -64,5 +64,3 @@ const UserHeader = ({ userData, onEditProfile }: UserHeaderProps) => {
     
   );
 };
-
-export default UserHeader;

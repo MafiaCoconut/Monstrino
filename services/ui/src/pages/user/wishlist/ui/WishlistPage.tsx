@@ -28,9 +28,6 @@ import Star from '@mui/icons-material/Star';
 import StarBorder from '@mui/icons-material/StarBorder';
 import { useNavigate } from 'react-router-dom';
 import { mockUserData } from '@/data/mocAppData';
-import AppHeader from '@/widgets/headers/AppHeader';
-import LeftMenu from '@/widgets/LeftMenu';
-import AppFooter from '@/widgets/footers/AppFooter';
 
 export const WishlistPage = () => {
   const navigate = useNavigate();
@@ -89,9 +86,7 @@ export const WishlistPage = () => {
   });
 
   return (
-    <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
-      <AppHeader />
-      
+    <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>      
       {/* Mobile Menu Toggle */}
       {isMobile && (
         <IconButton
@@ -110,8 +105,6 @@ export const WishlistPage = () => {
           <FavoriteOutlined />
         </IconButton>
       )}
-
-      <LeftMenu mobileOpen={mobileMenuOpen} onMobileClose={() => setMobileMenuOpen(false)} />
       
       {/* Main Content */}
       <Box 
@@ -314,8 +307,6 @@ export const WishlistPage = () => {
             </Box>
           )}
         </Container>
-
-        <AppFooter />
       </Box>
     </Box>
   );

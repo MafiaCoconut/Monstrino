@@ -25,11 +25,7 @@ import EmojiEvents from '@mui/icons-material/EmojiEvents';
 import MenuOpen from '@mui/icons-material/MenuOpen';
 
 import { useNavigate } from 'react-router-dom';
-import Header from '../../../widgets/headers/AppHeader';
 import { mockUserData, mockActivities, mockAchievements } from '../../../data/mocAppData';
-import LeftMenu from '../../../widgets/LeftMenu';
-import UserHeader from '../../../widgets/headers/UserHeader';
-import AppFooter from '../../../widgets/footers/AppFooter';
 import ActivityFeed from '../../../widgets/activities/ActivityFeed';
 import FriendsModal from '../../../widgets/friends/FriendsModal';
 import GroupsModal from '../../../widgets/groups/GroupsModal';
@@ -38,6 +34,7 @@ import UserSettingsModal from '../../../widgets/settings/UserSettingsModal';
 import { NewPostModal, PostCard } from '@/entities/post';
 import { UserStatus } from '@/widgets/profile';
 import { FavoriteDollsWidget } from '@/widgets/dolls';
+import { UserHeader } from '@/widgets/headers';
 
 const UserPage = () => {
   const navigate = useNavigate();

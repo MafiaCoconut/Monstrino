@@ -6,10 +6,7 @@ import Favorite from '@mui/icons-material/Favorite';
 import Share from '@mui/icons-material/Share';
 import Add from '@mui/icons-material/Add';
 import { mockUserData } from '@/data/mocAppData';
-import UserHeader from '@/widgets/headers/UserHeader';
-import LeftMenu from '@/widgets/LeftMenu';
-import AppHeader from '@/widgets/headers/AppHeader';
-import AppFooter from '@/widgets/footers/AppFooter';
+import { UserHeader } from '@/widgets/headers';
 
 const DollViewPage = () => {
   const { id } = useParams();
@@ -26,8 +23,6 @@ const DollViewPage = () => {
 
   return (
     <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
-      <AppHeader />
-      <LeftMenu mobileOpen={undefined} onMobileClose={undefined} />
       
       <Box component="main" sx={{ flexGrow: 1, ml: '200px', mt: 8 }}>
         <UserHeader userData={mockUserData.currentUser} onEditProfile={undefined} />
@@ -73,8 +68,6 @@ const DollViewPage = () => {
             </CardContent>
           </Card>
         </Box>
-
-        <AppFooter />
       </Box>
     </Box>
   );

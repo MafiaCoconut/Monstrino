@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 
-const Header = (props: any) => {
+export const PublicHeader = (props: any) => {
   const { onOpenAuth = "" } = props;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -99,13 +99,13 @@ const Header = (props: any) => {
             alignItems="center"
             sx={{ display: { xs: 'none', md: 'flex' } }}
           >
-            <Button component="a" href="#features" sx={linkSX}>
+            <Button disabled={true} component="a" href="#features" sx={linkSX}>
               Features
             </Button>
-            <Button component="a" href="#community" sx={linkSX}>
+            <Button disabled={true} component="a" href="#community" sx={linkSX}>
               Community
             </Button>
-            <Button component="a" href="#about" sx={linkSX}>
+            <Button disabled={true} component="a" href="#about" sx={linkSX}>
               About
             </Button>
           </Stack>
@@ -118,13 +118,15 @@ const Header = (props: any) => {
             sx={{ display: { xs: 'none', md: 'flex' }, ml: 3 }}
           >
             <Button
-              onClick={() => onOpenAuth && onOpenAuth('login')}
+              disabled={true}
+              // onClick={() => onOpenAuth && onOpenAuth('login')}
               sx={linkSX}
             >
               Login
             </Button>
             <Button
-              onClick={() => onOpenAuth && onOpenAuth('register')}
+              disabled={true}
+              // onClick={() => onOpenAuth && onOpenAuth('register')}
               sx={ctaSX}
             >
               Join Now
@@ -169,13 +171,13 @@ const Header = (props: any) => {
               <Divider sx={{ my: 1.5, borderColor: alpha(C.purple, 0.2) }} />
 
               <Button
-                onClick={() => onOpenAuth && onOpenAuth('login')}
+                // onClick={() => onOpenAuth && onOpenAuth('login')}
                 sx={{ ...linkSX, justifyContent: 'flex-start' }}
               >
                 Login
               </Button>
               <Button
-                onClick={() => onOpenAuth && onOpenAuth('register')}
+                // onClick={() => onOpenAuth && onOpenAuth('register')}
                 sx={{ ...ctaSX, alignSelf: 'flex-start' }}
               >
                 Join Now
@@ -187,5 +189,3 @@ const Header = (props: any) => {
     </AppBar>
   );
 };
-
-export default Header;
