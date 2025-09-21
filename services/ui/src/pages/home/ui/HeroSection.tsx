@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Zap, Users, Heart, ArrowRight } from 'lucide-react';
 import { Box, Container, Stack, Typography, Button, TextField } from "@mui/material";
 import { alpha } from "@mui/material/styles";
+import { FeatureChip, HeroDescription, HeroTagline, HeroTitle } from '@/shared/ui/homepage-hero';
 
 const HeroSection = (props: any) => {
   const { onOpenAuth, onSubscribe, isSubscribed } = props
@@ -28,90 +29,24 @@ const HeroSection = (props: any) => {
       component="section"
       sx={{
         position: "relative",
+        zIndex: 1,
         minHeight: "100vh",
+        height: "100%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         overflow: "hidden",
         pt: { xs: 8, lg: 10 },
-        bgcolor: C.black,
-        color: C.white,
       }}
     >
-      {/* Background */}
-      <Box
-        sx={{
-          position: "absolute",
-          inset: 0,
-          background: `linear-gradient(135deg, ${C.black} 0%, ${alpha(C.purple, 0.2)} 50%, ${C.black} 100%)`,
-        }}
-      />
-      <Box
-        sx={{
-          position: "absolute",
-          top: "25%",
-          left: "25%",
-          width: { xs: 200, sm: 256 },
-          height: { xs: 200, sm: 256 },
-          bgcolor: alpha(C.pink, 0.1),
-          borderRadius: "50%",
-          filter: "blur(48px)",
-        }}
-      />
-      <Box
-        sx={{
-          position: "absolute",
-          bottom: "25%",
-          right: "25%",
-          width: { xs: 280, sm: 384 },
-          height: { xs: 280, sm: 384 },
-          bgcolor: alpha(C.purple, 0.1),
-          borderRadius: "50%",
-          filter: "blur(48px)",
-        }}
-      />
-
       <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
         <Stack alignItems="center" textAlign="center" spacing={3}>
-          {/* Headline */}
-          <Typography
-            variant="h1"
-            sx={{
-              fontFamily: "Inter, Helvetica Neue, Arial, sans-serif",
-              fontWeight: 800,
-              textTransform: "uppercase",
-              letterSpacing: "-0.02em",
-              lineHeight: 1,
-              color: C.pink,
-              fontSize: { xs: "3rem", sm: "4.5rem", md: "6rem", lg: "8rem" },
-            }}
-          >
-            MONSTRINO
-          </Typography>
+          <HeroTitle text="Monstrino"/>
+          <HeroTagline text="Where monsters unite"/>
+          <HeroDescription 
+            text="Join the most fang-tastic social network for Monster High fans! Connect with fellow ghouls, share your monster moments, and embrace your inner monster." 
+          />
 
-          <Typography
-            sx={{
-              fontFamily: "Fira Code, Menlo, Monaco, Consolas, monospace",
-              color: C.purple,
-              textTransform: "uppercase",
-              letterSpacing: "0.12em",
-            }}
-          >
-            Where Monsters Unite
-          </Typography>
-
-          {/* Description */}
-          <Typography
-            sx={{
-              maxWidth: 640,
-              opacity: 0.8,
-              fontSize: { xs: "1.1rem", md: "1.25rem" },
-              lineHeight: 1.6,
-            }}
-          >
-            Join the most fang-tastic social network for Monster High fans! Connect with fellow ghouls,
-            share your monster moments, and embrace your inner monster.
-          </Typography>
 
           {/* Feature highlights */}
           <Stack direction="row" spacing={{ xs: 2, md: 3 }} flexWrap="wrap" justifyContent="center" sx={{ my: 2 }}>
@@ -120,19 +55,7 @@ const HeroSection = (props: any) => {
               { icon: Heart, label: "Ghoul Friends" },
               { icon: Zap, label: "Spooky Fun" },
             ].map(({ icon: Icon, label }) => (
-              <Stack key={label} direction="row" alignItems="center" spacing={1} sx={{ color: C.pink }}>
-                <Icon size={20} />
-                <Typography
-                  sx={{
-                    fontFamily: "Fira Code, monospace",
-                    fontSize: 12,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.1em",
-                  }}
-                >
-                  {label}
-                </Typography>
-              </Stack>
+              <FeatureChip icon={Icon} label={label}/>
             ))}
           </Stack>
 

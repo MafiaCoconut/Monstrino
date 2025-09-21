@@ -6,7 +6,6 @@ import { } from 'react-router-dom';
 import RegisterForm from './features/auth-register/ui/RegisterForm';
 import LoginForm from './features/auth-login/ui/LoginForm';
 import { Context } from './main';
-import LandingPage from './pages/home/Homepage';
 import MonstrinoProfilePage from './pages/user/profile/UserProfile';
 import muiTheme from './shared/theme/muiTheme'
 import { CssBaseline } from '@mui/material';
@@ -22,7 +21,8 @@ import { ContactPage } from './pages/static/contact';
 import { PrivacyPage } from './pages/static/privacy';
 import { SupportPage } from './pages/static/support';
 import { TermsPage } from './pages/static/terms';
-import { UserLayout } from './layouts';
+import { PublicLayout, UserLayout } from './layouts';
+import { Homepage } from '@/pages/home';
 function App() {
   const { userStore } = useContext(Context);
 
@@ -39,7 +39,6 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
       <Route path="/register" element={<RegisterForm />} />
       <Route path="/login" element={<LoginForm />} />
 
@@ -57,14 +56,16 @@ function App() {
       </Route>
 
       {/* Static pages */}
-      <Route path="/about"    element={<AboutPage   />} />
-      <Route path="/contact"  element={<ContactPage />} />
-      <Route path="/privacy"  element={<PrivacyPage />} />
-      <Route path="/support"  element={<SupportPage />} />
-      <Route path="/terms"    element={<TermsPage   />} />
-      
-      <Route path="/settings" element={<SettingsPage />} />
-
+      <Route path="/"           element={<PublicLayout />}>
+        <Route index            element={<Homepage />} />
+        <Route path="/about"    element={<AboutPage   />} />
+        <Route path="/contact"  element={<ContactPage />} />
+        <Route path="/privacy"  element={<PrivacyPage />} />
+        <Route path="/support"  element={<SupportPage />} />
+        <Route path="/terms"    element={<TermsPage   />} />
+        
+        <Route path="/settings" element={<SettingsPage />} />
+      </Route>
 
       {/* Groups */}
       {/* <Route path="/users/-1/groups" element={<MonstrinoProfilePage />} />

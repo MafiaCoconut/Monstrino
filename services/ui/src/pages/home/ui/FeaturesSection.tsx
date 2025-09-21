@@ -16,7 +16,7 @@ import {
   Button,
   Chip,
 } from '@mui/material';
-import { alpha, keyframes } from '@mui/material/styles';
+import { alpha, keyframes, useTheme } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
 
 const iconMap = {
@@ -28,31 +28,23 @@ const iconMap = {
   MessageCircle,
 };
 
-const C = {
-  black: '#0a0a0a',
-  white: '#ffffff',
-  purple: '#8b5fbf',
-  pink: '#ff69b4',
-  blue: '#4a90e2',
-  green: '#66cc66',
-  yellow: '#ffd93d',
-  orange: '#ff8c42',
+type FeatureData = {
+  id: number;
+  title: string;
+  description: string;
+  tags: string[];
+  icon: keyof typeof iconMap | string;
+  bgColor: string;
 };
 
-const FeatureCard = ({ feature }) => {
-  const Icon = iconMap[feature.icon];
+type FeaturePalette = {
+  bg: string;
+  fg: string;
+  chipBg: string;
+};
 
-  const bgStyleMap = {
-    'mid-purple': { bg: C.purple, fg: C.white, chipBg: alpha(C.white, 0.15) },
-    'light-pink': { bg: C.pink, fg: '#0a0a0a', chipBg: alpha('#000', 0.2) },
-    'light-yellow': { bg: C.yellow, fg: '#0a0a0a', chipBg: alpha('#000', 0.2) },
-    'mid-blue': { bg: C.blue, fg: C.white, chipBg: alpha(C.white, 0.15) },
-    'mid-green': { bg: C.green, fg: C.white, chipBg: alpha(C.white, 0.15) },
-    'mid-orange': { bg: C.orange, fg: C.white, chipBg: alpha(C.white, 0.15) },
-  };
-
-  const palette =
-    bgStyleMap[feature.bgColor] || { bg: C.pink, fg: '#0a0a0a', chipBg: alpha('#000', 0.2) };
+const FeatureCard = ({ feature, palette }: { feature: FeatureData; palette: FeaturePalette }) => {
+  const Icon = iconMap[feature.icon as keyof typeof iconMap];
 
   return (
     <Box
@@ -128,11 +120,50 @@ const slideInUp = keyframes`
   100% { opacity: 1; transform: translateY(0); }
 `;
 
-const FeaturesSection = ({ features }) => {
-  const navigate = useNavigate()
+const FeaturesSection = ({ features }: { features: FeatureData[] }) => {
+  const navigate = useNavigate();
+  const theme = useTheme();
+  const colors = theme.palette.monstrino;
+
+  const defaultPalette: FeaturePalette = {
+    bg: colors.pink,
+    fg: colors.black,
+    chipBg: alpha(theme.palette.common.black, 0.2),
+  };
+
+  const paletteMap: Record<string, FeaturePalette> = {
+    default: defaultPalette,
+    'mid-purple': { bg: colors.purple, fg: colors.white, chipBg: alpha(colors.white, 0.15) },
+    'light-pink': { bg: colors.pink, fg: colors.black, chipBg: alpha(theme.palette.common.black, 0.2) },
+    'light-yellow': { bg: colors.yellow, fg: colors.black, chipBg: alpha(theme.palette.common.black, 0.2) },
+    'mid-blue': { bg: colors.blue, fg: colors.white, chipBg: alpha(colors.white, 0.15) },
+    'mid-green': { bg: colors.green, fg: colors.white, chipBg: alpha(colors.white, 0.15) },
+    'mid-orange': { bg: colors.orange, fg: colors.white, chipBg: alpha(colors.white, 0.15) },
+  };
+
   return (
-    <Box component="section" id="features" sx={{ py: { xs: 8, lg: 12 }, bgcolor: C.black }}>
-      <Container maxWidth="lg">
+    <Box
+      component="section"
+      id="features"
+      sx={{
+        position: 'relative',
+        py: { xs: 8, lg: 12 },
+        overflow: 'hidden',
+      }}
+    >
+
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: { xs: '-10%', md: '-6%' },
+          right: { xs: '-10%', md: '-6%' },
+          width: { xs: 280, md: 360 },
+          height: { xs: 280, md: 360 },
+          borderRadius: '50%',
+          filter: 'blur(64px)',
+        }}
+      />
+      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
         {/* Section Header */}
         <Box sx={{ textAlign: 'center', mb: 6 }}>
           <Typography
@@ -141,7 +172,7 @@ const FeaturesSection = ({ features }) => {
               fontWeight: 800,
               textTransform: 'uppercase',
               letterSpacing: '-0.02em',
-              color: C.pink,
+              color: colors.pink,
               fontSize: { xs: '2.25rem', md: '3rem', lg: '3.75rem' },
               mb: 1.5,
             }}
@@ -151,7 +182,7 @@ const FeaturesSection = ({ features }) => {
 
           <Typography
             sx={{
-              color: alpha(C.white, 0.8),
+              color: alpha(colors.white, 0.8),
               maxWidth: 720,
               mx: 'auto',
               fontSize: { xs: '1.1rem', md: '1.25rem' },
@@ -166,6 +197,7 @@ const FeaturesSection = ({ features }) => {
         <Grid container spacing={{ xs: 2, md: 3 }}>
           {features.map((feature, index) => (
             <Grid
+              key={feature.id ?? feature.title}
               size={{ xs: 12, md: 6, lg: 4}}
               sx={{
                 animation: `${slideInUp} .5s ease-out forwards`,
@@ -173,14 +205,17 @@ const FeaturesSection = ({ features }) => {
                 animationDelay: `${index * 0.1}s`,
               }}
             >
-              <FeatureCard feature={feature} />
+              <FeatureCard
+                feature={feature}
+                palette={paletteMap[feature.bgColor] ?? defaultPalette}
+              />
             </Grid>
           ))}
         </Grid>
 
         {/* Additional CTA */}
         <Box sx={{ textAlign: 'center', mt: 8 }}>
-          <Typography sx={{ color: alpha(C.white, 0.6), mb: 2 }}>
+          <Typography sx={{ color: alpha(colors.white, 0.6), mb: 2 }}>
             Ready to unleash your inner monster?
           </Typography>
 
@@ -190,17 +225,17 @@ const FeaturesSection = ({ features }) => {
                 px: 4,
                 py: 1.25,
                 borderRadius: 999,
-                bgcolor: C.pink,
-                color: C.black,
+                bgcolor: colors.pink,
+                color: colors.black,
                 fontFamily: 'Fira Code, monospace',
                 fontSize: 12,
                 letterSpacing: '0.09em',
                 textTransform: 'uppercase',
                 transition: 'all .3s ease',
                 '&:hover': {
-                  bgcolor: alpha(C.pink, 0.9),
+                  bgcolor: alpha(colors.pink, 0.9),
                   transform: 'scale(1.03)',
-                  boxShadow: `0 16px 32px ${alpha(C.pink, 0.25)}`,
+                  boxShadow: `0 16px 32px ${alpha(colors.pink, 0.25)}`,
                 },
               }}
             >
@@ -214,14 +249,14 @@ const FeaturesSection = ({ features }) => {
                 px: 4,
                 py: 1.25,
                 borderRadius: 999,
-                color: C.white,
-                borderColor: C.white,
+                color: colors.white,
+                borderColor: colors.white,
                 fontFamily: 'Fira Code, monospace',
                 fontSize: 12,
                 letterSpacing: '0.09em',
                 textTransform: 'uppercase',
                 transition: 'all .3s ease',
-                '&:hover': { bgcolor: alpha(C.white, 0.1), borderColor: C.white },
+                '&:hover': { bgcolor: alpha(colors.white, 0.1), borderColor: colors.white },
               }}
             >
               Watch Demo

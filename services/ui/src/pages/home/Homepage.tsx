@@ -4,11 +4,10 @@ import FeaturesSection from './ui/FeaturesSection';
 import CTASection from './ui/CTASection';
 import AuthModal from '../../features/auth-login/AuthModal';
 import { mockData } from './mock';
-import { Box } from '@mui/material';
-import { PublicHeader } from '@/widgets/headers';
-import { AppFooter } from '@/widgets/footers';
+import { Box, Container } from '@mui/material';
+import { AuroraBackground } from '@pages/home';
 
-const LandingPage = () => {
+export const Homepage = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login'); // 'login' or 'register'
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -26,21 +25,52 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-monstrino-black text-monstrino-white">
-      <Box sx={{
+    <Box 
+      data-l="Homepage"
+      sx={{
         minHeight: "100vh",
-        bgcolor: "monstrino.black",
-        color: "monstrino.white"
-       }}>
-        <PublicHeader onOpenAuth={handleOpenAuth} />
-        <HeroSection
-          onOpenAuth={handleOpenAuth}
-          onSubscribe={handleSubscribe}
-          isSubscribed={isSubscribed}
+      // bgcolor: "monstrino.black",
+      // color: "monstrino.white"
+      }}>
+      <Box
+        aria-hidden
+        sx={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 0,
+          pointerEvents: 'none',
+        }}
+      >
+        <AuroraBackground
+          // подстрой цвета под Monstrino
+          colorStops={["#FF00C7", "#B19EEF", "#FFFFFF"]}
+          blend={1}
+          amplitude={0.5}
+          speed={0.8}
         />
+      </Box>
+      <Box 
+        component="main"
+        sx={{
+          position: 'relative',
+          zIndex: 1,
+          height: '100%',
+          overflowY: 'auto',
+          scrollSnapType: 'y mandatory',
+          WebkitOverflowScrolling: 'touch',
+        }}
+      >
+        <section id="hero" data-section="Homepage/Hero">
+        <Container></Container>
+          <HeroSection
+            onOpenAuth={handleOpenAuth}
+            onSubscribe={handleSubscribe}
+            isSubscribed={isSubscribed}
+          />
+        </section>
+
         <FeaturesSection features={mockData.features} />
-        {/* <CTASection onOpenAuth={handleOpenAuth} /> */}
-        <AppFooter />
+        <CTASection onOpenAuth={handleOpenAuth} />
 
         <AuthModal
           isOpen={isAuthModalOpen}
@@ -48,8 +78,7 @@ const LandingPage = () => {
           mode={authMode}
         />
       </Box>
-    </div>
+      
+    </Box>
   );
 };
-
-export default LandingPage;

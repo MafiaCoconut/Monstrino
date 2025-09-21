@@ -1,18 +1,12 @@
 import React from 'react';
 import { ArrowRight, Sparkles, Crown } from 'lucide-react';
 import { Box, Container, Stack, Typography, Button, Grid } from '@mui/material';
-import { alpha } from '@mui/material/styles';
+import { alpha, useTheme } from '@mui/material/styles';
 import { keyframes } from '@mui/system';
 
 const CTASection = ({ onOpenAuth }) => {
-  const C = {
-    black: '#0a0a0a',
-    white: '#ffffff',
-    purple: '#8b5fbf',
-    pink: '#ff69b4',
-    yellow: '#ffd93d',
-    green: '#66cc66',
-  };
+  const theme = useTheme();
+  const colors = theme.palette.monstrino;
 
   const pulse = keyframes`
     0% { transform: scale(1); opacity: 1; }
@@ -27,24 +21,8 @@ const CTASection = ({ onOpenAuth }) => {
         position: 'relative',
         py: { xs: 8, lg: 12 },
         overflow: 'hidden',
-        background: `linear-gradient(135deg, ${alpha(C.purple, 0.2)} 0%, ${C.black} 50%, ${alpha(C.pink, 0.2)} 100%)`,
-        color: C.white,
       }}
     >
-      {/* Background Effects */}
-      <Box sx={{ position: 'absolute', inset: 0, bgcolor: alpha('#000', 0.5) }} />
-      <Box
-        sx={{
-          position: 'absolute',
-          top: 0,
-          left: '25%',
-          width: 384,
-          height: 384,
-          bgcolor: alpha(C.pink, 0.2),
-          borderRadius: '50%',
-          filter: 'blur(48px)',
-        }}
-      />
       <Box
         sx={{
           position: 'absolute',
@@ -52,9 +30,7 @@ const CTASection = ({ onOpenAuth }) => {
           right: '25%',
           width: 384,
           height: 384,
-          bgcolor: alpha(C.purple, 0.2),
           borderRadius: '50%',
-          filter: 'blur(48px)',
         }}
       />
 
@@ -62,11 +38,11 @@ const CTASection = ({ onOpenAuth }) => {
         {/* Decorative Icons */}
         <Stack direction="row" justifyContent="center" alignItems="center" spacing={4} sx={{ mb: 4 }}>
           <Box sx={{ animation: `${pulse} 1.8s ease-in-out infinite` }}>
-            <Sparkles size={32} color={C.pink} />
+            <Sparkles size={32} color={colors.pink} />
           </Box>
-          <Crown size={48} color={C.yellow} />
+          <Crown size={48} color={colors.yellow} />
           <Box sx={{ animation: `${pulse} 1.8s ease-in-out infinite .3s` }}>
-            <Sparkles size={32} color={C.pink} />
+            <Sparkles size={32} color={colors.pink} />
           </Box>
         </Stack>
 
@@ -79,13 +55,13 @@ const CTASection = ({ onOpenAuth }) => {
             letterSpacing: '-0.02em',
             lineHeight: 1.1,
             mb: 2,
-            color: C.pink,
+            color: colors.pink,
             fontSize: { xs: '2.75rem', md: '3.5rem', lg: '4.5rem' },
           }}
         >
           JOIN THE MONSTER
           <br />
-          <Box component="span" sx={{ color: C.white }}>
+          <Box component="span" sx={{ color: colors.white }}>
             REVOLUTION
           </Box>
         </Typography>
@@ -115,15 +91,15 @@ const CTASection = ({ onOpenAuth }) => {
             <Grid size={{ xs:12, md: 4 }}>
               <Box
                 sx={{
-                  bgcolor: alpha(C.white, 0.1),
+                  bgcolor: alpha(colors.white, 0.1),
                   backdropFilter: 'blur(4px)',
                   borderRadius: 2,
                   p: 3,
-                  border: `1px solid ${alpha(C.purple, 0.3)}`,
+                  border: `1px solid ${alpha(colors.purple, 0.3)}`,
                 }}
               >
-                <Typography sx={{ color: C.pink, fontWeight: 700, fontSize: '1.25rem', mb: 1 }}>{t}</Typography>
-                <Typography sx={{ color: alpha(C.white, 0.8) }}>{s}</Typography>
+                <Typography sx={{ color: colors.pink, fontWeight: 700, fontSize: '1.25rem', mb: 1 }}>{t}</Typography>
+                <Typography sx={{ color: alpha(colors.white, 0.8) }}>{s}</Typography>
               </Box>
             </Grid>
           ))}
@@ -138,8 +114,8 @@ const CTASection = ({ onOpenAuth }) => {
               px: 6,
               py: 1.5,
               borderRadius: 999,
-              bgcolor: C.pink,
-              color: C.black,
+              bgcolor: colors.pink,
+              color: colors.black,
               fontFamily: 'Fira Code, monospace',
               fontSize: 12,
               letterSpacing: '0.09em',
@@ -148,8 +124,8 @@ const CTASection = ({ onOpenAuth }) => {
               '& .MuiButton-endIcon': { transition: 'transform .3s ease' },
               '&:hover .MuiButton-endIcon': { transform: 'translateX(4px)' },
               '&:hover': {
-                bgcolor: alpha(C.pink, 0.9),
-                boxShadow: `0 20px 40px ${alpha(C.pink, 0.25)}`,
+                bgcolor: alpha(colors.pink, 0.9),
+                boxShadow: `0 20px 40px ${alpha(colors.pink, 0.25)}`,
                 transform: 'scale(1.03)',
               },
             }}
@@ -164,14 +140,14 @@ const CTASection = ({ onOpenAuth }) => {
               px: 6,
               py: 1.5,
               borderRadius: 999,
-              color: C.white,
-              borderColor: C.white,
+              color: colors.white,
+              borderColor: colors.white,
               fontFamily: 'Fira Code, monospace',
               fontSize: 12,
               letterSpacing: '0.09em',
               textTransform: 'uppercase',
               transition: 'all .3s ease',
-              '&:hover': { bgcolor: alpha(C.white, 0.1), borderColor: C.white, transform: 'scale(1.03)' },
+              '&:hover': { bgcolor: alpha(colors.white, 0.1), borderColor: colors.white, transform: 'scale(1.03)' },
             }}
           >
             I'm Already a Monster
@@ -185,11 +161,11 @@ const CTASection = ({ onOpenAuth }) => {
           alignItems="center"
           spacing={4}
           flexWrap="wrap"
-          sx={{ color: alpha(C.white, 0.6), fontSize: 14 }}
+          sx={{ color: alpha(colors.white, 0.6), fontSize: 14 }}
         >
           {['Safe & Secure', 'No Spam Ever', 'Join in 30 Seconds'].map((label) => (
             <Stack key={label} direction="row" alignItems="center" spacing={1}>
-              <Box sx={{ width: 8, height: 8, bgcolor: C.green, borderRadius: '50%' }} />
+              <Box sx={{ width: 8, height: 8, bgcolor: colors.green, borderRadius: '50%' }} />
               <Box component="span">{label}</Box>
             </Stack>
           ))}
@@ -197,7 +173,7 @@ const CTASection = ({ onOpenAuth }) => {
 
         {/* Emergency CTA for mobile */}
         <Box sx={{ mt: 6, display: { md: 'none' } }}>
-          <Typography sx={{ color: alpha(C.white, 0.8), fontSize: '1.125rem', mb: 2 }}>
+          <Typography sx={{ color: alpha(colors.white, 0.8), fontSize: '1.125rem', mb: 2 }}>
             Don't wait another full moon! 🌙
           </Typography>
           <Button
@@ -211,10 +187,10 @@ const CTASection = ({ onOpenAuth }) => {
               fontSize: 12,
               letterSpacing: '0.09em',
               textTransform: 'uppercase',
-              background: `linear-gradient(90deg, ${C.pink}, ${C.purple})`,
-              color: C.white,
+              background: `linear-gradient(90deg, ${colors.pink}, ${colors.purple})`,
+              color: colors.white,
               '&:hover': {
-                background: `linear-gradient(90deg, ${alpha(C.pink, 0.9)}, ${alpha(C.purple, 0.9)})`,
+                background: `linear-gradient(90deg, ${alpha(colors.pink, 0.9)}, ${alpha(colors.purple, 0.9)})`,
               },
             }}
           >
