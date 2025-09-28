@@ -18,6 +18,10 @@ export default defineConfig(({ command, mode }) => {
       tsconfigPaths({ projects: ['tsconfig.app.json'] }),
     ].filter(Boolean),
     server: { port: 3000 },
-    build: { sourcemap: true }
+    build: { sourcemap: true },
+    define: {
+      __APP_NAME__: JSON.stringify('Monstrino'),
+      __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
+    }
   };
 });

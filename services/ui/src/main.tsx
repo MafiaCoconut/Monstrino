@@ -19,6 +19,8 @@ export const Context = createContext<UserState>({
 })
 export const api = createApi(userStore);
 
+document.title = 'Monstrino';
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
