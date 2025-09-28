@@ -12,7 +12,6 @@ export const HeroTitle = ({text}: HeroTitleProps) => {
               textTransform: "uppercase",
               letterSpacing: "-0.02em",
               lineHeight: 1,
-            //   color: C.pink,
               color: t.palette.primary.main,
               fontSize: { xs: "3rem", sm: "4.5rem", md: "6rem", lg: "8rem" },
             })}

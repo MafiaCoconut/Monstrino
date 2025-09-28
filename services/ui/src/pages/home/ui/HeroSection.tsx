@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Zap, Users, Heart, ArrowRight } from 'lucide-react';
 import { Box, Container, Stack, Typography, Button, TextField } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import { FeatureChip, HeroDescription, HeroTagline, HeroTitle } from '@/shared/ui/homepage-hero';
+import { FeatureChip, HeroDescription, HeroTagline, HeroTitle } from '@/entities/homepage/homepage-hero';
 
 const HeroSection = (props: any) => {
   const { onOpenAuth, onSubscribe, isSubscribed } = props

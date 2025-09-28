@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import { alpha, keyframes, useTheme } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
+import { FeatureCard, FeaturesDescription, FeaturesTitle, MagicBento } from '@/entities/homepage/homepage-features';
 
 const iconMap = {
   Users,
@@ -43,77 +44,7 @@ type FeaturePalette = {
   chipBg: string;
 };
 
-const FeatureCard = ({ feature, palette }: { feature: FeatureData; palette: FeaturePalette }) => {
-  const Icon = iconMap[feature.icon as keyof typeof iconMap];
 
-  return (
-    <Box
-      sx={{
-        bgcolor: palette.bg,
-        color: palette.fg,
-        borderRadius: 2,
-        p: 3,
-        minHeight: 300,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        transition: 'transform .2s ease, box-shadow .2s ease',
-        cursor: 'pointer',
-        overflow: 'hidden',
-        '&:hover': {
-          transform: 'translateY(-4px) scale(1.02)',
-          boxShadow: '0 12px 32px rgba(0,0,0,.35)',
-        },
-      }}
-    >
-      <Box>
-        <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 1.5 }}>
-          {Icon && <Icon size={32} />}
-          <Typography
-            sx={{
-              fontFamily: 'Inter, Helvetica Neue, Arial, sans-serif',
-              fontWeight: 600,
-              fontSize: '1.25rem',
-              lineHeight: 1.375,
-            }}
-          >
-            {feature.title}
-          </Typography>
-        </Stack>
-
-        <Typography
-          sx={{
-            opacity: 0.85,
-            lineHeight: 1.6,
-            mb: 2.5,
-            fontSize: '1rem',
-          }}
-        >
-          {feature.description}
-        </Typography>
-      </Box>
-
-      <Stack direction="row" flexWrap="wrap" gap={1}>
-        {feature.tags.map((tag, index) => (
-          <Chip
-            key={index}
-            label={tag}
-            sx={{
-              bgcolor: palette.chipBg,
-              color: 'inherit',
-              borderRadius: 999,
-              fontFamily: 'Fira Code, Menlo, Monaco, Consolas, monospace',
-              fontSize: 11,
-              letterSpacing: '0.09em',
-              textTransform: 'uppercase',
-              px: 1.5,
-            }}
-          />
-        ))}
-      </Stack>
-    </Box>
-  );
-};
 
 const slideInUp = keyframes`
   0% { opacity: 0; transform: translateY(16px); }
@@ -147,7 +78,7 @@ const FeaturesSection = ({ features }: { features: FeatureData[] }) => {
       id="features"
       sx={{
         position: 'relative',
-        py: { xs: 8, lg: 12 },
+        py: { xs: 0, lg: 2 },
         overflow: 'hidden',
       }}
     >
@@ -166,39 +97,16 @@ const FeaturesSection = ({ features }: { features: FeatureData[] }) => {
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
         {/* Section Header */}
         <Box sx={{ textAlign: 'center', mb: 6 }}>
-          <Typography
-            sx={{
-              fontFamily: 'Inter, Helvetica Neue, Arial, sans-serif',
-              fontWeight: 800,
-              textTransform: 'uppercase',
-              letterSpacing: '-0.02em',
-              color: colors.pink,
-              fontSize: { xs: '2.25rem', md: '3rem', lg: '3.75rem' },
-              mb: 1.5,
-            }}
-          >
-            Freaky Features
-          </Typography>
-
-          <Typography
-            sx={{
-              color: alpha(colors.white, 0.8),
-              maxWidth: 720,
-              mx: 'auto',
-              fontSize: { xs: '1.1rem', md: '1.25rem' },
-              lineHeight: 1.6,
-            }}
-          >
-            Discover all the clawsome ways to connect, share, and embrace your monster side
-          </Typography>
+          <FeaturesTitle text="Freaky Features" />
+          <FeaturesDescription text="Discover all the clawsome ways to connect, share, and embrace your monster side" />
         </Box>
 
         {/* Features Grid */}
-        <Grid container spacing={{ xs: 2, md: 3 }}>
+        <Grid container spacing={{ xs: 2, md: 3 }} justifyContent="center">
           {features.map((feature, index) => (
             <Grid
               key={feature.id ?? feature.title}
-              size={{ xs: 6, md: 6, lg: 4}}
+              size={{ xs: 12, sm: 6, md: 4, lg: 4}}
               sx={{
                 animation: `${slideInUp} .5s ease-out forwards`,
                 opacity: 0,
@@ -206,8 +114,12 @@ const FeaturesSection = ({ features }: { features: FeatureData[] }) => {
               }}
             >
               <FeatureCard
-                feature={feature}
-                palette={paletteMap[feature.bgColor] ?? defaultPalette}
+                icon={iconMap[feature.icon as keyof typeof iconMap]}
+                id={feature.id}
+                title={feature.title}
+                description={feature.description}
+                tags={feature.tags}
+                bgColor={paletteMap[feature.bgColor] ?? defaultPalette}
               />
             </Grid>
           ))}
