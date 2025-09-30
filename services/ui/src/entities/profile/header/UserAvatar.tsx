@@ -5,7 +5,7 @@ export const UserAvatar = (props: any) => {
         avatar = ""
     } = props
 
-    const avatarDefault = "https://images.unsplash.com/photo-1494790108755-2616b9c8d8c1?w=100&h=100&fit=crop&crop=face"
+    const avatarDefault = ""
     return (
         <Avatar
             src={avatar !== "" ? avatar : avatarDefault}

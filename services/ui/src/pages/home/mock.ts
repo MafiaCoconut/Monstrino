@@ -54,21 +54,21 @@ export const mockData = {
     {
       id: 1,
       name: "Draculaura Fan",
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b9c8d8c1?w=100&h=100&fit=crop&crop=face",
+      avatar: "",
       text: "Finally found my monster family! The community here is absolutely clawsome!",
       location: "Vampire Crew"
     },
     {
       id: 2, 
       name: "Clawdeen Admirer",
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
+      avatar: "",
       text: "Love sharing my monster fashion looks and getting inspiration from other ghouls!",
       location: "Werewolf Pack"
     },
     {
       id: 3,
       name: "Frankie Follower", 
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+      avatar: "",
       text: "The events feature helped me find a Monster High convention in my city. Electric!",
       location: "Monster Squad"
     }
