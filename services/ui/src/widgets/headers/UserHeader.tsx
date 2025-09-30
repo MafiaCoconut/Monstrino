@@ -14,9 +14,10 @@ import { UserAvatar, UserCollectionsButton, UserDollsButton, UserFriendsButton, 
 type UserHeaderProps = {
   userData: {stats: {collections: string, dolls: string, friends: string}, avatar: string, username: string, bio: string};
   onEditProfile?: () => void;
+  showStats?: boolean;
 }
 
-export const UserHeader = ({ userData, onEditProfile }: UserHeaderProps) => {
+export const UserHeader = ({ userData, onEditProfile, showStats=false }: UserHeaderProps) => {
 
   return (
     <Paper
@@ -46,19 +47,21 @@ export const UserHeader = ({ userData, onEditProfile }: UserHeaderProps) => {
         </Grid>
 
         {/* Stats */}
-        <Grid sx={{ display: { xs: 'none', md: 'block' } }}>
-          <Stack direction="row" spacing={4}>
-            <Box textAlign="center">
-              <UserCollectionsButton value={userData.stats.collections} />
-            </Box>  
-            <Box textAlign="center">
-              <UserDollsButton value={userData.stats.dolls} />
-            </Box>
-            <Box textAlign="center">
-              <UserFriendsButton value={userData.stats.friends}/>
-            </Box>
-          </Stack>
-        </Grid>
+        { showStats &&
+          <Grid sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Stack direction="row" spacing={4}>
+              <Box textAlign="center">
+                <UserCollectionsButton value={userData.stats.collections} />
+              </Box>  
+              <Box textAlign="center">
+                <UserDollsButton value={userData.stats.dolls} />
+              </Box>
+              <Box textAlign="center">
+                <UserFriendsButton value={userData.stats.friends}/>
+              </Box>
+            </Stack>
+          </Grid>
+        }
       </Grid>
     </Paper>
     

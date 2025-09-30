@@ -4,7 +4,7 @@ export const mockUserData = {
     username: "GhoulishFashionista",
     email: "draculaura@monster.high",
     bio: "Living my best afterlife! 💖 Fashion lover, vampire extraordinaire, and collector of all things pink and fabulous!",
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b9c8d8c1?w=100&h=100&fit=crop&crop=face",
+    avatar: "",
     stats: {
       collections: 12,
       dolls: 47,

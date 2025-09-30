@@ -37,7 +37,7 @@ const LeftMenu = ({ mobileOpen, onMobileClose }) => {
     { path: defaultUserPath,                   label: 'My Page',        icon: Person,           disabled: false },
     { path: '/friends-posts',                  label: 'Friends Posts',  icon: Article,          disabled: true },
     { path: `${defaultUserPath}/collections`,  label: 'My Collections', icon: FolderOpen,       disabled: false },
-    { path: `${defaultUserPath}/dolls`,        label: 'My Dolls',       icon: WomanIcon,        disabled: true },
+    { path: `${defaultUserPath}/dolls`,        label: 'My Dolls',       icon: WomanIcon,        disabled: false },
     { path: `${defaultUserPath}/wishlist`,     label: 'Wishlist',       icon: FavoriteOutlined, disabled: true },
     { path: `${defaultUserPath}/friends`,      label: 'My Friends',     icon: People,           disabled: true },
     { path: `${defaultUserPath}/groups`,       label: 'My Groups',      icon: Forum,            disabled: true },

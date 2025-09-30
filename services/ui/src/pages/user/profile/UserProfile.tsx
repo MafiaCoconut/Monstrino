@@ -52,7 +52,7 @@ const UserPage = () => {
   return (
     <Box sx={{ display: 'flex', bgcolor: 'background.default', justifyContent: 'center',}}>
       {/* Main Content */}
-      <Grid container spacing={2} alignItems="center">
+      <Grid container spacing={2} direction="column" alignItems="center">
         {/* <Grid container spacing={{ xs: 8, md: 2 }}></Grid> */}
         <Grid size={12}>
           <UserHeader 
@@ -60,6 +60,7 @@ const UserPage = () => {
             data-section="UserHeader"
             userData={userData} 
             onEditProfile={() => setIsEditProfileOpen(true)} 
+            showStats={true}
           />
         </Grid>
         

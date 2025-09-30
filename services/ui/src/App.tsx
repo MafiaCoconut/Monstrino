@@ -23,7 +23,8 @@ import { SupportPage } from './pages/static/support';
 import { TermsPage } from './pages/static/terms';
 import { PublicLayout, UserLayout } from './layouts';
 import { Homepage } from '@/pages/home';
-import { ScrollToTop } from './shared/ui/components';
+import { UserDollsPage } from './pages/user/dolls';
+
 function App() {
   const { userStore } = useContext(Context);
 
@@ -50,7 +51,8 @@ function App() {
         <Route index                            element={<MonstrinoProfilePage />} />
         <Route path="posts"                     element={<MonstrinoProfilePage />} />
         <Route path="collections"               element={<UserCollectionsPage />} />
-        <Route path="collection/:collectionId" element={<CollectionPage />} />
+        <Route path="collection/:collectionId"  element={<CollectionPage />} />
+        <Route path="dolls"                     element={<UserDollsPage />} />
         <Route path="friends"                   element={<FriendsPage />} />
         <Route path="groups"                    element={<GroupsPage />} />
         <Route path="wishlist"                  element={<WishlistPage />} />
