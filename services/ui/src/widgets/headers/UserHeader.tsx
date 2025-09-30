@@ -39,7 +39,7 @@ export const UserHeader = ({ userData, onEditProfile }: UserHeaderProps) => {
 
         {/* User Info */}
         <Grid>
-          <Stack direction="row" alignItems="center" spacing={1}>
+          <Stack direction="row" alignItems="center" spacing={1} sx={{ width: '100%', 'minWidth': 0}}>
             <UserUsername username={userData.username} onEditProfile={onEditProfile}/>
           </Stack>
           <UserStatus bio={userData.bio}/>

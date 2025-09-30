@@ -179,6 +179,7 @@ const CTASection = ({ onOpenAuth }) => {
             Don't wait another full moon! 🌙
           </Typography>
           <Button
+            disabled={true}
             onClick={() => onOpenAuth('register')}
             fullWidth
             sx={{

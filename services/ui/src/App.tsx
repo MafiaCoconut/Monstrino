@@ -23,6 +23,7 @@ import { SupportPage } from './pages/static/support';
 import { TermsPage } from './pages/static/terms';
 import { PublicLayout, UserLayout } from './layouts';
 import { Homepage } from '@/pages/home';
+import { ScrollToTop } from './shared/ui/components';
 function App() {
   const { userStore } = useContext(Context);
 

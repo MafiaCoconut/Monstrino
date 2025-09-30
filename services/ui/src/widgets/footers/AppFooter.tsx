@@ -37,11 +37,9 @@ export const AppFooter = () => {
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              © {currentYear} Monstrino. Made with
-            </Typography>
+              © {currentYear} Monstrino. Made with {' '}
             <Favorite sx={{ color: 'primary.main', fontSize: 16 }} />
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              for monster fans everywhere.
+              {' '}for monster fans everywhere.
             </Typography>
           </Box>
           

@@ -40,13 +40,19 @@ export const FavoriteDollsWidget = ({favoriteDolls, isMobile=false}: FavoriteDol
               display: 'flex',
               gap: 2,
               pb: 1,
-              minHeight: '700',
+              minHeight: 200,
+              overflowX: 'auto',
+              overflowY: 'hidden',
+              flexWrap: 'nowrap',
+              scrollBehavior: 'smooth',
               '&::-webkit-scrollbar': { height: 6 },
               '&::-webkit-scrollbar-track': { bgcolor: 'rgba(139, 95, 191, 0.1)' },
               '&::-webkit-scrollbar-thumb': { bgcolor: 'rgba(139, 95, 191, 0.5)', borderRadius: 3 }
             }}>
               {favoriteDolls.map((doll) => (
-                <DollCard dollId={doll.id} image={doll.image} name={doll.name} character={doll.character} isMobile={isMobile}/>
+                <Box key={doll.id} >
+                  <DollCard dollId={doll.id} image={doll.image} name={doll.name} character={doll.character} isMobile={isMobile}/>
+                </Box>
               ))}
             </Box>
         </Box>

@@ -7,6 +7,7 @@ import './i18n.ts';
 import UserStore from './entities/user/UserStore.ts';
 import { Routes, Route, Navigate, BrowserRouter } from 'react-router-dom';
 import { AppThemeProvider } from '@/app/providers/ThemeProvider';
+import { ScrollToTop } from './shared/ui/components/ScrollToTop.tsx';
 
 
 interface UserState {
@@ -26,6 +27,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <Context.Provider value={{ userStore}}>
         <AppThemeProvider>
+          <ScrollToTop />
           <App />
         </AppThemeProvider>
       </Context.Provider>

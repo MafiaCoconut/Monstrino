@@ -33,7 +33,7 @@ export function UserLayout() {
     end ? location.pathname === to : location.pathname.startsWith(to);
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column'}}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column'}}>        
         <AppHeader />
         
         {/* Mobile Menu Toggle */}

@@ -20,6 +20,7 @@ export const DollCard = ({dollId, image, name, character, onClick, isMobile=fals
             sx={{
                 minWidth: { xs: 70, sm: 90, md: 110, lg: 130 },
                 maxWidth: { xs: 100, sm: 90, md: 110, lg: 130 },
+                height: { xs: 250, sm: 400, md: 420, lg: 420, xl: 420},
                 bgcolor: 'rgba(255, 105, 180, 0.1)',
                 cursor: 'pointer',
                 transition: 'transform 0.2s ease',

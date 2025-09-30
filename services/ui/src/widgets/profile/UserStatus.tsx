@@ -52,35 +52,40 @@ export const UserStatus = () => {
                   Achievements
                 </Typography>
               </Stack>
-              <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+              <Grid container spacing={2}>
                 {mockAchievements.slice(0, isMobile ? 2 : 3).map((achievement) => (
-                  <Chip
-                    key={achievement.id}
-                    label={achievement.name}
-                    size="small"
-                    sx={{
-                      bgcolor: achievement.color,
-                      color: 'white',
-                      fontSize: { xs: '0.65rem', md: '0.75rem' }
-                    }}
-                    onClick={() => navigate('/achievements')}
-                  />
+                  <Grid>
+                    <Chip
+                      key={achievement.id}
+                      label={achievement.name}
+                      size="small"
+                      sx={{
+                        bgcolor: achievement.color,
+                        color: 'white',
+                        fontSize: { xs: '0.65rem', md: '0.75rem' }
+                      }}
+                      // onClick={() => navigate('/achievements')}
+                    />
+                  </Grid>
                 ))}
-                <Button
-                  variant="text"
-                  size="small"
-                  onClick={() => navigate('/achievements')}
-                  sx={{ color: 'warning.main', fontSize: '0.7rem', minWidth: 'auto', p: 0.5 }}
-                >
-                  View All
-                </Button>
-              </Stack>
+                {/* <Grid> */}
+                  {/* <Button
+                    variant="text"
+                    size="small"
+                    disabled={true}
+                    onClick={() => navigate('/achievements')}
+                    sx={{ color: 'warning.main', fontSize: '0.7rem', minWidth: 'auto', p: 0.5 }}
+                  >
+                    View All
+                  </Button> */}
+                {/* </Grid> */}
+              </Grid>
             </Grid>
-            <Grid size={{ xs: 12, lg: 1 }} sx={{ textAlign: 'right' }}>
+            {/* <Grid size={{ xs: 12, lg: 1 }} sx={{ textAlign: 'right' }}>
               <IconButton onClick={() => setIsSettingsOpen(true)} sx={{ color: 'primary.main' }} size="small">
                 <Settings />
               </IconButton>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Paper>
 
