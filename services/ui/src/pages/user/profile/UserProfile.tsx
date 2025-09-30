@@ -1,37 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Box,
-  Typography,
-  Button,
   Grid,
-  Container,
-  Stack,
-  Paper,
-  Chip,
-  Card,
-  CardMedia,
-  CardContent,
-  IconButton,
   useMediaQuery,
   useTheme
 } from '@mui/material';
-import Edit from '@mui/icons-material/Edit';
-import People from '@mui/icons-material/People';
-import Forum from '@mui/icons-material/Forum';
-import AccessTime from '@mui/icons-material/AccessTime';
-import Settings from '@mui/icons-material/Settings';
-import FavoriteOutlined from '@mui/icons-material/FavoriteOutlined';
-import EmojiEvents from '@mui/icons-material/EmojiEvents';
-import MenuOpen from '@mui/icons-material/MenuOpen';
 
 import { useNavigate } from 'react-router-dom';
-import { mockUserData, mockActivities, mockAchievements } from '../../../data/mocAppData';
-import ActivityFeed from '../../../widgets/activities/ActivityFeed';
-import FriendsModal from '../../../widgets/friends/FriendsModal';
-import GroupsModal from '../../../widgets/groups/GroupsModal';
-import EditUserProfileModal from '../../../widgets/EditUserProfileModal';
-import UserSettingsModal from '../../../widgets/settings/UserSettingsModal';
-import { NewPostModal, PostCard } from '@/entities/post';
+import { mockUserData } from '../../../data/mocAppData';
 import { UserStatus } from '@/widgets/profile';
 import { FavoriteDollsWidget } from '@/widgets/dolls';
 import { UserHeader } from '@/widgets/headers';

@@ -19,38 +19,23 @@ export const CollectionCard = ({ collection, size = 'medium' }) => {
     navigate(`users/:id/collection/${collection.id}`);
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+  const formatDate = (dateString: any) => {
+    return new Date(dateString).toLocaleDateString('en-DE', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
     });
   };
 
-  const getCardHeight = () => {
-    switch (size) {
-      case 'small': return 200;
-      case 'medium': return 250;
-      case 'large': return 300;
-      default: return 250;
-    }
-  };
-
-  const getImageHeight = () => {
-    switch (size) {
-      case 'small': return 120;
-      case 'medium': return 150;
-      case 'large': return 180;
-      default: return 150;
-    }
-  };
 
   return (
     <Card
-      onClick={handleClick}
+      // onClick={handleClick}
       sx={{
-        height: getCardHeight(),
+        // height: getCardHeight(),
         bgcolor: 'rgba(139, 95, 191, 0.1)',
+        width: '100%',
+        height: '100%',
         border: 1,
         borderColor: 'rgba(139, 95, 191, 0.3)',
         cursor: 'pointer',
@@ -61,7 +46,7 @@ export const CollectionCard = ({ collection, size = 'medium' }) => {
         },
       }}
     >
-      <CardMedia
+      {/* <CardMedia
         component="img"
         height={getImageHeight()}
         image={collection.coverImage || 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=300&h=200&fit=crop'}
@@ -71,7 +56,7 @@ export const CollectionCard = ({ collection, size = 'medium' }) => {
           bgcolor: 'rgba(0, 0, 0, 0.5)'
         }}
       />
-      
+       */}
       <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
         <Typography 
           variant={size === 'small' ? 'subtitle2' : 'h6'} 

@@ -30,17 +30,17 @@ const LeftMenu = ({ mobileOpen, onMobileClose }) => {
 
   const defaultUserPath = '/users/:id'
   const menuItems = [
-    { path: defaultUserPath, label: 'My Page', icon: Person },
-    { path: '/friends-posts', label: 'Friends Posts', icon: Article },
-    { path: `${defaultUserPath}/collections`, label: 'My Collections', icon: FolderOpen },
-    { path: `${defaultUserPath}/wishlist`, label: 'Wishlist', icon: FavoriteOutlined },
-    { path: `${defaultUserPath}/friends`, label: 'My Friends', icon: People },
-    { path: `${defaultUserPath}/groups`, label: 'My Groups', icon: Forum },
-    { path: `${defaultUserPath}/achievements`, label: 'Achievements', icon: EmojiEvents },
+    { path: defaultUserPath, label: 'My Page', icon: Person, disabled: false },
+    { path: '/friends-posts', label: 'Friends Posts', icon: Article, disabled: true },
+    { path: `${defaultUserPath}/collections`, label: 'My Collections', icon: FolderOpen, disabled: false },
+    { path: `${defaultUserPath}/wishlist`, label: 'Wishlist', icon: FavoriteOutlined, disabled: true },
+    { path: `${defaultUserPath}/friends`, label: 'My Friends', icon: People, disabled: true },
+    { path: `${defaultUserPath}/groups`, label: 'My Groups', icon: Forum, disabled: true },
+    { path: `${defaultUserPath}/achievements`, label: 'Achievements', icon: EmojiEvents, disabled: true },
   ];
 
   const settingsItems = [
-    { path: '/settings', label: 'Settings', icon: Settings }
+    { path: '/settings', label: 'Settings', icon: Settings, disabled: true }
   ];
 
   const handleNavigation = (path) => {
@@ -94,7 +94,7 @@ const LeftMenu = ({ mobileOpen, onMobileClose }) => {
           return (
             <ListItem key={item.path} disablePadding>
               <ListItemButton
-                disabled={true}
+                disabled={item.disabled}
                 onClick={() => handleNavigation(item.path)}
                 sx={{
                   borderRadius: 1,

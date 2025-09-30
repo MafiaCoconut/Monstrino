@@ -120,7 +120,7 @@ export const AppHeader = () => {
           {/* Search Bar */}
           <Box sx={{
             flexGrow: 1,
-            maxWidth: { xs: 200, sm: 300, md: 400 },
+            maxWidth: { xs: 150, sm: 300, md: 400 },
             mx: { xs: 1, md: 2 },
             minWidth: 0
           }}>
@@ -214,10 +214,10 @@ export const AppHeader = () => {
                 <Person sx={{ mr: 2, color: 'primary.main' }} />
                 My Profile
               </MenuItem>
-              <MenuItem onClick={() => handleMenuAction('dashboard')}>
+              {/* <MenuItem onClick={() => handleMenuAction('dashboard')}>
                 <Dashboard sx={{ mr: 2, color: 'secondary.main' }} />
                 Dashboard
-              </MenuItem>
+              </MenuItem> */}
               <MenuItem onClick={() => handleMenuAction('settings')}>
                 <Settings sx={{ mr: 2, color: 'info.main' }} />
                 Settings
