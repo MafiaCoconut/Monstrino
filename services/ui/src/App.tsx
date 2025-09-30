@@ -50,7 +50,7 @@ function App() {
         <Route index                            element={<MonstrinoProfilePage />} />
         <Route path="posts"                     element={<MonstrinoProfilePage />} />
         <Route path="collections"               element={<UserCollectionsPage />} />
-        <Route path="collections/:collectionId" element={<CollectionPage />} />
+        <Route path="collection/:collectionId" element={<CollectionPage />} />
         <Route path="friends"                   element={<FriendsPage />} />
         <Route path="groups"                    element={<GroupsPage />} />
         <Route path="wishlist"                  element={<WishlistPage />} />

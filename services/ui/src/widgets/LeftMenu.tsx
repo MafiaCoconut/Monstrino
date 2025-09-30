@@ -15,12 +15,14 @@ import {
 } from '@mui/material';
 import Person from '@mui/icons-material/Person';
 import FolderOpen from '@mui/icons-material/FolderOpen';
+import WomanIcon from '@mui/icons-material/Woman';
 import People from '@mui/icons-material/People';
 import Forum from '@mui/icons-material/Forum';
 import Settings from '@mui/icons-material/Settings';
 import Article from '@mui/icons-material/Article';
 import EmojiEvents from '@mui/icons-material/EmojiEvents';
 import FavoriteOutlined from '@mui/icons-material/FavoriteOutlined';
+import { SectionButton } from '@/entities/menu';
 
 const LeftMenu = ({ mobileOpen, onMobileClose }) => {
   const navigate = useNavigate();
@@ -28,15 +30,18 @@ const LeftMenu = ({ mobileOpen, onMobileClose }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  const defaultUserPath = '/users/:id'
+
+  // TODO Value 'id' should be taken from cookies
+  const defaultUserPath = '/users/-1'
   const menuItems = [
-    { path: defaultUserPath, label: 'My Page', icon: Person, disabled: false },
-    { path: '/friends-posts', label: 'Friends Posts', icon: Article, disabled: true },
-    { path: `${defaultUserPath}/collections`, label: 'My Collections', icon: FolderOpen, disabled: false },
-    { path: `${defaultUserPath}/wishlist`, label: 'Wishlist', icon: FavoriteOutlined, disabled: true },
-    { path: `${defaultUserPath}/friends`, label: 'My Friends', icon: People, disabled: true },
-    { path: `${defaultUserPath}/groups`, label: 'My Groups', icon: Forum, disabled: true },
-    { path: `${defaultUserPath}/achievements`, label: 'Achievements', icon: EmojiEvents, disabled: true },
+    { path: defaultUserPath,                   label: 'My Page',        icon: Person,           disabled: false },
+    { path: '/friends-posts',                  label: 'Friends Posts',  icon: Article,          disabled: true },
+    { path: `${defaultUserPath}/collections`,  label: 'My Collections', icon: FolderOpen,       disabled: false },
+    { path: `${defaultUserPath}/dolls`,        label: 'My Dolls',       icon: WomanIcon,        disabled: true },
+    { path: `${defaultUserPath}/wishlist`,     label: 'Wishlist',       icon: FavoriteOutlined, disabled: true },
+    { path: `${defaultUserPath}/friends`,      label: 'My Friends',     icon: People,           disabled: true },
+    { path: `${defaultUserPath}/groups`,       label: 'My Groups',      icon: Forum,            disabled: true },
+    { path: `${defaultUserPath}/achievements`, label: 'Achievements',   icon: EmojiEvents,      disabled: true },
   ];
 
   const settingsItems = [
@@ -93,35 +98,7 @@ const LeftMenu = ({ mobileOpen, onMobileClose }) => {
           
           return (
             <ListItem key={item.path} disablePadding>
-              <ListItemButton
-                disabled={item.disabled}
-                onClick={() => handleNavigation(item.path)}
-                sx={{
-                  borderRadius: 1,
-                  mb: 0.5,
-                  bgcolor: isActive ? 'secondary.main' : 'transparent',
-                  color: isActive ? 'white' : 'primary.main',
-                  minHeight: { xs: 40, md: 48 },
-                  px: { xs: 1, md: 2 },
-                  '&:hover': {
-                    bgcolor: isActive ? 'secondary.main' : 'rgba(139, 95, 191, 0.2)',
-                    color: 'white',
-                  },
-                }}
-              >
-                <ListItemIcon sx={{ color: 'inherit', minWidth: { xs: 32, md: 36 } }}>
-                  <Icon fontSize={isMobile ? "small" : "medium"} />
-                </ListItemIcon>
-                <ListItemText 
-                  primary={item.label}
-                  primaryTypographyProps={{
-                    fontSize: { xs: '0.7rem', md: '0.75rem' },
-                    fontFamily: '"Fira Code", monospace',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em'
-                  }}
-                />
-              </ListItemButton>
+              <SectionButton disabled={item.disabled} path={item.path} label={item.label} icon={Icon} isActive={isActive} />
             </ListItem>
           );
         })}

@@ -51,7 +51,6 @@ export const mockUserData = {
       id: 1,
       name: "Original Ghouls",
       description: "The iconic first wave of Monster High dolls that started it all!",
-      coverImage: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=300&fit=crop",
       dollsCount: 8,
       createdAt: "2024-02-01",
       dolls: [1, 2, 3, 4, 5, 6]
@@ -60,7 +59,6 @@ export const mockUserData = {
       id: 2,
       name: "Vampire Collection",
       description: "All my favorite vampire ghouls and their fabulous outfits",
-      coverImage: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=300&fit=crop",
       dollsCount: 12,
       createdAt: "2024-02-15",
       dolls: [1, 3, 5]
@@ -69,7 +67,6 @@ export const mockUserData = {
       id: 3,
       name: "Special Editions",
       description: "Rare and limited edition Monster High dolls",
-      coverImage: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=300&fit=crop",
       dollsCount: 6,
       createdAt: "2024-03-01",
       dolls: [2, 4, 6]
@@ -78,7 +75,6 @@ export const mockUserData = {
       id: 4,
       name: "Fashion Week",
       description: "Runway-ready outfits and haute couture looks",
-      coverImage: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=300&fit=crop",
       dollsCount: 15,
       createdAt: "2024-03-10",
       dolls: [1, 2, 3, 4, 5, 6]
@@ -87,7 +83,6 @@ export const mockUserData = {
       id: 5,
       name: "Movie Characters",
       description: "Dolls from all the Monster High movies and specials",
-      coverImage: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=300&fit=crop",
       dollsCount: 9,
       createdAt: "2024-03-20",
       dolls: [3, 4, 5]
@@ -96,7 +91,6 @@ export const mockUserData = {
       id: 6,
       name: "Holiday Specials",
       description: "Festive and seasonal Monster High collections",
-      coverImage: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=300&fit=crop",
       dollsCount: 7,
       createdAt: "2024-04-01",
       dolls: [1, 6]

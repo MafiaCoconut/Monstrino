@@ -12,11 +12,17 @@ import {
 import FolderOpen from '@mui/icons-material/FolderOpen';
 import CalendarToday from '@mui/icons-material/CalendarToday';
 
-export const CollectionCard = ({ collection, size = 'medium' }) => {
+type CollectionCardProps = {
+  navigateUrl: string,
+  collection: {name: string, dollsCount: number, description: string, createdAt: string},
+  size?: 'small' | 'medium'
+}
+
+export const CollectionCard = ({ navigateUrl, collection, size = 'medium' }: CollectionCardProps) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`users/:id/collection/${collection.id}`);
+    navigate(navigateUrl);
   };
 
   const formatDate = (dateString: any) => {
