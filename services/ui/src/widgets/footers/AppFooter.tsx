@@ -25,7 +25,7 @@ export const AppFooter = () => {
         borderColor: 'rgba(139, 95, 191, 0.2)',
         py: 3,
         mt: 'auto',
-        zIndex: 9999,
+        zIndex: 1200,
       }}
     >
       <Container maxWidth="xl">
