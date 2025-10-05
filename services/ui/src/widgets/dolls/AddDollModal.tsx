@@ -185,28 +185,6 @@ const AddDollModal = ({ isOpen, onClose, onSubmit }) => {
 
             <AddDollImageField images={formData.images} handleAddImages={handleAddDollImageChange} handleRemoveImage={handleRemoveImage} handleReorderImages={handleReorderImages}/>
             <AddDollTextField name={'description'} label={'Description'} value={formData.description} onChange={handleDollDescriptionChange} placeholder={'Special details about this doll...'} multiline rows={3} />
-            
-{/* 
-            <TextField
-                name="image"
-                label="Image URL (Optional)"
-                value={formData.image}
-                onChange={handleDollImageChange}
-                fullWidth
-                sx={{ mb: 3 }}
-                InputProps={{
-                startAdornment: <CloudUpload sx={{ color: 'secondary.main', mr: 1 }} />,
-                }}
-                InputLabelProps={{
-                sx: { 
-                    color: 'text.secondary',
-                    fontFamily: '"Fira Code", monospace',
-                    textTransform: 'uppercase',
-                    fontSize: '0.75rem'
-                }
-                }}
-                placeholder="https://example.com/doll-image.jpg"
-            /> */}
 
         </Box>
       </DialogContent>

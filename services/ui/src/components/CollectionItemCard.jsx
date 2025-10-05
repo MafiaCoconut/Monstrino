@@ -7,7 +7,6 @@ const CollectionItemCard = (props) => {
         series = "",
         image = "",
     } = props
-    console.log("CollectionItemCard", props)
     return (
         <div>
             <Card sx={{ maxWidth: 300, margin: 'auto', marginBottom: 2, borderRadius: 2, position: 'relative'}}>

@@ -4,9 +4,10 @@ import FeaturesSection from './ui/FeaturesSection';
 import CTASection from './ui/CTASection';
 import AuthModal from '../../features/auth-login/AuthModal';
 import { mockData } from './mock';
-import { Box, Container, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Container, Stack, useMediaQuery, useTheme } from '@mui/material';
 import { AuroraBackground } from '@pages/home';
 import { StaticBackgroundGradient } from '@/shared/ui/background';
+import { AuthRegisterModal } from '@/widgets/auth';
 
 export const Homepage = () => {
     const theme = useTheme();
@@ -75,12 +76,10 @@ export const Homepage = () => {
           <section id="cta" data-section="Homepage/CTA">
             <CTASection onOpenAuth={handleOpenAuth} />
           </section>
-
-          <AuthModal
-            isOpen={isAuthModalOpen}
-            onClose={() => setIsAuthModalOpen(false)}
-            mode={authMode}
-          />
+          <Stack direction="column">
+            <AuthRegisterModal isOpen={true} onClose={() => setIsAuthModalOpen(false)} />
+            {/* <AuthModal isOpen={true} onClose={() => setIsAuthModalOpen(false)} mode={"register"}/> */}
+          </Stack>
         </Box>
         
       </Box>

@@ -80,6 +80,10 @@ const AuthModal = ({ isOpen, onClose, mode }) => {
           border: `1px solid ${alpha(C.purple, 0.3)}`,
           borderRadius: 2,
           maxHeight: '90vh',
+                position: 'absolute',
+      top: `0px`,
+      left: `0px`,
+      margin: 0, // убрать автоцентрирование
         },
       }}
     >
@@ -302,7 +306,7 @@ const AuthModal = ({ isOpen, onClose, mode }) => {
                     name="agreeToTerms"
                     checked={formData.agreeToTerms}
                     onChange={handleInputChange}
-                    required
+                      // required
                     sx={{
                       color: alpha(C.purple, 0.6),
                       '&.Mui-checked': { color: C.pink },

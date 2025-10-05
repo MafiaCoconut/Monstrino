@@ -7,13 +7,11 @@ import RegisterForm from './features/auth-register/ui/RegisterForm';
 import LoginForm from './features/auth-login/ui/LoginForm';
 import { Context } from './main';
 import MonstrinoProfilePage from './pages/user/profile/UserProfile';
-import muiTheme from './shared/theme/muiTheme'
 import { CssBaseline } from '@mui/material';
 import UserCollectionsPage from './pages/user/collections/UserCollectionsPage';
 import GroupsPage from './pages/user/groups/UserGroupsPage';
 import FriendsPage from './pages/user/friends/UserFriendsPage';
 import CollectionPage from './pages/user/collections/UserCollectionPage';
-import { AppThemeProvider } from '@/app/providers/ThemeProvider';
 import { AboutPage } from '@/pages/static/about';
 import { SettingsPage } from '@/pages/user/settings';
 import { WishlistPage } from '@/pages/user/wishlist';

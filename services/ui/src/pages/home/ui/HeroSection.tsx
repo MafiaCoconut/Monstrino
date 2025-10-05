@@ -65,7 +65,6 @@ const HeroSection = (props: any) => {
               size="large"
               onClick={() => onOpenAuth("register")}
               endIcon={<ArrowRight size={16} />}
-              disabled={true}
               sx={{
                 px: 4,
                 py: 1.5,

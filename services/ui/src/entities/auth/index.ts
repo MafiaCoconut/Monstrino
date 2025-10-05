@@ -1,0 +1,1 @@
+export {AuthModalTitle} from './ui/AuthModalTitle';
