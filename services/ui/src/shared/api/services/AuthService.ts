@@ -1,12 +1,10 @@
 import { AxiosResponse } from 'axios';
-import { AuthResponse } from './responses/authResponses';
-import { LoginResponseData } from './responses/LoginResponse';
-import { api } from '../../main';
-import { UserRegistrationResponse } from './responses/UserRegistrationResponse';
+import { AuthResponse, LoginResponse, UserRegistrationResponse } from '@shared/api/responses';
+import { api } from '@/main';
 
 export default class AuthService {
     static async login(email: string, password: string) {
-        return api.post<LoginResponseData>('/auth/login', { email, password }, { validateStatus: status => status === 200 || status === 401 });
+        return api.post<LoginResponse>('/auth/login', { email, password }, { validateStatus: status => status === 200 || status === 401 });
     }
     static async registration(username: string, email: string, password: string) {
         return api.post<UserRegistrationResponse>('/auth/registration', { username, email, password });

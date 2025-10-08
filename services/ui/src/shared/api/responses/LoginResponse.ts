@@ -1,7 +1,6 @@
-import { Meta } from "../../../modules/Auth/api/models/BaseModels";
-import { LoginModel } from "../../../modules/Auth/api/models/LoginModel";
+import { Meta, LoginModel } from "@shared/api/models";
 
-export interface LoginResponseData {
+export interface LoginResponse {
     meta: Meta;
     result: LoginModel;
 }

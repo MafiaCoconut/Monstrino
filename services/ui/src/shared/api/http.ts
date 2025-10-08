@@ -1,8 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
-import { AuthResponse } from './responses/authResponses';
 import { Context } from "../../main";
 import { RefreshTokensResponse } from './responses/RefreshTokensResponse';
-import UserStore from '../../entities/user/UserStore';
+import { UserStore } from '@/entities/user/model';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 export const API_URL = `${BACKEND_URL}/api/v1`

@@ -1,5 +1,4 @@
-import { IUser } from "../../../models/IUser";
-import { UserBaseInfo } from "../../../models/userModels/UserBaseInfo";
+import { IUser } from "@/entities/user/model";
 
 export interface AuthResponse {
     accessToken: string;

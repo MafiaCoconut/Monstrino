@@ -1,6 +1,6 @@
-import { UserBaseInfo } from "../../../../models/userModels/UserBaseInfo";
+import { UserBaseInfo } from "@/entities/user/model";
 
 export interface LoginModel {
     accessToken: string;
-    user: UserBaseInfo
+    user: UserBaseInfo;
 }

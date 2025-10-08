@@ -4,10 +4,10 @@ import React, { createContext } from 'react';
 import ReactDOM from 'react-dom/client';
 import { createApi } from './shared/api/http.ts';
 import './i18n.ts';
-import UserStore from './entities/user/UserStore.ts';
 import { Routes, Route, Navigate, BrowserRouter } from 'react-router-dom';
 import { AppThemeProvider } from '@/app/providers/ThemeProvider';
 import { ScrollToTop } from './shared/ui/components/ScrollToTop.tsx';
+import { UserStore } from '@entities/user/model/index.ts';
 
 
 interface UserState {

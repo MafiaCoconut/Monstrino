@@ -1,10 +1,10 @@
 import { makeAutoObservable } from "mobx";
 import { AxiosResponse } from "axios";
-import AuthService from "../../shared/api/AuthService";
-import { UserRegistrationResponse } from "../../shared/api/responses/UserRegistrationResponse";
-import { UserBaseInfo } from "./types";
+import { UserBaseInfo } from "../types";
+import AuthService from "@/shared/api/services/AuthService";
+import { UserRegistrationResponse } from "@/shared/api/responses";
 
-export default class UserStore {
+export class UserStore {
     user = {} as UserBaseInfo;
     isAuth = false;
     isLoading = false;

@@ -1,5 +1,7 @@
+import { Meta } from "@shared/api/models";
+
 export interface UserRegistrationResponse {
-    meta: d;
+    meta: Meta;
     result: string;
 }
 
