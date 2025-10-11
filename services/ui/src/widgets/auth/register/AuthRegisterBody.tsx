@@ -1,9 +1,12 @@
 import { AuthDataField } from "@/entities/auth/ui/AuthDataField"
 import { Context } from "@/main";
 import { Box, DialogContent, InputAdornment, Stack, useTheme } from "@mui/material"
-import { User } from "lucide-react"
+import { Mail, User, Lock } from "lucide-react"
 import { useContext, useState } from "react";
 import { isValidEmail, isValidPassword, isValidUsername } from "../utils";
+import { AuthPasswordTextField } from "@/shared/ui/auth";
+import { AuthChooseLoginOrRegister, AuthPasswordField, AuthTermOfUseField } from "@/entities/auth";
+import { RegisterButton } from "@/features/auth-register";
 
 
 type AuthRegisterBodyProps = {
@@ -100,19 +103,44 @@ export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
     return (
         <DialogContent>
             <Box component="form" onSubmit={handleSubmit}>
-                <Stack spacing={3}>
+                <Stack spacing={3} direction="column" sx={{ mt: 2 }}>
                     <AuthDataField 
-                        titleText={'Monster Name'} 
+                        titleText={'Username'} 
                         data={formData.username} 
                         onChange={handleInputChange} 
-                        placeholder={'Enter your monster name'} 
+                        placeholder={'Enter your monster username'} 
                         name={'username'} 
                         inputAdornment={
                             <InputAdornment position="start">
                                 <User size={18} color={theme.palette.monstrino.purple} />
                             </InputAdornment>
-                        } 
+                        }
+                        required={true}
                     />
+                    <AuthDataField 
+                        titleText={'Email'} 
+                        data={formData.email} 
+                        onChange={handleInputChange} 
+                        placeholder={'Enter your email'} 
+                        name={'email'} 
+                        inputAdornment={
+                            <InputAdornment position="start">
+                                <Mail size={18} color={theme.palette.monstrino.purple} />
+                            </InputAdornment>
+                        }
+                        required={true}
+                    />
+                    <AuthPasswordField
+                        titleText={'Password'}
+                        data={formData.password}
+                        onChange={handleInputChange}
+                        placeholder={'Enter your password'}
+                        name={'password'}
+                        required={true}                   
+                    />
+                    <AuthTermOfUseField agreeToTerms={formData.agreeToTerms} onChange={handleInputChange} />
+                    <RegisterButton />
+                    <AuthChooseLoginOrRegister mode="register" />
                 </Stack>
             </Box>
         </DialogContent>

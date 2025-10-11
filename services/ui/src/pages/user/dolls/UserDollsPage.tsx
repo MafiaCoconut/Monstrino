@@ -1,6 +1,6 @@
 import { mockUserData } from "@/data/mocAppData"
 import { AddDollButton, DollsPageTitle } from "@/entities/doll"
-import AddDollModal from "@/widgets/dolls/AddDollModal"
+import { AddDollModal } from "@/widgets/dolls/AddDollModal"
 import { UserDollsWidget } from "@/widgets/dolls"
 import { UserHeader } from "@/widgets/headers"
 import { Box, Grid, Stack } from "@mui/material"

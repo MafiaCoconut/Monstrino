@@ -301,6 +301,7 @@ const AuthModal = ({ isOpen, onClose, mode }) => {
 
             {mode === 'register' && (
               <FormControlLabel
+                required={true}
                 control={
                   <Checkbox
                     name="agreeToTerms"

@@ -23,12 +23,7 @@ export const AuthTextField = ({ data, onChange, inputAdornment, placeholder, nam
                     startAdornment: inputAdornment
                 }
             }}
-            // InputProps={{
-            // startAdornment: (
-            //     <InputAdornment position="start">
-            //     <User size={18} color={C.purple} />
-            //     </InputAdornment>
-            // ),
+            
             // sx: {
             //     bgcolor: alpha(C.white, 0.1),
             //     borderRadius: 1,
@@ -37,8 +32,8 @@ export const AuthTextField = ({ data, onChange, inputAdornment, placeholder, nam
             //     '&:hover fieldset': { borderColor: alpha(C.purple, 0.5) },
             //     '&.Mui-focused fieldset': { borderColor: C.pink },
             //     '::placeholder': { color: alpha(C.white, 0.6) },
-            // },
-            // }}
+            // }
+            
         />
     )
 }

@@ -15,9 +15,9 @@ import Add from '@mui/icons-material/Add';
 import { mockUserData } from '../../../data/mocAppData';
 import LeftMenu from '../../../widgets/LeftMenu';
 import RightMenu from '../../../widgets/RightMenu';
-import AddDollModal from '../../../widgets/dolls/AddDollModal';
 import { DollCard } from '@/entities/collection';
 import { UserHeader } from '@/widgets/headers';
+import { AddDollModal } from '@/widgets/dolls';
 
 const CollectionPage = () => {
   const { id } = useParams();

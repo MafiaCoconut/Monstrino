@@ -1,5 +1,5 @@
 import { AuthTextField, AuthTitleTextField } from "@/shared/ui/auth"
-import { Box } from "@mui/material";
+import { Box, BoxProps } from "@mui/material";
 
 type AuthDataFieldProps = {
     titleText: string;
@@ -9,13 +9,12 @@ type AuthDataFieldProps = {
     name: string;
     inputAdornment: React.ReactNode; 
     required?: boolean;
-
 }
 
-export const AuthDataField = ({ titleText, data, onChange, placeholder, name, inputAdornment, required=false }: AuthDataFieldProps) => {
+export const AuthDataField = ({ titleText, data, onChange, placeholder, name, inputAdornment, required=false, }: AuthDataFieldProps) => {
     return (
         <Box>
-            <AuthTitleTextField text={titleText}/> 
+            <AuthTitleTextField text={titleText} required={required} sx={{ ml: 1 }} /> 
             <AuthTextField data={data} onChange={onChange} placeholder={placeholder} name={name} inputAdornment={inputAdornment} required={required} />
         </Box>
     )

@@ -77,7 +77,7 @@ export const Homepage = () => {
             <CTASection onOpenAuth={handleOpenAuth} />
           </section>
           <Stack direction="column">
-            <AuthRegisterModal isOpen={false} onClose={() => setIsAuthModalOpen(false)} />
+            <AuthRegisterModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
             {/* <AuthModal isOpen={true} onClose={() => setIsAuthModalOpen(false)} mode={"register"}/> */}
           </Stack>
         </Box>
