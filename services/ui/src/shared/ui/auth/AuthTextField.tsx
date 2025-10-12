@@ -5,16 +5,20 @@ type AuthTextFieldProps = {
     placeholder: string;
     name: string;
     inputAdornment: React.ReactNode; 
+    error: boolean;
+    helperText?: string;
     required?: boolean;
 }
 
-export const AuthTextField = ({ data, onChange, inputAdornment, placeholder, name, required=false }: AuthTextFieldProps) => {
+export const AuthTextField = ({ data, onChange, inputAdornment, placeholder, name, error, helperText, required=false }: AuthTextFieldProps) => {
     return (
         <TextField
             fullWidth
             type="text"
             name={name}
             value={data}
+            error={error}
+            helperText={helperText}
             onChange={onChange}
             placeholder={placeholder}
             required={required}

@@ -1,12 +1,17 @@
 import { Button, useTheme } from "@mui/material"
 
-export const RegisterButton = () => {
+type RegisterButtonProps = {
+    disabled?: boolean;
+}
+
+export const RegisterButton = ({ disabled=false }: RegisterButtonProps) => {
     const theme = useTheme();
     
     return (
         <Button
             type="submit"
             fullWidth
+            disabled={disabled}
             sx={{
                 mt: 1,
                 borderRadius: 999,

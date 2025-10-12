@@ -6,10 +6,12 @@ type AuthPasswordTextField = {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     placeholder: string;
     name: string;
+    error: boolean;
+    helperText?: string;
     required?: boolean;
 }
 
-export const AuthPasswordTextField = ({ data, onChange, placeholder, name, required=false }: AuthPasswordTextField) => {
+export const AuthPasswordTextField = ({ data, onChange, placeholder, name, error, helperText, required=false }: AuthPasswordTextField) => {
     const theme = useTheme();
     const [showPassword, setShowPassword] = useState(false);
 
@@ -19,6 +21,8 @@ export const AuthPasswordTextField = ({ data, onChange, placeholder, name, requi
             type={showPassword ? 'text' : 'password'}
             name={name}
             value={data}
+            error={error}
+            helperText={helperText}
             onChange={onChange}
             placeholder={placeholder}
             required={required}

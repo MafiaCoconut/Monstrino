@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, toJS } from "mobx";
 import { AxiosResponse } from "axios";
 import { UserBaseInfo } from "../types";
 import AuthService from "@/shared/api/services/AuthService";
@@ -29,6 +29,10 @@ export class UserStore {
     setAccessToken(token: string) {
         console.log('new accessToken: ' + token);
         this.accessToken = token;
+    }
+
+    getAllData() {
+        return [toJS(this.user), this.isAuth, this.isLoading, this.accessToken];
     }
 
     async login(email: string, password: string): Promise<boolean> {
@@ -64,6 +68,13 @@ export class UserStore {
         console.log("start registration")
         try {
             const response = await AuthService.registration(username, email, password);
+            console.log("========================================================")
+            console.log(toJS(this.user))
+            console.log(email)
+            console.log(username)
+            this.setUser({username: username, email: email, firstName: "", lastName: "", createdAt: "", updatedAt: ""});
+            console.log(toJS(this.user))
+
             this.setAuth(true);
             this.setAccessToken(response.data.result);
             return response as AxiosResponse<UserRegistrationResponse>;

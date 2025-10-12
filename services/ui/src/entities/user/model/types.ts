@@ -5,7 +5,7 @@ export interface IUser {
 }
 
 export interface UserBaseInfo {
-    id: string;
+    id?: string;
     username: string;
     email: string;
     firstName: string;

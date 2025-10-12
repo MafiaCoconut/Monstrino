@@ -2,7 +2,7 @@ import { AuthDataField } from "@/entities/auth/ui/AuthDataField"
 import { Context } from "@/main";
 import { Box, DialogContent, InputAdornment, Stack, useTheme } from "@mui/material"
 import { Mail, User, Lock } from "lucide-react"
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { isValidEmail, isValidPassword, isValidUsername } from "../utils";
 import { AuthPasswordTextField } from "@/shared/ui/auth";
 import { AuthChooseLoginOrRegister, AuthPasswordField, AuthTermOfUseField } from "@/entities/auth";
@@ -18,12 +18,20 @@ export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
     const { userStore } = useContext(Context);
     const [showPassword, setShowPassword] = useState(false);
 
+    // const [formData, setFormData] = useState({
+    //     username: '',
+    //     email: '',
+    //     password: '',
+    //     confirmPassword: '',
+    //     agreeToTerms: false
+    // });
+
     const [formData, setFormData] = useState({
-        username: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        agreeToTerms: false
+        username: 'TestUser',
+        email: 'testuser@example.com',
+        password: 'TestPassword123',
+        confirmPassword: 'TestPassword123',
+        agreeToTerms: true
     });
 
     const [formDataErrors, setFormDataErrors] = useState({
@@ -42,27 +50,36 @@ export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
         console.log(`Registration attempt:`, formData);
         // TODO main register logic
 
-        if (!isConfirmPasswordMatchPassword()) {
-            setErrorInFormData('confirmPassword', true);
+        // if (!isConfirmPasswordMatchPassword()) {
+        //     setErrorInFormData('confirmPassword', true);
+        // }
+
+        // if (!formData.agreeToTerms) {
+        //     setErrorInFormData('agreeToTerms', true);
+        // }
+
+        if ( !formDataErrors.username && !formDataErrors.email && !formDataErrors.password ) {
+            const result = userStore.registration(formData.username, formData.email, formData.password);
+            console.log("User store: ")
+            console.log(userStore.getAllData())
+
+        //     setTimeout(() => {
+        //     alert('Registration successful! Welcome to Monstrino!');
+        //     onClose && onClose();
+        //     setFormData({
+        //         email: '',
+        //         password: '',
+        //         confirmPassword: '',
+        //         username: '',
+        //         agreeToTerms: false
+        //     });
+        // }, 1000);
+        }
+        else {
+            alert('Please fix the errors in the form before submitting.');
         }
 
-        if (!formData.agreeToTerms) {
-            setErrorInFormData('agreeToTerms', true);
-        }
 
-        const result = userStore.registration(formData.username, formData.email, formData.password);
-
-        setTimeout(() => {
-            alert('Registration successful! Welcome to Monstrino!');
-            onClose && onClose();
-            setFormData({
-                email: '',
-                password: '',
-                confirmPassword: '',
-                username: '',
-                agreeToTerms: false
-            });
-        }, 1000);
     };
 
 
@@ -71,20 +88,33 @@ export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
         setValueInFormData(name, type === 'checkbox' ? checked : value);
         switch (name) {
             case 'username': { 
-                isValidUsername(value) && formDataErrors.username? setErrorInFormData(name, false) :  setErrorInFormData(name, true); 
+                if (!isValidUsername(value)) {
+                    setErrorInFormData(name, true);
+                } else if (formDataErrors.username === true){
+                    setErrorInFormData(name, false);
+                }
                 break;
             }
             case 'email': { 
-                isValidEmail(value) && formDataErrors.email? setErrorInFormData(name, false) :  setErrorInFormData(name, true); 
+                if (!isValidEmail(value)) {
+                    setErrorInFormData(name, true);
+                } else if (formDataErrors.email === true){
+                    setErrorInFormData(name, false);
+                }
                 break;
             }
             case 'password': {
-                isValidPassword(value) && formDataErrors.password? setErrorInFormData(name, false) :  setErrorInFormData(name, true); 
-                break; }
-            case 'confirmPassword': {
-                isValidPassword(value) && formDataErrors.confirmPassword? setErrorInFormData(name, false) :  setErrorInFormData(name, true); 
+                if (!isValidPassword(value)) {
+                    setErrorInFormData(name, true);
+                } else if (formDataErrors.password === true){
+                    setErrorInFormData(name, false);
+                }
                 break; 
             }
+            // case 'confirmPassword': {
+            //     isValidPassword(value) && formDataErrors.confirmPassword? setErrorInFormData(name, false) :  setErrorInFormData(name, true); 
+            //     break; 
+            // }
         }
     };
 
@@ -98,6 +128,13 @@ export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
         setFormDataErrors(prev => ({ ...prev, [name]: value }));
     }
 
+    useEffect(() => {
+    console.log("formData changed:", formData);
+    }, [formData]);
+
+    useEffect(() => {
+        console.log("formDataErrors changed:", formDataErrors);
+    }, [formDataErrors]);
 
 
     return (
@@ -115,6 +152,8 @@ export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
                                 <User size={18} color={theme.palette.monstrino.purple} />
                             </InputAdornment>
                         }
+                        error={formDataErrors.username}
+                        helperText="Allowed: letters (A-Z), digits (0-9), and underscores. Length: 3-20 characters."
                         required={true}
                     />
                     <AuthDataField 
@@ -128,6 +167,8 @@ export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
                                 <Mail size={18} color={theme.palette.monstrino.purple} />
                             </InputAdornment>
                         }
+                        error={formDataErrors.email}
+                        helperText="Must be a valid email address"
                         required={true}
                     />
                     <AuthPasswordField
@@ -136,10 +177,12 @@ export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
                         onChange={handleInputChange}
                         placeholder={'Enter your password'}
                         name={'password'}
+                        error={formDataErrors.password}
+                        helperText="Minimum 8 characters, must include one letter, one digit, and one special character"
                         required={true}                   
                     />
                     <AuthTermOfUseField agreeToTerms={formData.agreeToTerms} onChange={handleInputChange} />
-                    <RegisterButton />
+                    <RegisterButton disabled={!formData.agreeToTerms}/>
                     <AuthChooseLoginOrRegister mode="register" />
                 </Stack>
             </Box>

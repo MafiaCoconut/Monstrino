@@ -7,15 +7,17 @@ type AuthPasswordFieldProps = {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     placeholder: string;
     name: string;
+    error: boolean;
+    helperText?: string;
     required?: boolean;
 
 }
 
-export const AuthPasswordField = ({ titleText, data, onChange, placeholder, name, required=false, }: AuthPasswordFieldProps) => {
+export const AuthPasswordField = ({ titleText, data, onChange, placeholder, name, error, helperText, required=false, }: AuthPasswordFieldProps) => {
     return (
         <Box>
             <AuthTitleTextField text={titleText} required={required} sx={{ ml: 1 }} /> 
-            <AuthPasswordTextField data={data} onChange={onChange} placeholder={placeholder} name={name} required={required} />
+            <AuthPasswordTextField data={data} onChange={onChange} placeholder={placeholder} name={name} error={error} helperText={helperText} required={required} />
         </Box>
     )
 }
