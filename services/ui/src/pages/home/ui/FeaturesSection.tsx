@@ -19,6 +19,7 @@ import {
 import { alpha, keyframes, useTheme } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
 import { FeatureCard, FeaturesDescription, FeaturesTitle, MagicBento } from '@/entities/homepage/homepage-features';
+import { WatchDemoButton } from '@/features/demo/ui/WatchDemoButton';
 
 const iconMap = {
   Users,
@@ -132,28 +133,7 @@ const FeaturesSection = ({ features }: { features: FeatureData[] }) => {
           </Typography>
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
-            <Button
-              onClick={ () => {navigate("/users/-1")}}
-              sx={{
-                px: 4,
-                py: 1.25,
-                borderRadius: 999,
-                bgcolor: colors.pink,
-                color: colors.black,
-                fontFamily: 'Fira Code, monospace',
-                fontSize: 12,
-                letterSpacing: '0.09em',
-                textTransform: 'uppercase',
-                transition: 'all .3s ease',
-                '&:hover': {
-                  bgcolor: alpha(colors.pink, 0.9),
-                  transform: 'scale(1.03)',
-                  boxShadow: `0 16px 32px ${alpha(colors.pink, 0.25)}`,
-                },
-              }}
-            >
-              Watch Demo
-            </Button>
+            <WatchDemoButton />
 
             {/* <Button
               variant="outlined"

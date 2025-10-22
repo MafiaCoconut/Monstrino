@@ -3,6 +3,7 @@ import { Zap, Users, Heart, ArrowRight } from 'lucide-react';
 import { Box, Container, Stack, Typography, Button, TextField } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { FeatureChip, HeroDescription, HeroTagline, HeroTitle } from '@/entities/homepage/homepage-hero';
+import { WatchDemoButton } from '@/features/demo/ui/WatchDemoButton';
 
 const HeroSection = (props: any) => {
   const { onOpenAuth, onSubscribe, isSubscribed } = props
@@ -91,7 +92,6 @@ const HeroSection = (props: any) => {
               size="large"
               variant="outlined"
               onClick={() => onOpenAuth("login")}
-              disabled={true}
               sx={{
                 px: 4,
                 py: 1.5,
@@ -110,6 +110,8 @@ const HeroSection = (props: any) => {
               Sign In
             </Button>
           </Stack>
+          <WatchDemoButton />
+
 
           {/* Email subscribe */}
           <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%", maxWidth: 520 }}>

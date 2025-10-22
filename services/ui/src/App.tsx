@@ -39,8 +39,8 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/register" element={<RegisterForm />} />
-      <Route path="/login" element={<LoginForm />} />
+      {/* <Route path="/register" element={<RegisterForm />} />
+      <Route path="/login" element={<LoginForm />} /> */}
 
       <Route path="collections" element={<UserCollectionsPage />} />
 

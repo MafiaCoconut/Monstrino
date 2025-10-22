@@ -64,7 +64,7 @@ export class UserStore {
         return false;
     }
 
-    async registration(username: string, email: string, password: string): Promise<AxiosResponse<UserRegistrationResponse>> {
+    async registration(username: string, email: string, password: string): Promise<{ success: boolean, typeOfError?: string}> {
         console.log("start registration")
         try {
             const response = await AuthService.registration(username, email, password);
@@ -77,21 +77,28 @@ export class UserStore {
 
             this.setAuth(true);
             this.setAccessToken(response.data.result);
-            return response as AxiosResponse<UserRegistrationResponse>;
+            // return response as AxiosResponse<UserRegistrationResponse>;
+            return {success: true}
         } catch (e: any) {
             console.log(e.response?.data?.meta);
+            let typeOfError = ""
             switch (e.response.status) {
                 case 409:
                     console.log("Registration failed");
-                    break;
+                    return {success: false, typeOfError: "user-exists"}
                 case 422:
                     console.log("Validation error");
                     let result = e.response.data.result
+                    typeOfError =  e.response.data.result
                     console.log(result)
-                    break;
-
+                    return {success: false, typeOfError: typeOfError}
+                case 500:
+                    console.log("Internal server error");
+                    return {success: false, typeOfError: "internal-server-error"}
             }
-            return e.response as AxiosResponse<UserRegistrationResponse>
+            return {success: false, typeOfError: "internal-server-error"}
+
+
         }
     }
 

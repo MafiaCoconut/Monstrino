@@ -5,8 +5,9 @@ import { Mail, User, Lock } from "lucide-react"
 import { useContext, useEffect, useState } from "react";
 import { isValidEmail, isValidPassword, isValidUsername } from "../utils";
 import { AuthPasswordTextField } from "@/shared/ui/auth";
-import { AuthChooseLoginOrRegister, AuthPasswordField, AuthTermOfUseField } from "@/entities/auth";
+import { AuthChooseLoginOrRegister, AuthPasswordField, AuthSubmitButton, AuthTermOfUseField } from "@/entities/auth";
 import { RegisterButton } from "@/features/auth-register";
+import { useNavigate } from "react-router-dom";
 
 
 type AuthRegisterBodyProps = {
@@ -14,7 +15,8 @@ type AuthRegisterBodyProps = {
 }
 export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
     const theme = useTheme();
-    
+    const navigate = useNavigate();
+
     const { userStore } = useContext(Context);
     const [showPassword, setShowPassword] = useState(false);
 
@@ -45,23 +47,27 @@ export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
     const isConfirmPasswordMatchPassword = () => {
         return formData.password === formData.confirmPassword;
     }
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log(`Registration attempt:`, formData);
-        // TODO main register logic
-
-        // if (!isConfirmPasswordMatchPassword()) {
-        //     setErrorInFormData('confirmPassword', true);
-        // }
-
-        // if (!formData.agreeToTerms) {
-        //     setErrorInFormData('agreeToTerms', true);
-        // }
 
         if ( !formDataErrors.username && !formDataErrors.email && !formDataErrors.password ) {
-            const result = userStore.registration(formData.username, formData.email, formData.password);
+            let result = await userStore.registration(formData.username, formData.email, formData.password);
             console.log("User store: ")
             console.log(userStore.getAllData())
+            if (result.success) {
+                navigate(`/user/${userStore.user.id}`);
+            } else {
+                switch (result.typeOfError) {
+                    case "user-exists":
+                        alert("User with this email or username already exists. Please try again with another email or username.");
+                        break;
+                    case "internal-server-error":
+                        alert("Something went wrong. Please try again later.");
+                        break;
+                }
+            }
+             
 
         //     setTimeout(() => {
         //     alert('Registration successful! Welcome to Monstrino!');
@@ -118,6 +124,10 @@ export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
         }
     };
 
+    const onErrorRegister = () => {
+
+    }
+
 
 
     const setValueInFormData = (name: string, value: string | boolean) => {
@@ -142,17 +152,18 @@ export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
             <Box component="form" onSubmit={handleSubmit}>
                 <Stack spacing={3} direction="column" sx={{ mt: 2 }}>
                     <AuthDataField 
-                        titleText={'Username'} 
+                        name='username'
+                        titleText='Username'
                         data={formData.username} 
                         onChange={handleInputChange} 
                         placeholder={'Enter your monster username'} 
-                        name={'username'} 
+                        error={formDataErrors.username}
+
                         inputAdornment={
                             <InputAdornment position="start">
                                 <User size={18} color={theme.palette.monstrino.purple} />
                             </InputAdornment>
                         }
-                        error={formDataErrors.username}
                         helperText="Allowed: letters (A-Z), digits (0-9), and underscores. Length: 3-20 characters."
                         required={true}
                     />
@@ -182,7 +193,7 @@ export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
                         required={true}                   
                     />
                     <AuthTermOfUseField agreeToTerms={formData.agreeToTerms} onChange={handleInputChange} />
-                    <RegisterButton disabled={!formData.agreeToTerms}/>
+                    <AuthSubmitButton text="Create Account" disabled={!formData.agreeToTerms} onClick={handleSubmit}/>
                     <AuthChooseLoginOrRegister mode="register" />
                 </Stack>
             </Box>
