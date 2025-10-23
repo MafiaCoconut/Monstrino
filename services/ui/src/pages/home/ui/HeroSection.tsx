@@ -4,9 +4,11 @@ import { Box, Container, Stack, Typography, Button, TextField } from "@mui/mater
 import { alpha } from "@mui/material/styles";
 import { FeatureChip, HeroDescription, HeroTagline, HeroTitle } from '@/entities/homepage/homepage-hero';
 import { WatchDemoButton } from '@/features/demo/ui/WatchDemoButton';
+import { AuthHomepageLoginButton, AuthHomepageRegisterButton } from '@/entities/auth';
+import { EmailSubscribeWidget } from '@/widgets/email';
 
 const HeroSection = (props: any) => {
-  const { onOpenAuth, onSubscribe, isSubscribed } = props
+  const { onOpenAuth, isSubscribed } = props
   const [email, setEmail] = React.useState("")
 
   const C = {
@@ -17,13 +19,6 @@ const HeroSection = (props: any) => {
     green: "#66cc66",
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (email.trim()) {
-      onSubscribe(email.trim());
-      setEmail("");
-    }
-  };
 
   return (
     <Box
@@ -62,102 +57,15 @@ const HeroSection = (props: any) => {
 
           {/* CTAs */}
           <Stack direction={{ xs: "column", sm: "row" }} spacing={2} justifyContent="center" sx={{ my: 2 }}>
-            <Button
-              size="large"
-              onClick={() => onOpenAuth("register")}
-              endIcon={<ArrowRight size={16} />}
-              sx={{
-                px: 4,
-                py: 1.5,
-                borderRadius: 999,
-                bgcolor: C.pink,
-                color: C.black,
-                border: `1px solid ${C.pink}`,
-                fontFamily: "Fira Code, monospace",
-                fontSize: 12,
-                letterSpacing: "0.09em",
-                textTransform: "uppercase",
-                transition: "all .3s ease",
-                "&:hover": {
-                  bgcolor: alpha(C.pink, 0.9),
-                  boxShadow: `0 8px 24px ${alpha(C.pink, 0.25)}`,
-                  transform: "scale(1.03)",
-                },
-              }}
-            >
-              Join the Pack
-            </Button>
-
-            <Button
-              size="large"
-              variant="outlined"
-              onClick={() => onOpenAuth("login")}
-              sx={{
-                px: 4,
-                py: 1.5,
-                borderRadius: 999,
-                color: C.white,
-                borderColor: C.white,
-                fontFamily: "Fira Code, monospace",
-                fontSize: 12,
-                letterSpacing: "0.09em",
-                textTransform: "uppercase",
-                bgcolor: "transparent",
-                transition: "all .3s ease",
-                "&:hover": { bgcolor: alpha(C.white, 0.1), borderColor: C.white, transform: "scale(1.03)" },
-              }}
-            >
-              Sign In
-            </Button>
+            <AuthHomepageRegisterButton title="Join the Pack" onClick={() => onOpenAuth("register")} />
+            <AuthHomepageLoginButton title="Sign In" onClick={() => onOpenAuth("login")} />
           </Stack>
           <WatchDemoButton />
 
 
           {/* Email subscribe */}
-          <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%", maxWidth: 520 }}>
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
-              <TextField
-                disabled={true}
-                fullWidth
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email for monster updates"
-                variant="outlined"
-                InputProps={{
-                  sx: {
-                    bgcolor: alpha(C.white, 0.1),
-                    borderRadius: 999,
-                    color: C.white,
-                    backdropFilter: "blur(4px)",
-                    "& fieldset": { borderColor: alpha(C.purple, 0.3) },
-                    "&:hover fieldset": { borderColor: alpha(C.purple, 0.5) },
-                    "&.Mui-focused fieldset": { borderColor: C.pink },
-                    "::placeholder": { color: alpha(C.white, 0.6) },
-                  },
-                }}
-              />
-              <Button
-                type="submit"
-                disabled={true}
-                sx={{
-                  px: 3,
-                  py: 1.5,
-                  borderRadius: 999,
-                  fontFamily: "Fira Code, monospace",
-                  fontSize: 11,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.09em",
-                  whiteSpace: "nowrap",
-                  bgcolor: isSubscribed ? C.green : C.purple,
-                  color: C.white,
-                  "&:hover": { bgcolor: isSubscribed ? C.green : alpha(C.purple, 0.9) },
-                }}
-              >
-                {isSubscribed ? "Subscribed!" : "Get Updates"}
-              </Button>
-            </Stack>
+          <Box component="form" sx={{ width: "100%", maxWidth: 520 }}>
+            <EmailSubscribeWidget />
           </Box>
 
           <Typography variant="body2" sx={{ color: alpha(C.white, 0.6), mt: 1 }}>

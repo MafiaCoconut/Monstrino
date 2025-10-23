@@ -27,12 +27,7 @@ export const Homepage = () => {
         setIsAuthLoginModalOpen(true);
     };
 
-    const handleSubscribe = (email: any) => {
-    // Mock subscription logic
-    console.log('Subscribed:', email);
-    setIsSubscribed(true);
-    setTimeout(() => setIsSubscribed(false), 3000); // Reset after 3 seconds
-    };
+
 
     return (
     <Box data-l="Homepage">
@@ -70,7 +65,6 @@ export const Homepage = () => {
             <section id="hero" data-section="Homepage/Hero">
                 <HeroSection
                 onOpenAuth={handleOpenAuth}
-                onSubscribe={handleSubscribe}
                 isSubscribed={isSubscribed}
                 />
             </section>
