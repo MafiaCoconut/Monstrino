@@ -3,7 +3,7 @@ import logging
 from application.services.users_service import UsersService
 from application.use_cases.auth.jwt_refresh_use_case import JwtRefreshUseCase
 from application.use_cases.auth.jwt_use_case import JwtUseCase
-from domain.entities.user import UserRegistration
+from domain.entities.user import UserRegistration, UserLogin
 
 logger = logging.getLogger(__name__)
 
@@ -35,19 +35,20 @@ class AuthService:
                 result['error'] = "internal-error"
         return result
 
-    # @log_decorator()
-    # async def login(self, user: UserLogin) -> dict | None:
-    #     result = await self.users_service.login(user=user)
-    #     if result:
-    #         tokens = await self.update_tokens(user_id=user.email)
-    #         logger.info("Login success")
-    #         return tokens | {"user": result}
-    #     else:
-    #         logger.info("Login failed")
-    #         return None
+    async def login(self, user: UserLogin) -> dict | None:
+        result = await self.users_service.login(user=user)
+        print(f"result on login function: {result}")
+        if result:
+            user_id = result.get('user').id
+            tokens = await self.update_tokens(user_id=user_id, ip=user.ip)
+            logger.info("Login success")
+            return tokens | {"user": result}
+        else:
+            logger.info("Login failed")
+            return None
 
 
-    async def update_tokens(self, user_id: int, ip: str) -> dict:
+    async def update_tokens(self, user_id: int, ip: str="") -> dict:
         tokens = await self.jwt_use_case.get_new_tokens(user_id=user_id)
         print("tokens")
         print(tokens)

@@ -15,7 +15,7 @@ class UsersProviderUseCase:
         self.users_gateway = users_gateway
         self.user_validation = UserValidation()
 
-    async def register_new_user(self, user: UserRegistration):
+    async def register_new_user(self, user: UserRegistration) -> dict:
         result = {}
         try:
             self.user_validation.validate_new_user(user=user)
@@ -27,14 +27,19 @@ class UsersProviderUseCase:
         response = await self.users_gateway.register_new_user(user=user)
         return response
 
+    async def login(self, user: UserLogin) -> dict:
+        result = {}
+        try:
+            return await self.users_gateway.login(user=user)
+        except Exception as e:
+            return {'error': 500}
+
     async def set_refresh_token(self, user_id: int, refresh_token: str, ip: str) -> None:
         await self.users_gateway.set_refresh_token(user_id=user_id, refresh_token=refresh_token, ip=ip)
 
     async def update_refresh_token(self, user_id: int, refresh_token: str, ip: str):
         await self.users_gateway.update_refresh_token(user_id=user_id, refresh_token=refresh_token, ip=ip)
 
-    async def login(self, user: UserLogin) -> UserBaseInfo | None:
-        return await self.users_gateway.login(user=user)
 
     async def check_refresh_token(self, refresh_token: str) -> bool | None:
         return await self.users_gateway.check_refresh_token(refresh_token=refresh_token)

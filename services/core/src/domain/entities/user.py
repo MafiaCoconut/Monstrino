@@ -35,3 +35,4 @@ class UserBaseInfo(BaseModel):
 class UserLogin(BaseModel):
     email:     str = Field()
     password:  str = Field()
+    ip:        str = Field(default="")

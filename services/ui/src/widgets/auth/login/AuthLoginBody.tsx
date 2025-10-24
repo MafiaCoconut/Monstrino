@@ -16,9 +16,7 @@ type AuthRegisterBodyProps = {
 export const AuthLoginBody = ({ onClose }: AuthRegisterBodyProps) => {
     const theme = useTheme();
     const navigate = useNavigate();
-
     const { userStore } = useContext(Context);
-    const [showPassword, setShowPassword] = useState(false);
 
     const [formData, setFormData] = useState({
         username: 'TestUser',
@@ -35,6 +33,20 @@ export const AuthLoginBody = ({ onClose }: AuthRegisterBodyProps) => {
 
     const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        console.log("Login attempt:", formData);
+
+        if ( !formDataErrors.email && !formDataErrors.password ) {
+            let success = await userStore.login(formData.email, formData.password);
+            console.log("User store: ")
+            console.log(userStore.getAllData())
+            if (success) {
+                navigate(`/users/${userStore.user.username}`);
+            } else {
+                alert("Invalid email or password. Please try again.");
+            }
+        } else {
+            alert('Please fix the errors in the form before submitting.');
+        }
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

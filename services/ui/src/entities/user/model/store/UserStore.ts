@@ -36,6 +36,7 @@ export class UserStore {
     }
 
     async login(email: string, password: string): Promise<boolean> {
+        console.log("========================================================")
         console.log("Start login")
         try {
             const response = await AuthService.login(email, password);
@@ -45,16 +46,15 @@ export class UserStore {
                     console.log("Login success");
                     this.setAuth(true);
                     console.log("Auth:" + this.isAuth);
-
+                    console.log("response.data.result.user")
+                    console.log(response.data.result.user)
                     this.setUser(response.data.result.user);
                     console.log("User:")
                     console.log(this.user);
                     return true;
-                // break;
                 case 401:
                     console.log("Login failed");
                     return false;
-                // break;
             };
 
         } catch (e: any) {
@@ -65,6 +65,7 @@ export class UserStore {
     }
 
     async registration(username: string, email: string, password: string): Promise<{ success: boolean, typeOfError?: string}> {
+        console.log("========================================================")
         console.log("start registration")
         try {
             const response = await AuthService.registration(username, email, password);

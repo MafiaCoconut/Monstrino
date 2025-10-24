@@ -36,6 +36,25 @@ class UsersGatewayImpl(UsersGateway):
                         result['error'] = 500
                 return result
 
+    async def login(self, user: UserLogin) -> dict:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                url=self.users_service_address + "/api/v1/auth/login",
+                json={'email': user.email, 'password': user.password}
+            ) as resp:
+                result = {}
+                match resp.status:
+                    case 200:
+                        result = await resp.json()
+                        data = result.get('result')
+                        result['user'] = UserBaseInfo(**result.get('result'))
+                    case 404:
+                        result['error'] = 404
+                    case 422:
+                        result['error'] = 422
+                return result
+                # raise ValidationError(result)
+
 
     async def get_user_by_id(self, user_id: int):
         pass
@@ -75,21 +94,7 @@ class UsersGatewayImpl(UsersGateway):
                         return None
                 return None
 
-    async def login(self, user: UserLogin) -> UserBaseInfo | None:
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                url=self.users_service_address + "/api/v1/auth/login",
-                json={'email': user.email, 'password': user.password}
-            ) as resp:
-                match resp.status:
-                    case 200:
-                        result = await resp.json()
-                        user_base_info = UserBaseInfo(**result.get('result'))
-                        return user_base_info
-                    case 404:
-                        return None
-                return None
-                # raise ValidationError(result)
+
 
     async def check_refresh_token(self, refresh_token: str) -> bool | None:
         async with aiohttp.ClientSession() as session:

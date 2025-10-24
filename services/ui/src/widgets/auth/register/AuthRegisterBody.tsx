@@ -16,17 +16,7 @@ type AuthRegisterBodyProps = {
 export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
     const theme = useTheme();
     const navigate = useNavigate();
-
     const { userStore } = useContext(Context);
-    const [showPassword, setShowPassword] = useState(false);
-
-    // const [formData, setFormData] = useState({
-    //     username: '',
-    //     email: '',
-    //     password: '',
-    //     confirmPassword: '',
-    //     agreeToTerms: false
-    // });
 
     const [formData, setFormData] = useState({
         username: 'TestUser',
@@ -42,11 +32,7 @@ export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
         password: false,
         confirmPassword: false,
     });
-    
 
-    const isConfirmPasswordMatchPassword = () => {
-        return formData.password === formData.confirmPassword;
-    }
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log(`Registration attempt:`, formData);
@@ -56,11 +42,13 @@ export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
             console.log("User store: ")
             console.log(userStore.getAllData())
             if (result.success) {
-                navigate(`/user/${userStore.user.id}`);
+                navigate(`/users/${userStore.user.username}`);
             } else {
                 switch (result.typeOfError) {
                     case "user-exists":
                         alert("User with this email or username already exists. Please try again with another email or username.");
+                        // setErrorInFormData("email", true);
+                        // setErrorInFormData("username", true);
                         break;
                     case "internal-server-error":
                         alert("Something went wrong. Please try again later.");
