@@ -66,13 +66,20 @@ async def login(
     if user_credentials:
         result = await auth_service.login(user=user_credentials)
         if result:
-            return await get_success_json_response(
-                data={
-                    "access_token": result.get('access_token'),
-                    "user": result.get('user')
-                },
-               cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('refresh_token')}]
-            )
+            if result.get('error') is not None:
+                error_code = result.get('error')
+                match error_code:
+                    case 401: return await return_unauthorized_found_status_code()
+                    case 404: return await return_item_not_found_status_code()
+                    case 500: return await return_internal_server_error_status_code()
+            else:
+                return await get_success_json_response(
+                    data={
+                        "access_token": result.get('tokens').get('access_token'),
+                        "user": result.get('user')
+                    },
+                   cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('tokens').get('refresh_token')}]
+                )
         else:
             return await return_unauthorized_found_status_code()
     return await return_unauthorized_found_status_code()

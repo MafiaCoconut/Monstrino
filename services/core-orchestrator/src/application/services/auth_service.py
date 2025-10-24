@@ -38,14 +38,18 @@ class AuthService:
     async def login(self, user: UserLogin) -> dict | None:
         result = await self.users_service.login(user=user)
         print(f"result on login function: {result}")
-        if result:
-            user_id = result.get('user').id
-            tokens = await self.update_tokens(user_id=user_id, ip=user.ip)
-            logger.info("Login success")
-            return tokens | {"user": result}
+        if result.get('error') is not None:
+            return result
         else:
-            logger.info("Login failed")
-            return None
+            try:
+                user_id = result.get('user').id
+                tokens = await self.update_tokens(user_id=user_id, ip=user.ip)
+                logger.info("Login success")
+                result['tokens'] = tokens
+                result['user'] = result.get('user')
+            except Exception as e:
+                result['error'] = 500
+        return result
 
 
     async def update_tokens(self, user_id: int, ip: str="") -> dict:

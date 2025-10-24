@@ -6,7 +6,6 @@ import { useContext, useEffect, useState } from "react";
 import { isValidEmail, isValidPassword, isValidUsername } from "../utils";
 import { AuthPasswordTextField } from "@/shared/ui/auth";
 import { AuthChooseLoginOrRegister, AuthPasswordField, AuthSubmitButton, AuthTermOfUseField } from "@/entities/auth";
-import { RegisterButton } from "@/features/auth-register";
 import { useNavigate } from "react-router-dom";
 
 type AuthRegisterBodyProps = {
@@ -35,7 +34,7 @@ export const AuthLoginBody = ({ onClose }: AuthRegisterBodyProps) => {
         e.preventDefault();
         console.log("Login attempt:", formData);
 
-        if ( !formDataErrors.email && !formDataErrors.password ) {
+        if ( !formDataErrors.email && !formDataErrors.password && formData.email != '' && formData.password != '' ) {
             let success = await userStore.login(formData.email, formData.password);
             console.log("User store: ")
             console.log(userStore.getAllData())
@@ -45,7 +44,7 @@ export const AuthLoginBody = ({ onClose }: AuthRegisterBodyProps) => {
                 alert("Invalid email or password. Please try again.");
             }
         } else {
-            alert('Please fix the errors in the form before submitting.');
+            alert('Please provide valid credentials');
         }
     }
 

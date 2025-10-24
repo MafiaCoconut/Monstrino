@@ -43,15 +43,11 @@ class UsersGatewayImpl(UsersGateway):
                 json={'email': user.email, 'password': user.password}
             ) as resp:
                 result = {}
-                match resp.status:
-                    case 200:
-                        result = await resp.json()
-                        data = result.get('result')
-                        result['user'] = UserBaseInfo(**result.get('result'))
-                    case 404:
-                        result['error'] = 404
-                    case 422:
-                        result['error'] = 422
+                if resp.status == 200:
+                    resp_json = await resp.json()
+                    result['user'] = UserBaseInfo(**resp_json.get('result'))
+                else:
+                    result['error'] = resp.status
                 return result
                 # raise ValidationError(result)
 

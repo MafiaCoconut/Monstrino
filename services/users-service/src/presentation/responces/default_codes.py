@@ -17,6 +17,10 @@ responses = {
 async def return_created_status_code() -> None:
     return await get_json_response(status_code=201, message="Created", description="Created", data={})
 
+async def return_unauthorized_found_status_code() -> None:
+    """Return 401 status code"""
+    return await get_json_response(status_code=401, message="Unauthorized", description="Unauthorized", data={})
+
 async def return_item_not_found_status_code() -> None:
     return await get_json_response(status_code=404, message="Item not found", description="Item not found", data={})
 

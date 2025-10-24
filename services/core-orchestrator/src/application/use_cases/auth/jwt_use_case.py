@@ -12,6 +12,12 @@ class JwtUseCase:
         self.auth = AuthJWT()
 
     async def get_new_tokens(self, user_id: int) -> dict:
+        """
+        Function generate new access and refresh tokens for user with user_id
+
+        :return: {'access_token': str, 'refresh_token': str}
+        :rtype: dict
+        """
         return {
             "access_token": await self.get_new_access_token(user_id),
             "refresh_token": await self.get_new_refresh_token(user_id),

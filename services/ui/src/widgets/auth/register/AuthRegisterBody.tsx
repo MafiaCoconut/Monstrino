@@ -37,7 +37,7 @@ export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
         e.preventDefault();
         console.log(`Registration attempt:`, formData);
 
-        if ( !formDataErrors.username && !formDataErrors.email && !formDataErrors.password ) {
+        if ( !formDataErrors.username && !formDataErrors.email && !formDataErrors.password  && formData.email != '' && formData.password != '' && formData.username != '' ) {
             let result = await userStore.registration(formData.username, formData.email, formData.password);
             console.log("User store: ")
             console.log(userStore.getAllData())

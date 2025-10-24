@@ -11,7 +11,7 @@ from presentation.responces.models import ResponseModel
 from presentation.responces.templates import get_success_json_response
 # from application.services.scheduler_service import SchedulerService
 from presentation.responces.default_codes import return_validation_error_status_code, return_item_not_found_status_code, \
-    return_conflict_error_status_code
+    return_conflict_error_status_code, return_unauthorized_found_status_code
 
 router = APIRouter()
 
@@ -92,6 +92,6 @@ async def login(
             return await get_success_json_response(data=result.model_dump())
         else:
             logger.info(f"Login for {user_credentials.email} was not successful")
-            return await return_item_not_found_status_code()
+            return await return_unauthorized_found_status_code()
     else:
-        return await return_validation_error_status_code(detail="Users credentials are not valid")
+        return await return_validation_error_status_code(description="Users credentials are not valid")
