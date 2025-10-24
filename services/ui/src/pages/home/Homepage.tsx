@@ -76,14 +76,10 @@ export const Homepage = () => {
             <section id="cta" data-section="Homepage/CTA">
                 <CTASection onOpenAuth={handleOpenAuth} />
             </section>
-
-            <Stack direction="column">
-                <AuthRegisterModal isOpen={isAuthRegisterModalOpen} onClose={() => setIsAuthRegisterModalOpen(false)} />
-                <AuthLoginModal isOpen={isAuthLoginModalOpen} onClose={() => setIsAuthLoginModalOpen(false)} />
-                {/* <AuthModal isOpen={true} onClose={() => setIsAuthModalOpen(false)} mode={"register"}/> */}
-            </Stack>
         </Box>
-        
+        <AuthRegisterModal isOpen={isAuthRegisterModalOpen} onClose={() => setIsAuthRegisterModalOpen(false)} />
+        <AuthLoginModal isOpen={isAuthLoginModalOpen} onClose={() => setIsAuthLoginModalOpen(false)} />        
+        {/* <AuthModal isOpen={true} onClose={() => setIsAuthModalOpen(false)} mode={"register"}/> */}
     </Box>
     );
 };
