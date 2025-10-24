@@ -49,6 +49,8 @@ class AuthService:
 
     async def update_tokens(self, user_id: int, ip: str) -> dict:
         tokens = await self.jwt_use_case.get_new_tokens(user_id=user_id)
+        print("tokens")
+        print(tokens)
         await self.users_service.update_refresh_token(user_id=user_id, refresh_token=tokens.get('refresh_token'), ip=ip)
         return tokens
 

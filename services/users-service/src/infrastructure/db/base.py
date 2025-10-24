@@ -8,8 +8,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-ctx = ssl.create_default_context()
-ctx.minimum_version = ssl.TLSVersion.TLSv1_3
+# ctx = ssl.create_default_context()
+# ctx.minimum_version = ssl.TLSVersion.TLSv1_3
 
 
 sync_engine = create_engine(
@@ -24,7 +24,7 @@ sync_engine = create_engine(
 
 async_engine = create_async_engine(
     url=get_db_settings().DATABASE_URL_asyncpg,
-    connect_args={"ssl": ctx},
+    connect_args={"ssl": False},
     # echo=True,
     pool_size=10,
     max_overflow=20,
