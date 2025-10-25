@@ -9,7 +9,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from infrastructure.db.base import Base
 from infrastructure.db.models.dolls_relations_orm import DollsRelationsORM
-from infrastructure.db.models.original_mh_characters_orm import OriginalMHCharactersORM
+from infrastructure.db.models.original_characters_orm import OriginalCharactersORM
 from infrastructure.db.models.dolls_types_orm import DollsTypesORM
 from infrastructure.db.models.dolls_series_orm import DollsSeriesORM
 
@@ -25,7 +25,7 @@ class DollsReleasesORM(Base):
 
     id:            Mapped[int]             = mapped_column(Integer, primary_key=True)
     type_id:       Mapped[int]             = mapped_column(ForeignKey("dolls_types.id"), nullable=False)
-    character_id:  Mapped[int]             = mapped_column(ForeignKey("original_mh_characters.id"), nullable=False)
+    character_id:  Mapped[int]             = mapped_column(ForeignKey("original_characters.id"), nullable=False)
     name:          Mapped[str]             = mapped_column(String(160), nullable=False)
     mpn:           Mapped[Optional[str]]   = mapped_column(String(64))
     series_id:     Mapped[Optional[int]]   = mapped_column(ForeignKey("dolls_series.id"))
@@ -47,7 +47,7 @@ class DollsReleasesORM(Base):
     )
 
     # m2m персонажи (через промежуточную таблицу)
-    characters: Mapped[List["OriginalMHCharactersORM"]] = relationship(
+    characters: Mapped[List["OriginalCharactersORM"]] = relationship(
         secondary="release_characters",
         back_populates="releases"
     )

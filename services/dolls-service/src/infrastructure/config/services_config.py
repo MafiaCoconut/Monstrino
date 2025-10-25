@@ -17,7 +17,7 @@ def build_services(repositories: Repositories, scheduler: SchedulerPort) -> Serv
             dolls_series_repo=repositories.dolls_series,
             dolls_images_repo=repositories.dolls_images,
             dolls_relations_repo=repositories.dolls_relations,
-            original_mh_characters_repo=repositories.original_mh_characters,
+            original_characters_repo=repositories.original_characters,
             release_characters_repo=repositories.release_characters,
         )
     )

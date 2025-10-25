@@ -6,7 +6,7 @@ from application.repositories.dolls_relations_repository import DollsRelationsRe
 from application.repositories.dolls_releases_repository import DollsReleasesRepository
 from application.repositories.dolls_series_repository import DollsSeriesRepository
 from application.repositories.dolls_types_repository import DollsTypesRepository
-from application.repositories.original_mh_characters_repository import OriginalMHCharactersRepository
+from application.repositories.original_characters_repository import OriginalCharactersRepository
 from application.repositories.release_characters_repository import ReleaseCharactersRepository
 from application.services.core_service import CoreService
 from application.services.db_internal_service import DBInternalService
@@ -32,7 +32,7 @@ class Repositories:
     dolls_relations: DollsRelationsRepository
     dolls_series: DollsSeriesRepository
     dolls_types: DollsTypesRepository
-    original_mh_characters: OriginalMHCharactersRepository
+    original_characters: OriginalCharactersRepository
     release_characters: ReleaseCharactersRepository
 
 

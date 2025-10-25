@@ -12,25 +12,24 @@ logger = logging.getLogger(__name__)
 
 
 class DollsSeriesRepositoryImpl(DollsSeriesRepository):
-    @staticmethod
-    async def _get_session():
-        return AsyncSession(bind=async_engine, expire_on_commit=False)
-
     async def get_all(self):
         async with async_session_factory() as session:
             query = select(DollsSeriesORM)
             result = await session.execute(query)
             if result:
                 dolls_series_orms = result.scalars().all()
-                return [self._refactor_orm_to_entity(dolls_series_orm=dolls_series_orm) for dolls_series_orm in dolls_series_orms]
+                if dolls_series_orms:
+                    return [self._refactor_orm_to_entity(dolls_series_orm=dolls_series_orm) for dolls_series_orm in dolls_series_orms]
+                else:
+                    raise EntityNotFound("No original characters found")
             else:
-                logger.error("No doll series found in database")
-                raise EntityNotFound("No doll series found")
+                logger.error(f"Error by getting original characters from DB")
+                raise DBConnectionError(f"Error by getting original characters from DB")
 
-    async def add(self, name: str, description: str):
+    async def add(self, name: str, description: str, display_name: str):
         async with async_session_factory() as session:
-            dolls_type_orm = DollsSeriesORM(name=name, description=description)
-            session.add(dolls_type_orm)
+            dolls_series_orm = DollsSeriesORM(name=name, description=description, display_name=display_name)
+            session.add(dolls_series_orm)
             await session.commit()
 
 

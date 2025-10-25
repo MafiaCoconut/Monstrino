@@ -4,7 +4,7 @@ from sqlalchemy import select, update, or_
 
 from application.repositories.dolls_types_repository import DollsTypesRepository
 from domain.entities.dolls.dolls_type import DollsType
-from domain.exceptions.db import EntityNotFound
+from domain.exceptions.db import EntityNotFound, DBConnectionError
 from infrastructure.db.base import async_engine, async_session_factory
 from infrastructure.db.models.dolls_types_orm import DollsTypesORM
 
@@ -21,10 +21,13 @@ class DollsTypesRepositoryImpl(DollsTypesRepository):
             result = await session.execute(query)
             if result:
                 dolls_types_orms = result.scalars().all()
-                return [self._refactor_orm_to_entity(doll_type_orm=doll_type_orm) for doll_type_orm in dolls_types_orms]
+                if dolls_types_orms:
+                    return [self._refactor_orm_to_entity(doll_type_orm=doll_type_orm) for doll_type_orm in dolls_types_orms]
+                else:
+                    raise EntityNotFound("No doll types found")
             else:
-                logger.error("No doll types found in database")
-                raise EntityNotFound("No doll types found")
+                    logger.error(f"Error by getting dolls types from DB")
+                    raise DBConnectionError(f"Error by getting dolls types from DB")
 
     async def add(self, name: str, display_name: str):
         async with async_session_factory() as session:
@@ -39,10 +42,13 @@ class DollsTypesRepositoryImpl(DollsTypesRepository):
             result = await session.execute(query)
             if result:
                 doll_type_orm = result.scalars().first()
-                return self._refactor_orm_to_entity(doll_type_orm=doll_type_orm)
+                if doll_type_orm:
+                    return self._refactor_orm_to_entity(doll_type_orm=doll_type_orm)
+                else:
+                    raise EntityNotFound("No doll types found")
             else:
-                logger.error(f"Doll type {type_id} was not found")
-                raise EntityNotFound(f"Doll type {type_id} was not found")
+                logger.error(f"Error by getting doll type {type_id} from DB")
+                raise DBConnectionError(f"Doll type {type_id} was not found")
 
     @staticmethod
     def _refactor_orm_to_entity(doll_type_orm: DollsTypesORM):

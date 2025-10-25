@@ -8,7 +8,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from infrastructure.db.base import Base
-from infrastructure.db.models.original_mh_characters_orm import OriginalMHCharactersORM
+from infrastructure.db.models.original_characters_orm import OriginalCharactersORM
 from infrastructure.db.models.enums import CharacterRole
 from infrastructure.db.models.dolls_releases_orm import DollsReleasesORM
 
@@ -21,7 +21,7 @@ class ReleaseCharactersORM(Base):
     )
 
     release_id:             Mapped[int] = mapped_column(ForeignKey("dolls_releases.id"), primary_key=True)
-    character_id:           Mapped[int] = mapped_column(ForeignKey("original_mh_characters.id"), primary_key=True)
+    character_id:           Mapped[int] = mapped_column(ForeignKey("original_characters.id"), primary_key=True)
     role:         Mapped[CharacterRole] = mapped_column(SAEnum(CharacterRole), default=CharacterRole.primary, nullable=False)
     position:               Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
@@ -33,7 +33,7 @@ class ReleaseCharactersORM(Base):
         back_populates="character_links",
         overlaps="characters"
     )
-    character: Mapped["OriginalMHCharactersORM"] = relationship(
+    character: Mapped["OriginalCharactersORM"] = relationship(
         overlaps="characters"
     )
 
