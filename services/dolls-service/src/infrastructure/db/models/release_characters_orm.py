@@ -29,6 +29,11 @@ class ReleaseCharactersORM(Base):
     created_at: Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"))
 
     # relationships:
-    release: Mapped["DollsReleasesORM"] = relationship(back_populates="character_links")
-    character: Mapped["OriginalMHCharactersORM"] = relationship()
+    release: Mapped["DollsReleasesORM"] = relationship(
+        back_populates="character_links",
+        overlaps="characters"
+    )
+    character: Mapped["OriginalMHCharactersORM"] = relationship(
+        overlaps="characters"
+    )
 

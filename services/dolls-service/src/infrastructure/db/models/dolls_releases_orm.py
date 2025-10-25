@@ -8,6 +8,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from infrastructure.db.base import Base
+from infrastructure.db.models.dolls_relations_orm import DollsRelationsORM
 from infrastructure.db.models.original_mh_characters_orm import OriginalMHCharactersORM
 from infrastructure.db.models.dolls_types_orm import DollsTypesORM
 from infrastructure.db.models.dolls_series_orm import DollsSeriesORM
@@ -54,19 +55,20 @@ class DollsReleasesORM(Base):
     # список связей персонажей с ролями
     character_links: Mapped[List["ReleaseCharactersORM"]] = relationship(
         back_populates="release",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
+        overlaps = "characters"
     )
 
     # исходящие связи релиза с другими релизами
     relations_out: Mapped[List["DollsRelationsORM"]] = relationship(
-        foreign_keys="Relation.release_id",
+        foreign_keys=[DollsRelationsORM.release_id],
         back_populates="src",
         cascade="all, delete-orphan"
     )
 
     # входящие связи от других релизов
     relations_in: Mapped[List["DollsRelationsORM"]] = relationship(
-        foreign_keys="Relation.related_release_id",
+        foreign_keys=[DollsRelationsORM.related_release_id],
         back_populates="dst",
         cascade="all, delete-orphan"
     )

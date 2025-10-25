@@ -7,8 +7,8 @@ from infrastructure.db.base import Base
 
 class DollsTypesORM(Base):
     __tablename__ = "dolls_types"
-    id: Mapped[int]          = mapped_column(INTEGER,       primary_key=True)
-    name: Mapped[str]        = mapped_column(String,        nullable=False, unique=True)
+    id: Mapped[int]           = mapped_column(INTEGER,      primary_key=True)
+    name: Mapped[str]         = mapped_column(String,       nullable=False, unique=True)
     display_name: Mapped[str] = mapped_column(String,       nullable=False, unique=True)
 
     updated_at:     Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"), onupdate=text("TIMEZONE('utc', now())"), nullable=True)
