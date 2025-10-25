@@ -20,10 +20,10 @@ class ReleaseCharactersORM(Base):
         Index("ix_rc_character_role", "character_id", "role"),
     )
 
-    release_id: Mapped[int] = mapped_column(ForeignKey("dolls_releases.id"), primary_key=True)
-    character_id: Mapped[int] = mapped_column(ForeignKey("original_mh_characters.id"), primary_key=True)
-    role: Mapped[CharacterRole] = mapped_column(SAEnum(CharacterRole), default=CharacterRole.primary, nullable=False)
-    position: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    release_id:             Mapped[int] = mapped_column(ForeignKey("dolls_releases.id"), primary_key=True)
+    character_id:           Mapped[int] = mapped_column(ForeignKey("original_mh_characters.id"), primary_key=True)
+    role:         Mapped[CharacterRole] = mapped_column(SAEnum(CharacterRole), default=CharacterRole.primary, nullable=False)
+    position:               Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
     updated_at: Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"), onupdate=text("TIMEZONE('utc', now())"), nullable=True)
     created_at: Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"))

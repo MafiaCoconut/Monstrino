@@ -7,6 +7,6 @@ from application.services.scheduler_service import SchedulerService
 def build_services(repositories: Repositories, scheduler: SchedulerPort) -> Services:
     return Services(
         scheduler=SchedulerService(scheduler),
-        core=CoreService(dolls_repository=repositories.dolls)
+        core=CoreService()
 
     )

@@ -29,6 +29,6 @@ def build_app():
     return AppContainer(
         services=services,
         adapters=adapters,
-        registry=registry
+        repositories=repositories,
     )
 

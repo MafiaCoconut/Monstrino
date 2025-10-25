@@ -1,4 +1,4 @@
-from application.repositories.dolls_repository import DollsRepository
+# from application.repositories.dolls_repository import DollsRepository
 from domain.entities.dolls.doll import Doll
 from domain.entities.new_doll import NewDoll
 
@@ -6,9 +6,10 @@ from domain.entities.new_doll import NewDoll
 class DollDataUseCase:
     def __init__(
             self,
-            dolls_repository: DollsRepository,
+            # dolls_repository: DollsRepository,
     ):
-        self.dolls_repository = dolls_repository
+        pass
+        # self.dolls_repository = dolls_repository
 
     async def register_new_doll(self, new_doll: NewDoll):
         await self.dolls_repository.set_doll(doll=new_doll)
