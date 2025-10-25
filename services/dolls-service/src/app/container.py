@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 
 from application.ports.logger_port import LoggerPort
-from application.ports.scheduler_port import SchedulerPort
 from application.repositories.doll_images_repository import DollsImagesRepository
 from application.repositories.dolls_relations_repository import DollsRelationsRepository
 from application.repositories.dolls_releases_repository import DollsReleasesRepository
@@ -10,6 +9,7 @@ from application.repositories.dolls_types_repository import DollsTypesRepository
 from application.repositories.original_mh_characters_repository import OriginalMHCharactersRepository
 from application.repositories.release_characters_repository import ReleaseCharactersRepository
 from application.services.core_service import CoreService
+from application.services.db_internal_service import DBInternalService
 from application.services.scheduler_service import SchedulerService
 
 
@@ -17,6 +17,7 @@ from application.services.scheduler_service import SchedulerService
 class Services:
     core: CoreService
     scheduler: SchedulerService
+    db_internal: DBInternalService
 
 @dataclass
 class Adapters:
