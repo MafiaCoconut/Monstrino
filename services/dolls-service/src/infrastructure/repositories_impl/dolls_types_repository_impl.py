@@ -5,7 +5,7 @@ from sqlalchemy import select, update, or_
 from application.repositories.dolls_types_repository import DollsTypesRepository
 from domain.entities.dolls.dolls_type import DollsType
 from domain.exceptions.db import EntityNotFound
-from infrastructure.db.base import async_engine
+from infrastructure.db.base import async_engine, async_session_factory
 from infrastructure.db.models.dolls_types_orm import DollsTypesORM
 
 logger = logging.getLogger(__name__)
@@ -16,8 +16,7 @@ class DollsTypesRepositoryImpl(DollsTypesRepository):
         return AsyncSession(bind=async_engine, expire_on_commit=False)
 
     async def get_all(self):
-        session = await self._get_session()
-        async with session.begin():
+        async with async_session_factory() as session:
             query = select(DollsTypesORM)
             result = await session.execute(query)
             if result:
@@ -28,16 +27,14 @@ class DollsTypesRepositoryImpl(DollsTypesRepository):
                 raise EntityNotFound("No doll types found")
 
     async def add(self, name: str, display_name: str):
-        session = await self._get_session()
-        async with session.begin():
+        async with async_session_factory() as session:
             dolls_type_orm = DollsTypesORM(name=name, display_name=display_name)
             session.add(dolls_type_orm)
             await session.commit()
 
 
     async def get(self, type_id: int):
-        session = await self._get_session()
-        async with session.begin():
+        async with async_session_factory() as session:
             query = select(DollsTypesORM).where(DollsTypesORM.id == type_id)
             result = await session.execute(query)
             if result:

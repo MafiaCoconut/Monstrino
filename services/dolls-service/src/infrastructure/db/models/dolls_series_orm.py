@@ -10,11 +10,14 @@ from infrastructure.db.base import Base
 
 class DollsSeriesORM(Base):
     __tablename__ = "dolls_series"
-    id: Mapped[int]          = mapped_column(INTEGER,       primary_key=True)
-    name: Mapped[str]        = mapped_column(String,        nullable=False, unique=True)
-    description: Mapped[str] = mapped_column(String,        nullable=False)
+    id:             Mapped[int] = mapped_column(INTEGER,       primary_key=True)
+    name:           Mapped[str] = mapped_column(String,        nullable=False, unique=True)
+    description:    Mapped[str] = mapped_column(String,        nullable=False, default="")
+    display_name:   Mapped[str] = mapped_column(String,        nullable=False, unique=True)
 
     updated_at:     Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"), onupdate=text("TIMEZONE('utc', now())"), nullable=True)
     created_at:     Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"))
 
-    releases: Mapped[List["DollsReleasesORM"]] = relationship(back_populates="series")
+    releases: Mapped[List["DollsReleasesORM"]] = relationship(
+        back_populates="series"
+    )

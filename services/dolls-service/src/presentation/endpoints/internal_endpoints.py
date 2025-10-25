@@ -34,8 +34,9 @@ async def restart_database(
 
 class TypeRequest(BaseModel):
     type_id: int
+
 @private.post('/get_dolls_type')
-async def restart_database(
+async def get_dolls_type(
         body: TypeRequest,
         response: Response, background_tasks: BackgroundTasks, request: Request,
 ):
@@ -47,7 +48,20 @@ async def restart_database(
         return await get_success_json_response(data=result)
     except Exception as e:
         logger.error(e)
-        return return_internal_server_error_status_code()
+        return await return_internal_server_error_status_code()
 
-
+@private.post('/get_dolls_series')
+async def get_dolls_series(
+        body: TypeRequest,
+        response: Response, background_tasks: BackgroundTasks, request: Request,
+):
+    container = request.app.state.container
+    tables_data_manager: TablesDataManagerService = container.services.tables_data_manager
+    type_id = body.type_id
+    try:
+        result = await tables_data_manager.get_dolls_series(body.type_id)
+        return await get_success_json_response(data=result)
+    except Exception as e:
+        logger.error(e)
+        return await return_internal_server_error_status_code()
 
