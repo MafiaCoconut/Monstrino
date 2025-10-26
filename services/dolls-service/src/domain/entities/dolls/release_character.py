@@ -20,5 +20,6 @@ class SaveReleaseCharacter(BaseModel):
 
 class ReceiveReleaseCharacter(BaseModel):
     character_name:      str = Field()
+    display_name:        str = Field()
     role:      CharacterRole = Field()
     position:            int = Field()

@@ -1,8 +1,11 @@
-from fastapi import APIRouter, Response, BackgroundTasks, FastAPI
+import json
+
+from fastapi import APIRouter, Response, BackgroundTasks, FastAPI, Request
 from fastapi.params import Depends
 import logging
 
 from fastapi.security import HTTPBearer
+from pydantic import BaseModel
 
 from application.services.parser_service import ParserService
 from application.use_cases.auth.verify_token_use_case import VerifyToken
@@ -22,10 +25,13 @@ async def parse(
 ):
     await parser_service.parse()
 
-
+class Payload(BaseModel):
+    dict: dict
 @private.post('/kafka_publish_message')
 async def parse(
+        request: Request,
         response: Response, background_tasks: BackgroundTasks,
         parser_service: ParserService = Depends(get_parser_service)
 ):
-    await parser_service.publish_message()
+    # payload = json.loads(payload.value.decode('utf-8'))
+    await parser_service.publish_message(await request.json())

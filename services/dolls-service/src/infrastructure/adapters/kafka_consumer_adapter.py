@@ -4,16 +4,19 @@ import os
 from aiokafka import AIOKafkaConsumer
 import asyncio, json
 
+from app.dependencies.container_components.services import Services
+from application.dto.ReleaseCreateDto import ReleaseCreateDto
 from application.ports.kafka_consumer_port import KafkaConsumerPort
 
 logger = logging.getLogger(__name__)
 
 class KafkaConsumerAdapter(KafkaConsumerPort):
-    def __init__(self, servers: str, group_id: str):
+    def __init__(self, servers: str, group_id: str, services: Services):
         self.servers = servers
         self.group_id = group_id
         self.consumer = None
         self.new_releases = os.getenv("KAFKA_TOPIC_NEW_RELEASES")
+        self.services = services
 
     async def start(self):
         self.consumer = AIOKafkaConsumer(
@@ -34,11 +37,12 @@ class KafkaConsumerAdapter(KafkaConsumerPort):
                 try:
                     match msg.topic:
                         case self.new_releases:
-                             await self.print_message(payload)
+                            dto = ReleaseCreateDto(**payload)
+                            await self.services.scenarios.create_release(dto)
+                    await self.consumer.commit()
 
                 except Exception as e:
                     logger.error(f"❗ Error processing message: {e}")
-                await self.consumer.commit()
                 logger.info(f"✅ Message processed and offset committed ({msg.topic}:{msg.partition}:{msg.offset})")
         except asyncio.CancelledError:
             logger.info("🟡 Consumer cancelled")

@@ -5,7 +5,7 @@ from application.repositories.dolls_series_repository import DollsSeriesReposito
 from domain.entities.dolls.dolls_serie import DollsSeries
 from domain.exceptions.db import EntityNotFound, DBConnectionError
 from infrastructure.db.base import async_session_factory
-from infrastructure.db.models.dolls_series_orm import DollsSeriesORM
+from infrastructure.db.models.release_series_orm import ReleaseSeriesORM
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class DollsSeriesRepositoryImpl(DollsSeriesRepository):
     async def get_all(self):
         async with async_session_factory() as session:
-            query = select(DollsSeriesORM)
+            query = select(ReleaseSeriesORM)
             result = await session.execute(query)
             if result:
                 dolls_series_orms = result.scalars().all()
@@ -27,13 +27,13 @@ class DollsSeriesRepositoryImpl(DollsSeriesRepository):
 
     async def add(self, name: str, description: str, display_name: str):
         async with async_session_factory() as session:
-            dolls_series_orm = DollsSeriesORM(name=name, description=description, display_name=display_name)
+            dolls_series_orm = ReleaseSeriesORM(name=name, description=description, display_name=display_name)
             session.add(dolls_series_orm)
             await session.commit()
 
     async def get(self, series_id: int):
         async with async_session_factory() as session:
-            query = select(DollsSeriesORM).where(DollsSeriesORM.id == series_id)
+            query = select(ReleaseSeriesORM).where(ReleaseSeriesORM.id == series_id)
             result = await session.execute(query)
             if result:
                 doll_series_orm = result.scalars().first()
@@ -48,7 +48,7 @@ class DollsSeriesRepositoryImpl(DollsSeriesRepository):
 
     async def get_by_name(self, name: int):
         async with async_session_factory() as session:
-            query = select(DollsSeriesORM).where(DollsSeriesORM.name == name)
+            query = select(ReleaseSeriesORM).where(ReleaseSeriesORM.name == name)
             result = await session.execute(query)
             if result:
                 doll_series_orm = result.scalars().first()
@@ -62,7 +62,7 @@ class DollsSeriesRepositoryImpl(DollsSeriesRepository):
                 raise DBConnectionError(f"Doll series {name} was not found")
 
     @staticmethod
-    def _refactor_orm_to_entity(dolls_series_orm: DollsSeriesORM):
+    def _refactor_orm_to_entity(dolls_series_orm: ReleaseSeriesORM):
         return DollsSeries(
             id=dolls_series_orm.id,
             name=dolls_series_orm.name,

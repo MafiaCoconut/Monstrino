@@ -7,7 +7,7 @@ from domain.entities.dolls.original_character import OriginalCharacter
 from domain.exceptions.db import DBConnectionError, EntityNotFound
 from infrastructure.db.base import async_engine, async_session_factory
 from application.repositories.original_characters_repository import OriginalCharactersRepository
-from infrastructure.db.models.original_characters_orm import OriginalCharactersORM
+from infrastructure.db.models.characters_orm import CharactersORM
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ class OriginalCharactersRepositoryImpl(OriginalCharactersRepository):
 
     async def get_all(self):
         async with async_session_factory() as session:
-            query = select(OriginalCharactersORM)
+            query = select(CharactersORM)
             result = await session.execute(query)
             if result:
                 original_characters_orms = result.scalars().all()
@@ -29,14 +29,14 @@ class OriginalCharactersRepositoryImpl(OriginalCharactersRepository):
 
     async def add(self, name: str, description: str, alt_names: Optional[list] = None, notes: Optional[str] = None):
         async with async_session_factory() as session:
-            character_orm = OriginalCharactersORM(name=name, description=description, alt_names=alt_names, notes=notes)
+            character_orm = CharactersORM(name=name, description=description, alt_names=alt_names, notes=notes)
             session.add(character_orm)
             await session.commit()
 
 
     async def get(self, character_id: int):
         async with async_session_factory() as session:
-            query = select(OriginalCharactersORM).where(OriginalCharactersORM.id == character_id)
+            query = select(CharactersORM).where(CharactersORM.id == character_id)
             result = await session.execute(query)
             if result:
                 original_character_orm = result.scalars().first()
@@ -51,7 +51,7 @@ class OriginalCharactersRepositoryImpl(OriginalCharactersRepository):
 
     async def get_by_name(self, name: str):
         async with async_session_factory() as session:
-            query = select(OriginalCharactersORM).where(OriginalCharactersORM.name == name)
+            query = select(CharactersORM).where(CharactersORM.name == name)
             result = await session.execute(query)
             if result:
                 original_character_orm = result.scalars().first()
@@ -65,7 +65,7 @@ class OriginalCharactersRepositoryImpl(OriginalCharactersRepository):
                 raise DBConnectionError(f"Original characters {name} was not found")
 
     @staticmethod
-    def _refactor_orm_to_entity(original_character_orm: OriginalCharactersORM):
+    def _refactor_orm_to_entity(original_character_orm: CharactersORM):
         return OriginalCharacter(
             id=original_character_orm.id,
             name=original_character_orm.name,

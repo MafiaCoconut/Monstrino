@@ -6,7 +6,7 @@ from application.repositories.dolls_types_repository import DollsTypesRepository
 from domain.entities.dolls.dolls_type import DollsType
 from domain.exceptions.db import EntityNotFound, DBConnectionError
 from infrastructure.db.base import async_engine, async_session_factory
-from infrastructure.db.models.dolls_types_orm import DollsTypesORM
+from infrastructure.db.models.release_types_orm import ReleaseTypesORM
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ class DollsTypesRepositoryImpl(DollsTypesRepository):
 
     async def get_all(self):
         async with async_session_factory() as session:
-            query = select(DollsTypesORM)
+            query = select(ReleaseTypesORM)
             result = await session.execute(query)
             if result:
                 dolls_types_orms = result.scalars().all()
@@ -31,14 +31,14 @@ class DollsTypesRepositoryImpl(DollsTypesRepository):
 
     async def add(self, name: str, display_name: str):
         async with async_session_factory() as session:
-            dolls_type_orm = DollsTypesORM(name=name, display_name=display_name)
+            dolls_type_orm = ReleaseTypesORM(name=name, display_name=display_name)
             session.add(dolls_type_orm)
             await session.commit()
 
 
     async def get(self, type_id: int):
         async with async_session_factory() as session:
-            query = select(DollsTypesORM).where(DollsTypesORM.id == type_id)
+            query = select(ReleaseTypesORM).where(ReleaseTypesORM.id == type_id)
             result = await session.execute(query)
             if result:
                 doll_type_orm = result.scalars().first()
@@ -52,7 +52,7 @@ class DollsTypesRepositoryImpl(DollsTypesRepository):
 
     async def get_by_name(self, name: str):
         async with async_session_factory() as session:
-            query = select(DollsTypesORM).where(DollsTypesORM.name == name)
+            query = select(ReleaseTypesORM).where(ReleaseTypesORM.name == name)
             result = await session.execute(query)
             if result:
                 doll_type_orm = result.scalars().first()
@@ -65,7 +65,7 @@ class DollsTypesRepositoryImpl(DollsTypesRepository):
                 raise DBConnectionError(f"Doll type {name} was not found")
 
     @staticmethod
-    def _refactor_orm_to_entity(doll_type_orm: DollsTypesORM):
+    def _refactor_orm_to_entity(doll_type_orm: ReleaseTypesORM):
         return DollsType(
             id=doll_type_orm.id,
             name=doll_type_orm.name,

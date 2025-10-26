@@ -23,5 +23,5 @@ class ParserService:
     async def parse(self):
         await self.parse_website_uc.by_year(WebsiteKey.HMArchive, 2024)
 
-    async def publish_message(self):
-        await self.kafka_uc.execute()
+    async def publish_message(self, payload: dict):
+        await self.kafka_uc.execute(payload)

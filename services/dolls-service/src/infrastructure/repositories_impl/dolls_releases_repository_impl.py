@@ -4,7 +4,7 @@ from application.repositories.dolls_releases_repository import DollsReleasesRepo
 
 from infrastructure.db.base import async_session_factory
 from domain.entities.dolls.dolls_release import DollsRelease
-from infrastructure.db.models.dolls_releases_orm import DollsReleasesORM
+from infrastructure.db.models.releases_orm import ReleasesORM
 
 logger = logging.getLogger(__name__)
 
@@ -18,8 +18,8 @@ class DollsReleasesRepositoryImpl(DollsReleasesRepository):
             return self._format_orm_to_pydantic(release_orm)
 
     @staticmethod
-    def _format_pydantic_to_orm(pydantic_model: DollsRelease) -> DollsReleasesORM:
-        return DollsReleasesORM(
+    def _format_pydantic_to_orm(pydantic_model: DollsRelease) -> ReleasesORM:
+        return ReleasesORM(
             type_id=pydantic_model.type_id,
             name=pydantic_model.name,
             mpn=pydantic_model.mpn,
@@ -30,7 +30,7 @@ class DollsReleasesRepositoryImpl(DollsReleasesRepository):
         )
 
     @staticmethod
-    def _format_orm_to_pydantic(orm_model: DollsReleasesORM) -> DollsRelease:
+    def _format_orm_to_pydantic(orm_model: ReleasesORM) -> DollsRelease:
         return DollsRelease(
             id=orm_model.id,
             type_id=orm_model.type_id,

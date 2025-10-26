@@ -8,8 +8,6 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from infrastructure.db.base import Base
-from infrastructure.db.models.enums import ShotType
-from infrastructure.db.models.dolls_releases_orm import DollsReleasesORM
 
 
 class ReleaseImagesORM(Base):
@@ -20,14 +18,14 @@ class ReleaseImagesORM(Base):
     )
 
     id:         Mapped[int]             = mapped_column(Integer, primary_key=True)
-    release_id: Mapped[int]             = mapped_column(ForeignKey("dolls_releases.id"), nullable=False)
+    release_id: Mapped[int]             = mapped_column(ForeignKey("releases.id"), nullable=False)
     url:        Mapped[str]             = mapped_column(String(500), nullable=False)
     is_primary: Mapped[bool]            = mapped_column(Boolean, default=False, nullable=False)
-    width:      Mapped[Optional[int]]   = mapped_column(Integer)
-    height:     Mapped[Optional[int]]   = mapped_column(Integer)
 
     updated_at: Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"), onupdate=text("TIMEZONE('utc', now())"), nullable=True)
     created_at: Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"))
 
     # Relationships:
-    release:    Mapped[DollsReleasesORM]     = relationship(back_populates="images")
+    release:    Mapped["ReleasesORM"] = relationship(
+        back_populates="images"
+    )
