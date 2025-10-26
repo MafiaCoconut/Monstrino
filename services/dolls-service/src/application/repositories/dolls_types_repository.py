@@ -14,3 +14,9 @@ class DollsTypesRepository(ABC):
     async def get(self, type_id: int):
         pass
 
+    @abstractmethod
+    async def get_by_name(self, name: str):
+        pass
+
+
+

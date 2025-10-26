@@ -1,8 +1,6 @@
 from typing import Optional
 import logging
 
-from application.repositories.dolls_releases_repository import DollsReleasesRepository
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete, text, update, func, cast, or_, and_
 
 from domain.entities.dolls.original_character import OriginalCharacter
@@ -31,25 +29,40 @@ class OriginalCharactersRepositoryImpl(OriginalCharactersRepository):
 
     async def add(self, name: str, description: str, alt_names: Optional[list] = None, notes: Optional[str] = None):
         async with async_session_factory() as session:
-            dolls_type_orm = OriginalCharactersORM(name=name, description=description, alt_names=alt_names, notes=notes)
-            session.add(dolls_type_orm)
+            character_orm = OriginalCharactersORM(name=name, description=description, alt_names=alt_names, notes=notes)
+            session.add(character_orm)
             await session.commit()
 
 
-    async def get(self, type_id: int):
+    async def get(self, character_id: int):
         async with async_session_factory() as session:
-            query = select(OriginalCharactersORM).where(OriginalCharactersORM.id == type_id)
+            query = select(OriginalCharactersORM).where(OriginalCharactersORM.id == character_id)
             result = await session.execute(query)
             if result:
                 original_character_orm = result.scalars().first()
                 if original_character_orm:
                     return self._refactor_orm_to_entity(original_character_orm=original_character_orm)
                 else:
-                    logger.error(f"Original characters {type_id} was not found")
-                    raise EntityNotFound(f"Original characters {type_id} not found")
+                    logger.error(f"Original characters {character_id} was not found")
+                    raise EntityNotFound(f"Original characters {character_id} not found")
             else:
-                logger.error(f"Error by getting Original characters {type_id} from DB")
-                raise DBConnectionError(f"Original characters {type_id} was not found")
+                logger.error(f"Error by getting Original characters {character_id} from DB")
+                raise DBConnectionError(f"Original characters {character_id} was not found")
+
+    async def get_by_name(self, name: str):
+        async with async_session_factory() as session:
+            query = select(OriginalCharactersORM).where(OriginalCharactersORM.name == name)
+            result = await session.execute(query)
+            if result:
+                original_character_orm = result.scalars().first()
+                if original_character_orm:
+                    return self._refactor_orm_to_entity(original_character_orm=original_character_orm)
+                else:
+                    logger.error(f"Original characters {name} was not found")
+                    raise EntityNotFound(f"Original characters {name} not found")
+            else:
+                logger.error(f"Error by getting Original characters {name} from DB")
+                raise DBConnectionError(f"Original characters {name} was not found")
 
     @staticmethod
     def _refactor_orm_to_entity(original_character_orm: OriginalCharactersORM):

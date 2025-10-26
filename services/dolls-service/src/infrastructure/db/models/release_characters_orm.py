@@ -8,10 +8,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from infrastructure.db.base import Base
-from infrastructure.db.models.original_characters_orm import OriginalCharactersORM
 from infrastructure.db.models.enums import CharacterRole
-from infrastructure.db.models.dolls_releases_orm import DollsReleasesORM
-
 
 class ReleaseCharactersORM(Base):
     __tablename__ = "release_characters"

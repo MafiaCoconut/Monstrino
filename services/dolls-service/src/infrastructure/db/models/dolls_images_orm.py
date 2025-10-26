@@ -23,12 +23,11 @@ class DollsImagesORM(Base):
     release_id: Mapped[int]             = mapped_column(ForeignKey("dolls_releases.id"), nullable=False)
     url:        Mapped[str]             = mapped_column(String(500), nullable=False)
     is_primary: Mapped[bool]            = mapped_column(Boolean, default=False, nullable=False)
-    shot_type:  Mapped[ShotType]        = mapped_column(SAEnum(ShotType), default=ShotType.box, nullable=False)
     width:      Mapped[Optional[int]]   = mapped_column(Integer)
     height:     Mapped[Optional[int]]   = mapped_column(Integer)
-
-    release:    Mapped[DollsReleasesORM]     = relationship(back_populates="images")
 
     updated_at: Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"), onupdate=text("TIMEZONE('utc', now())"), nullable=True)
     created_at: Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"))
 
+    # Relationships:
+    release:    Mapped[DollsReleasesORM]     = relationship(back_populates="images")

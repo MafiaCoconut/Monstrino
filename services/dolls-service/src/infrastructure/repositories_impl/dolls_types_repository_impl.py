@@ -50,6 +50,20 @@ class DollsTypesRepositoryImpl(DollsTypesRepository):
                 logger.error(f"Error by getting doll type {type_id} from DB")
                 raise DBConnectionError(f"Doll type {type_id} was not found")
 
+    async def get_by_name(self, name: str):
+        async with async_session_factory() as session:
+            query = select(DollsTypesORM).where(DollsTypesORM.name == name)
+            result = await session.execute(query)
+            if result:
+                doll_type_orm = result.scalars().first()
+                if doll_type_orm:
+                    return self._refactor_orm_to_entity(doll_type_orm=doll_type_orm)
+                else:
+                    raise EntityNotFound("No doll types found")
+            else:
+                logger.error(f"Error by getting doll type {name} from DB")
+                raise DBConnectionError(f"Doll type {name} was not found")
+
     @staticmethod
     def _refactor_orm_to_entity(doll_type_orm: DollsTypesORM):
         return DollsType(
