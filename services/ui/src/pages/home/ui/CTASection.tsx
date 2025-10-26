@@ -108,7 +108,6 @@ const CTASection = ({ onOpenAuth }) => {
         {/* Primary CTA Buttons */}
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} justifyContent="center" sx={{ mb: 4 }}>
           <Button
-            disabled={true}
             onClick={() => onOpenAuth('register')}
             endIcon={<ArrowRight size={20} />}
             sx={{
@@ -136,7 +135,6 @@ const CTASection = ({ onOpenAuth }) => {
 
           <Button
             onClick={() => onOpenAuth('login')}
-            disabled={true}
             variant="outlined"
             sx={{
               px: 6,

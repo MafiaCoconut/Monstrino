@@ -3,17 +3,18 @@ from application.ports.logger_port import LoggerPort
 from application.ports.scheduler_port import SchedulerPort
 from application.registries.ports_registry import PortsRegistry
 from application.services.parser_service import ParserService
-from app.container import Services
+from app.container import Services, Adapters
 from application.services.scheduler_service import SchedulerService
 
 
-def build_services(registry: PortsRegistry, logger: LoggerPort, scheduler: SchedulerPort) -> Services:
+def build_services(registry: PortsRegistry, adapters: Adapters) -> Services:
     return Services(
         parser=ParserService(
             registry=registry,
-            logger=logger,
+            logger=adapters.logger,
+            kafka_producer=adapters.kafka_producer
         ),
-        scheduler=SchedulerService(scheduler=scheduler)
+        scheduler=SchedulerService(scheduler=adapters.scheduler)
     )
 
 

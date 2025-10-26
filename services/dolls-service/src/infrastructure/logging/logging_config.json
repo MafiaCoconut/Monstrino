@@ -56,8 +56,32 @@
       "handlers": ["system_file", "console"],
       "level": "INFO",
       "propagate": false
+    },
+    "aiokafka.conn": {
+      "handlers": ["console"],
+      "level": "INFO",
+      "propagate": false
+    },
+    "aiokafka.consumer.fetcher": {
+      "handlers": [
+        "console"
+      ],
+      "level": "INFO",
+      "propagate": false
+    },
+    "aiokafka.consumer.group_coordinator": {
+      "handlers": [
+        "console"
+      ],
+      "level": "INFO",
+      "propagate": false
+    },
+    "aiokafka.cluster": {
+      "handlers": ["console"],
+      "level": "INFO",
+      "propagate": false
     }
-  },
+    },
   "root": {
     "handlers": ["console"],
     "level": "DEBUG"

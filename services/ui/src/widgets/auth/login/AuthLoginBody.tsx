@@ -32,12 +32,8 @@ export const AuthLoginBody = ({ onClose }: AuthRegisterBodyProps) => {
 
     const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log("Login attempt:", formData);
-
         if ( !formDataErrors.email && !formDataErrors.password && formData.email != '' && formData.password != '' ) {
             let success = await userStore.login(formData.email, formData.password);
-            console.log("User store: ")
-            console.log(userStore.getAllData())
             if (success) {
                 navigate(`/users/${userStore.user.username}`);
             } else {
@@ -45,12 +41,12 @@ export const AuthLoginBody = ({ onClose }: AuthRegisterBodyProps) => {
             }
         } else {
             alert('Please provide valid credentials');
-        }
+        }  
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
-        setValueInFormData(name, value);
+        setValueInFormData(name, value);   
 
 
     }

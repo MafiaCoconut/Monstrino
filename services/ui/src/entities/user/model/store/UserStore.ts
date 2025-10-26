@@ -36,24 +36,14 @@ export class UserStore {
     }
 
     async login(email: string, password: string): Promise<boolean> {
-        console.log("========================================================")
-        console.log("Start login")
         try {
             const response = await AuthService.login(email, password);
-            console.log(response);
             switch (response.status) {
                 case 200:
-                    console.log("Login success");
                     this.setAuth(true);
-                    console.log("Auth:" + this.isAuth);
-                    console.log("response.data.result.user")
-                    console.log(response.data.result.user)
                     this.setUser(response.data.result.user);
-                    console.log("User:")
-                    console.log(this.user);
                     return true;
                 case 401:
-                    console.log("Login failed");
                     return false;
             };
 
@@ -65,36 +55,27 @@ export class UserStore {
     }
 
     async registration(username: string, email: string, password: string): Promise<{ success: boolean, typeOfError?: string}> {
-        console.log("========================================================")
-        console.log("start registration")
         try {
             const response = await AuthService.registration(username, email, password);
-            console.log("========================================================")
-            console.log(toJS(this.user))
-            console.log(email)
-            console.log(username)
-            this.setUser({username: username, email: email, firstName: "", lastName: "", createdAt: "", updatedAt: ""});
-            console.log(toJS(this.user))
-
+            this.setUser(response.data.result.user)
             this.setAuth(true);
-            this.setAccessToken(response.data.result);
-            // return response as AxiosResponse<UserRegistrationResponse>;
+            this.setAccessToken(response.data.result.accessToken);
             return {success: true}
         } catch (e: any) {
             console.log(e.response?.data?.meta);
             let typeOfError = ""
             switch (e.response.status) {
                 case 409:
-                    console.log("Registration failed");
-                    return {success: false, typeOfError: "user-exists"}
+                    if (e.response.data.result == "email"){
+                        typeOfError = "email-exists"
+                    } else {
+                        typeOfError = "username-exists"
+                    }
+                    return {success: false, typeOfError: typeOfError}
                 case 422:
-                    console.log("Validation error");
-                    let result = e.response.data.result
                     typeOfError =  e.response.data.result
-                    console.log(result)
                     return {success: false, typeOfError: typeOfError}
                 case 500:
-                    console.log("Internal server error");
                     return {success: false, typeOfError: "internal-server-error"}
             }
             return {success: false, typeOfError: "internal-server-error"}

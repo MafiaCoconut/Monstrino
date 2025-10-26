@@ -10,6 +10,8 @@ class User(BaseModel):
     lastName:       str | None = Field(default=None)
     email:          str | None = Field(default=None)
     password:       str | None = Field(default=None)
+    status:       str | None = Field(default=None)
+    role:           str        = Field(default="user")
 
     updatedAt: datetime | None = Field(default=None)
     createdAt: datetime | None = Field(default=None)
@@ -17,8 +19,6 @@ class User(BaseModel):
 
 class UserRegistration(BaseModel):
     username:  str        = Field(default=None)
-    # firstName: str | None = Field(default=None)
-    # lastName:  str | None = Field(default=None)
     email:     str | None = Field(default=None)
     password:  str | None = Field(default=None)
     ip:        str        = Field(default="")
@@ -28,6 +28,8 @@ class UserBaseInfo(BaseModel):
     id:             int  = Field()
     username:       str = Field()
     email:          str = Field()
+    role:           str = Field()
+    status:         str = Field(default=None)
 
     updated_at: datetime | str = Field()
     created_at: datetime | str = Field()

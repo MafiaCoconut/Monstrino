@@ -28,7 +28,8 @@ class AuthService:
             try:
                 user_id = result.get('user').id
                 tokens = await self.update_tokens(user_id=user_id, ip=user.ip)
-                return tokens
+                result['tokens'] = tokens
+                result['user'] = result.get('user')
 
             except Exception as e:
                 logger.error(f"Exception by creating jwt: {e}")

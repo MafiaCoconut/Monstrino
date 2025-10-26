@@ -51,7 +51,12 @@ async def registration(
                     return await return_internal_server_error_status_code() # 500
             return await return_internal_server_error_status_code() # 500
         else:
-            return await get_success_json_response(data=result.get('access_token'), cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('refresh_token')}]) # 200
+            return await get_success_json_response(
+                data={
+                    "access_token": result.get('tokens').get('access_token'),
+                    "user": result.get('user')
+                },
+                cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('tokens').get('refresh_token')}]) # 200
     else:
         return await return_validation_error_status_code() # 422
 

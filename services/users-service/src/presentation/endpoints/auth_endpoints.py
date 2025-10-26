@@ -20,8 +20,7 @@ logger = logging.getLogger(__name__)
 def config(app: FastAPI):
     app.include_router(router)
 
-@router.post("/api/v1/auth/registerNewUser", tags=["Auth"],
-             response_model=RegisterUserResponse,)
+@router.post("/api/v1/auth/registerNewUser", tags=["Auth"], response_model=RegisterUserResponse,)
 async def register_new_user(
         user_credentials: UserRegistration,
         response: Response, background_tasks: BackgroundTasks,

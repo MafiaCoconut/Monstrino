@@ -19,7 +19,7 @@ def build_app():
     logger.debug("Finishing scheduler configuration")
 
     logger.debug("Starting  adapters configuration")
-    adapters = build_adapters(logger)
+    adapters = build_adapters(logger, aps)
     logger.debug("Finishing adapters configuration")
 
     logger.debug("Starting  registry configuration")
@@ -27,7 +27,7 @@ def build_app():
     logger.debug("Finishing registry configuration")
 
     logger.debug("Starting  services configuration")
-    services = build_services(registry=registry, logger=logger, scheduler=SchedulerAdapter(aps))
+    services = build_services(registry=registry, adapters=adapters)
     logger.debug("Finishing services configuration")
 
     return AppContainer(

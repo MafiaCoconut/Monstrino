@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from application.ports.kafka_producer_port import KafkaProducerPort
 from application.ports.logger_port import LoggerPort
 from application.ports.scheduler_port import SchedulerPort
 from application.ports.website_catalog_port import WebsiteCatalogPort
@@ -17,6 +18,8 @@ class Services:
 class Adapters:
     MHArchive: WebsiteCatalogPort
     logger: LoggerPort
+    kafka_producer: KafkaProducerPort
+    scheduler: SchedulerPort
 
 @dataclass
 class AppContainer:

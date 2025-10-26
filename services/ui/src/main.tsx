@@ -10,6 +10,14 @@ import { ScrollToTop } from './shared/ui/components/ScrollToTop.tsx';
 import { UserStore } from '@entities/user/model/index.ts';
 
 
+const container = document.getElementById('root')!;
+
+// @ts-ignore
+if (!window.__monstrino_root__) {
+  // @ts-ignore
+  window.__monstrino_root__ = ReactDOM.createRoot(container);
+}
+
 interface UserState {
   userStore: UserStore,
 }
@@ -22,7 +30,8 @@ export const api = createApi(userStore);
 
 document.title = 'Monstrino';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+// @ts-ignore
+window.__monstrino_root__.render(
   <React.StrictMode>
     <BrowserRouter>
       <Context.Provider value={{ userStore}}>

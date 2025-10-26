@@ -1,7 +1,5 @@
 from infrastructure.db.base import Base, async_engine
 
-from infrastructure.db.models.user_orm import UserORM
-from infrastructure.db.models.dolls_collection_orm import DollsCollectionORM
 
 class DBUseCase:
     def __init__(self):

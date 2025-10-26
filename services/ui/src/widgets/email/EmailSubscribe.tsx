@@ -5,7 +5,7 @@ export const EmailSubscribeWidget = () => {
     const [email, setEmail] = useState("")
     const [isSubscribed, setIsSubscribed] = useState(false)
     const theme = useTheme()
-
+    const disabled = true;
     const handleSubscribe = (email: any) => {
         console.log('Subscribed:', email);
         setIsSubscribed(true);
@@ -27,6 +27,7 @@ export const EmailSubscribeWidget = () => {
                 type="email"
                 required
                 value={email}
+                disabled={disabled}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email for monster updates"
                 variant="outlined"
@@ -45,6 +46,7 @@ export const EmailSubscribeWidget = () => {
             />
             <Button
                 type="submit"
+                disabled={disabled}
                 onClick={onClick}
                 sx={{
                     px: 3,

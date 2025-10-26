@@ -35,8 +35,6 @@ export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(`Registration attempt:`, formData);
-
         if ( !formDataErrors.username && !formDataErrors.email && !formDataErrors.password  && formData.email != '' && formData.password != '' && formData.username != '' ) {
             let result = await userStore.registration(formData.username, formData.email, formData.password);
             console.log("User store: ")
@@ -45,29 +43,19 @@ export const AuthRegisterBody = ({ onClose }: AuthRegisterBodyProps) => {
                 navigate(`/users/${userStore.user.username}`);
             } else {
                 switch (result.typeOfError) {
-                    case "user-exists":
-                        alert("User with this email or username already exists. Please try again with another email or username.");
-                        // setErrorInFormData("email", true);
-                        // setErrorInFormData("username", true);
+                    case "email-exists":
+                        alert("User with this email already exists. Please try again with another email.");
+                        setErrorInFormData("email", true);
+                        break;
+                    case "username-exists":
+                        alert("User with this username already exists. Please try again with another username.");
+                        setErrorInFormData("username", true);
                         break;
                     case "internal-server-error":
                         alert("Something went wrong. Please try again later.");
                         break;
                 }
             }
-             
-
-        //     setTimeout(() => {
-        //     alert('Registration successful! Welcome to Monstrino!');
-        //     onClose && onClose();
-        //     setFormData({
-        //         email: '',
-        //         password: '',
-        //         confirmPassword: '',
-        //         username: '',
-        //         agreeToTerms: false
-        //     });
-        // }, 1000);
         }
         else {
             alert('Please fix the errors in the form before submitting.');
