@@ -1,12 +1,12 @@
 from infrastructure.db.base import Base, async_engine
 import logging
-from infrastructure.db.models.dolls_types_orm import DollsTypesORM
 from infrastructure.db.models.release_characters_orm import ReleaseCharactersORM
+from infrastructure.db.models.release_images_orm import ReleaseImagesORM
+from infrastructure.db.models.release_relations_orm import ReleaseRelationsORM
 from infrastructure.db.models.dolls_releases_orm import DollsReleasesORM
-from infrastructure.db.models.dolls_images_orm import DollsImagesORM
+from infrastructure.db.models.dolls_types_orm import DollsTypesORM
 from infrastructure.db.models.dolls_series_orm import DollsSeriesORM
 from infrastructure.db.models.original_characters_orm import OriginalCharactersORM
-from infrastructure.db.models.dolls_relations_orm import DollsRelationsORM
 
 logger = logging.getLogger(__name__)
 

@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 
-class DollsImage(BaseModel):
+class ReleaseImage(BaseModel):
     id:                       int = Field()
     release_id:               int = Field()
     url:                      str = Field()
@@ -15,13 +15,13 @@ class DollsImage(BaseModel):
     updated_at: datetime | str | None = Field(default=None)
     created_at: datetime | str | None = Field(default=None)
 
-class SaveDollsImage(BaseModel):
+class SaveReleaseImage(BaseModel):
     url:                      str = Field()
     is_primary:              bool = Field()
     width:          Optional[int] = Field(default=None)
     height:         Optional[int] = Field(default=None)
 
-class ReceiveDollsImage(BaseModel):
+class ReceiveReleaseImage(BaseModel):
     url:                      str = Field()
     is_primary:              bool = Field()
     width:          Optional[int] = Field(default=None)

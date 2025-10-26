@@ -12,8 +12,8 @@ from infrastructure.db.models.enums import ShotType
 from infrastructure.db.models.dolls_releases_orm import DollsReleasesORM
 
 
-class DollsImagesORM(Base):
-    __tablename__ = "dolls_images"
+class ReleaseImagesORM(Base):
+    __tablename__ = "release_images"
     __table_args__ = (
         Index("ix_images_release", "release_id"),
         Index("ix_images_primary", "release_id", "is_primary"),

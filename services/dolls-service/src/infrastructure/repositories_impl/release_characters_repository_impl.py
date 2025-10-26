@@ -1,8 +1,6 @@
 from application.repositories.release_characters_repository import ReleaseCharactersRepository
-from domain.entities.dolls.dolls_image import ReceiveDollsImage
 from domain.entities.dolls.release_character import SaveReleaseCharacter
 from infrastructure.db.base import async_session_factory
-from infrastructure.db.models.dolls_images_orm import DollsImagesORM
 from infrastructure.db.models.release_characters_orm import ReleaseCharactersORM
 
 

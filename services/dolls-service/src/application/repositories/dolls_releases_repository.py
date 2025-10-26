@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
-from application.dto.ReleaseCreateDto import ReleaseCreateDto
-from domain.entities.dolls_release import DollsRelease
+from domain.entities.dolls.dolls_release import DollsRelease
 
 
 class DollsReleasesRepository(ABC):

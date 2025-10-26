@@ -8,7 +8,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from infrastructure.db.base import Base
-from infrastructure.db.models.dolls_relations_orm import DollsRelationsORM
+from infrastructure.db.models.release_relations_orm import ReleaseRelationsORM
 from infrastructure.db.models.original_characters_orm import OriginalCharactersORM
 from infrastructure.db.models.dolls_types_orm import DollsTypesORM
 from infrastructure.db.models.dolls_series_orm import DollsSeriesORM
@@ -40,7 +40,7 @@ class DollsReleasesORM(Base):
     series: Mapped[Optional["DollsSeriesORM"]] = relationship(back_populates="releases")  # серия
 
     # галерея изображений (один релиз -> много фото)
-    images: Mapped[List["DollsImagesORM"]] = relationship(
+    images: Mapped[List["ReleaseImagesORM"]] = relationship(
         back_populates="release",
         cascade="all, delete-orphan"
     )
@@ -59,15 +59,15 @@ class DollsReleasesORM(Base):
     )
 
     # исходящие связи релиза с другими релизами
-    relations_out: Mapped[List["DollsRelationsORM"]] = relationship(
-        foreign_keys=[DollsRelationsORM.release_id],
+    relations_out: Mapped[List["ReleaseRelationsORM"]] = relationship(
+        foreign_keys=[ReleaseRelationsORM.release_id],
         back_populates="src",
         cascade="all, delete-orphan"
     )
 
     # входящие связи от других релизов
-    relations_in: Mapped[List["DollsRelationsORM"]] = relationship(
-        foreign_keys=[DollsRelationsORM.related_release_id],
+    relations_in: Mapped[List["ReleaseRelationsORM"]] = relationship(
+        foreign_keys=[ReleaseRelationsORM.related_release_id],
         back_populates="dst",
         cascade="all, delete-orphan"
     )

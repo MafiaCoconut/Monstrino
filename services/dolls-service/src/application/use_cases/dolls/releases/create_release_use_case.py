@@ -1,15 +1,15 @@
 import logging
 from application.dto.ReleaseCreateDto import ReleaseCreateDto
-from application.repositories.doll_images_repository import DollsImagesRepository
-from application.repositories.dolls_relations_repository import DollsRelationsRepository
+from application.repositories.release_images_repository import ReleaseImagesRepository
+from application.repositories.release_relations_repository import ReleaseRelationsRepository
 from application.repositories.dolls_releases_repository import DollsReleasesRepository
 from application.repositories.dolls_series_repository import DollsSeriesRepository
 from application.repositories.dolls_types_repository import DollsTypesRepository
 from application.repositories.original_characters_repository import OriginalCharactersRepository
 from application.repositories.release_characters_repository import ReleaseCharactersRepository
-from domain.entities.dolls.dolls_image import SaveDollsImage
+from domain.entities.dolls.release_image import SaveReleaseImage
 from domain.entities.dolls.release_character import SaveReleaseCharacter
-from domain.entities.dolls_release import DollsRelease
+from domain.entities.dolls.dolls_release import DollsRelease
 
 logger = logging.getLogger(__name__)
 
@@ -18,16 +18,16 @@ class CreateReleaseUseCase:
             self,
             releases_repo: DollsReleasesRepository,
             releases_characters_repo: ReleaseCharactersRepository,
-            dolls_images_repo: DollsImagesRepository,
-            dolls_relations_repo: DollsRelationsRepository,
+            release_images_repo: ReleaseImagesRepository,
+            release_relations_repo: ReleaseRelationsRepository,
             dolls_types_repo: DollsTypesRepository,
             dolls_series_repo: DollsSeriesRepository,
             original_characters_repo: OriginalCharactersRepository
     ):
         self.releases_repo = releases_repo
         self.releases_characters_repo = releases_characters_repo
-        self.dolls_images_repo = dolls_images_repo
-        self.dolls_relations_repo = dolls_relations_repo
+        self.release_images_repo = release_images_repo
+        self.release_relations_repo = release_relations_repo
         self.dolls_types_repo = dolls_types_repo
         self.dolls_series_repo = dolls_series_repo
         self.original_characters_repo = original_characters_repo
@@ -72,13 +72,13 @@ class CreateReleaseUseCase:
             position=dto.characters[0].position,
         ))
         logger.info(f"Release character {release_character}")
-        dolls_images = await self.dolls_images_repo.attach_to_release(release.id, SaveDollsImage(
+        release_images = await self.release_images_repo.attach_to_release(release.id, SaveReleaseImage(
             url=dto.images[0].url,
             is_primary=dto.images[0].is_primary,
             width=dto.images[0].width,
             height=dto.images[0].height,
         ))
-        logger.info(f"Doll images {dolls_images}")
+        logger.info(f"Release images {release_images}")
 
 
 

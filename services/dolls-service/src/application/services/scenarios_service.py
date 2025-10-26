@@ -12,8 +12,8 @@ class ScenariosService:
         self.create_release_uc = CreateReleaseUseCase(
             releases_repo=self.repositories.dolls_releases,
             releases_characters_repo=self.repositories.release_characters,
-            dolls_images_repo=self.repositories.dolls_images,
-            dolls_relations_repo=self.repositories.dolls_relations,
+            release_images_repo=self.repositories.release_images,
+            release_relations_repo=self.repositories.release_relations,
             dolls_types_repo=self.repositories.dolls_types,
             dolls_series_repo=self.repositories.dolls_series,
             original_characters_repo=self.repositories.original_characters

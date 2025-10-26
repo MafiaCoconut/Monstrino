@@ -2,7 +2,7 @@ from typing import Optional, List
 
 from pydantic import BaseModel
 
-from domain.entities.dolls.dolls_image import ReceiveDollsImage
+from domain.entities.dolls.release_image import ReceiveReleaseImage
 from domain.entities.dolls.release_character import ReceiveReleaseCharacter
 
 
@@ -15,4 +15,4 @@ class ReleaseCreateDto(BaseModel):
     description: Optional[str]
     link: str
     characters: List[ReceiveReleaseCharacter]
-    images: List[ReceiveDollsImage]
+    images: List[ReceiveReleaseImage]
