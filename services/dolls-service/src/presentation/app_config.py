@@ -28,9 +28,9 @@ async def lifespan(app: FastAPI):
 
     app.state.container = build_app()
     api_config.config(app=app)
-    kafka_task = asyncio.create_task(app.state.container.adapters.kafka_consumer.start())
+    # kafka_task = asyncio.create_task(app.state.container.adapters.kafka_consumer.start())
     # ic(await scheduler_service.get_all_jobs())
     yield
-    kafka_task.cancel()
+    # kafka_task.cancel()
 
 app.router.lifespan_context = lifespan

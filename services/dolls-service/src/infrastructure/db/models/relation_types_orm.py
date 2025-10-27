@@ -11,6 +11,7 @@ class RelationTypesORM(Base):
 
     id:                    Mapped[int] = mapped_column(Integer, primary_key=True)
     name:                  Mapped[str] = mapped_column(String(50), unique=True)
+    display_name:                  Mapped[str] = mapped_column(String(50), unique=True)
     description: Mapped[Optional[str]] = mapped_column(Text)
 
     updated_at:     Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"), onupdate=text("TIMEZONE('utc', now())"), nullable=True)
