@@ -22,7 +22,11 @@ class ParserService:
         self.parse_website_uc = ParseWebsiteUseCase(registry=registry, logger=logger)
         self.kafka_uc = PublishKafkaMessageUseCase(kafka_producer)
 
-        self.parse_characters_uc = ParseCharactersUseCase(repositories.parsed_characters, self.registry.get)
+        self.parse_characters_uc = ParseCharactersUseCase(
+            parsed_characters_repository=repositories.parsed_characters,
+            registry=registry,
+            logger=logger
+        )
 
 
     async def parse(self):
@@ -33,4 +37,4 @@ class ParserService:
 
 
     async def parse_characters(self,):
-        await self.parse_characters_uc.execute()
+        await self.parse_characters_uc.execute(WebsiteKey.HMArchive)
