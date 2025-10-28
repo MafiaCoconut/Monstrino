@@ -13,13 +13,14 @@ from pydantic import BaseModel
 from bs4 import BeautifulSoup
 
 from application.ports.parse.parse_pets_port import ParsePetsPort
+from application.ports.parse.parse_series_port import ParseSeriesPort
 from domain.entities.parsed_pet_dto import ParsedPetDTO
 from infrastructure.parsers.helper import Helper
 
 logger = logging.getLogger(__name__)
 
 
-class PetsParser(ParsePetsPort):
+class SeriesParser(ParseSeriesPort):
     def __init__(self):
         self.domain_url = os.getenv("MHARCHIVE_LINK")
         self.batch_size = 10

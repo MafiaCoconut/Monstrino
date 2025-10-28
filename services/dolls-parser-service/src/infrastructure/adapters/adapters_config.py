@@ -18,4 +18,5 @@ def build_adapters(logger: LoggerAdapter, aps: AsyncIOScheduler) -> Adapters:
         scheduler=SchedulerAdapter(aps),
         parse_characters=CharactersParser(),
         parse_pets=PetsParser(),
+        parse_series=Par
     )

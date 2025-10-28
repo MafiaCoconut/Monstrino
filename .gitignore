@@ -1,3 +1,5 @@
 .idea/
 .env
 monstrino-configurations/
+services/dolls-parser-service/src/data/
+services/core-orchestrator/src/certs/
