@@ -5,6 +5,7 @@ from application.registries.ports_registry import PortsRegistry
 from application.use_cases.getDollsUseCase import GetDollsUseCase
 from application.use_cases.parse.parse_characters_use_case import ParseCharactersUseCase
 from application.use_cases.parse.parse_pets_use_case import ParsePetsUseCase
+from application.use_cases.parse.parse_series_use_case import ParseSeriesUseCase
 from application.use_cases.parse_website import ParseWebsiteUseCase
 from application.use_cases.publich_kafka_message_use_case import PublishKafkaMessageUseCase
 from domain.enums.website_key import WebsiteKey
@@ -32,6 +33,10 @@ class ParserService:
             parsed_pets_repository=repositories.parsed_pets,
             registry=registry
         )
+        self.parse_series_uc = ParseSeriesUseCase(
+            parsed_series_repository=repositories.parsed_series,
+            registry=registry
+        )
 
 
     async def parse(self):
@@ -46,3 +51,6 @@ class ParserService:
 
     async def parse_pets(self):
         await self.parse_pets_uc.execute(WebsiteKey.HMArchive)
+
+    async def parse_series(self):
+        await self.parse_series_uc.execute(WebsiteKey.HMArchive)

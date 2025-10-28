@@ -5,11 +5,12 @@ import logging
 from bs4 import BeautifulSoup
 
 from application.ports.parse.parse_characters_port import ParseCharactersPort
+from application.ports.parse.parse_releases_port import ParseReleasesPort
 
 logger = logging.getLogger(__name__)
 
 
-class ReleasesParser(ParseCharactersPort):
+class ReleasesParser(ParseReleasesPort):
     def __init__(self):
         self.domain_url = os.getenv("MHARCHIVE_LINK")
         self.headers = {

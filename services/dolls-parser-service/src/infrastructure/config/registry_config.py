@@ -2,6 +2,8 @@ import logging
 
 from application.ports.parse.parse_characters_port import ParseCharactersPort
 from application.ports.parse.parse_pets_port import ParsePetsPort
+from application.ports.parse.parse_releases_port import ParseReleasesPort
+from application.ports.parse.parse_series_port import ParseSeriesPort
 from application.ports.website_catalog_port import WebsiteCatalogPort
 from application.registries.ports_registry import PortsRegistry
 from domain.enums.website_key import WebsiteKey
@@ -16,6 +18,8 @@ registry = PortsRegistry()
 def config(adapters: Adapters):
     registry.register(WebsiteKey.HMArchive, ParseCharactersPort, adapters.parse_characters)
     registry.register(WebsiteKey.HMArchive, ParsePetsPort, adapters.parse_pets)
+    registry.register(WebsiteKey.HMArchive, ParseSeriesPort, adapters.parse_series)
+    registry.register(WebsiteKey.HMArchive, ParseReleasesPort, adapters.parse_releases)
 
 
 

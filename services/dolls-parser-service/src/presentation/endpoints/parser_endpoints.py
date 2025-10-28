@@ -54,3 +54,13 @@ async def parse_pets(
 ):
     # payload = json.loads(payload.value.decode('utf-8'))
     await parser_service.parse_pets()
+
+
+@private.post('/parse_series')
+async def parse_series(
+        request: Request,
+        response: Response, background_tasks: BackgroundTasks,
+        parser_service: ParserService = Depends(get_parser_service)
+):
+    # payload = json.loads(payload.value.decode('utf-8'))
+    await parser_service.parse_series()

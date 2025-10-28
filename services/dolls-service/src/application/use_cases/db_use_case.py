@@ -12,9 +12,9 @@ import logging
 # from infrastructure.db.models.release_relations_orm import ReleaseRelationsORM
 # from infrastructure.db.models.release_characters_orm import ReleaseCharactersORM
 # from infrastructure.db.models.release_character_roles import ReleaseCharacterRolesORM
-from infrastructure.db.models.parsed_pets import ParsedPetsORM
-from infrastructure.db.models.parsed_characters import ParsedCharactersORM
-
+# from infrastructure.db.models.parsed_pets import ParsedPetsORM
+# from infrastructure.db.models.parsed_characters import ParsedCharactersORM
+from infrastructure.db.models.parsed_series import ParsedSeriesORM
 
 logger = logging.getLogger(__name__)
 

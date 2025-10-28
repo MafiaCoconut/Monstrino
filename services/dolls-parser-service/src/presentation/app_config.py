@@ -21,7 +21,7 @@ cors.config(app=app)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info('Starting core-service')
+    logger.info('Starting dolls-parser-service')
     async with async_engine.begin() as conn:
         await conn.run_sync(lambda conn: None)
 
