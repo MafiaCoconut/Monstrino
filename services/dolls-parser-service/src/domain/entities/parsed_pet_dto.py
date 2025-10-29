@@ -11,4 +11,4 @@ class ParsedPetDTO(BaseModel):
     primary_image: str
     link: str
     count_of_releases: int
-    original_html_content: str
+    original_html_content: Optional[str] = None

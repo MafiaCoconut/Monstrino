@@ -11,4 +11,4 @@ class ParsedCharacterDTO(BaseModel):
     count_of_releases: int
     primary_image: str
     description: Optional[str] = None
-    original_html_content: str
+    original_html_content: Optional[str] = None

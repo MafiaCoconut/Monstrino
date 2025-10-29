@@ -6,7 +6,7 @@ from application.repositories.parsed_characters_repository import ParsedCharacte
 from domain.entities.parsed_character_dto import ParsedCharacterDTO
 from domain.enums.website_key import WebsiteKey
 
-logger = logging.Logger(__name__)
+logger = logging.getLogger(__name__)
 
 class ParseCharactersUseCase:
     def __init__(self,
@@ -21,8 +21,8 @@ class ParseCharactersUseCase:
 
     async def execute(self, site: WebsiteKey):
         port: ParseCharactersPort = self._r.get(site, ParseCharactersPort)
-        # async for batch in port.parse_ghouls():
-        #         await self._save_batch(batch)
+        async for batch in port.parse_ghouls():
+                await self._save_batch(batch)
         async for batch in port.parse_mansters():
                 await self._save_batch(batch)
 

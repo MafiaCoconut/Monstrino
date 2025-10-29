@@ -1,3 +1,4 @@
+import asyncio
 import dataclasses
 import os
 import re
@@ -28,7 +29,7 @@ class PetsParser(ParsePetsPort):
     async def parse(self):
         html = await Helper.get_page(self.domain_url + '/category/characters/pets/')
         list_of_pets = await self._parse_pets_list(html)
-        logger.info(f"Found ghouls: {len(list_of_pets)}")
+        logger.info(f"Found pets count: {len(list_of_pets)}")
 
         last_return_ghoul_index = 0
 
@@ -36,12 +37,12 @@ class PetsParser(ParsePetsPort):
             await self._parse_pet_info(list_of_pets[i - 1])
 
             if i % self.batch_size == 0:
-                time.sleep(3)
                 logger.info(f"Returning batch: {i - self.batch_size} - {i}")
                 yield list_of_pets[i - self.batch_size: i]
+                await asyncio.sleep(2)
+
                 last_return_ghoul_index = i
 
-        # остаток, если длина не кратна batch_size
         if last_return_ghoul_index < len(list_of_pets):
             logger.info(f"Returning batch: {last_return_ghoul_index} - {len(list_of_pets)}")
             yield list_of_pets[last_return_ghoul_index:]
@@ -51,16 +52,15 @@ class PetsParser(ParsePetsPort):
         soup = BeautifulSoup(html, "html.parser")
         results = []
 
-        # Каждый персонаж находится в блоке <div class="cat_div_three">
         for div in soup.select("div.cat_div_three"):
             name_tag = div.find("h3").find("a")
             img_tag = div.find("img")
             count_tag = div.find("span", class_="key_note")
 
             name = name_tag.get_text(strip=True) if name_tag else None
+
             url = name_tag["href"] if name_tag and name_tag.has_attr("href") else None
 
-            # количество релизов, извлекаем число из скобок "(46)"
             count = None
             if count_tag:
                 m = re.search(r"\((\d+)\)", count_tag.text)
@@ -76,7 +76,6 @@ class PetsParser(ParsePetsPort):
                     link=url,
                     count_of_releases=count,
                     primary_image=image,
-                    original_html_content=html
                 ))
 
         return results
@@ -90,15 +89,19 @@ class PetsParser(ParsePetsPort):
         if h2_tag:
             link = h2_tag.find("a")
             if link:
-                data.owner_name = Helper.format_name(link.get_text(strip=True))
-                owner_link = link.get("href")
+                link_str = link.get_text(strip=True)
+                link = re.sub(r"\s*\([^)]*\)", "", link_str).strip()
+                data.owner_name = Helper.format_name(link)
             else:
                 text = h2_tag.get_text(" ", strip=True)
                 if "with" in text:
-                    data.owner_name = Helper.format_name(text.split("with", 1)[-1].strip())
+                    owner_name = text.split("with", 1)[-1].strip()
+                    owner_name = re.sub(r"\s*\([^)]*\)", "", owner_name).strip()
+                    data.owner_name = Helper.format_name(owner_name)
 
         description = None
         for p in soup.find_all("p"):
             if not p.find("strong") and len(p.get_text(strip=True)) > 20:
                 data.description = p.get_text(" ", strip=True)
                 break
+        data.original_html_content = html

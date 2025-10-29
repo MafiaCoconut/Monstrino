@@ -31,7 +31,6 @@ class SeriesParser(ParseSeriesPort):
         # await Helper.save_page_in_file(html)
         list_of_series = await self._parse_series_list(html)
         logger.info(f"Found series count: {len(list_of_series)}")
-        # searched_index = 5
 
         for i, series in enumerate(list_of_series, start=1):
             parsed_series = await self._parse_series_info(series)
