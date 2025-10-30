@@ -168,8 +168,10 @@ logs/*
 .idea/
 .env
 monstrino-configurations/
-services/dolls-parser-service/src/data/
-services/core-orchestrator/src/certs/
+services/dolls/dolls-parser-service/src/data/
 test.py
 test.txt
 test.json
+jwt-private.pem
+jwt-public.pem
+monstrino-models/
