@@ -14,8 +14,8 @@ import logging
 # from infrastructure.db.models.release_character_roles import ReleaseCharacterRolesORM
 # from infrastructure.db.models.parsed_pets import ParsedPetsORM
 # from infrastructure.db.models.parsed_characters import ParsedCharactersORM
-from infrastructure.db.models.parsed_series import ParsedSeriesORM
-
+# from infrastructure.db.models.parsed_series import ParsedSeriesORM
+from infrastructure.db.models.parsed_releases_orm import ParsedReleasesORM
 logger = logging.getLogger(__name__)
 
 class DBUseCase:

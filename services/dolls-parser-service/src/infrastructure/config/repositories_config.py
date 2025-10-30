@@ -10,7 +10,7 @@ def build_repositories() -> Repositories:
         parsed_pets=ParsedPetsRepositoryImpl(),
         parsed_characters=ParsedCharactersRepositoryImpl(),
         parsed_series=ParsedSeriesRepositoryImpl(),
-        parsed_single_releases=ParsedReleasesRepositoryImpl(),
+        parsed_releases=ParsedReleasesRepositoryImpl(),
     )
 
 

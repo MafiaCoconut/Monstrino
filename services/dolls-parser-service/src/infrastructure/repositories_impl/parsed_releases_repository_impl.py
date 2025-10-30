@@ -1,27 +1,41 @@
+from platform import release
+
 from application.repositories.parsed_releases_repository import ParsedReleasesRepository
 from domain.entities.parsed_release_dto import ParsedReleaseDTO
+from infrastructure.db.base import async_session_factory
+from infrastructure.db.models.parsed_releases import ParsedReleasesORM
 
 
 class ParsedReleasesRepositoryImpl(ParsedReleasesRepository):
     async def save(self, data: ParsedReleaseDTO):
-        pass
-    #     async with async_session_factory() as session:
-    #         character_orm = self._format_pydantic_to_orm(data)
-    #         session.add(character_orm)
-    #         await session.commit()
-    #         # await session.refresh(character_orm)
-    #         # return self._format_orm_to_pydantic(character_orm)
-    #
-    #
-    # @staticmethod
-    # def _format_pydantic_to_orm(dto: ParsedReleaseDTO):
-    #     return ParsedSingleReleasesORM(
-    #         name=dto.name,
-    #         display_name=dto.display_name,
-    #         gender=dto.gender,
-    #         description=dto.description,
-    #         primary_image=dto.primary_image,
-    #         link=dto.link,
-    #         process_state="init",
-    #         original_html_content=dto.original_html_content,
-    #     )
+
+        async with async_session_factory() as session:
+            release_orm = self._format_pydantic_to_orm(data)
+            session.add(release_orm)
+            await session.commit()
+
+
+    @staticmethod
+    def _format_pydantic_to_orm(dto: ParsedReleaseDTO):
+        return ParsedReleasesORM(
+            name=dto.name,
+            characters=dto.characters,
+            series_name=dto.series_name,
+            type_name=dto.type_name,
+            gender=dto.gender,
+            multi_pack=dto.multi_pack,
+            year=dto.year,
+            exclusive_of_names=dto.exclusive_of_names,
+            reissue_of=dto.reissue_of,
+            mpn=dto.mpn,
+            pet_names=dto.pet_names,
+            description=dto.description,
+            from_the_box_text=dto.from_the_box_text,
+            primary_image=dto.primary_image,
+            images=dto.images,
+            images_link=dto.images_link,
+            link=dto.link,
+            original_html_content=dto.original_html_content,
+            extra=dto.extra,
+            process_state="init",
+        )

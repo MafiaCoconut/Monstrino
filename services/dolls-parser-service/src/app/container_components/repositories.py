@@ -11,4 +11,4 @@ class Repositories:
     parsed_characters: ParsedCharactersRepository
     parsed_pets: ParsedPetsRepository
     parsed_series: ParsedSeriesRepository
-    parsed_single_releases: ParsedReleasesRepository
+    parsed_releases: ParsedReleasesRepository

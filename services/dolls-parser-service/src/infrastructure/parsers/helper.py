@@ -34,7 +34,7 @@ class Helper:
 
     @staticmethod
     async def get_page(url: str):
-        logger.info(f"Getting page: {url}")
+        logger.debug(f"Getting page: {url}")
 
         async with aiohttp.ClientSession(headers=headers, cookies=cookies) as session:
             async with session.get(
@@ -46,9 +46,9 @@ class Helper:
 
     @staticmethod
     async def save_page_in_file(html: str):
-        logger.info(f"Starting saving file: page.html ({len(html)} symbols)")
+        logger.debug(f"Starting saving file: page.html ({len(html)} symbols)")
 
         with open("data/page.html", "w", encoding="utf-8") as f:
             f.write(html)
 
-        logger.info(f"File saved: page.html ({len(html)} symbols)")
+        logger.debug(f"File saved: page.html ({len(html)} symbols)")

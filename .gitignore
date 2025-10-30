@@ -170,3 +170,6 @@ logs/*
 monstrino-configurations/
 services/dolls-parser-service/src/data/
 services/core-orchestrator/src/certs/
+test.py
+test.txt
+test.json
