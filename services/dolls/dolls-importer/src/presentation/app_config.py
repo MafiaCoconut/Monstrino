@@ -10,7 +10,7 @@ from presentation import api_config, cors
 from infrastructure.logging import logs_config
 from app.wiring import build_app
 # from infra.db.models import *
-from monstrino_models.orm import *
+# from monstrino_models.orm import *
 dotenv.load_dotenv()
 logger = logging.getLogger(__name__)
 logger.info('-------------------------------------------------------')

@@ -1,11 +1,11 @@
+from monstrino_models.orm.parsed_releases_orm import ParsedReleasesORM
+
 from application.repositories.source.parsed_releases_repository import ParsedReleasesRepository
-from domain.entities.parsed_release_dto import ParsedReleaseDTO
 from infrastructure.db.base import async_session_factory
-from infrastructure.db.models.parsed_releases import ParsedReleasesORM
 
 
 class ParsedReleasesRepositoryImpl(ParsedReleasesRepository):
-    async def save(self, data: ParsedReleaseDTO):
+    async def save(self, data):
 
         async with async_session_factory() as session:
             release_orm = self._format_pydantic_to_orm(data)
@@ -14,7 +14,7 @@ class ParsedReleasesRepositoryImpl(ParsedReleasesRepository):
 
 
     @staticmethod
-    def _format_pydantic_to_orm(dto: ParsedReleaseDTO):
+    def _format_pydantic_to_orm(dto):
         return ParsedReleasesORM(
             name=dto.name,
             characters=dto.characters,

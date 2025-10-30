@@ -16,16 +16,19 @@ def build_app():
 
     logger.debug("Processing scheduler configuration")
     aps = build_apscheduler()
+    logger.debug("Finishing scheduler configuration")
 
+    logger.debug("Starting adapters configuration")
+    adapters = build_adapters(logger, aps)
+    logger.debug("Finishing adapters configuration")
 
-    logger.debug("Processing adapters configuration")
+    logger.debug("Starting repositories configuration")
     repositories = build_repositories()
+    logger.debug("Finishing repositories configuration")
 
     logger.debug("Processing services configuration")
-    services = build_services(repositories=repositories, scheduler=SchedulerAdapter(aps))
-
-    logger.debug("Processing adapters configuration")
-    adapters = build_adapters(logger, services)
+    services = build_services(repositories=repositories, adapters=adapters)
+    logger.debug("Finishing services configuration")
 
     return AppContainer(
         services=services,

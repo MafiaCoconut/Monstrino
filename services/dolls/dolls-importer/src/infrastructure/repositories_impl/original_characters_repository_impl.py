@@ -1,13 +1,12 @@
 from typing import Optional
 import logging
 
+from monstrino_models.exceptions.db import EntityNotFound, DBConnectionError
+from monstrino_models.orm.characters_orm import CharactersORM
 from sqlalchemy import select
 
-from domain.entities.dolls.original_character import OriginalCharacter
-from domain.exceptions.db import DBConnectionError, EntityNotFound
 from infrastructure.db.base import async_session_factory
 from application.repositories.destination.reference.original_characters_repository import OriginalCharactersRepository
-from infrastructure.db.models.characters_orm import CharactersORM
 
 logger = logging.getLogger(__name__)
 
@@ -64,15 +63,15 @@ class OriginalCharactersRepositoryImpl(OriginalCharactersRepository):
                 logger.error(f"Error by getting Original characters {name} from DB")
                 raise DBConnectionError(f"Original characters {name} was not found")
 
-    @staticmethod
-    def _refactor_orm_to_entity(original_character_orm: CharactersORM):
-        return OriginalCharacter(
-            id=original_character_orm.id,
-            name=original_character_orm.name,
-            display_name=original_character_orm.display_name,
-            description=original_character_orm.description,
-            alt_names=original_character_orm.alt_names,
-            notes=original_character_orm.notes,
-            updated_at=original_character_orm.updated_at.isoformat(),
-            created_at=original_character_orm.created_at.isoformat(),
-        )
+    # @staticmethod
+    # def _refactor_orm_to_entity(original_character_orm: CharactersORM):
+    #     return OriginalCharacter(
+    #         id=original_character_orm.id,
+    #         name=original_character_orm.name,
+    #         display_name=original_character_orm.display_name,
+    #         description=original_character_orm.description,
+    #         alt_names=original_character_orm.alt_names,
+    #         notes=original_character_orm.notes,
+    #         updated_at=original_character_orm.updated_at.isoformat(),
+    #         created_at=original_character_orm.created_at.isoformat(),
+    #     )

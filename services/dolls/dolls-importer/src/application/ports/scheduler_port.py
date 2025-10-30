@@ -1,5 +1,7 @@
 from typing import Protocol, List
-from domain.entities.job import Job
+
+from monstrino_models.dto.job import Job
+
 
 class SchedulerPort(Protocol):
     async def start(self) -> None: ...

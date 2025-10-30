@@ -1,12 +1,12 @@
 import logging
+
+from monstrino_models.exceptions.db import EntityNotFound, DBConnectionError
+from monstrino_models.orm.release_types_orm import ReleaseTypesORM
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from application.repositories.destination.reference.dolls_types_repository import DollsTypesRepository
-from domain.entities.dolls.dolls_type import DollsType
-from domain.exceptions.db import EntityNotFound, DBConnectionError
 from infrastructure.db.base import async_engine, async_session_factory
-from infrastructure.db.models.release_types_orm import ReleaseTypesORM
 
 logger = logging.getLogger(__name__)
 
@@ -64,12 +64,12 @@ class DollsTypesRepositoryImpl(DollsTypesRepository):
                 logger.error(f"Error by getting doll type {name} from DB")
                 raise DBConnectionError(f"Doll type {name} was not found")
 
-    @staticmethod
-    def _refactor_orm_to_entity(doll_type_orm: ReleaseTypesORM):
-        return DollsType(
-            id=doll_type_orm.id,
-            name=doll_type_orm.name,
-            display_name=doll_type_orm.display_name,
-            updated_at=doll_type_orm.updated_at.isoformat(),
-            created_at=doll_type_orm.created_at.isoformat(),
-        )
+    # @staticmethod
+    # def _refactor_orm_to_entity(doll_type_orm: ReleaseTypesORM):
+    #     return DollsType(
+    #         id=doll_type_orm.id,
+    #         name=doll_type_orm.name,
+    #         display_name=doll_type_orm.display_name,
+    #         updated_at=doll_type_orm.updated_at.isoformat(),
+    #         created_at=doll_type_orm.created_at.isoformat(),
+    #     )

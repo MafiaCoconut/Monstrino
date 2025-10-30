@@ -1,9 +1,9 @@
 from typing import List
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from monstrino_models.dto.job import Job
 
 from application.ports.scheduler_port import SchedulerPort
-from domain.entities.job import Job
 
 
 class SchedulerAdapter(SchedulerPort):

@@ -1,11 +1,11 @@
+from monstrino_models.orm.parsed_pets import ParsedPetsORM
+
 from application.repositories.source.parsed_pets_repository import ParsedPetsRepository
-from domain.entities.parsed_pet_dto import ParsedPetDTO
 from infrastructure.db.base import async_session_factory
-from infrastructure.db.models.parsed_pets import ParsedPetsORM
 
 
 class ParsedPetsRepositoryImpl(ParsedPetsRepository):
-    async def save(self, data: ParsedPetDTO):
+    async def save(self, data):
         async with async_session_factory() as session:
             character_orm = self._format_pydantic_to_orm(data)
             session.add(character_orm)
@@ -15,7 +15,7 @@ class ParsedPetsRepositoryImpl(ParsedPetsRepository):
 
 
     @staticmethod
-    def _format_pydantic_to_orm(dto: ParsedPetDTO):
+    def _format_pydantic_to_orm(dto):
         return ParsedPetsORM(
             name=dto.name,
             display_name=dto.display_name,

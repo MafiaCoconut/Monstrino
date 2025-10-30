@@ -3,44 +3,38 @@ import logging
 from application.repositories.destination.dolls_releases_repository import DollsReleasesRepository
 
 from infrastructure.db.base import async_session_factory
-from domain.entities.dolls.dolls_release import DollsRelease
-from infrastructure.db.models.releases_orm import ReleasesORM
 
 logger = logging.getLogger(__name__)
 
 class DollsReleasesRepositoryImpl(DollsReleasesRepository):
-    async def add(self, dto: DollsRelease):
-        async with async_session_factory() as session:
-            release_orm = self._format_pydantic_to_orm(dto)
-            session.add(release_orm)
-            await session.commit()
-            await session.refresh(release_orm)
-            return self._format_orm_to_pydantic(release_orm)
+    async def add(self, dolls_release):
+        pass
 
-    @staticmethod
-    def _format_pydantic_to_orm(pydantic_model: DollsRelease) -> ReleasesORM:
-        return ReleasesORM(
-            type_id=pydantic_model.type_id,
-            name=pydantic_model.name,
-            mpn=pydantic_model.mpn,
-            series_id=pydantic_model.series_id,
-            year=pydantic_model.year,
-            description=pydantic_model.description,
-            link=pydantic_model.link,
-        )
+    ...
+    # @staticmethod
+    # def _format_pydantic_to_orm(pydantic_model) -> ReleasesORM:
+    #     return ReleasesORM(
+    #         type_id=pydantic_model.type_id,
+    #         name=pydantic_model.name,
+    #         mpn=pydantic_model.mpn,
+    #         series_id=pydantic_model.series_id,
+    #         year=pydantic_model.year,
+    #         description=pydantic_model.description,
+    #         link=pydantic_model.link,
+    #     )
 
-    @staticmethod
-    def _format_orm_to_pydantic(orm_model: ReleasesORM) -> DollsRelease:
-        return DollsRelease(
-            id=orm_model.id,
-            type_id=orm_model.type_id,
-            name=orm_model.name,
-            mpn=orm_model.mpn,
-            series_id=orm_model.series_id,
-            year=orm_model.year,
-            description=orm_model.description,
-            link=orm_model.link,
-        )
+    # @staticmethod
+    # def _format_orm_to_pydantic(orm_model: ReleasesORM):
+    #     return DollsRelease(
+    #         id=orm_model.id,
+    #         type_id=orm_model.type_id,
+    #         name=orm_model.name,
+    #         mpn=orm_model.mpn,
+    #         series_id=orm_model.series_id,
+    #         year=orm_model.year,
+    #         description=orm_model.description,
+    #         link=orm_model.link,
+    #     )
 
     # async def get_all(self):
     #     async with async_session_factory() as session:

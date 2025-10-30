@@ -1,11 +1,11 @@
 import logging
+
+from monstrino_models.exceptions.db import EntityNotFound, DBConnectionError
+from monstrino_models.orm.release_series_orm import ReleaseSeriesORM
 from sqlalchemy import select
 
 from application.repositories.destination.dolls_series_repository import DollsSeriesRepository
-from domain.entities.dolls.dolls_serie import DollsSeries
-from domain.exceptions.db import EntityNotFound, DBConnectionError
 from infrastructure.db.base import async_session_factory
-from infrastructure.db.models.release_series_orm import ReleaseSeriesORM
 
 logger = logging.getLogger(__name__)
 
@@ -61,12 +61,12 @@ class DollsSeriesRepositoryImpl(DollsSeriesRepository):
                 logger.error(f"Error by getting doll series {name} from DB")
                 raise DBConnectionError(f"Doll series {name} was not found")
 
-    @staticmethod
-    def _refactor_orm_to_entity(dolls_series_orm: ReleaseSeriesORM):
-        return DollsSeries(
-            id=dolls_series_orm.id,
-            name=dolls_series_orm.name,
-            description=dolls_series_orm.description,
-            updated_at=dolls_series_orm.updated_at.isoformat(),
-            created_at=dolls_series_orm.created_at.isoformat(),
-        )
+    # @staticmethod
+    # def _refactor_orm_to_entity(dolls_series_orm: ReleaseSeriesORM):
+    #     return DollsSeries(
+    #         id=dolls_series_orm.id,
+    #         name=dolls_series_orm.name,
+    #         description=dolls_series_orm.description,
+    #         updated_at=dolls_series_orm.updated_at.isoformat(),
+    #         created_at=dolls_series_orm.created_at.isoformat(),
+    #     )
