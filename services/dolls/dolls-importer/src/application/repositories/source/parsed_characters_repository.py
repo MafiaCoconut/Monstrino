@@ -3,5 +3,7 @@ from abc import ABC, abstractmethod
 
 class ParsedCharactersRepository(ABC):
     @abstractmethod
-    async def save(self, data):
-        ...
+    async def get_unprocessed_characters(self, count: int = 10): ...
+
+    @abstractmethod
+    async def set_character_as_processed(self, character_id: int): ...

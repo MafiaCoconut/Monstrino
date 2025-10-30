@@ -1,4 +1,4 @@
-from monstrino_models.orm.parsed_pets import ParsedPetsORM
+from monstrino_models.orm.parsed_pets_orm import ParsedPetsORM
 
 from application.repositories.source.parsed_pets_repository import ParsedPetsRepository
 from infrastructure.db.base import async_session_factory

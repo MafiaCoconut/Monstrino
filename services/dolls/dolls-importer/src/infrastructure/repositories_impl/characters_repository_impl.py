@@ -1,16 +1,28 @@
 from typing import Optional
 import logging
 
+from monstrino_models.dto.parsed_character import ParsedCharacter
 from monstrino_models.exceptions.db import EntityNotFound, DBConnectionError
 from monstrino_models.orm.characters_orm import CharactersORM
 from sqlalchemy import select
 
 from infrastructure.db.base import async_session_factory
-from application.repositories.destination.reference.original_characters_repository import OriginalCharactersRepository
+from application.repositories.destination.reference.original_characters_repository import CharactersRepository
 
 logger = logging.getLogger(__name__)
 
-class OriginalCharactersRepositoryImpl(OriginalCharactersRepository):
+class CharactersRepositoryImpl(CharactersRepository):
+    async def save_unprocessed_character(self, character: ParsedCharacter):
+        async with async_session_factory() as session:
+            character_orm = CharactersORM(
+                name=character.name,
+                display_name=character.display_name,
+                gender_id=character.gender_id,
+                description=character.description,
+                primary_image=character.primary_image,
+            )
+            session.add(character_orm)
+            await session.commit()
 
     async def get_all(self):
         async with async_session_factory() as session:
