@@ -1,7 +1,7 @@
 import logging
-from monstrino_models.dto.parsed_character import ParsedCharacter
+from monstrino_models.dto import ParsedCharacter
 from monstrino_models.exceptions.db import DBConnectionError, EntityNotFound
-from monstrino_models.orm.parsed_characters_orm import ParsedCharactersORM
+from monstrino_models.orm.parsed.parsed_characters_orm import ParsedCharactersORM
 from sqlalchemy import select, update, or_
 
 from application.repositories.source.parsed_characters_repository import ParsedCharactersRepository
@@ -33,6 +33,13 @@ class ParsedCharactersRepositoryImpl(ParsedCharactersRepository):
                 raise DBConnectionError(f"Error by unprocessed characters from DB")
 
     async def set_character_as_processed(self, character_id: int):
+        await self._set_character_process_state(character_id, "processed")
+
+    async def set_character_as_processed_with_errors(self, character_id: int):
+       await self._set_character_process_state(character_id, "processed_with_errors")
+
+    @staticmethod
+    async def _set_character_process_state(character_id: int, state: str):
         async with async_session_factory() as session:
             try:
                 query = select(ParsedCharactersORM).where(ParsedCharactersORM.id == character_id)
@@ -43,7 +50,7 @@ class ParsedCharactersRepositoryImpl(ParsedCharactersRepository):
                     logger.error(f"Character with id {character_id} not found in DB")
                     raise EntityNotFound(f"Character with id {character_id} not found")
 
-                character_orm.process_state = "processed"
+                character_orm.process_state = state
 
                 await session.commit()
 
@@ -52,6 +59,7 @@ class ParsedCharactersRepositoryImpl(ParsedCharactersRepository):
             except Exception as e:
                 logger.error(f"Error updating process_state for character {character_id}: {e}")
                 raise DBConnectionError(f"Failed to update character {character_id}")
+
 
 
     @staticmethod

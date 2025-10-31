@@ -9,6 +9,8 @@ class ProcessingService:
             parsed_characters_repo=repositories.parsed_characters,
             characters_repo=repositories.characters,
             characters_genders_repo=repositories.character_genders,
+            parsed_images_repo=repositories.parsed_images,
+            image_reference_origin_repo=repositories.image_reference_origin
         )
 
     async def process_characters(self):

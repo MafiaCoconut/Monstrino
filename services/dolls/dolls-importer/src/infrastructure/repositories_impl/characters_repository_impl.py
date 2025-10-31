@@ -1,13 +1,13 @@
 from typing import Optional
 import logging
 
-from monstrino_models.dto.parsed_character import ParsedCharacter
+from monstrino_models.dto import Character, ParsedCharacter
 from monstrino_models.exceptions.db import EntityNotFound, DBConnectionError
 from monstrino_models.orm.characters_orm import CharactersORM
 from sqlalchemy import select
 
 from infrastructure.db.base import async_session_factory
-from application.repositories.destination.reference.original_characters_repository import CharactersRepository
+from application.repositories.destination.reference.characters_repository import CharactersRepository
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +23,8 @@ class CharactersRepositoryImpl(CharactersRepository):
             )
             session.add(character_orm)
             await session.commit()
+            await session.refresh(character_orm)
+            return self._refactor_orm_to_entity(character_orm=character_orm)
 
     async def get_all(self):
         async with async_session_factory() as session:
@@ -31,7 +33,7 @@ class CharactersRepositoryImpl(CharactersRepository):
             if result:
                 original_characters_orms = result.scalars().all()
                 if original_characters_orms:
-                    return [self._refactor_orm_to_entity(original_character_orm=original_character_orm) for original_character_orm in original_characters_orms]
+                    return [self._refactor_orm_to_entity(original_character_orm) for original_character_orm in original_characters_orms]
                 else:
                     raise EntityNotFound("No original characters found")
             else:
@@ -52,7 +54,7 @@ class CharactersRepositoryImpl(CharactersRepository):
             if result:
                 original_character_orm = result.scalars().first()
                 if original_character_orm:
-                    return self._refactor_orm_to_entity(original_character_orm=original_character_orm)
+                    return self._refactor_orm_to_entity(original_character_orm)
                 else:
                     logger.error(f"Original characters {character_id} was not found")
                     raise EntityNotFound(f"Original characters {character_id} not found")
@@ -67,7 +69,7 @@ class CharactersRepositoryImpl(CharactersRepository):
             if result:
                 original_character_orm = result.scalars().first()
                 if original_character_orm:
-                    return self._refactor_orm_to_entity(original_character_orm=original_character_orm)
+                    return self._refactor_orm_to_entity(original_character_orm)
                 else:
                     logger.error(f"Original characters {name} was not found")
                     raise EntityNotFound(f"Original characters {name} not found")
@@ -75,15 +77,38 @@ class CharactersRepositoryImpl(CharactersRepository):
                 logger.error(f"Error by getting Original characters {name} from DB")
                 raise DBConnectionError(f"Original characters {name} was not found")
 
-    # @staticmethod
-    # def _refactor_orm_to_entity(original_character_orm: CharactersORM):
-    #     return OriginalCharacter(
-    #         id=original_character_orm.id,
-    #         name=original_character_orm.name,
-    #         display_name=original_character_orm.display_name,
-    #         description=original_character_orm.description,
-    #         alt_names=original_character_orm.alt_names,
-    #         notes=original_character_orm.notes,
-    #         updated_at=original_character_orm.updated_at.isoformat(),
-    #         created_at=original_character_orm.created_at.isoformat(),
-    #     )
+    async def remove_unprocessed_character(self, character_id: int):
+        async with async_session_factory() as session:
+            try:
+                query = select(CharactersORM).where(CharactersORM.id == character_id)
+                result = await session.execute(query)
+                character_orm = result.scalar_one_or_none()
+
+                if not character_orm:
+                    logger.error(f"Character with id {character_id} not found in DB")
+                    raise EntityNotFound(f"Character with id {character_id} not found")
+
+                await session.delete(character_orm)
+                await session.commit()
+
+            except EntityNotFound:
+                raise
+            except Exception as e:
+                logger.error(f"Error deleting character {character_id}: {e}")
+                raise DBConnectionError(f"Failed to delete character {character_id}")
+
+
+    @staticmethod
+    def _refactor_orm_to_entity(character_orm: CharactersORM):
+        return Character(
+            id=character_orm.id,
+            name=character_orm.name,
+            display_name=character_orm.display_name,
+            gender_id=character_orm.gender_id,
+            description=character_orm.description,
+            primary_image=character_orm.primary_image,
+            alt_names=character_orm.alt_names,
+            notes=character_orm.notes,
+            updated_at=character_orm.updated_at.isoformat(),
+            created_at=character_orm.created_at.isoformat(),
+        )

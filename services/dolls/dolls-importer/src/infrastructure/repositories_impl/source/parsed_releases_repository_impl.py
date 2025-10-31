@@ -1,4 +1,4 @@
-from monstrino_models.orm.parsed_releases_orm import ParsedReleasesORM
+from monstrino_models.orm.parsed.parsed_releases_orm import ParsedReleasesORM
 
 from application.repositories.source.parsed_releases_repository import ParsedReleasesRepository
 from infrastructure.db.base import async_session_factory

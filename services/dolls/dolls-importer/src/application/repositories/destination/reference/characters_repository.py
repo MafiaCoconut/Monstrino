@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from monstrino_models.dto.parsed_character import ParsedCharacter
+from monstrino_models.dto import ParsedCharacter
 
 
 class CharactersRepository(ABC):
@@ -23,3 +23,6 @@ class CharactersRepository(ABC):
     @abstractmethod
     async def get_by_name(self, name: str):
         pass
+
+    @abstractmethod
+    async def remove_unprocessed_character(self, character_id: int): ...

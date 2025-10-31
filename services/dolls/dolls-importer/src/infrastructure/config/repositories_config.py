@@ -1,5 +1,8 @@
 from app.container import Repositories
 from infrastructure.repositories_impl.character_genders_repository_impl import CharacterGendersRepositoryImpl
+from infrastructure.repositories_impl.parsed_images_repo import ParsedImagesRepositoryImpl
+from infrastructure.repositories_impl.reference.image_reference_origin_repository_impl import \
+    ImageReferenceOriginRepositoryImpl
 from infrastructure.repositories_impl.source.parsed_characters_repository_impl import ParsedCharactersRepositoryImpl
 from infrastructure.repositories_impl.source.parsed_pets_repository_impl import ParsedPetsRepositoryImpl
 from infrastructure.repositories_impl.source.parsed_releases_repository_impl import ParsedReleasesRepositoryImpl
@@ -24,6 +27,9 @@ def build_repositories() -> Repositories:
         dolls_series=DollsSeriesRepositoryImpl(),
         dolls_types=DollsTypesRepositoryImpl(),
         release_characters=ReleaseCharactersRepositoryImpl(),
+
+        parsed_images=ParsedImagesRepositoryImpl(),
+        image_reference_origin=ImageReferenceOriginRepositoryImpl(),
 
         parsed_characters=ParsedCharactersRepositoryImpl(),
         parsed_pets=ParsedPetsRepositoryImpl(),

@@ -23,7 +23,7 @@ class CharacterGendersRepositoryImpl(CharacterGendersRepository):
                     raise EntityNotFound(f"Gender with name {name} not found")
             else:
                 logger.error(f"Error by getting gender id by name '{name}' from DB")
-                raise DBConnectionError(f"Error by getting gender id by name '{name}' was not found")
+                raise DBConnectionError(f"Error by getting gender id by name '{name}' from DB")
 
     @staticmethod
     def _refactor_orm_to_entity(character_gender_orm: CharacterGendersORM):
