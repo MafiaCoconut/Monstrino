@@ -1,7 +1,7 @@
 import logging
 
-from monstrino_models.exceptions.db import EntityNotFound, DBConnectionError
-from monstrino_models.orm.release_series_orm import ReleaseSeriesORM
+from monstrino_models.exceptions import EntityNotFound, DBConnectionError
+from monstrino_models.orm import ReleaseSeriesORM
 from sqlalchemy import select
 
 from application.repositories.destination.dolls_series_repository import DollsSeriesRepository

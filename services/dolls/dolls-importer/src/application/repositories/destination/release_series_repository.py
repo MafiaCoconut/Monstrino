@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from monstrino_models.dto.dolls.parsed.parsed_series import ParsedSeries
-from monstrino_models.dto.dolls.releases.release_series import ReleaseSeries
+from monstrino_models.dto import ParsedSeries
+from monstrino_models.dto import ReleaseSeries
 
 
 class ReleaseSeriesRepository(ABC):

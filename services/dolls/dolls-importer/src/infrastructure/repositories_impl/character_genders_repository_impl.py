@@ -1,6 +1,6 @@
 import logging
 
-from monstrino_models.exceptions.db import EntityNotFound, DBConnectionError
+from monstrino_models.exceptions import EntityNotFound, DBConnectionError
 from monstrino_models.orm import CharacterGendersORM
 from sqlalchemy import select
 

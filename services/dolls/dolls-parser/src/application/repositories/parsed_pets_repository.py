@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 
-from domain.entities.parsed_pet_dto import ParsedPetDTO
+from monstrino_models.dto import ParsedPet
 
 
 class ParsedPetsRepository(ABC):
     @abstractmethod
-    async def save(self, data: ParsedPetDTO):
+    async def save(self, data: ParsedPet):
         ...

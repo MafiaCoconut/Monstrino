@@ -1,11 +1,11 @@
 import logging
 
-from monstrino_models.exceptions.db import EntityNotFound, DBConnectionError
-from monstrino_models.exceptions.post_parser_processing.exceptions import SettingProcessStateError
+from monstrino_models.exceptions import EntityNotFound, DBConnectionError
+from monstrino_models.exceptions import SettingProcessStateError
 from sqlalchemy import select, update, or_, desc, asc
 
 from monstrino_models.dto import ParsedPet
-from monstrino_models.orm.parsed.parsed_pets_orm import ParsedPetsORM
+from monstrino_models.orm import ParsedPetsORM
 
 from application.repositories.source.parsed_pets_repository import ParsedPetsRepository
 from infrastructure.db.base import async_session_factory

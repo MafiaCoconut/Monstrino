@@ -1,9 +1,9 @@
 import logging
 
-from monstrino_models.dto.dolls.parsed.parsed_series import ParsedSeries
-from monstrino_models.dto.dolls.releases.release_series import ReleaseSeries
-from monstrino_models.exceptions.db import EntityNotFound, DBConnectionError
-from monstrino_models.exceptions.post_parser_processing.exceptions import SavingParsedRecordWithErrors
+from monstrino_models.dto import ParsedSeries
+from monstrino_models.dto import ReleaseSeries
+from monstrino_models.exceptions import EntityNotFound, DBConnectionError
+from monstrino_models.exceptions import SavingParsedRecordWithErrors
 from monstrino_models.orm import ReleaseSeriesORM
 from sqlalchemy import select, and_
 from sqlalchemy.exc import IntegrityError

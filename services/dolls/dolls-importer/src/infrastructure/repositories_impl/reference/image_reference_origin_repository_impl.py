@@ -1,6 +1,6 @@
 import logging
 
-from monstrino_models.exceptions.db import EntityNotFound, DBConnectionError
+from monstrino_models.exceptions import EntityNotFound, DBConnectionError
 from monstrino_models.orm import ImageReferenceOrigin
 from sqlalchemy import select, and_
 from infrastructure.db.base import async_session_factory

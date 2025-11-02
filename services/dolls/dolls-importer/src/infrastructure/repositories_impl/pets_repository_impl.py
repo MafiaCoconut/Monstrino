@@ -3,8 +3,8 @@ import logging
 
 from monstrino_models.dto import Pet
 from monstrino_models.dto import ParsedPet
-from monstrino_models.exceptions.db import EntityNotFound, DBConnectionError, EntityAlreadyExists
-from monstrino_models.exceptions.post_parser_processing.exceptions import SavingParsedRecordWithErrors
+from monstrino_models.exceptions import EntityNotFound, DBConnectionError, EntityAlreadyExists
+from monstrino_models.exceptions import SavingParsedRecordWithErrors
 from monstrino_models.orm import PetsORM
 from sqlalchemy import select, and_
 from sqlalchemy.exc import IntegrityError

@@ -3,8 +3,8 @@ import logging
 
 from monstrino_models.dto import Character, ParsedCharacter
 from monstrino_models.exceptions import SavingParsedRecordWithErrors
-from monstrino_models.exceptions.db import EntityNotFound, DBConnectionError
-from monstrino_models.orm.characters_orm import CharactersORM
+from monstrino_models.exceptions import EntityNotFound, DBConnectionError
+from monstrino_models.orm import CharactersORM
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 

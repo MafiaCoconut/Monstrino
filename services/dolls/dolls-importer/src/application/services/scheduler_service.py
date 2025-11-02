@@ -1,4 +1,4 @@
-from monstrino_models.dto.job import Job
+from monstrino_models.dto import Job
 
 from application.ports.scheduler_port import SchedulerPort
 from application.use_cases.scheduler.set_all_scheduler_jobs_use_case import SetAllSchedulerJobsUseCase

@@ -2,8 +2,8 @@ import logging
 
 from icecream import ic
 from monstrino_models.dto import ParsedImage
-from monstrino_models.dto.dolls.parsed.parsed_series import ParsedSeries
-from monstrino_models.exceptions.db import EntityNotFound, DBConnectionError
+from monstrino_models.dto import ParsedSeries
+from monstrino_models.exceptions import EntityNotFound, DBConnectionError
 
 from application.repositories.destination.parsed_images_repo import ParsedImagesRepository
 from application.repositories.destination.reference.image_reference_origin_repository import \

@@ -20,7 +20,7 @@ from infrastructure.parsers.helper import Helper
 logger = logging.getLogger(__name__)
 
 
-class SeriesParser(ParseSeriesPort):
+class MHArchiveSeriesParser(ParseSeriesPort):
     def __init__(self):
         self.domain_url = os.getenv("MHARCHIVE_LINK")
         self.batch_size = 1

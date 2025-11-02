@@ -16,10 +16,10 @@ logger = logging.getLogger(__name__)
 registry = PortsRegistry()
 
 def config(adapters: Adapters):
-    registry.register(WebsiteKey.HMArchive, ParseCharactersPort, adapters.parse_characters)
-    registry.register(WebsiteKey.HMArchive, ParsePetsPort, adapters.parse_pets)
-    registry.register(WebsiteKey.HMArchive, ParseSeriesPort, adapters.parse_series)
-    registry.register(WebsiteKey.HMArchive, ParseReleasesPort, adapters.parse_releases)
+    registry.register(WebsiteKey.HMArchive, ParseCharactersPort, adapters.mh_archive_parse_characters)
+    registry.register(WebsiteKey.HMArchive, ParsePetsPort, adapters.mh_archive_parse_pets)
+    registry.register(WebsiteKey.HMArchive, ParseSeriesPort, adapters.mh_archive_parse_series)
+    registry.register(WebsiteKey.HMArchive, ParseReleasesPort, adapters.mh_archive_parse_releases)
 
 
 

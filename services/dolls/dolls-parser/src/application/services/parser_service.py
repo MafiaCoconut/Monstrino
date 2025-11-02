@@ -28,7 +28,6 @@ class ParserService:
         self.parse_characters_uc = ParseCharactersUseCase(
             parsed_characters_repository=repositories.parsed_characters,
             registry=registry,
-            logger=logger
         )
         self.parse_pets_uc = ParsePetsUseCase(
             parsed_pets_repository=repositories.parsed_pets,

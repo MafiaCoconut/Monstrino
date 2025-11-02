@@ -1,7 +1,7 @@
 import logging
 from monstrino_models.dto import ParsedCharacter
-from monstrino_models.exceptions.db import DBConnectionError, EntityNotFound
-from monstrino_models.orm.parsed.parsed_characters_orm import ParsedCharactersORM
+from monstrino_models.exceptions import DBConnectionError, EntityNotFound
+from monstrino_models.orm import ParsedCharactersORM
 from sqlalchemy import select, update, or_
 
 from application.repositories.source.parsed_characters_repository import ParsedCharactersRepository

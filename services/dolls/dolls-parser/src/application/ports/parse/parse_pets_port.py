@@ -1,9 +1,9 @@
 from typing import Protocol, AsyncGenerator
 
-from domain.entities.parsed_pet_dto import ParsedPetDTO
+from monstrino_models.dto import ParsedPet
 
 
 class ParsePetsPort(Protocol):
-    async def parse(self) -> AsyncGenerator[list[ParsedPetDTO]]: ...
+    def parse(self) -> AsyncGenerator[list[ParsedPet]]: ...
 
     # async def parse(self, ): ...

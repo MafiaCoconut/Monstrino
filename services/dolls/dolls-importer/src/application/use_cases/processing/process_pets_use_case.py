@@ -3,8 +3,8 @@ from icecream import ic
 from monstrino_models.dto import ParsedImage, Pet
 from monstrino_models.dto import ParsedPet
 
-from monstrino_models.exceptions.db import EntityNotFound, DBConnectionError, EntityAlreadyExists
-from monstrino_models.exceptions.post_parser_processing.exceptions import SavingParsedRecordWithErrors, \
+from monstrino_models.exceptions import EntityNotFound, DBConnectionError, EntityAlreadyExists
+from monstrino_models.exceptions import SavingParsedRecordWithErrors, \
     SettingProcessStateError
 
 from application.repositories.destination.parsed_images_repo import ParsedImagesRepository

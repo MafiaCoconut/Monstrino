@@ -14,7 +14,7 @@ class Adapters:
     logger: LoggerPort
     kafka_producer: KafkaProducerPort
     scheduler: SchedulerPort
-    parse_characters: ParseCharactersPort
-    parse_pets: ParsePetsPort
-    parse_series: ParseSeriesPort
-    parse_releases: ParseReleasesPort
+    mh_archive_parse_characters: ParseCharactersPort
+    mh_archive_parse_pets: ParsePetsPort
+    mh_archive_parse_series: ParseSeriesPort
+    mh_archive_parse_releases: ParseReleasesPort

@@ -1,11 +1,12 @@
 import asyncio
 import dataclasses
+from datetime import datetime
 import os
 import re
 import time
 import unicodedata
 from typing import Optional
-
+import json
 import aiohttp
 import logging
 
@@ -20,13 +21,17 @@ from infrastructure.parsers.helper import Helper
 logger = logging.getLogger(__name__)
 
 
-class ReleasesParser(ParseReleasesPort):
+class MHArchiveReleasesParser(ParseReleasesPort):
     def __init__(self):
         self.domain_url = os.getenv("MHARCHIVE_LINK")
         self.batch_size = 10
+        self.sleep_between_requests = 5
+        self.source_name = "mh-archive"
+        self.debug_mode = False
 
     async def parse(self, ):
-        for year in range(2014, 2009, -1):
+        for year in range(2019, 2009, -1):
+            start_time = datetime.now()
 
             logger.info(f"Starting parsing year: {year}")
 
@@ -36,21 +41,28 @@ class ReleasesParser(ParseReleasesPort):
             releases = await self._parse_links(html)
             logger.info(f"Found releases count: {len(releases)} for year: {year}")
 
-            # await self._parse_release_info(ParsedReleaseDTO(
-            #     # link="https://mhcollector.com/skulltimate-secrets-hauntlywood-clawdeen-wolf/"
-            # # link = "https://mhcollector.com/deadfast-ghoulia-yelps-2024/" # from the box
-            # # link = "https://mhcollector.com/draculaura-and-clawdeen-wolf-eeekend-getaway/"
-            # # link = "https://mhcollector.com/day-out-3-pack/"
-            # # link = "https://mhcollector.com/draculaura-bite-in-the-park/"  # 2 pets
-            # # link = "https://mhcollector.com/dawn-of-the-dance-lagoona-blue-reissue/"
-            # # link = "https://mhcollector.com/skulltimate-secrets-neon-frights-draculaura/"
-            # # link = "https://mhcollector.com/vinyl-count-fabulous/"
-            # # link = "https://mhcollector.com/original-ghouls-collection-6-pack/" # 6 characters and reissues
-            # # link = "https://mhcollector.com/freaky-fusion-catacombs/"
-            # # link = "https://mhcollector.com/freaky-fusion-save-frankie-jackson-jekyll/"
-            # #
-            # ))
+            # if self.debug_mode:
+            #     release = [ParsedRelease(
+            #         name="Test doll",
+            #         source="test",
+            #         link="https://mhcollector.com/skulltimate-secrets-hauntlywood-clawdeen-wolf/"
+            #         # link = "https://mhcollector.com/deadfast-ghoulia-yelps-2024/" # from the box
+            #         # link = "https://mhcollector.com/draculaura-and-clawdeen-wolf-eeekend-getaway/"
+            #         # link = "https://mhcollector.com/day-out-3-pack/"
+            #         # link = "https://mhcollector.com/draculaura-bite-in-the-park/"  # 2 pets
+            #         # link = "https://mhcollector.com/dawn-of-the-dance-lagoona-blue-reissue/"
+            #         # link = "https://mhcollector.com/skulltimate-secrets-neon-frights-draculaura/"
+            #         # link = "https://mhcollector.com/vinyl-count-fabulous/"
+            #         # link = "https://mhcollector.com/original-ghouls-collection-6-pack/" # 6 characters and reissues
+            #         # link = "https://mhcollector.com/freaky-fusion-catacombs/"
+            #         # link = "https://mhcollector.com/freaky-fusion-save-frankie-jackson-jekyll/"
+            #         #
+            #     )]
+            #     await self._parse_release_info(release[0])
+            #     yield release
+            #     return
 
+            logger.info(f"Start processing info for every release")
             last_return_release_index = 0
 
             for i in range(1, len(releases) + 1):
@@ -59,14 +71,16 @@ class ReleasesParser(ParseReleasesPort):
                 if i % self.batch_size == 0:
                     logger.info(f"Returning batch: {i - self.batch_size} - {i}")
                     yield releases[i - self.batch_size: i]
-                    await asyncio.sleep(2)
-
                     last_return_release_index = i
+                    await asyncio.sleep(self.sleep_between_requests)
 
-            if last_return_release_index < len(releases):
-                logger.info(f"Returning batch: {last_return_release_index} - {len(releases)}")
-                yield releases[last_return_release_index:]
-            await asyncio.sleep(10)
+            if not self.debug_mode:
+                if last_return_release_index < len(releases):
+                    logger.info(f"Returning batch: {last_return_release_index} - {len(releases)}")
+                    yield releases[last_return_release_index:]
+                await asyncio.sleep(self.sleep_between_requests)
+            end_time = datetime.now()
+            logger.info(f"Finished parsing year: {year} in {end_time - start_time}")
 
     async def _parse_links(self, html: str):
         soup = BeautifulSoup(html, "html.parser")
@@ -82,7 +96,8 @@ class ReleasesParser(ParseReleasesPort):
         result = []
         for link in links:
             result.append(ParsedRelease(
-                link=link
+                link=link,
+                source=self.source_name
             ))
         return result
 
@@ -107,31 +122,33 @@ class ReleasesParser(ParseReleasesPort):
         for key in stats.keys():
             match key:
                 case "Character":
-                    dto.characters = str(stats[key])
+                    dto.characters = stats[key]
                 case "Series":
-                    dto.series_name = str(stats[key])
+                    dto.series_name = stats[key]
                 case "Type":
-                    dto.type_name = str(stats[key])
+                    dto.type_name = stats[key]
                 case "Gender":
-                    dto.gender = str(stats[key])
+                    dto.gender = stats[key]
                 case "Multi-Pack":
-                    dto.multi_pack = str(stats[key])
+                    dto.multi_pack = stats[key]
                 case "Released":
-                    dto.year = str(stats[key])
+                    dto.year = stats[key]
                 case "Exclusiveof":
-                    dto.exclusive_of_names = str(stats[key])
+                    dto.exclusive_of_names = stats[key]
                 case "Reissue of":
-                    dto.reissue_of = str(stats[key])
+                    dto.reissue_of = stats[key]
                 case "Model Number":
-                    dto.mpn = str(stats[key])
+                    dto.mpn = stats[key]
                 case "Pet":
-                    dto.pet_names = str(stats[key])
+                    dto.pet_names = stats[key]
                 case "Gallery":
                     dto.images_link = self.domain_url + stats["Gallery"][0]['link']
                 case _:
-                    dto.extra += f'"{key}": {stats[key]}'
+                    if dto.extra is None:
+                        dto.extra = []
+                    dto.extra.append({key: stats[key]})
         try:
-            dto.images = str(await self._get_images(self.domain_url + stats["Gallery"][0]['link']))
+            dto.images = await self._get_images(self.domain_url + stats["Gallery"][0]['link'])
         except Exception as e:
             logger.error("Error while getting images: " + str(e))
 
@@ -153,156 +170,6 @@ class ReleasesParser(ParseReleasesPort):
                 break
             parts.append(str(p))
         return "\n".join(parts)
-
-    @staticmethod
-    async def _get_stats_dict_v1(soup: BeautifulSoup) -> dict[str, dict[str, str]]:
-        stats_block = soup.find("div", class_="stats")
-        result = {}
-
-        if not stats_block:
-            return result
-
-        # каждый <ul> = один параметр (например Character, Series, Released, Gallery)
-        for ul in stats_block.find_all("ul"):
-            items = ul.find_all("li")
-            if len(items) >= 2:
-                key = items[0].get_text(strip=True).rstrip(":")
-                value_elem = items[1]
-                link = None
-                text = value_elem.get_text(strip=True)
-                a = value_elem.find("a")
-                if a and a.get("href"):
-                    link = a["href"]
-                result[key] = {"text": text, "link": link}
-        return result
-
-    @staticmethod
-    async def _get_stats_dict_v2(soup: BeautifulSoup) -> dict[str, list[dict[str, str]]]:
-        stats_block = soup.find("div", class_="stats")
-        result: dict[str, list[dict[str, str]]] = {}
-
-        if not stats_block:
-            return result
-
-        # перебираем все ul внутри блока
-        for ul in stats_block.find_all("ul"):
-            items = ul.find_all("li")
-            if len(items) < 2:
-                continue
-
-            # определяем ключ (до двоеточия)
-            key_raw = items[0].get_text(strip=True)
-            key = key_raw.split(":", 1)[0].strip()
-
-            # если элемент — служебная ссылка вроде "Exclusive"
-            # и в названии есть "of:", то ключ остаётся как есть
-            if not key:
-                continue
-
-            value_elem = items[1]
-            a = value_elem.find("a")
-
-            # собираем значение
-            text = value_elem.get_text(strip=True)
-            link = a["href"] if a and a.get("href") else None
-
-            # фильтруем "служебные" ссылки — если в ссылке есть "/category/exclusives/"
-            # и это просто базовая ссылка, игнорируем
-            if link and link.strip().endswith("/category/exclusives/"):
-                link = None
-
-            value_dict = {"text": text, "link": link}
-
-            # добавляем в список, если ключ уже встречался
-            if key in result:
-                result[key].append(value_dict)
-            else:
-                result[key] = [value_dict]
-
-        return result
-
-    @staticmethod
-    async def _get_stats_dict_v3(soup: BeautifulSoup) -> dict[str, list[dict[str, str]]]:
-        stats_block = soup.find("div", class_="stats")
-        result: dict[str, list[dict[str, str]]] = {}
-
-        if not stats_block:
-            return result
-
-        for ul in stats_block.find_all("ul"):
-            items = ul.find_all("li")
-            if len(items) < 2:
-                continue
-
-            # Определяем ключ (всё до двоеточия)
-            key_raw = items[0].get_text(strip=True)
-            key = key_raw.split(":", 1)[0].strip()
-            if not key:
-                continue
-
-            # Собираем все значения в этом <ul>
-            values = []
-            for value_elem in items[1:]:
-                # Пропускаем пустые или служебные
-                text = value_elem.get_text(strip=True)
-                if not text or text == ",":
-                    continue
-
-                a = value_elem.find("a")
-                link = a["href"] if a and a.get("href") else None
-
-                # Игнорируем служебные ссылки вроде /category/exclusives/
-                if link and link.strip().endswith("/category/exclusives/"):
-                    link = None
-
-                values.append({"text": text, "link": link})
-
-            # Если ключ уже есть — добавляем новые значения
-            if key in result:
-                result[key].extend(values)
-            else:
-                result[key] = values
-
-        return result
-
-    @staticmethod
-    async def _get_stats_dict_v4(soup: BeautifulSoup) -> dict[str, list[dict[str, str]]]:
-        stats_block = soup.find("div", class_="stats")
-        result: dict[str, list[dict[str, str]]] = {}
-
-        if not stats_block:
-            return result
-
-        # Берём только верхнеуровневые <ul> (не вложенные)
-        for ul in stats_block.find_all("ul", recursive=False):
-            items = ul.find_all("li", recursive=False)
-            if len(items) < 2:
-                continue
-
-            key_raw = items[0].get_text(strip=True)
-            key = key_raw.split(":", 1)[0].strip()
-            if not key:
-                continue
-
-            values = []
-            for value_elem in items[1:]:
-                text = value_elem.get_text(strip=True)
-                if not text or text == ",":
-                    continue
-
-                a = value_elem.find("a")
-                link = a["href"] if a and a.get("href") else None
-                if link and link.strip().endswith("/category/exclusives/"):
-                    link = None
-
-                values.append({"text": text, "link": link})
-
-            if key in result:
-                result[key].extend(values)
-            else:
-                result[key] = values
-
-        return result
 
     @staticmethod
     async def _get_stats_dict_v5(soup: BeautifulSoup) -> dict[str, list[dict[str, str]]]:

@@ -2,8 +2,8 @@ import logging
 from icecream import ic
 from monstrino_models.dto import ParsedImage
 from monstrino_models.dto import ParsedCharacter
-from monstrino_models.exceptions.db import EntityNotFound, DBConnectionError
-from monstrino_models.exceptions.post_parser_processing.exceptions import GenderNotExistError
+from monstrino_models.exceptions import EntityNotFound, DBConnectionError
+from monstrino_models.exceptions import GenderNotExistError
 
 from application.repositories.destination.parsed_images_repo import ParsedImagesRepository
 from application.repositories.destination.reference.character_genders_repository import CharacterGendersRepository

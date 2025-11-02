@@ -1,22 +1,29 @@
 from platform import release
 
+from monstrino_models.dto import ParsedRelease
+from monstrino_models.exceptions import SavingParsedRecordWithErrors
+from monstrino_models.orm import ParsedReleasesORM
+from sqlalchemy.exc import IntegrityError
+
 from application.repositories.parsed_releases_repository import ParsedReleasesRepository
-from domain.entities.parsed_release_dto import ParsedReleaseDTO
 from infrastructure.db.base import async_session_factory
-from infrastructure.db.models.parsed_releases import ParsedReleasesORM
 
 
 class ParsedReleasesRepositoryImpl(ParsedReleasesRepository):
-    async def save(self, data: ParsedReleaseDTO):
-
+    async def save(self, data: ParsedRelease):
         async with async_session_factory() as session:
-            release_orm = self._format_pydantic_to_orm(data)
-            session.add(release_orm)
-            await session.commit()
+            try:
+                release_orm = self._format_pydantic_to_orm(data)
+                session.add(release_orm)
+                await session.commit()
+            except IntegrityError as e:
+                raise SavingParsedRecordWithErrors(F"Release with name {data.name} already exists: {e}")
+            except Exception as e:
+                raise SavingParsedRecordWithErrors(f"Error saving release {data.name}: {e}") from e
 
 
     @staticmethod
-    def _format_pydantic_to_orm(dto: ParsedReleaseDTO):
+    def _format_pydantic_to_orm(dto: ParsedRelease):
         return ParsedReleasesORM(
             name=dto.name,
             characters=dto.characters,
@@ -38,4 +45,5 @@ class ParsedReleasesRepositoryImpl(ParsedReleasesRepository):
             original_html_content=dto.original_html_content,
             extra=dto.extra,
             process_state="init",
+            source=dto.source,
         )

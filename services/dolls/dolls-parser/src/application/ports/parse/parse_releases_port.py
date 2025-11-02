@@ -1,7 +1,7 @@
 from typing import Protocol, AsyncGenerator
 
-from domain.entities.parsed_release_dto import ParsedReleaseDTO
+from monstrino_models.dto import ParsedRelease
 
 
 class ParseReleasesPort(Protocol):
-    async def parse(self) -> AsyncGenerator[list[ParsedReleaseDTO]]: ...
+    def parse(self) -> AsyncGenerator[list[ParsedRelease]]: ...

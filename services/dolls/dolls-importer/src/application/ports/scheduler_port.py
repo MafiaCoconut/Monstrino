@@ -1,6 +1,6 @@
 from typing import Protocol, List
 
-from monstrino_models.dto.job import Job
+from monstrino_models.dto import Job
 
 
 class SchedulerPort(Protocol):
