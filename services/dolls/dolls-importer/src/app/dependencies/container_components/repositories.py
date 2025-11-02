@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 
 from application.repositories.destination.parsed_images_repo import ParsedImagesRepository
+from application.repositories.destination.pets_repository import PetsRepository
 from application.repositories.destination.reference.character_genders_repository import CharacterGendersRepository
 from application.repositories.destination.reference.image_reference_origin_repository import \
     ImageReferenceOriginRepository
+from application.repositories.destination.release_series_repository import ReleaseSeriesRepository
 from application.repositories.source.parsed_characters_repository import ParsedCharactersRepository
 from application.repositories.source.parsed_pets_repository import ParsedPetsRepository
 from application.repositories.source.parsed_releases_repository import ParsedReleasesRepository
@@ -22,12 +24,14 @@ class Repositories:
     character_genders: CharacterGendersRepository
 
     characters: CharactersRepository
+    pets: PetsRepository
     dolls_series: DollsSeriesRepository
     dolls_types: DollsTypesRepository
     dolls_releases: DollsReleasesRepository
     release_images: ReleaseImagesRepository
     release_relations: ReleaseRelationsRepository
     release_characters: ReleaseCharactersRepository
+    release_series: ReleaseSeriesRepository
 
     # Images
     parsed_images: ParsedImagesRepository

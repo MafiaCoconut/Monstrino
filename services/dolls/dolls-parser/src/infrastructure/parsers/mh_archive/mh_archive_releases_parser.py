@@ -10,11 +10,11 @@ import aiohttp
 import logging
 
 from icecream import ic
+from monstrino_models.dto import ParsedRelease
 from pydantic import BaseModel
 from bs4 import BeautifulSoup
 
 from application.ports.parse.parse_releases_port import ParseReleasesPort
-from domain.entities.parsed_release_dto import ParsedReleaseDTO
 from infrastructure.parsers.helper import Helper
 
 logger = logging.getLogger(__name__)
@@ -81,12 +81,12 @@ class ReleasesParser(ParseReleasesPort):
 
         result = []
         for link in links:
-            result.append(ParsedReleaseDTO(
+            result.append(ParsedRelease(
                 link=link
             ))
         return result
 
-    async def _parse_release_info(self, dto: ParsedReleaseDTO):
+    async def _parse_release_info(self, dto: ParsedRelease):
         logger.info("------------------------------------")
         logger.info(f"Parsing release link: {dto.link}")
         html = await Helper.get_page(dto.link)

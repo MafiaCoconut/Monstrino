@@ -9,20 +9,7 @@ class CharactersRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_all(self):
-        pass
-
-    @abstractmethod
-    async def add(self, name: str, display_name: str):
-        pass
-
-    @abstractmethod
-    async def get(self, type_id: int):
-        pass
-
-    @abstractmethod
-    async def get_by_name(self, name: str):
-        pass
-
-    @abstractmethod
     async def remove_unprocessed_character(self, character_id: int): ...
+
+    @abstractmethod
+    async def get_id_by_name(self, character_name: str): ...

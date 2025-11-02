@@ -10,20 +10,23 @@ import aiohttp
 import logging
 
 from icecream import ic
+from monstrino_models.dto import ParsedPet
 from pydantic import BaseModel
 from bs4 import BeautifulSoup
 
 from application.ports.parse.parse_pets_port import ParsePetsPort
-from domain.entities.parsed_pet_dto import ParsedPetDTO
 from infrastructure.parsers.helper import Helper
 
 logger = logging.getLogger(__name__)
 
 
-class PetsParser(ParsePetsPort):
+class MHArchivePetsParser(ParsePetsPort):
     def __init__(self):
         self.domain_url = os.getenv("MHARCHIVE_LINK")
         self.batch_size = 10
+        self.source_name = "mh-archive"
+        self.sleep_between_requests = 5
+        self.debug_mode = False
 
 
     async def parse(self):
@@ -39,16 +42,17 @@ class PetsParser(ParsePetsPort):
             if i % self.batch_size == 0:
                 logger.info(f"Returning batch: {i - self.batch_size} - {i}")
                 yield list_of_pets[i - self.batch_size: i]
-                await asyncio.sleep(2)
-
                 last_return_ghoul_index = i
+                await asyncio.sleep(self.sleep_between_requests)
+                if self.debug_mode:
+                    break
 
-        if last_return_ghoul_index < len(list_of_pets):
-            logger.info(f"Returning batch: {last_return_ghoul_index} - {len(list_of_pets)}")
-            yield list_of_pets[last_return_ghoul_index:]
+        if not self.debug_mode:
+            if last_return_ghoul_index < len(list_of_pets):
+                logger.info(f"Returning batch: {last_return_ghoul_index} - {len(list_of_pets)}")
+                yield list_of_pets[last_return_ghoul_index:]
 
-    @staticmethod
-    async def _parse_pets_list(html: str) -> list[ParsedPetDTO]:
+    async def _parse_pets_list(self, html: str) -> list[ParsedPet]:
         soup = BeautifulSoup(html, "html.parser")
         results = []
 
@@ -61,43 +65,38 @@ class PetsParser(ParsePetsPort):
 
             url = name_tag["href"] if name_tag and name_tag.has_attr("href") else None
 
-            count = None
-            if count_tag:
-                m = re.search(r"\((\d+)\)", count_tag.text)
-                count = int(m.group(1)) if m else None
-
             image = img_tag["src"] if img_tag and img_tag.has_attr("src") else None
 
             if name and url:
-                results.append(ParsedPetDTO(
-                    name=Helper.format_name(name),
+                results.append(ParsedPet(
+                    name=name,
                     display_name=name,
                     owner_name="",
                     link=url,
-                    count_of_releases=count,
                     primary_image=image,
+                    source=self.source_name
                 ))
 
         return results
 
-    async def _parse_pet_info(self, data: ParsedPetDTO):
+    async def _parse_pet_info(self, data: ParsedPet):
         html = await Helper.get_page(data.link)
         # await Helper.save_page_in_file(html)
         soup = BeautifulSoup(html, "html.parser")
         owner_name, owner_link = None, None
         h2_tag = soup.find("h2")
         if h2_tag:
-            link = h2_tag.find("a")
-            if link:
-                link_str = link.get_text(strip=True)
-                link = re.sub(r"\s*\([^)]*\)", "", link_str).strip()
-                data.owner_name = Helper.format_name(link)
+            owner_name_link = h2_tag.find("a")
+            if owner_name_link:
+                owner_name_str = owner_name_link.get_text(strip=True)
+                owner_name_str = re.sub(r"\s*\([^)]*\)", "", owner_name_str).strip()
+                data.owner_name = owner_name_str
             else:
                 text = h2_tag.get_text(" ", strip=True)
                 if "with" in text:
                     owner_name = text.split("with", 1)[-1].strip()
                     owner_name = re.sub(r"\s*\([^)]*\)", "", owner_name).strip()
-                    data.owner_name = Helper.format_name(owner_name)
+                    data.owner_name = owner_name
 
         description = None
         for p in soup.find_all("p"):

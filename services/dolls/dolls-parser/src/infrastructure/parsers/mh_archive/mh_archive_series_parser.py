@@ -10,11 +10,11 @@ import aiohttp
 import logging
 
 from icecream import ic
+from monstrino_models.dto import ParsedSeries
 from pydantic import BaseModel
 from bs4 import BeautifulSoup
 
 from application.ports.parse.parse_series_port import ParseSeriesPort
-from domain.entities.parsed_series_dto import ParsedSeriesDTO
 from infrastructure.parsers.helper import Helper
 
 logger = logging.getLogger(__name__)
@@ -24,11 +24,13 @@ class SeriesParser(ParseSeriesPort):
     def __init__(self):
         self.domain_url = os.getenv("MHARCHIVE_LINK")
         self.batch_size = 1
+        self.source_name = "mh-archive"
 
 
     async def parse(self):
+        logger.info(f"============== Starting series parser ==============")
         html = await Helper.get_page(self.domain_url + '/category/series/')
-        # await Helper.save_page_in_file(html)
+
         list_of_series = await self._parse_series_list(html)
         logger.info(f"Found series count: {len(list_of_series)}")
 
@@ -36,17 +38,16 @@ class SeriesParser(ParseSeriesPort):
             parsed_series = await self._parse_series_info(series)
             await asyncio.sleep(2)
             logger.info(f"Returning series: {i}")
-            if i > 6:
-                yield parsed_series
-            else:
-                continue
+
+            yield parsed_series
+
         # остаток, если длина не кратна batch_size
         # if last_return_ghoul_index < len(list_of_series):
         #     logger.info(f"Returning batch: {last_return_ghoul_index} - {len(list_of_series)}")
         #     yield list_of_series[last_return_ghoul_index:]
 
-    @staticmethod
-    async def _parse_series_list(html: str) -> list[ParsedSeriesDTO]:
+    async def _parse_series_list(self, html: str) -> list[ParsedSeries]:
+        logger.info("Parsing series links")
         soup = BeautifulSoup(html, "html.parser")
         results = []
 
@@ -75,24 +76,22 @@ class SeriesParser(ParseSeriesPort):
 
             # Добавляем только валидные результаты
             if name and url:
-                results.append(ParsedSeriesDTO(
-                    name=Helper.format_name(name),
-                    display_name=name,
+                results.append(ParsedSeries(
+                    name=name,
                     link=url,
-                    count_of_releases=count,
                     primary_image=image,
+                    source=self.source_name
                 ))
 
         return results
 
-    async def _parse_series_info(self, data: ParsedSeriesDTO):
+    async def _parse_series_info(self, data: ParsedSeries):
         logger.info('-----------------------------------------------------------------')
-        logger.info(f"Parsing series info for series: {data.display_name}")
+        logger.info(f"Parsing series info for series: {data.name}")
 
         list_of_dto = [data]
 
         html = await Helper.get_page(data.link)
-        await Helper.save_page_in_file(html)
 
         soup = BeautifulSoup(html, "html.parser")
         title_tag = soup.find("h1")
@@ -135,20 +134,20 @@ class SeriesParser(ParseSeriesPort):
 
         if subseries:
             data.series_type = "series_prime"
+            logger.info(f"Found series {data.name} with subseries. Subseries count: {len(subseries)}")
             for sub_name in subseries:
                 list_of_dto.append(
-                    ParsedSeriesDTO(
-                        name=Helper.format_name(sub_name),
-                        display_name=sub_name,
+                    ParsedSeries(
+                        name=sub_name,
                         description=None,
                         series_type="series_secondary",
                         primary_image=None,
                         link=data.link or "",
-                        count_of_releases=0,
+                        parent_name=data.name,
                         original_html_content=data.original_html_content,
+                        source=self.source_name
                     )
                 )
-
         return list_of_dto
 
     async def get_subseries(self, soup: BeautifulSoup) -> list:

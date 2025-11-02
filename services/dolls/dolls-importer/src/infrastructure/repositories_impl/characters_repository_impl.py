@@ -62,20 +62,24 @@ class CharactersRepositoryImpl(CharactersRepository):
                 logger.error(f"Error by getting Original characters {character_id} from DB")
                 raise DBConnectionError(f"Original characters {character_id} was not found")
 
-    async def get_by_name(self, name: str):
+    async def get_id_by_name(self, name: str) -> Optional[int]:
         async with async_session_factory() as session:
-            query = select(CharactersORM).where(CharactersORM.name == name)
-            result = await session.execute(query)
-            if result:
-                original_character_orm = result.scalars().first()
-                if original_character_orm:
-                    return self._refactor_orm_to_entity(original_character_orm)
-                else:
-                    logger.error(f"Original characters {name} was not found")
-                    raise EntityNotFound(f"Original characters {name} not found")
-            else:
-                logger.error(f"Error by getting Original characters {name} from DB")
-                raise DBConnectionError(f"Original characters {name} was not found")
+            try:
+                query = select(CharactersORM.id).where(CharactersORM.name == name)
+                result = await session.execute(query)
+                if result:
+                    character_id = result.scalars().first()
+                    if not character_id:
+                        logger.error(f"Original characters {name} was not found")
+                        raise EntityNotFound(f"Original characters {name} not found")
+
+                    return character_id
+
+            except EntityNotFound:
+                raise
+            except Exception as e:
+                    logger.error(f"Error by getting id from character {name}: {e}")
+                    raise DBConnectionError(f"Error by getting id from character {name}")
 
     async def remove_unprocessed_character(self, character_id: int):
         async with async_session_factory() as session:

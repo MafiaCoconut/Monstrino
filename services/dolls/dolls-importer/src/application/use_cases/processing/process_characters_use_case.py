@@ -53,7 +53,7 @@ class ProcessCharactersUseCase:
                     logger.info(f"Character {unprocessed_character.display_name} marked as processed")
 
                 except Exception as e:
-                    logger.error(f"Error setting image to process for character {unprocessed_character.id}: {e}")
+                    logger.error(f"Error by processing {unprocessed_character.id}: {e}")
                     logger.error(f"Removing saved character {unprocessed_character.id} due to image processing error")
                     await self.characters_repo.remove_unprocessed_character(character.id)
                     logger.error(f"Settings parsed character {unprocessed_character.display_name} as processed with errors")
