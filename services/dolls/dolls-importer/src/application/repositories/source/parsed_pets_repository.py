@@ -6,6 +6,9 @@ class ParsedPetsRepository(ABC):
     async def get_unprocessed_pets(self, count: int = 10): ...
 
     @abstractmethod
+    async def set_pet_as_already_exists(self, pet_id: int): ...
+
+    @abstractmethod
     async def set_pet_as_processed(self, pet_id: int): ...
 
     @abstractmethod

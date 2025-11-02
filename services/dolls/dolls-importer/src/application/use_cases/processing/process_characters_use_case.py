@@ -11,6 +11,7 @@ from application.repositories.destination.reference.image_reference_origin_repos
     ImageReferenceOriginRepository
 from application.repositories.destination.reference.characters_repository import CharactersRepository
 from application.repositories.source.parsed_characters_repository import ParsedCharactersRepository
+from domain.formatters.name_formatter import NameFormatter
 
 logger = logging.getLogger(__name__)
 
@@ -30,50 +31,66 @@ class ProcessCharactersUseCase:
         self.image_reference_origin_repo = image_reference_origin_repo
 
     async def execute(self):
-
-        unprocessed_characters = await self._get_unprocessed_characters(1)
+        try:
+            unprocessed_characters = await self._get_unprocessed_characters(150)
+        except Exception as e:
+            logger.error(f"Unexpected error during fetching unprocessed characters: {e}")
+            return
 
         if not unprocessed_characters:
-            return None
+            logger.info(f"No unprocessed characters found")
 
         for unprocessed_character in unprocessed_characters:
-            logger.info(f"Processing character {unprocessed_character.display_name} (ID: {unprocessed_character.id})")
+            logger.info(f"Processing character {unprocessed_character.name} (ID: {unprocessed_character.id})")
             try:
+                # ------------- Set gender id from name -----------------
+                logger.info(f"Setting gender id for character {unprocessed_character.name} (ID: {unprocessed_character.id})")
                 await self._set_gender_id(character=unprocessed_character)
-                logger.info(f"Saving character {unprocessed_character.display_name} (ID: {unprocessed_character.id})")
+
+                logger.info(f"Processing name for character {unprocessed_character.name} (ID: {unprocessed_character.id})")
+                await self._process_name(unprocessed_character)
+
+
+                # ------------- Save unprocessed character -----------------
+                logger.info(f"Saving character {unprocessed_character.name} (ID: {unprocessed_character.id})")
                 character = await self.characters_repo.save_unprocessed_character(unprocessed_character)
-                logger.info(f"Character {unprocessed_character.display_name} saved (ID: {unprocessed_character.id})")
+                logger.info(f"Character {unprocessed_character.name} saved (ID: {unprocessed_character.id})")
                 try:
+
+                    # ------------- Set image to processing -----------------
                     logger.info(f"Setting image to process for character {unprocessed_character.id}")
                     await self._set_image_to_process(character)
                     logger.info(f"Image set to process for character {unprocessed_character.id}")
 
-                    logger.info(f"Settings parsed character {unprocessed_character.display_name} as processed")
+                    # ------------- Set process_state to processed-----------------
+                    logger.info(f"Settings parsed character {unprocessed_character.name} as processed")
                     await self.parsed_characters_repo.set_character_as_processed(unprocessed_character.id)
-                    logger.info(f"Character {unprocessed_character.display_name} marked as processed")
+                    logger.info(f"Character {unprocessed_character.name} marked as processed")
 
                 except Exception as e:
                     logger.error(f"Error by processing {unprocessed_character.id}: {e}")
                     logger.error(f"Removing saved character {unprocessed_character.id} due to image processing error")
                     await self.characters_repo.remove_unprocessed_character(character.id)
-                    logger.error(f"Settings parsed character {unprocessed_character.display_name} as processed with errors")
+                    logger.error(f"Settings parsed character {unprocessed_character.name} as processed with errors")
                     await self.parsed_characters_repo.set_character_as_processed_with_errors(unprocessed_character.id)
 
             except GenderNotExistError as e:
                 logger.error(e)
             except Exception as e:
                 logger.error(f"Error saving character {unprocessed_character.id}: {e}")
+                logger.error(f"Settings parsed character {unprocessed_character.name} as processed with errors")
+                await self.parsed_characters_repo.set_character_as_processed_with_errors(unprocessed_character.id)
 
-        return None
+        return
 
     async def _get_unprocessed_characters(self, count: int) -> list[ParsedCharacter] | None:
         try:
             unprocessed_characters = await self.parsed_characters_repo.get_unprocessed_characters(count)
             return unprocessed_characters
         except EntityNotFound:
-            ...
+            raise
         except DBConnectionError:
-            ...
+            raise
         except Exception as e:
             logger.error(f"Unexpected error during processing characters: {e}")
 
@@ -107,4 +124,7 @@ class ProcessCharactersUseCase:
                     )
                 )
 
-
+    @staticmethod
+    async def _process_name(character: ParsedCharacter):
+        character.display_name = character.name
+        character.name = NameFormatter.format_name(character.name)

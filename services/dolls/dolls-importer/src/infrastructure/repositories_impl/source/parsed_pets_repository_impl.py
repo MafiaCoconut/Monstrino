@@ -29,6 +29,8 @@ class ParsedPetsRepositoryImpl(ParsedPetsRepository):
             except Exception as e:
                 raise SettingProcessStateError(f"Error getting unprocessed pets: {e}")
 
+    async def set_pet_as_already_exists(self, pet_id: int):
+        await self._set_pet_process_state(pet_id, "already_exists")
 
     async def set_pet_as_processed(self, pet_id: int):
         await self._set_pet_process_state(pet_id, "processed")
@@ -61,23 +63,23 @@ class ParsedPetsRepositoryImpl(ParsedPetsRepository):
         return ParsedPet(
             id=data.id,
             name=data.name,
-            display_name=data.display_name,
             owner_name=data.owner_name,
             description=data.description,
             primary_image=data.primary_image,
             link=data.link,
             process_state=data.process_state,
+            source=data.source,
         )
 
     @staticmethod
-    def _format_pydantic_to_orm(dto):
+    def _format_pydantic_to_orm(dto: ParsedPet):
         return ParsedPetsORM(
             name=dto.name,
-            display_name=dto.display_name,
             owner_name=dto.owner_name,
             description=dto.description,
             primary_image=dto.primary_image,
             link=dto.link,
             process_state="init",
+            source=dto.source,
             original_html_content=dto.original_html_content,
         )

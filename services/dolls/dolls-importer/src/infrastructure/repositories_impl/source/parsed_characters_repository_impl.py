@@ -67,12 +67,12 @@ class ParsedCharactersRepositoryImpl(ParsedCharactersRepository):
         return ParsedCharacter(
             id=data.id,
             name=data.name,
-            display_name=data.display_name,
             gender=data.gender,
             description=data.description,
             primary_image=data.primary_image,
             link=data.link,
             process_state=data.process_state,
+            source=data.source,
             # original_html_content=data.original_html_content,
         )
 
@@ -80,11 +80,11 @@ class ParsedCharactersRepositoryImpl(ParsedCharactersRepository):
     def _format_pydantic_to_orm(dto):
         return ParsedCharactersORM(
             name=dto.name,
-            display_name=dto.display_name,
             gender=dto.gender,
             description=dto.description,
             primary_image=dto.primary_image,
             link=dto.link,
             process_state="init",
+            source=dto.sorce,
             original_html_content=dto.original_html_content,
         )

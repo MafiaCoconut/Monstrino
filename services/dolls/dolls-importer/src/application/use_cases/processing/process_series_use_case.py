@@ -43,6 +43,7 @@ class ProcessSeriesUseCase:
             try:
                 logger.info(f"Processing series {unprocessed_series.name} (ID: {unprocessed_series.id})")
 
+                logger.info(f"Processing name for series {unprocessed_series.name} (ID: {unprocessed_series.id})")
                 await self._process_name(unprocessed_series)
 
                 if unprocessed_series.series_type == "series_secondary":
