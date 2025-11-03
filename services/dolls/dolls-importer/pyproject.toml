@@ -34,6 +34,7 @@ dependencies = [
     "bcrypt (>=4.3.0,<5.0.0)",
     "colorlog (>=6.9.0,<7.0.0)",
     "monstrino-models @ file:///home/coconut/Projects/Monstrino/monstrino-models",
+    "monstrino-repositories @ file:///home/coconut/Projects/Monstrino/monstrino-repositories",
 ]
 
 [tool.poetry]
@@ -41,6 +42,9 @@ package-mode = false
 
 [tool.poetry.dependencies]
 monstrino-models = {develop = true}
+monstrino-repositories = {develop = true}
+
+
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"

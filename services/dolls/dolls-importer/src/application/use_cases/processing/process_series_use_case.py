@@ -5,7 +5,7 @@ from monstrino_models.dto import ParsedImage
 from monstrino_models.dto import ParsedSeries
 from monstrino_models.exceptions import EntityNotFound, DBConnectionError
 
-from application.repositories import (
+from monstrino_repositories.repositories import (
     ParsedSeriesRepo, ReleaseSeriesRepo, ParsedImagesRepo, ImageReferenceOriginRepo
 )
 from domain.formatters.name_formatter import NameFormatter

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from application.repositories import *
+from monstrino_repositories.repositories import *
 
 @dataclass
 class Repositories:

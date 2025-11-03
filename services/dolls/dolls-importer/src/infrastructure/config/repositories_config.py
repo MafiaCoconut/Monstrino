@@ -1,5 +1,7 @@
+from monstrino_repositories.repositories_impl import ReleasesRepoImpl
+
 from app.container import Repositories
-from infrastructure.repositories_impl import *
+from monstrino_repositories.repositories_impl import *
 
 
 

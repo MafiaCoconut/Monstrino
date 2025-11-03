@@ -1,3 +1,6 @@
+from typing import Optional
+
+from monstrino_repositories.base.session import Sessions
 from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
@@ -6,31 +9,34 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-sync_engine = create_engine(
-    url=db_settings.DATABASE_URL_psycopg,
-    # echo=True,
-    pool_size=10,
-    max_overflow=20,
-    pool_timeout=30,
-    pool_recycle=1800,
-    pool_pre_ping=True,
-)
-
-async_engine = create_async_engine(
-    url=db_settings.DATABASE_URL_asyncpg,
-    # echo=True,
-    pool_size=10,
-    max_overflow=20,
-    pool_timeout=30,
-    pool_recycle=1800,
-    pool_pre_ping=True,
-)
-
-
-session_factory = sessionmaker(sync_engine)
-async_session_factory = async_sessionmaker(async_engine, expire_on_commit=False)
+# sync_engine = create_engine(
+#     url=db_settings.DATABASE_URL_psycopg,
+#     # echo=True,
+#     pool_size=10,
+#     max_overflow=20,
+#     pool_timeout=30,
+#     pool_recycle=1800,
+#     pool_pre_ping=True,
+# )
+#
+# async_engine = create_async_engine(
+#     url=db_settings.DATABASE_URL_asyncpg,
+#     # echo=True,
+#     pool_size=10,
+#     max_overflow=20,
+#     pool_timeout=30,
+#     pool_recycle=1800,
+#     pool_pre_ping=True,
+# )
 
 
-class Base(DeclarativeBase):
-    pass
+# session_factory = sessionmaker(sync_engine)
+# async_session_factory = async_sessionmaker(async_engine, expire_on_commit=False)
+sessions: Optional[Sessions] = None
+async def config_repositories_connection():
+    global sessions
+    sessions = await Sessions.init(db_settings.DATABASE_URL_psycopg)
+
+# class Base(DeclarativeBase):
+#     pass
 

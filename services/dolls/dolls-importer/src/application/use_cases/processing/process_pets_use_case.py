@@ -4,7 +4,7 @@ from monstrino_models.dto import ParsedPet
 
 from monstrino_models.exceptions import EntityNotFound, DBConnectionError, EntityAlreadyExists
 
-from application.repositories import (
+from monstrino_repositories.repositories import (
     ImageReferenceOriginRepo, ParsedImagesRepo, ParsedPetsRepo, PetsRepo, \
     CharactersRepo
 )

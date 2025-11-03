@@ -4,7 +4,7 @@ from monstrino_models.dto import ParsedCharacter
 from monstrino_models.exceptions import EntityNotFound, DBConnectionError
 from monstrino_models.exceptions import GenderNotExistError
 
-from application.repositories import (
+from monstrino_repositories.repositories import (
     ParsedCharactersRepo, CharactersRepo, ParsedImagesRepo, CharacterGendersRepo, \
     ImageReferenceOriginRepo
 )

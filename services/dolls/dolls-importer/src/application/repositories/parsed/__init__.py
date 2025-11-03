@@ -1,5 +1,0 @@
-from .parsed_characters_repo import ParsedCharactersRepo
-from .parsed_images_repo import ParsedImagesRepo
-from .parsed_pets_repo import ParsedPetsRepo
-from .parsed_releases_repo import ParsedReleasesRepo
-from .parsed_series_repo import ParsedSeriesRepo

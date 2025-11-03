@@ -2,6 +2,8 @@
 # Monstrino Service Makefile
 # ==============================
 DOTENV := .env
+SHELL := /bin/bash
+.PHONY: run
 
 ifneq (,$(wildcard .env))
     include .env
@@ -9,31 +11,53 @@ ifneq (,$(wildcard .env))
 endif
 
 SERVICE_NAME := dolls-importer
-PACKAGE_NAME := monstrino-models
-GITHUB_TOKEN ?= none
-PACKAGE_PATH := ../../../monstrino-models
-PACKAGE_GIT  := git@github.com:MafiaCoconut/monstrino-models.git
-PACKAGE_TAG  := 0.1.0
+
+MONSTRINO_MODELS_PACKAGE_NAME := monstrino-models
+MONSTRINO_MODELS_PACKAGE_PATH := ../../../monstrino-models
+MONSTRINO_MODELS_PACKAGE_GIT  := git@github.com:MafiaCoconut/monstrino-models.git
+MONSTRINO_MODELS_PACKAGE_TAG  := 0.1.0
+
+MONSTRINO_REPOSITORIES_PACKAGE_NAME := monstrino-repositories
+MONSTRINO_REPOSITORIES_PACKAGE_PATH := ../../../monstrino-repositories
+MONSTRINO_REPOSITORIES_PACKAGE_GIT  := git@github.com:MafiaCoconut/monstrino-repositories.git
+MONSTRINO_REPOSITORIES_PACKAGE_TAG  := 0.1.0
+
 ENV ?= dev
 
 
 
-SHELL := /bin/bash
-
-.PHONY: run
 
 run:
 	cd src && poetry run uvicorn main:app --reload --port 8010 --log-config infrastructure/logging/logging_config.json
 
-dev:
-	@echo "🔧 Switching $(PACKAGE_NAME) to local editable path..."
-	poetry remove $(PACKAGE_NAME) || true
-	poetry add --editable $(PACKAGE_PATH)
-	@echo "✅ $(PACKAGE_NAME) установлен локально (editable)."
+switch-monstrino-models-dev:
+	@echo "🔧 Switching $(MONSTRINO_MODELS_PACKAGE_NAME) to local editable path..."
+	poetry remove $(MONSTRINO_MODELS_PACKAGE_NAME) || true
+	poetry add --editable $(MONSTRINO_MODELS_PACKAGE_PATH)
+	@echo "✅ $(MONSTRINO_MODELS_PACKAGE_NAME) installed locally (editable)."
+
+switch-monstrino-models-prod:
+	@echo "🚀 Устанавливаем $(MONSTRINO_MODELS_PACKAGE_NAME) by SSH Git ($(MONSTRINO_MODELS_PACKAGE_TAG))..."
+	poetry remove $(MONSTRINO_MODELS_PACKAGE_NAME) || true
+	poetry add git+ssh://$(MONSTRINO_MODELS_PACKAGE_GIT)
+	@echo "✅ $(MONSTRINO_MODELS_PACKAGE_NAME) installed from Git by SSH."
+
+switch-monstrino-repositories-dev:
+	@echo "🔧 Switching $(MONSTRINO_REPOSITORIES_PACKAGE_NAME) to local editable path..."
+	poetry remove $(MONSTRINO_REPOSITORIES_PACKAGE_NAME) || true
+	poetry add --editable $(MONSTRINO_REPOSITORIES_PACKAGE_PATH)
+	@echo "✅ $(MONSTRINO_REPOSITORIES_PACKAGE_NAME) installed locally (editable)."
+
+switch-monstrino-repositories-prod:
+	@echo "🚀 Install $(MONSTRINO_REPOSITORIES_PACKAGE_NAME) by SSH Git ($(MONSTRINO_REPOSITORIES_PACKAGE_TAG))..."
+	poetry remove $(MONSTRINO_REPOSITORIES_PACKAGE_NAME) || true
+	poetry add git+ssh://$(MONSTRINO_REPOSITORIES_PACKAGE_GIT)
+	@echo "✅ $(MONSTRINO_REPOSITORIES_PACKAGE_NAME) installed from Git by SSH."
+
+
+
+
+dev: switch-monstrino-models-dev switch-monstrino-repositories-dev
 
 # === PROD MODE: использовать git tag ===
-prod:
-	@echo "🚀 Устанавливаем $(PACKAGE_NAME) через SSH Git ($(PACKAGE_TAG))..."
-	poetry remove $(PACKAGE_NAME) || true
-	GIT_SSH_COMMAND=poetry add git+ssh://$(PACKAGE_GIT)
-	@echo "✅ $(PACKAGE_NAME) установлен из Git по SSH."
+prod: switch-monstrino-models-prod switch-monstrino-repositories-prod

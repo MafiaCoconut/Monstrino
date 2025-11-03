@@ -1218,6 +1218,24 @@ type = "directory"
 url = "../../../monstrino-models"
 
 [[package]]
+name = "monstrino-repositories"
+version = "0.1.0"
+description = ""
+optional = false
+python-versions = ">=3.13"
+groups = ["main"]
+files = []
+develop = true
+
+[package.dependencies]
+pydantic = ">=2.0,<3.0"
+sqlalchemy = ">=2.0,<3.0"
+
+[package.source]
+type = "directory"
+url = "../../../monstrino-repositories"
+
+[[package]]
 name = "multidict"
 version = "6.7.0"
 description = "multidict implementation"
@@ -2430,4 +2448,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13"
-content-hash = "2f0320cd450251fc9ef0c1e1d299e395cddca63cee420134f4fddba8309e99b5"
+content-hash = "c3b68ca8dfe9a0fcc90f455260f682f2ac41fab9ff398be78f97f6ffca562c5e"
