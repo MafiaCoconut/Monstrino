@@ -1,42 +1,33 @@
 from app.container import Repositories
-from infrastructure.repositories_impl.character_genders_repository_impl import CharacterGendersRepositoryImpl
-from infrastructure.repositories_impl.parsed_images_repo import ParsedImagesRepositoryImpl
-from infrastructure.repositories_impl.pets_repository_impl import PetsRepositoryImpl
-from infrastructure.repositories_impl.reference.image_reference_origin_repository_impl import \
-    ImageReferenceOriginRepositoryImpl
-from infrastructure.repositories_impl.release_series_repository_impl import ReleaseSeriesRepositoryImpl
-from infrastructure.repositories_impl.source.parsed_characters_repository_impl import ParsedCharactersRepositoryImpl
-from infrastructure.repositories_impl.source.parsed_pets_repository_impl import ParsedPetsRepositoryImpl
-from infrastructure.repositories_impl.source.parsed_releases_repository_impl import ParsedReleasesRepositoryImpl
-from infrastructure.repositories_impl.source.parsed_series_repository_impl import ParsedSeriesRepositoryImpl
-from infrastructure.repositories_impl.release_images_repository_impl import ReleaseImagesRepositoryImpl
-from infrastructure.repositories_impl.releae_relations_repository_impl import ReleaseRelationsRepositoryImpl
-from infrastructure.repositories_impl.dolls_releases_repository_impl import DollsReleasesRepositoryImpl
-from infrastructure.repositories_impl.dolls_series_repository_impl import DollsSeriesRepositoryImpl
-from infrastructure.repositories_impl.dolls_types_repository_impl import DollsTypesRepositoryImpl
-from infrastructure.repositories_impl.characters_repository_impl import CharactersRepositoryImpl
-from infrastructure.repositories_impl.release_characters_repository_impl import ReleaseCharactersRepositoryImpl
+from infrastructure.repositories_impl import *
+
 
 
 def build_repositories() -> Repositories:
     return Repositories(
-        character_genders=CharacterGendersRepositoryImpl(),
-        characters=CharactersRepositoryImpl(),
-        pets=PetsRepositoryImpl(),
+        character_genders=CharacterGendersRepoImpy(),
+        characters=CharactersRepoImpl(),
+        pets=PetsRepoImpl(),
 
-        dolls_releases=DollsReleasesRepositoryImpl(),
-        release_images=ReleaseImagesRepositoryImpl(),
-        release_relations=ReleaseRelationsRepositoryImpl(),
-        dolls_series=DollsSeriesRepositoryImpl(),
-        dolls_types=DollsTypesRepositoryImpl(),
-        release_characters=ReleaseCharactersRepositoryImpl(),
-        release_series=ReleaseSeriesRepositoryImpl(),
-
+        # Images
+        image_reference_origin=ImageReferenceOriginRepoImpl(),
         parsed_images=ParsedImagesRepositoryImpl(),
-        image_reference_origin=ImageReferenceOriginRepositoryImpl(),
+        release_images=ReleaseImagesRepoImpl(),
 
-        parsed_characters=ParsedCharactersRepositoryImpl(),
-        parsed_pets=ParsedPetsRepositoryImpl(),
-        parsed_series=ParsedSeriesRepositoryImpl(),
-        parsed_releases=ParsedReleasesRepositoryImpl(),
+        # Source repositories
+        parsed_characters=ParsedCharactersRepoImpl(),
+        parsed_pets=ParsedPetsRepoImpl(),
+        parsed_series=ParsedSeriesRepoImpl(),
+        parsed_releases=ParsedReleasesRepoImpl(),
+
+        # Releases
+        release_character_roles=ReleaseCharacterRolesRepoImpl(),
+        release_characters=ReleaseCharactersRepoImpl(),
+        release_exclusives=ReleaseExclusivesRepoImpl(),
+        release_pets=ReleasePetsRepoImpl(),
+        release_relation_types=ReleaseRelationTypesRepoImpl(),
+        release_relations=ReleaseRelationsRepoImpl(),
+        release_series=ReleaseSeriesRepoImpl(),
+        release_types=ReleaseTypesRepoImpl(),
+        releases=ReleasesRepoImpl()
     )

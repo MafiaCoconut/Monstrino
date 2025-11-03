@@ -13,7 +13,11 @@ from app.wiring import build_app
 # from monstrino_models.orm import *
 dotenv.load_dotenv()
 logger = logging.getLogger(__name__)
-logger.info('-------------------------------------------------------')
+logger.info('***********************************************')
+logger.info('*                                             *')
+logger.info('*       Starting dolls-importer service       *')
+logger.info('*                                             *')
+logger.info('***********************************************')
 
 app = FastAPI()
 
@@ -22,7 +26,7 @@ cors.config(app=app)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info('Starting dolls-service')
+
     async with async_engine.begin() as conn:
         await conn.run_sync(lambda conn: None)
 

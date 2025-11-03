@@ -1,0 +1,4 @@
+from .characters_repository import CharactersRepo
+from .character_genders_repository import CharacterGendersRepo
+from .image_reference_origin_repository import ImageReferenceOriginRepo
+from .pets_repository import PetsRepo

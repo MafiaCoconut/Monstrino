@@ -1,16 +1,13 @@
 import logging
-from icecream import ic
 from monstrino_models.dto import ParsedImage
 from monstrino_models.dto import ParsedCharacter
 from monstrino_models.exceptions import EntityNotFound, DBConnectionError
 from monstrino_models.exceptions import GenderNotExistError
 
-from application.repositories.destination.parsed_images_repo import ParsedImagesRepository
-from application.repositories.destination.reference.character_genders_repository import CharacterGendersRepository
-from application.repositories.destination.reference.image_reference_origin_repository import \
-    ImageReferenceOriginRepository
-from application.repositories.destination.reference.characters_repository import CharactersRepository
-from application.repositories.source.parsed_characters_repository import ParsedCharactersRepository
+from application.repositories import (
+    ParsedCharactersRepo, CharactersRepo, ParsedImagesRepo, CharacterGendersRepo, \
+    ImageReferenceOriginRepo
+)
 from domain.formatters.name_formatter import NameFormatter
 
 logger = logging.getLogger(__name__)
@@ -18,11 +15,11 @@ logger = logging.getLogger(__name__)
 
 class ProcessCharactersUseCase:
     def __init__(self,
-                 parsed_characters_repo: ParsedCharactersRepository,
-                 characters_repo: CharactersRepository,
-                 characters_genders_repo: CharacterGendersRepository,
-                 parsed_images_repo: ParsedImagesRepository,
-                 image_reference_origin_repo: ImageReferenceOriginRepository
+                 parsed_characters_repo: ParsedCharactersRepo,
+                 characters_repo: CharactersRepo,
+                 characters_genders_repo: CharacterGendersRepo,
+                 parsed_images_repo: ParsedImagesRepo,
+                 image_reference_origin_repo: ImageReferenceOriginRepo
                  ):
         self.parsed_characters_repo = parsed_characters_repo
         self.characters_repo = characters_repo

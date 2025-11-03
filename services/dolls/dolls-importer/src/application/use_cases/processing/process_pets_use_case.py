@@ -1,18 +1,13 @@
 import logging
-from icecream import ic
 from monstrino_models.dto import ParsedImage, Pet
 from monstrino_models.dto import ParsedPet
 
 from monstrino_models.exceptions import EntityNotFound, DBConnectionError, EntityAlreadyExists
-from monstrino_models.exceptions import SavingParsedRecordWithErrors, \
-    SettingProcessStateError
 
-from application.repositories.destination.parsed_images_repo import ParsedImagesRepository
-from application.repositories.destination.pets_repository import PetsRepository
-from application.repositories.destination.reference.characters_repository import CharactersRepository
-from application.repositories.destination.reference.image_reference_origin_repository import \
-    ImageReferenceOriginRepository
-from application.repositories.source.parsed_pets_repository import ParsedPetsRepository
+from application.repositories import (
+    ImageReferenceOriginRepo, ParsedImagesRepo, ParsedPetsRepo, PetsRepo, \
+    CharactersRepo
+)
 from domain.formatters.name_formatter import NameFormatter
 
 logger = logging.getLogger(__name__)
@@ -20,11 +15,11 @@ logger = logging.getLogger(__name__)
 
 class ProcessPetsUseCase:
     def __init__(self,
-                 parsed_pets_repo: ParsedPetsRepository,
-                 pets_repo: PetsRepository,
-                 parsed_images_repo: ParsedImagesRepository,
-                 image_reference_origin_repo: ImageReferenceOriginRepository,
-                 characters_repo: CharactersRepository,
+                 parsed_pets_repo: ParsedPetsRepo,
+                 pets_repo: PetsRepo,
+                 parsed_images_repo: ParsedImagesRepo,
+                 image_reference_origin_repo: ImageReferenceOriginRepo,
+                 characters_repo: CharactersRepo,
                  ):
         self.parsed_pets_repo = parsed_pets_repo
         self.pets_repo = pets_repo
