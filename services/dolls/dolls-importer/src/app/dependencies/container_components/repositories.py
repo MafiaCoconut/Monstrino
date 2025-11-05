@@ -26,6 +26,6 @@ class Repositories:
     release_pets: ReleasePetsRepo
     release_relation_types: ReleaseRelationTypesRepo
     release_relations: ReleaseRelationsRepo
-    release_series: ReleaseSeriesRepo
+    release_series: SeriesRepo
     release_types: ReleaseTypesRepo
     releases: ReleasesRepo

@@ -3,7 +3,7 @@ from icecream import ic
 from monstrino_models.dto import ParsedRelease
 from monstrino_models.dto.dolls.releases import Release, ReleaseCharacter
 from monstrino_repositories.repositories import (
-    ParsedImagesRepo, ReleaseSeriesRepo, ImageReferenceOriginRepo, \
+    ParsedImagesRepo, SeriesRepo, ImageReferenceOriginRepo, \
     ReleasesRepo, ParsedReleasesRepo, CharactersRepo, PetsRepo, ReleaseRelationsRepo, ReleaseRelationTypesRepo,
     ReleaseExclusivesRepo, ReleaseTypesRepo, ReleaseCharactersRepo, ReleasePetsRepo, ReleaseCharacterRolesRepo
 )
@@ -26,7 +26,7 @@ class ProcessReleasesUseCase:
                  release_exclusives_repo: ReleaseExclusivesRepo,
                  release_types_repo: ReleaseTypesRepo,
                  releases_repo: ReleasesRepo,
-                 release_series_repo: ReleaseSeriesRepo,
+                 release_series_repo: SeriesRepo,
                  parsed_images_repo: ParsedImagesRepo,
                  image_reference_origin_repo: ImageReferenceOriginRepo
                  ):
@@ -114,5 +114,6 @@ class ProcessReleasesUseCase:
     async def _process_series_id(self, unprocessed_release: ParsedRelease, release: Release):
         logger.debug(f"Processing releases series {unprocessed_release.name} (ID: {unprocessed_release.id})")
         series_name = unprocessed_release.series_name['text']
-        series_id = await self.release_series_repo.get_id_by_name()
+        series_id = await self.release_series_repo.get_id_by_name(series_name)
+        logger.info(f"Set series_id {series_id} for release {release.name}")
         release.series_id = series_id

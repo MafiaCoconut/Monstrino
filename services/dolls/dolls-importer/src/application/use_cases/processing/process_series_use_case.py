@@ -6,7 +6,7 @@ from monstrino_models.dto import ParsedSeries
 from monstrino_models.exceptions import EntityNotFound, DBConnectionError
 
 from monstrino_repositories.repositories import (
-    ParsedSeriesRepo, ReleaseSeriesRepo, ParsedImagesRepo, ImageReferenceOriginRepo
+    ParsedSeriesRepo, SeriesRepo, ParsedImagesRepo, ImageReferenceOriginRepo
 )
 from domain.formatters.name_formatter import NameFormatter
 
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class ProcessSeriesUseCase:
     def __init__(self,
                  parsed_series_repo: ParsedSeriesRepo,
-                 release_series_repo: ReleaseSeriesRepo,
+                 release_series_repo: SeriesRepo,
                  parsed_images_repo: ParsedImagesRepo,
                  image_reference_origin_repo: ImageReferenceOriginRepo
 

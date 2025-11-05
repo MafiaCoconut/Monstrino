@@ -29,7 +29,7 @@ def build_repositories() -> Repositories:
         release_pets=ReleasePetsRepoImpl(),
         release_relation_types=ReleaseRelationTypesRepoImpl(),
         release_relations=ReleaseRelationsRepoImpl(),
-        release_series=ReleaseSeriesRepoImpl(),
+        release_series=SeriesRepoImpl(),
         release_types=ReleaseTypesRepoImpl(),
         releases=ReleasesRepoImpl()
     )
