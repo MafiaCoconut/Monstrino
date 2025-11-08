@@ -1,0 +1,29 @@
+[project]
+name = "sandbox-service"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "MafiaCoconut",email = "alex.kach.2000@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pytest (>=8.4.2,<9.0.0)",
+    "pytest-asyncio (>=1.2.0,<2.0.0)",
+    "sqlalchemy (>=2.0.44,<3.0.0)",
+    "monstrino-core @ file:///home/coconut/Projects/Monstrino/packages/monstrino-core",
+    "monstrino-models @ file:///home/coconut/Projects/Monstrino/packages/monstrino-models",
+    "monstrino-repositories @ file:///home/coconut/Projects/Monstrino/packages/monstrino-repositories",
+    "asyncpg (>=0.30.0,<0.31.0)"
+]
+
+[tool.poetry]
+package-mode = false
+
+[tool.poetry.dependencies]
+monstrino-core = {develop = true}
+monstrino-models = {develop = true}
+monstrino-repositories = {develop = true}
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
