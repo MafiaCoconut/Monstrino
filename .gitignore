@@ -174,5 +174,4 @@ test.txt
 test.json
 jwt-private.pem
 jwt-public.pem
-monstrino-models/
-monstrino-repositories/
+packages/*

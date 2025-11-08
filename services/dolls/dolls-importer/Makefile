@@ -1,63 +1,58 @@
-# ==============================
-# Monstrino Service Makefile
-# ==============================
+# =========================================
+# ‖  Monstrino Importer Service Makefile  ‖
+# =========================================
 DOTENV := .env
 SHELL := /bin/bash
-.PHONY: run
+.PHONY: run dev prod pytest
 
 ifneq (,$(wildcard .env))
     include .env
     export $(shell sed 's/=.*//' .env)
 endif
 
+ENV ?= dev
+
+# ========== Service Name ==========
 SERVICE_NAME := dolls-importer
 
+#
+include ../../../Makefiles/common.mk
+include $(ROOT_DIR)/Makefiles/monstrino-packages.mk
+include $(ROOT_DIR)/Makefiles/run.mk
+include $(ROOT_DIR)/Makefiles/pytest.mk
+
+# ========== Monstrino Packages ==========
+MONSTRINO_CORE_PACKAGE_NAME := monstrino-core
+MONSTRINO_CORE_PACKAGE_PATH := $(ROOT_DIR)/packages/monstrino-core
+MONSTRINO_CORE_PACKAGE_GIT  := git@github.com:MafiaCoconut/monstrino-core.git
+MONSTRINO_CORE_PACKAGE_TAG  := 0.1.0
+
 MONSTRINO_MODELS_PACKAGE_NAME := monstrino-models
-MONSTRINO_MODELS_PACKAGE_PATH := ../../../monstrino-models
+MONSTRINO_MODELS_PACKAGE_PATH := $(ROOT_DIR)/packages/monstrino-models
 MONSTRINO_MODELS_PACKAGE_GIT  := git@github.com:MafiaCoconut/monstrino-models.git
 MONSTRINO_MODELS_PACKAGE_TAG  := 0.1.0
 
 MONSTRINO_REPOSITORIES_PACKAGE_NAME := monstrino-repositories
-MONSTRINO_REPOSITORIES_PACKAGE_PATH := ../../../monstrino-repositories
+MONSTRINO_REPOSITORIES_PACKAGE_PATH := $(ROOT_DIR)/packages/monstrino-repositories
 MONSTRINO_REPOSITORIES_PACKAGE_GIT  := git@github.com:MafiaCoconut/monstrino-repositories.git
 MONSTRINO_REPOSITORIES_PACKAGE_TAG  := 0.1.0
 
-ENV ?= dev
+$(eval $(call SWITCH_DEV,$(MONSTRINO_CORE_PACKAGE_NAME),$(MONSTRINO_CORE_PACKAGE_PATH)))
+$(eval $(call SWITCH_DEV,$(MONSTRINO_MODELS_PACKAGE_NAME),$(MONSTRINO_MODELS_PACKAGE_PATH)))
+$(eval $(call SWITCH_DEV,$(MONSTRINO_REPOSITORIES_PACKAGE_NAME),$(MONSTRINO_REPOSITORIES_PACKAGE_PATH)))
+
+$(eval $(call SWITCH_PROD,$(MONSTRINO_CORE_PACKAGE_NAME),$(MONSTRINO_MODELS_PACKAGE_PATH),$(MONSTRINO_CORE_PACKAGE_TAG),$(MONSTRINO_CORE_PACKAGE_GIT)))
+$(eval $(call SWITCH_PROD,$(MONSTRINO_MODELS_PACKAGE_NAME),$(MONSTRINO_MODELS_PACKAGE_PATH),$(MONSTRINO_MODELS_PACKAGE_TAG),$(MONSTRINO_MODELS_PACKAGE_GIT)))
+$(eval $(call SWITCH_PROD,$(MONSTRINO_REPOSITORIES_PACKAGE_NAME),$(MONSTRINO_REPOSITORIES_PACKAGE_PATH),$(MONSTRINO_REPOSITORIES_PACKAGE_TAG),$(MONSTRINO_REPOSITORIES_PACKAGE_GIT)))
 
 
-
-
+# =========== Commands ===========
 run:
 	cd src && poetry run uvicorn main:app --reload --port 8010 --log-config infrastructure/logging/logging_config.json
 
-switch-monstrino-models-dev:
-	@echo "🔧 Switching $(MONSTRINO_MODELS_PACKAGE_NAME) to local editable path..."
-	poetry remove $(MONSTRINO_MODELS_PACKAGE_NAME) || true
-	poetry add --editable $(MONSTRINO_MODELS_PACKAGE_PATH)
-	@echo "✅ $(MONSTRINO_MODELS_PACKAGE_NAME) installed locally (editable)."
+pytest:
+	poetry run pytest -q --disable-warnings --tb=short
 
-switch-monstrino-models-prod:
-	@echo "🚀 Устанавливаем $(MONSTRINO_MODELS_PACKAGE_NAME) by SSH Git ($(MONSTRINO_MODELS_PACKAGE_TAG))..."
-	poetry remove $(MONSTRINO_MODELS_PACKAGE_NAME) || true
-	poetry add git+ssh://$(MONSTRINO_MODELS_PACKAGE_GIT)
-	@echo "✅ $(MONSTRINO_MODELS_PACKAGE_NAME) installed from Git by SSH."
+dev: switch-monstrino-core-dev switch-monstrino-models-dev switch-monstrino-repositories-dev
+prod: switch-monstrino-core-prod switch-monstrino-models-prod switch-monstrino-repositories-prod
 
-switch-monstrino-repositories-dev:
-	@echo "🔧 Switching $(MONSTRINO_REPOSITORIES_PACKAGE_NAME) to local editable path..."
-	poetry remove $(MONSTRINO_REPOSITORIES_PACKAGE_NAME) || true
-	poetry add --editable $(MONSTRINO_REPOSITORIES_PACKAGE_PATH)
-	@echo "✅ $(MONSTRINO_REPOSITORIES_PACKAGE_NAME) installed locally (editable)."
-
-switch-monstrino-repositories-prod:
-	@echo "🚀 Install $(MONSTRINO_REPOSITORIES_PACKAGE_NAME) by SSH Git ($(MONSTRINO_REPOSITORIES_PACKAGE_TAG))..."
-	poetry remove $(MONSTRINO_REPOSITORIES_PACKAGE_NAME) || true
-	poetry add git+ssh://$(MONSTRINO_REPOSITORIES_PACKAGE_GIT)
-	@echo "✅ $(MONSTRINO_REPOSITORIES_PACKAGE_NAME) installed from Git by SSH."
-
-
-
-
-dev: switch-monstrino-models-dev switch-monstrino-repositories-dev
-
-# === PROD MODE: использовать git tag ===
-prod: switch-monstrino-models-prod switch-monstrino-repositories-prod
