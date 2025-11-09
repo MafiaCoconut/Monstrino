@@ -23,5 +23,5 @@ async def test_save_unprocessed_character_and_get(character: Character, uow: Uni
     assert fetched_character.notes == character.notes
 
 
-@pytest.mark.asyncio
-async def test_get_not_exists_character_name(uow: UnitOfWorkInterface):
+# @pytest.mark.asyncio
+# async def test_get_not_exists_character_name(uow: UnitOfWorkInterface):

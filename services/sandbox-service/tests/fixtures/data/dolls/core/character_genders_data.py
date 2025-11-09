@@ -49,11 +49,4 @@ async def seed_character_genders_db(engine, session_factory, character_genders_o
         session.add_all(character_genders_orms)
         await session.commit()
 
-    # Передача управления тесту
     yield
-
-    # После выполнения тестов — очистка (по желанию)
-    # async with engine.begin() as conn:
-    #     for table in reversed(session_factory.kw["bind"].metadata.sorted_tables):
-    #         await conn.execute(table.delete())
-    #     await conn.commit()

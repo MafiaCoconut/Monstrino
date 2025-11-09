@@ -53,6 +53,8 @@ run:
 pytest:
 	poetry run pytest -q --disable-warnings --tb=short
 
+pytest-with-logs:
+	poetry run pytest --log-cli-level=INFO -s -ra $(ARGS)
 dev: switch-monstrino-core-dev switch-monstrino-models-dev switch-monstrino-repositories-dev
 prod: switch-monstrino-core-prod switch-monstrino-models-prod switch-monstrino-repositories-prod
 

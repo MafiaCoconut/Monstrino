@@ -24,6 +24,10 @@ package-mode = false
 monstrino-core = {develop = true}
 monstrino-models = {develop = true}
 monstrino-repositories = {develop = true}
+
+[tool.poetry.group.dev.dependencies]
+pytest-rich = "^0.2.0"
+
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"

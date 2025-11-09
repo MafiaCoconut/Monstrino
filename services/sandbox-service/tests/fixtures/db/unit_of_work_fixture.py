@@ -1,8 +1,9 @@
 import pytest
-from fixtures.db.repositories_fixture import build_repositories
 from monstrino_models.orm import Base
 from monstrino_repositories.unit_of_work.sqlaclhemy_unit_of_work import SqlAlchemyUnitOfWork
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+
+from fixtures.db.repositories_fixture import build_repositories, Repositories
 
 DATABASE_URL = "postgresql+asyncpg://pytest:pytest@localhost:5432/monstrino"
 
@@ -20,8 +21,8 @@ def session_factory(engine):
     return async_sessionmaker(engine, expire_on_commit=False)
 
 @pytest.fixture
-def uow(session_factory, reset_db):
-    return SqlAlchemyUnitOfWork(
+def uow(session_factory, reset_db) -> SqlAlchemyUnitOfWork[Repositories]:
+    return SqlAlchemyUnitOfWork[Repositories](
         session_factory=session_factory,
         repo_factory=build_repositories
 )
