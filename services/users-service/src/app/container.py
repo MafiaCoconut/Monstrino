@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from application.ports.logger_port import LoggerPort
 from application.ports.scheduler_port import SchedulerPort
-from application.repositories.refresh_tokens_repository import RefreshTokensRepository
+from application.repositories.refresh_token_repository import RefreshTokensRepository
 from application.repositories.users_repository import UsersRepository
 from application.services.core_service import CoreService
 from application.services.scheduler_service import SchedulerService
@@ -15,18 +15,22 @@ class Services:
     tokens: TokensService
     scheduler: SchedulerService
 
+
 @dataclass
 class Repositories:
     users: UsersRepository
-    refresh_tokens: RefreshTokensRepository
+    refresh_token: RefreshTokensRepository
+
 
 @dataclass
 class Adapters:
     scheduler: SchedulerPort
 
+
 @dataclass
 class Adapters:
     logger: LoggerPort
+
 
 @dataclass
 class AppContainer:

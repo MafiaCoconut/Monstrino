@@ -1,13 +1,14 @@
-from application.repositories.release_images_repository import ReleaseImagesRepository
+from application.repositories.release_image_repository import ReleaseImagesRepository
 from domain.entities.dolls.release_image import ReceiveReleaseImage, SaveReleaseImage
 from infrastructure.db.base import async_session_factory
-from infrastructure.db.models.release_images_orm import ReleaseImagesORM
+from infrastructure.db.models.release_image_orm import ReleaseImagesORM
 
 
 class ReleaseImagesRepositoryImpl(ReleaseImagesRepository):
     async def attach_to_release(self, release_id: int, release_image: SaveReleaseImage):
         async with async_session_factory() as session:
-            release_image_orm = self._refactor_to_orm(release_id, release_image)
+            release_image_orm = self._refactor_to_orm(
+                release_id, release_image)
             session.add(release_image_orm)
             await session.commit()
             await session.refresh(release_image_orm)

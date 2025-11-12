@@ -38,6 +38,7 @@ dependencies = [
     "monstrino-core @ file:///home/coconut/Projects/Monstrino/packages/monstrino-core",
     "monstrino-models @ file:///home/coconut/Projects/Monstrino/packages/monstrino-models",
     "monstrino-repositories @ file:///home/coconut/Projects/Monstrino/packages/monstrino-repositories",
+    "monstrino-testing @ file:///home/coconut/Projects/Monstrino/packages/monstrino-testing",
 ]
 
 [tool.poetry]
@@ -48,6 +49,7 @@ package-mode = false
 monstrino-core = {develop = true}
 monstrino-models = {develop = true}
 monstrino-repositories = {develop = true}
+monstrino-testing = {develop = true}
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

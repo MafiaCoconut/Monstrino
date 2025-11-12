@@ -4,7 +4,7 @@ from monstrino_models.exceptions import SavingParsedRecordWithErrors
 from monstrino_models.orm import ParsedCharactersORM
 from sqlalchemy.exc import IntegrityError
 
-from application.repositories.parsed_characters_repository import ParsedCharactersRepository
+from application.repositories.parsed_character_repository import ParsedCharactersRepository
 from infrastructure.db.base import async_session_factory
 
 
@@ -18,11 +18,11 @@ class ParsedCharactersRepositoryImpl(ParsedCharactersRepository):
                 # await session.refresh(character_orm)
                 # return self._format_orm_to_pydantic(character_orm)
             except IntegrityError as e:
-                raise SavingParsedRecordWithErrors(f"Character with name {data.name} already exists")
+                raise SavingParsedRecordWithErrors(
+                    f"Character with name {data.name} already exists")
             except Exception as e:
-                raise SavingParsedRecordWithErrors(f"Error saving character {data.name}: {e}") from e
-
-
+                raise SavingParsedRecordWithErrors(
+                    f"Error saving character {data.name}: {e}") from e
 
     @staticmethod
     def _format_pydantic_to_orm(dto: ParsedCharacter):
@@ -32,7 +32,7 @@ class ParsedCharactersRepositoryImpl(ParsedCharactersRepository):
             description=dto.description,
             primary_image=dto.primary_image,
             link=dto.link,
-            process_state="init",
+            processing_state="init",
             source=dto.source,
             original_html_content=dto.original_html_content,
         )

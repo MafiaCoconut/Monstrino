@@ -13,10 +13,14 @@ from presentation.deps import get_parser_service
 
 router = APIRouter()
 auth_scheme = HTTPBearer()
-private = APIRouter(prefix='/api/v1/internal', tags=["Private"], dependencies=[Depends(VerifyToken())])
+private = APIRouter(prefix='/api/v1/internal',
+                    tags=["Private"], dependencies=[Depends(VerifyToken())])
 public = APIRouter(prefix='/api/v1', tags=["Public"])
+
+
 def config(app: FastAPI):
     app.include_router(private)
+
 
 @router.post('/parse')
 async def parse(
@@ -25,8 +29,11 @@ async def parse(
 ):
     await parser_service.parse()
 
+
 class Payload(BaseModel):
     dict: dict
+
+
 @private.post('/kafka_publish_message')
 async def parse(
         request: Request,
@@ -45,6 +52,7 @@ async def parse_characters(
 ):
     # payload = json.loads(payload.value.decode('utf-8'))
     await parser_service.parse_characters()
+
 
 @private.post('/parse_pets')
 async def parse_pets(
@@ -66,11 +74,11 @@ async def parse_series(
     await parser_service.parse_series()
 
 
-@private.post('/parse_releases')
-async def parse_releases(
+@private.post('/parse_release')
+async def parse_release(
         request: Request,
         response: Response, background_tasks: BackgroundTasks,
         parser_service: ParserService = Depends(get_parser_service)
 ):
     # payload = json.loads(payload.value.decode('utf-8'))
-    await parser_service.parse_releases()
+    await parser_service.parse_release()

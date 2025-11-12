@@ -1,12 +1,13 @@
 import logging
 
-from application.repositories.dolls_releases_repository import DollsReleasesRepository
+from application.repositories.dolls_release_repository import DollsReleasesRepository
 
 from infrastructure.db.base import async_session_factory
 from domain.entities.dolls.dolls_release import DollsRelease
-from infrastructure.db.models.releases_orm import ReleasesORM
+from infrastructure.db.models.release_orm import ReleasesORM
 
 logger = logging.getLogger(__name__)
+
 
 class DollsReleasesRepositoryImpl(DollsReleasesRepository):
     async def add(self, dto: DollsRelease):
@@ -77,6 +78,3 @@ class DollsReleasesRepositoryImpl(DollsReleasesRepository):
     #         else:
     #             logger.error(f"Error by getting doll series {type_id} from DB")
     #             raise DBConnectionError(f"Doll series {type_id} was not found")
-
-
-

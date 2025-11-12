@@ -13,10 +13,14 @@ from presentation.deps import get_processing_service
 
 router = APIRouter()
 auth_scheme = HTTPBearer()
-private = APIRouter(prefix='/api/v1/internal', tags=["Private"], dependencies=[Depends(VerifyToken())])
+private = APIRouter(prefix='/api/v1/internal',
+                    tags=["Private"], dependencies=[Depends(VerifyToken())])
 public = APIRouter(prefix='/api/v1', tags=["Public"])
+
+
 def config(app: FastAPI):
     app.include_router(private)
+
 
 @router.post('/parse')
 async def parse(
@@ -34,6 +38,7 @@ async def process_characters(
 ):
     # payload = json.loads(payload.value.decode('utf-8'))
     await processing_service.process_characters()
+
 
 @private.post('/process_pets')
 async def process_pets(
@@ -55,11 +60,11 @@ async def process_series(
     await processing_service.process_series()
 
 
-@private.post('/process_releases')
-async def process_releases(
+@private.post('/process_release')
+async def process_release(
         request: Request,
         response: Response, background_tasks: BackgroundTasks,
         processing_service: ProcessingService = Depends(get_processing_service)
 ):
     # payload = json.loads(payload.value.decode('utf-8'))
-    await processing_service.process_releases()
+    await processing_service.process_release()

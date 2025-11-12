@@ -20,21 +20,24 @@ from fastapi.params import Depends
 from fastapi.security import HTTPBearer
 
 auth_scheme = HTTPBearer()
-private = APIRouter(prefix='/api/v1/auth', tags=["Auth"], dependencies=[Depends(JWTBearer())])
+private = APIRouter(prefix='/api/v1/auth',
+                    tags=["Auth"], dependencies=[Depends(JWTBearer())])
 public = APIRouter(prefix='/api/v1/auth', tags=["Public"])
 
 logger = logging.getLogger(__name__)
+
 
 def config(app: FastAPI):
     app.include_router(private)
     app.include_router(public)
 
+
 @public.post("/registration", response_model=RegistrationResponse, responses=default_responses)
 async def registration(
-        user_credentials: UserRegistration,
-        response: Response, background_tasks: BackgroundTasks,
-        auth_service: AuthService = Depends(get_auth_service),
-    ):
+    user_credentials: UserRegistration,
+    response: Response, background_tasks: BackgroundTasks,
+    auth_service: AuthService = Depends(get_auth_service),
+):
     logger.info(f"credentials: {user_credentials}")
     if user_credentials:
         result = await auth_service.registration(user=user_credentials)
@@ -42,31 +45,35 @@ async def registration(
             error: str = result.get('error')
             match error:
                 case str() if "not-valid" in error:
-                    return await return_validation_error_status_code(data=error[error.rfind('-')+1:]) # 422
+                    # 422
+                    return await return_validation_error_status_code(data=error[error.rfind('-')+1:])
                 case str() if "user-with-this-email-already-exist" in error:
-                    return await return_conflict_error_status_code(data='email') # 409
+                    # 409
+                    return await return_conflict_error_status_code(data='email')
                 case str() if "user-with-this-username-already-exist" in error:
-                    return await return_conflict_error_status_code(data='username') # 409
+                    # 409
+                    return await return_conflict_error_status_code(data='username')
                 case "internal-error":
-                    return await return_internal_server_error_status_code() # 500
-            return await return_internal_server_error_status_code() # 500
+                    return await return_internal_server_error_status_code()  # 500
+            return await return_internal_server_error_status_code()  # 500
         else:
             return await get_success_json_response(
                 data={
                     "access_token": result.get('tokens').get('access_token'),
                     "user": result.get('user')
                 },
-                cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('tokens').get('refresh_token')}]) # 200
+                # 200
+                cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('tokens').get('refresh_token')}])
     else:
-        return await return_validation_error_status_code() # 422
+        return await return_validation_error_status_code()  # 422
 
 
 @public.post("/login", response_model=LoginResponse)
 async def login(
-        user_credentials: UserLogin,
-        response: Response, background_tasks: BackgroundTasks,
-        auth_service: AuthService = Depends(get_auth_service)
-    ):
+    user_credentials: UserLogin,
+    response: Response, background_tasks: BackgroundTasks,
+    auth_service: AuthService = Depends(get_auth_service)
+):
     logger.info(f"credentials: {user_credentials}")
     if user_credentials:
         result = await auth_service.login(user=user_credentials)
@@ -83,7 +90,8 @@ async def login(
                         "access_token": result.get('tokens').get('access_token'),
                         "user": result.get('user')
                     },
-                   cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME, "value": result.get('tokens').get('refresh_token')}]
+                    cookies=[{'key': REFRESH_TOKEN_COOKIE_NAME,
+                              "value": result.get('tokens').get('refresh_token')}]
                 )
         else:
             return await return_unauthorized_found_status_code()
@@ -91,11 +99,11 @@ async def login(
 
 
 @public.get("/refresh", response_model=RefreshResponse)
-async def refresh_tokens(
-        request: Request,
-        response: Response, background_tasks: BackgroundTasks,
-        auth_service: AuthService = Depends(get_auth_service),
-    ):
+async def refresh_token(
+    request: Request,
+    response: Response, background_tasks: BackgroundTasks,
+    auth_service: AuthService = Depends(get_auth_service),
+):
     refresh_token = request.cookies.get(REFRESH_TOKEN_COOKIE_NAME)
     if refresh_token:
         result = await auth_service.refresh(refresh_token=refresh_token)
@@ -110,11 +118,12 @@ async def refresh_tokens(
     else:
         return await return_unauthorized_found_status_code()
 
+
 @private.get("/status", response_model=StatusResponse)
 async def status(
-        request: Request,
-        response: Response, background_tasks: BackgroundTasks,
-    ):
+    request: Request,
+    response: Response, background_tasks: BackgroundTasks,
+):
     print(request.state.user_id)
     return await get_success_json_response(data={'result': True})
     # if access_token:
@@ -134,4 +143,3 @@ async def test(
         user_id: int = Depends(JWTBearer()),
 ):
     print(user_id)
-

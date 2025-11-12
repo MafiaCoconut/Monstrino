@@ -5,7 +5,7 @@ from monstrino_models.exceptions import SavingParsedRecordWithErrors
 from monstrino_models.orm import ParsedReleasesORM
 from sqlalchemy.exc import IntegrityError
 
-from application.repositories.parsed_releases_repository import ParsedReleasesRepository
+from application.repositories.parsed_release_repository import ParsedReleasesRepository
 from infrastructure.db.base import async_session_factory
 
 
@@ -17,10 +17,11 @@ class ParsedReleasesRepositoryImpl(ParsedReleasesRepository):
                 session.add(release_orm)
                 await session.commit()
             except IntegrityError as e:
-                raise SavingParsedRecordWithErrors(F"Release with name {data.name} already exists: {e}")
+                raise SavingParsedRecordWithErrors(
+                    F"Release with name {data.name} already exists: {e}")
             except Exception as e:
-                raise SavingParsedRecordWithErrors(f"Error saving release {data.name}: {e}") from e
-
+                raise SavingParsedRecordWithErrors(
+                    f"Error saving release {data.name}: {e}") from e
 
     @staticmethod
     def _format_pydantic_to_orm(dto: ParsedRelease):
@@ -44,6 +45,6 @@ class ParsedReleasesRepositoryImpl(ParsedReleasesRepository):
             link=dto.link,
             original_html_content=dto.original_html_content,
             extra=dto.extra,
-            process_state="init",
+            processing_state="init",
             source=dto.source,
         )

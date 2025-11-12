@@ -9,17 +9,23 @@ from infrastructure.db.base import Base
 
 class CharactersORM(Base):
     __tablename__ = "characters"
-    id:                      Mapped[int] = mapped_column(Integer, primary_key=True)
-    name:                    Mapped[str] = mapped_column(String(120),  nullable=False, unique=True)
-    display_name:            Mapped[str] = mapped_column(String(120),  nullable=False)
-    gender_id:               Mapped[int] = mapped_column(ForeignKey('character_genders.id'), nullable=False)
+    id:                      Mapped[int] = mapped_column(
+        Integer, primary_key=True)
+    name:                    Mapped[str] = mapped_column(
+        String(120),  nullable=False, unique=True)
+    display_name:            Mapped[str] = mapped_column(
+        String(120),  nullable=False)
+    gender_id:               Mapped[int] = mapped_column(
+        ForeignKey('character_gender.id'), nullable=False)
     description:   Mapped[Optional[str]] = mapped_column(Text)
     primary_image: Mapped[Optional[str]] = mapped_column(Text)
     alt_names:     Mapped[Optional[str]] = mapped_column(Text)
     notes:         Mapped[Optional[str]] = mapped_column(Text)
 
-    updated_at:     Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"), onupdate=text("TIMEZONE('utc', now())"), nullable=True)
-    created_at:     Mapped[datetime | None] = mapped_column(server_default=text("TIMEZONE('utc', now())"))
+    updated_at:     Mapped[datetime | None] = mapped_column(server_default=text(
+        "TIMEZONE('utc', now())"), onupdate=text("TIMEZONE('utc', now())"), nullable=True)
+    created_at:     Mapped[datetime | None] = mapped_column(
+        server_default=text("TIMEZONE('utc', now())"))
 
     # --------------- Relationships ----------------
     # 1:1
@@ -37,8 +43,8 @@ class CharactersORM(Base):
         uselist=False,
     )
 
-    # releases: Mapped[List["DollsReleasesORM"]] = relationship(
-    #     secondary="release_characters",
+    # release: Mapped[List["DollsReleasesORM"]] = relationship(
+    #     secondary="release_character_link",
     #     back_populates="characters",
     #     viewonly=True
     # )

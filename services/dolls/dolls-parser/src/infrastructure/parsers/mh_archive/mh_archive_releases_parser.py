@@ -15,7 +15,7 @@ from monstrino_models.dto import ParsedRelease
 from pydantic import BaseModel
 from bs4 import BeautifulSoup
 
-from application.ports.parse.parse_releases_port import ParseReleasesPort
+from application.ports.parse.parse_release_port import ParseReleasesPort
 from infrastructure.parsers.helper import Helper
 
 logger = logging.getLogger(__name__)
@@ -35,11 +35,11 @@ class MHArchiveReleasesParser(ParseReleasesPort):
 
             logger.info(f"Starting parsing year: {year}")
 
-
             html = await Helper.get_page(self.domain_url + f'/category/release-dates/{year}/')
             # await Helper.save_page_in_file(html)
-            releases = await self._parse_links(html)
-            logger.info(f"Found releases count: {len(releases)} for year: {year}")
+            release = await self._parse_links(html)
+            logger.info(
+                f"Found release count: {len(release)} for year: {year}")
 
             # if self.debug_mode:
             #     release = [ParsedRelease(
@@ -65,22 +65,25 @@ class MHArchiveReleasesParser(ParseReleasesPort):
             logger.info(f"Start processing info for every release")
             last_return_release_index = 0
 
-            for i in range(1, len(releases) + 1):
-                await self._parse_release_info(releases[i - 1])
+            for i in range(1, len(release) + 1):
+                await self._parse_release_info(release[i - 1])
 
                 if i % self.batch_size == 0:
-                    logger.info(f"Returning batch: {i - self.batch_size} - {i}")
-                    yield releases[i - self.batch_size: i]
+                    logger.info(
+                        f"Returning batch: {i - self.batch_size} - {i}")
+                    yield release[i - self.batch_size: i]
                     last_return_release_index = i
                     await asyncio.sleep(self.sleep_between_requests)
 
             if not self.debug_mode:
-                if last_return_release_index < len(releases):
-                    logger.info(f"Returning batch: {last_return_release_index} - {len(releases)}")
-                    yield releases[last_return_release_index:]
+                if last_return_release_index < len(release):
+                    logger.info(
+                        f"Returning batch: {last_return_release_index} - {len(release)}")
+                    yield release[last_return_release_index:]
                 await asyncio.sleep(self.sleep_between_requests)
             end_time = datetime.now()
-            logger.info(f"Finished parsing year: {year} in {end_time - start_time}")
+            logger.info(
+                f"Finished parsing year: {year} in {end_time - start_time}")
 
     async def _parse_links(self, html: str):
         soup = BeautifulSoup(html, "html.parser")
@@ -142,7 +145,8 @@ class MHArchiveReleasesParser(ParseReleasesPort):
                 case "Pet":
                     dto.pet_names = stats[key]
                 case "Gallery":
-                    dto.images_link = self.domain_url + stats["Gallery"][0]['link']
+                    dto.images_link = self.domain_url + \
+                        stats["Gallery"][0]['link']
                 case _:
                     if dto.extra is None:
                         dto.extra = []

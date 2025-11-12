@@ -12,10 +12,11 @@ from infrastructure.scheduling.scheduler_adapter import SchedulerAdapter
 def build_adapters(logger: LoggerAdapter, aps: AsyncIOScheduler) -> Adapters:
     return Adapters(
         logger=logger,
-        kafka_producer=KafkaProducerAdapter(servers=os.getenv("KAFKA_SERVERS")),
+        kafka_producer=KafkaProducerAdapter(
+            servers=os.getenv("KAFKA_SERVERS")),
         scheduler=SchedulerAdapter(aps),
         mh_archive_parse_characters=MHArchiveCharactersParser(),
         mh_archive_parse_pets=MHArchivePetsParser(),
         mh_archive_parse_series=MHArchiveSeriesParser(),
-        mh_archive_parse_releases=MHArchiveReleasesParser(),
+        mh_archive_parse_release=MHArchiveReleasesParser(),
     )

@@ -11,30 +11,35 @@ from infrastructure.db.base import Base
 
 
 class ReleasesORM(Base):
-    __tablename__ = "releases"
+    __tablename__ = "release"
     __table_args__ = (
         # Индексы для ускоренного поиска
-        Index("ix_releases_type", "type_id"),
-        Index("ix_releases_series", "series_id"),
-        Index("ix_releases_year", "year"),
+        Index("ix_release_type", "type_id"),
+        Index("ix_release_series", "series_id"),
+        Index("ix_release_year", "year"),
     )
 
-    id:              Mapped[int]             = mapped_column(Integer, primary_key=True)
-    type_id:         Mapped[int]             = mapped_column(ForeignKey("release_types.id"), nullable=False)
-    name:            Mapped[str]             = mapped_column(String(200), nullable=False)
-    mpn:             Mapped[Optional[str]]   = mapped_column(String(64))
-    series_id:       Mapped[Optional[int]]   = mapped_column(ForeignKey("release_series.id"))
-    year:            Mapped[Optional[int]]   = mapped_column(Integer)
-    description:     Mapped[Optional[str]]   = mapped_column(Text)
-    link:            Mapped[Optional[str]]   = mapped_column(Text)
-    exclusive_of_id: Mapped[Optional[int]]   = mapped_column(ForeignKey("release_exclusives.id"))
+    id:              Mapped[int] = mapped_column(Integer, primary_key=True)
+    type_id:         Mapped[int] = mapped_column(
+        ForeignKey("release_type.id"), nullable=False)
+    name:            Mapped[str] = mapped_column(String(200), nullable=False)
+    mpn:             Mapped[Optional[str]] = mapped_column(String(64))
+    series_id:       Mapped[Optional[int]] = mapped_column(
+        ForeignKey("release_series.id"))
+    year:            Mapped[Optional[int]] = mapped_column(Integer)
+    description:     Mapped[Optional[str]] = mapped_column(Text)
+    link:            Mapped[Optional[str]] = mapped_column(Text)
+    exclusive_of_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("exclusive_vendor.id"))
 
-    updated_at:    Mapped[Optional[datetime]] = mapped_column(server_default=text("TIMEZONE('utc', now())"), onupdate=text("TIMEZONE('utc', now())"), nullable=True)
-    created_at:    Mapped[Optional[datetime]] = mapped_column(server_default=text("TIMEZONE('utc', now())"))
+    updated_at:    Mapped[Optional[datetime]] = mapped_column(server_default=text(
+        "TIMEZONE('utc', now())"), onupdate=text("TIMEZONE('utc', now())"), nullable=True)
+    created_at:    Mapped[Optional[datetime]] = mapped_column(
+        server_default=text("TIMEZONE('utc', now())"))
 
     # relationships:
     # type: # Mapped[ReleaseTypesORM] = relationship()                      # связь с типом продукта
-    # series: Mapped[Optional["SeriesORM"]] = relationship(back_populates="releases")  # серия
+    # series: Mapped[Optional["SeriesORM"]] = relationship(back_populates="release")  # серия
     #
     # # галерея изображений (один релиз -> много фото)
     # images: Mapped[List["ReleaseImagesORM"]] = relationship(
@@ -44,8 +49,8 @@ class ReleasesORM(Base):
     #
     # # m2m персонажи (через промежуточную таблицу)
     # characters: Mapped[List["CharactersORM"]] = relationship(
-    #     secondary="release_characters",
-    #     back_populates="releases"
+    #     secondary="release_character_link",
+    #     back_populates="release"
     # )
     #
     # # список связей персонажей с ролями
@@ -68,4 +73,3 @@ class ReleasesORM(Base):
     #     back_populates="dst",
     #     cascade="save-update, merge"
     # )
-

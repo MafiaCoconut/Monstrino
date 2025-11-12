@@ -8,29 +8,29 @@ from src.app.dependencies.container_components.repositories import Repositories
 
 def build_repositories(session: AsyncSession) -> Repositories:
     return Repositories(
-        character_genders=CharacterGendersRepoImpy(session),
+        character_gender=CharacterGendersRepoImpy(session),
         characters=CharactersRepoImpl(session),
-        pets=PetsRepoImpl(),
+        pets=PetRepoImpl(),
 
         # Images
         image_reference_origin=ImageReferenceOriginRepoImpl(),
         parsed_images=ParsedImagesRepositoryImpl(),
-        release_images=ReleaseImagesRepoImpl(),
+        release_image=ReleaseImagesRepoImpl(),
 
         # Source repositories
-        parsed_characters=ParsedCharactersRepoImpl(),
-        parsed_pets=ParsedPetsRepoImpl(),
+        parsed_character=ParsedCharactersRepoImpl(),
+        parsed_pet=ParsedPetRepoImpl(),
         parsed_series=ParsedSeriesRepoImpl(),
-        parsed_releases=ParsedReleasesRepoImpl(),
+        parsed_release=ParsedReleasesRepoImpl(),
 
         # Releases
-        release_character_roles=ReleaseCharacterRolesRepoImpl(),
-        release_characters=ReleaseCharactersRepoImpl(),
-        release_exclusives=ReleaseExclusivesRepoImpl(),
-        release_pets=ReleasePetsRepoImpl(),
-        release_relation_types=ReleaseRelationTypesRepoImpl(),
-        release_relations=ReleaseRelationsRepoImpl(),
+        character_role=ReleaseCharacterRolesRepoImpl(),
+        release_character_link=ReleaseCharactersRepoImpl(),
+        exclusive_vendor=ReleaseExclusivesRepoImpl(),
+        release_pet_link=ReleasePetRepoImpl(),
+        relation_type=ReleaseRelationTypesRepoImpl(),
+        release_relation_link=ReleaseRelationsRepoImpl(),
         release_series=SeriesRepoImpl(session),
-        release_types=ReleaseTypesRepoImpl(),
-        releases=ReleasesRepoImpl()
+        release_type=ReleaseTypesRepoImpl(),
+        release=ReleasesRepoImpl()
     )

@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 
-from application.repositories.parsed_characters_repository import ParsedCharactersRepository
-from application.repositories.parsed_pets_repository import ParsedPetsRepository
-from application.repositories.parsed_releases_repository import ParsedReleasesRepository
+from application.repositories.parsed_character_repository import ParsedCharactersRepository
+from application.repositories.parsed_pet_repository import ParsedPetRepository
+from application.repositories.parsed_release_repository import ParsedReleasesRepository
 from application.repositories.parsed_series_repository import ParsedSeriesRepository
 
 
 @dataclass
 class Repositories:
-    parsed_characters: ParsedCharactersRepository
-    parsed_pets: ParsedPetsRepository
+    parsed_character: ParsedCharactersRepository
+    parsed_pet: ParsedPetRepository
     parsed_series: ParsedSeriesRepository
-    parsed_releases: ParsedReleasesRepository
+    parsed_release: ParsedReleasesRepository

@@ -7,7 +7,7 @@ from application.services.tokens_service import TokensService
 
 # def get_tokens_service() -> TokensService:
 #     return TokensService(
-#         refresh_tokens_repository=refresh_tokens_repository
+#         refresh_token_repository=refresh_token_repository
 #     )
 #
 # def get_core_service():
@@ -18,13 +18,13 @@ from application.services.tokens_service import TokensService
 
 
 # def get_scheduler_service() -> SchedulerService:
-    # return SchedulerService(
-        # scheduler_interface=scheduler_interface,
-    # )
+# return SchedulerService(
+# scheduler_interface=scheduler_interface,
+# )
 
 def build_services(repositories: Repositories, scheduler: SchedulerPort) -> Services:
     tokens_service = TokensService(
-            refresh_tokens_repository=repositories.refresh_tokens
+        refresh_token_repository=repositories.refresh_token
     )
 
     return Services(

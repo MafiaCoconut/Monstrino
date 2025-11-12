@@ -1,22 +1,23 @@
 from infrastructure.db.base import Base, async_engine
 import logging
 # from infrastructure.db.models.pets_orm import PetsORM
-# from infrastructure.db.models.character_genders import CharacterGendersORM
+# from infrastructure.db.models.character_gender import CharacterGendersORM
 # from infrastructure.db.models.characters_orm import CharactersORM
 # from infrastructure.db.models.relation_types_orm import RelationTypesORM
-# from infrastructure.db.models.release_exclusives_orm import ReleaseExclusivesORM
-# from infrastructure.db.models.release_types_orm import ReleaseTypesORM
+# from infrastructure.db.models.exclusive_vendor_orm import ReleaseExclusivesORM
+# from infrastructure.db.models.release_type_orm import ReleaseTypesORM
 # from infrastructure.db.models.release_series_orm import ReleaseSeriesORM
-# from infrastructure.db.models.releases_orm import ReleasesORM
-# from infrastructure.db.models.release_images_orm import ReleaseImagesORM
-# from infrastructure.db.models.release_relations_orm import ReleaseRelationsORM
-# from infrastructure.db.models.release_characters_orm import ReleaseCharactersORM
-# from infrastructure.db.models.release_character_roles import ReleaseCharacterRolesORM
-# from infrastructure.db.models.parsed_pets import ParsedPetsORM
-# from infrastructure.db.models.parsed_characters import ParsedCharactersORM
+# from infrastructure.db.models.release_orm import ReleasesORM
+# from infrastructure.db.models.release_image_orm import ReleaseImagesORM
+# from infrastructure.db.models.release_relation_link_orm import ReleaseRelationsORM
+# from infrastructure.db.models.release_character_link_orm import ReleaseCharactersORM
+# from infrastructure.db.models.character_role import ReleaseCharacterRolesORM
+# from infrastructure.db.models.parsed_pet import ParsedPetsORM
+# from infrastructure.db.models.parsed_character import ParsedCharactersORM
 # from infrastructure.db.models.parsed_series import ParsedSeriesORM
-from infrastructure.db.models.parsed_releases_orm import ParsedReleasesORM
+from infrastructure.db.models.parsed_release_orm import ParsedReleasesORM
 logger = logging.getLogger(__name__)
+
 
 class DBUseCase:
     def __init__(self):

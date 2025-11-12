@@ -11,8 +11,9 @@ def character_gender():
         plural_name="Ghouls"
     )
 
+
 @pytest.fixture
-def character_genders() -> list[CharacterGender]:
+def character_gender() -> list[CharacterGender]:
     return [
         CharacterGender(
             name="ghoul",
@@ -26,8 +27,9 @@ def character_genders() -> list[CharacterGender]:
         )
     ]
 
+
 @pytest.fixture
-def character_genders_orms() -> list[CharacterGendersORM]:
+def character_gender_orms() -> list[CharacterGendersORM]:
     return [
         CharacterGendersORM(
             name="ghoul",
@@ -43,10 +45,10 @@ def character_genders_orms() -> list[CharacterGendersORM]:
 
 
 @pytest.fixture
-async def seed_character_genders_db(engine, session_factory, character_genders_orms):
+async def seed_character_gender_db(engine, session_factory, character_gender_orms):
     """Асинхронное наполнение БД начальными данными для тестов."""
     async with session_factory() as session:
-        session.add_all(character_genders_orms)
+        session.add_all(character_gender_orms)
         await session.commit()
 
     # Передача управления тесту

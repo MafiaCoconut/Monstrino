@@ -1,4 +1,4 @@
-from application.repositories.release_relations_repository import ReleaseRelationsRepository
+from application.repositories.release_relation_link_repository import ReleaseRelationsRepository
 
 
 class ReleaseRelationsRepositoryImpl(ReleaseRelationsRepository):

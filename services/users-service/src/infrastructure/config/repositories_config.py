@@ -4,10 +4,10 @@ from infrastructure.repositories_impl.users_repository_impl import UsersReposito
 
 
 # users_repository = UsersRepositoryImpl()
-# refresh_tokens_repository = RefreshTokensRepositoryImpl()
+# refresh_token_repository = RefreshTokensRepositoryImpl()
 
 def build_repositories() -> Repositories:
     return Repositories(
         users=UsersRepositoryImpl(),
-        refresh_tokens=RefreshTokensRepositoryImpl(),
+        refresh_token=RefreshTokensRepositoryImpl(),
     )

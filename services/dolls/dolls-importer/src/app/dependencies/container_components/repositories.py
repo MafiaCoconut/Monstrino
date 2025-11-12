@@ -2,30 +2,31 @@ from dataclasses import dataclass
 
 from monstrino_repositories.repositories import *
 
+
 @dataclass
 class Repositories:
-    character_genders: CharacterGendersRepo
+    character_gender: CharacterGendersRepo
     characters: CharactersRepo
-    pets: PetsRepo
+    pets: PetRepo
 
     # Images
     image_reference_origin: ImageReferenceOriginRepo
     parsed_images: ParsedImagesRepo
-    release_images: ReleaseImagesRepo
+    release_image: ReleaseImagesRepo
 
     # Source repositories
-    parsed_characters: ParsedCharactersRepo
+    parsed_character: ParsedCharactersRepo
     parsed_series: ParsedSeriesRepo
-    parsed_pets: ParsedPetsRepo
-    parsed_releases: ParsedReleasesRepo
+    parsed_pet: ParsedPetRepo
+    parsed_release: ParsedReleasesRepo
 
     # Releases
-    release_character_roles: ReleaseCharacterRolesRepo
-    release_characters: ReleaseCharactersRepo
-    release_exclusives: ReleaseExclusivesRepo
-    release_pets: ReleasePetsRepo
-    release_relation_types: ReleaseRelationTypesRepo
-    release_relations: ReleaseRelationsRepo
+    character_role: ReleaseCharacterRolesRepo
+    release_character_link: ReleaseCharactersRepo
+    exclusive_vendor: ReleaseExclusivesRepo
+    release_pet_link: ReleasePetRepo
+    relation_type: ReleaseRelationTypesRepo
+    release_relation_link: ReleaseRelationsRepo
     release_series: SeriesRepo
-    release_types: ReleaseTypesRepo
-    releases: ReleasesRepo
+    release_type: ReleaseTypesRepo
+    release: ReleasesRepo

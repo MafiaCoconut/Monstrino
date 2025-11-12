@@ -20,11 +20,14 @@ from presentation.responces.templates import get_success_json_response
 logger = logging.getLogger(__name__)
 
 auth_scheme = HTTPBearer()
-private = APIRouter(prefix='/api/v1/releases', tags=["Private"], dependencies=[Depends(VerifyToken())])
+private = APIRouter(prefix='/api/v1/release',
+                    tags=["Private"], dependencies=[Depends(VerifyToken())])
 public = APIRouter(prefix='/api/v1', tags=["Public"])
+
 
 def config(app: FastAPI):
     app.include_router(private)
+
 
 @private.post('/create_release')
 async def create_release(

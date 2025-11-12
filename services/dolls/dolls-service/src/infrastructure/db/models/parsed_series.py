@@ -15,15 +15,20 @@ from infrastructure.db.base import Base
 class ParsedSeriesORM(Base):
     __tablename__ = "parsed_series"
 
-    id:                          Mapped[int] = mapped_column(Integer, primary_key=True)
-    name:                        Mapped[str] = mapped_column(String(200), nullable=False)
+    id:                          Mapped[int] = mapped_column(
+        Integer, primary_key=True)
+    name:                        Mapped[str] = mapped_column(
+        String(200), nullable=False)
     display_name:      Mapped[Optional[str]] = mapped_column(String(64))
     description:       Mapped[Optional[str]] = mapped_column(Text)
-    series_type:                 Mapped[str] = mapped_column(String(100)) # dolls, fashion_pack, series_prime, series_secondary, playsets
+    # dolls, fashion_pack, series_prime, series_secondary, playsets
+    series_type:                 Mapped[str] = mapped_column(String(100))
     primary_image:     Mapped[Optional[str]] = mapped_column(Text)
     link:              Mapped[Optional[str]] = mapped_column(Text)
-    process_state:               Mapped[str] = mapped_column(String(50))
+    processing_state:               Mapped[str] = mapped_column(String(50))
     original_html_content:       Mapped[str] = mapped_column(Text)
 
-    updated_at:   Mapped[Optional[datetime]] = mapped_column(server_default=text("TIMEZONE('utc', now())"), onupdate=text("TIMEZONE('utc', now())"), nullable=True)
-    created_at:   Mapped[Optional[datetime]] = mapped_column(server_default=text("TIMEZONE('utc', now())"))
+    updated_at:   Mapped[Optional[datetime]] = mapped_column(server_default=text(
+        "TIMEZONE('utc', now())"), onupdate=text("TIMEZONE('utc', now())"), nullable=True)
+    created_at:   Mapped[Optional[datetime]] = mapped_column(
+        server_default=text("TIMEZONE('utc', now())"))
