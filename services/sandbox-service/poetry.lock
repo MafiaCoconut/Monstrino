@@ -762,6 +762,28 @@ type = "directory"
 url = "../../packages/monstrino-repositories"
 
 [[package]]
+name = "monstrino-testing"
+version = "0.1.0"
+description = ""
+optional = false
+python-versions = ">=3.13"
+groups = ["main"]
+files = []
+develop = true
+
+[package.dependencies]
+build = ">=1.3.0,<2.0.0"
+monstrino-core = {path = "/home/coconut/Projects/Monstrino/packages/monstrino-core"}
+monstrino-models = {path = "/home/coconut/Projects/Monstrino/packages/monstrino-models"}
+monstrino-repositories = {path = "/home/coconut/Projects/Monstrino/packages/monstrino-repositories"}
+pytest = ">=8.4.2,<9.0.0"
+twine = ">=6.2.0,<7.0.0"
+
+[package.source]
+type = "directory"
+url = "../../packages/monstrino-testing"
+
+[[package]]
 name = "more-itertools"
 version = "10.8.0"
 description = "More routines for operating on iterables, beyond itertools"
@@ -1386,4 +1408,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13"
-content-hash = "8801be874f91875fda5398ddd28bb67681c3a6576e7fa8be4f3437ca91d393e6"
+content-hash = "271d4ce8d129ffa4bfb548bce77eae69b9204e7a6c18aa62bb7c5f719305c9b5"

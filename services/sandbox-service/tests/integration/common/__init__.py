@@ -1,0 +1,1 @@
+from .test_crud_behavior import BaseCrudRepoTest

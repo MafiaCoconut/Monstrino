@@ -2,7 +2,6 @@ import asyncio
 
 import pytest
 
-
 @pytest.fixture(scope="session")
 def event_loop():
     loop = asyncio.new_event_loop()
@@ -11,5 +10,5 @@ def event_loop():
 
 
 pytest_plugins = [
-    "tests.fixtures",
+    "monstrino_testing.fixtures",
 ]
