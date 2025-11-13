@@ -13,6 +13,7 @@ export const AuthHomepageLoginButton = ({ title, onClick }: AuthHomepageLoginBut
         <Button
             size="large"
             variant="outlined"
+            disabled={import.meta.env.VITE_REGISTRATION_DISABLED}
             onClick={onClick}
             sx={{
             px: 4,

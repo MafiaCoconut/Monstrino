@@ -110,6 +110,7 @@ const CTASection = ({ onOpenAuth }) => {
           <Button
             onClick={() => onOpenAuth('register')}
             endIcon={<ArrowRight size={20} />}
+            disabled={import.meta.env.VITE_REGISTRATION_DISABLED}
             sx={{
               px: 6,
               py: 1.5,
@@ -135,6 +136,7 @@ const CTASection = ({ onOpenAuth }) => {
 
           <Button
             onClick={() => onOpenAuth('login')}
+            disabled={import.meta.env.VITE_REGISTRATION_DISABLED}
             variant="outlined"
             sx={{
               px: 6,

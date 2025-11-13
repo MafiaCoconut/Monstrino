@@ -3,8 +3,8 @@ import './App.css'
 import { Routes, Route, Navigate, BrowserRouter } from 'react-router-dom';
 import { } from 'react-router-dom';
 // import Homepage from './features/homepage/Homepage';
-import RegisterForm from './features/auth-register/ui/RegisterForm';
-import LoginForm from './features/auth-login/ui/LoginForm';
+// import RegisterForm from './features/auth-register/ui/RegisterForm';
+// import LoginForm from './features/auth-login/ui/LoginForm';
 import { Context } from './main';
 import MonstrinoProfilePage from './pages/user/profile/UserProfile';
 import { CssBaseline } from '@mui/material';

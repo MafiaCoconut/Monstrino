@@ -11,12 +11,12 @@ export const WatchDemoButton = () => {
     
 
     const onClick = async () => {
-        let success = await userStore.login("demouser@monstrino.com", "DemoUserPassword123")
-        if (success) {
-            navigate(`/users/${userStore.user.username}`);
-        } else {
-            alert("Failed to login as demo user. Please try again later.");
-        }
+        // let success = await userStore.login("demouser@monstrino.com", "DemoUserPassword123")
+        // if (success) {
+        navigate(`/users/${userStore.user.username}`);
+        // } else {
+        //     alert("Failed to login as demo user. Please try again later.");
+        // }
     }
     return (
         <Button

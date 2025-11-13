@@ -120,16 +120,18 @@ export const PublicHeader = () => {
                     sx={{ display: { xs: 'none', md: 'flex' }, ml: 3 }}
                 >
                     <Button
+                        disabled={import.meta.env.VITE_LOGIN_DISABLED}
                         onClick={() =>setIsAuthLoginModalOpen(true)}
-                    sx={linkSX}
+                        sx={linkSX}
                     >
-                    Login
+                        Login
                     </Button>
                     <Button
+                        disabled={import.meta.env.VITE_REGISTRATION_DISABLED}
                         onClick={() =>setIsAuthRegisterModalOpen(true)}
-                    sx={ctaSX}
+                        sx={ctaSX}
                     >
-                    Join Now
+                        Join Now
                     </Button>
                 </Stack>
 

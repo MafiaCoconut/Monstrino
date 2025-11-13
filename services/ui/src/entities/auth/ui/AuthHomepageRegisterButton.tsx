@@ -14,6 +14,7 @@ export const AuthHomepageRegisterButton = ({ title, onClick }: AuthHomepageRegis
             size="large"
             onClick={onClick}
             endIcon={<ArrowRight size={16} />}
+            disabled={import.meta.env.VITE_REGISTRATION_DISABLED}
             sx={{
             px: 4,
             py: 1.5,
