@@ -40,7 +40,7 @@ class ProcessSingleSeriesUseCase:
     async def execute(self, parsed_series_id: int):
         async with self.uow_factory.create() as uow:
             try:
-                parsed_series = await uow.repos.parsed_series.get_one_by_fields_or_none(id=parsed_series_id)
+                parsed_series = await uow.repos.parsed_series.get_unprocessed_series_by_id(parsed_series_id)
                 if not parsed_series:
                     raise EntityNotFound
 
