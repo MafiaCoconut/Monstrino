@@ -18,7 +18,7 @@ private = APIRouter(prefix='/api/v1/internal',
 public = APIRouter(prefix='/api/v1', tags=["Public"])
 
 
-def config(app: FastAPI):
+def config_routes(app: FastAPI):
     app.include_router(private)
 
 

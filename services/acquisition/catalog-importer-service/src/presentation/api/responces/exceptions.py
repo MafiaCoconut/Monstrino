@@ -1,6 +1,6 @@
 from fastapi import HTTPException, FastAPI, Request
 from starlette.exceptions import HTTPException as StarletteHTTPException
-from presentation.responces.models import ResponseModel, Meta
+from presentation.api.responces.models import ResponseModel, Meta
 from fastapi.responses import JSONResponse
 from fastapi.exception_handlers import http_exception_handler, request_validation_exception_handler
 from fastapi.exceptions import RequestValidationError

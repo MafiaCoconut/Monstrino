@@ -1,5 +1,5 @@
-from presentation.responces.models import ResponseModel
-from presentation.responces.templates import get_json_response
+from presentation.api.responces.models import ResponseModel
+from presentation.api.responces.templates import get_json_response
 
 responses = {
     '200': {"model": ResponseModel, 'description': "OK"},

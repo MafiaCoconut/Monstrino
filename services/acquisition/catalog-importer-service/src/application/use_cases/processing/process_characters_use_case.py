@@ -1,35 +1,27 @@
 import logging
 
 from monstrino_core import NameFormatter, UnitOfWorkInterface
-from monstrino_models.dto import ParsedImage, ParsedCharacter, Character
+from monstrino_models.dto import ParsedCharacter
 
-from monstrino_repositories.repositories import (
-    ParsedCharactersRepo, CharactersRepo, CharacterGendersRepo,
-    ImageReferenceOriginRepo
-)
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.dependencies.container_components.repositories import Repositories
+from app.container_components.repositories import Repositories
 
 logger = logging.getLogger(__name__)
+
+
 
 
 class ProcessCharactersUseCase:
     def __init__(
             self,
-        uow_factory: callable[[], UnitOfWorkInterface[AsyncSession, Repositories]],
-        parsed_character_repo: ParsedCharactersRepo,
-        characters_repo: CharactersRepo,
-        characters_genders_repo: CharacterGendersRepo,
-        image_reference_origin_repo: ImageReferenceOriginRepo
-    ) -> None:
-        self._uow_factory = uow_factory
-        self.parsed_character_repo: ParsedCharactersRepo
-        self.characters_repo: CharactersRepo
-        self.characters_genders_repo: CharacterGendersRepo
-        self.image_reference_origin_repo: ImageReferenceOriginRepo
+        # uow_factory: callable[[], UnitOfWorkInterface[AsyncSession, Repositories]],
 
-    async def
+    ) -> None:
+        ...
+        # self._uow_factory = uow_factory
+
+
 
     async def execute(self):
         try:
@@ -87,8 +79,8 @@ class ProcessCharactersUseCase:
                         f"Settings parsed character {unprocessed_character.name} as processed with errors")
                     await self.parsed_character_repo.set_character_as_processed_with_errors(unprocessed_character.id)
 
-            except GenderNotExistError as e:
-                logger.error(e)
+            # except GenderNotExistError as e:
+            #     logger.error(e)
             except Exception as e:
                 logger.error(
                     f"Error saving character {unprocessed_character.id}: {e}")
@@ -102,9 +94,9 @@ class ProcessCharactersUseCase:
         try:
             unprocessed_characters = await self.parsed_character_repo.get_unprocessed_characters(count)
             return unprocessed_characters
-        except EntityNotFound:
-            raise
-        except DBConnectionError:
+        # except EntityNotFound:
+        #     raise
+        # except DBConnectionError:
             raise
         except Exception as e:
             logger.error(f"Unexpected error during processing characters: {e}")
@@ -115,28 +107,29 @@ class ProcessCharactersUseCase:
         gender_id = await self.characters_genders_repo.get_id_by_name(character.gender)
         if gender_id:
             character.gender_id = gender_id
-        else:
-            raise GenderNotExistError(f"Unknown gender id {character.gender}")
+        # else:
+        #     raise GenderNotExistError(f"Unknown gender id {character.gender}")
 
     async def _set_image_to_process(self, character: ParsedCharacter):
-        try:
-            origin_reference_id = await self.image_reference_origin_repo.get_id_by_table_and_column(table="characters", column="primary_image")
-        except EntityNotFound:
-            raise
-        except Exception as e:
-            logger.error(
-                f"Unexpected error during getting image reference origin id: {e}")
-            raise
-
-        if origin_reference_id:
-            if character.primary_image:
-                await self.parsed_images_repo.set(
-                    ParsedImage(
-                        original_link=character.primary_image,
-                        origin_reference_id=origin_reference_id,
-                        origin_record_id=character.id
-                    )
-                )
+        ...
+        # try:
+        #     origin_reference_id = await self.image_reference_origin_repo.get_id_by_table_and_column(table="characters", column="primary_image")
+        # except EntityNotFound:
+        #     raise
+        # except Exception as e:
+        #     logger.error(
+        #         f"Unexpected error during getting image reference origin id: {e}")
+        #     raise
+        #
+        # if origin_reference_id:
+        #     if character.primary_image:
+        #         await self.parsed_images_repo.set(
+        #             ParsedImage(
+        #                 original_link=character.primary_image,
+        #                 origin_reference_id=origin_reference_id,
+        #                 origin_record_id=character.id
+        #             )
+        #         )
 
     @staticmethod
     async def _process_name(character: ParsedCharacter):

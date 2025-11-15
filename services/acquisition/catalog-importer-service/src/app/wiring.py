@@ -1,13 +1,7 @@
-from dataclasses import dataclass
-
 from app.container import AppContainer
-from application.services.scheduler_service import SchedulerService
+from app.bootstrap import *
 from infrastructure.adapters.adapters_config import build_adapters
-from infrastructure.config.repositories_config import build_repositories
-from infrastructure.config.services_config import build_services
 from infrastructure.logging.logger_adapter import LoggerAdapter
-from infrastructure.scheduling.scheduler_adapter import SchedulerAdapter
-from infrastructure.scheduling.scheduler_config import build_apscheduler
 
 
 def build_app():

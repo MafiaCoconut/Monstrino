@@ -1,5 +1,5 @@
 [project]
-name = "dolls-importer"
+name = "catalog-importer-service"
 version = "0.1.0"
 description = ""
 authors = [
@@ -39,11 +39,16 @@ dependencies = [
     "monstrino-models @ file:///home/coconut/Projects/Monstrino/packages/monstrino-models",
     "monstrino-repositories @ file:///home/coconut/Projects/Monstrino/packages/monstrino-repositories",
     "monstrino-testing @ file:///home/coconut/Projects/Monstrino/packages/monstrino-testing",
+    "pytest-mock (>=3.15.1,<4.0.0)",
 ]
 
 [tool.poetry]
 package-mode = false
 
+[tool.pytest.ini_options]
+pythonpath = [
+    "src"
+]
 
 [tool.poetry.dependencies]
 monstrino-core = {develop = true}
