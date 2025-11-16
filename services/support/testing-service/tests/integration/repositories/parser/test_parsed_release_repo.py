@@ -1,5 +1,6 @@
 import logging
 import pytest
+from monstrino_core import ProcessingStates
 from monstrino_models.dto import ParsedRelease
 from integration.common import BaseCrudRepoTest
 
@@ -21,11 +22,11 @@ class TestParsedReleaseRepo(BaseCrudRepoTest):
         "description": "Ghoulia’s pajama party doll with sleep mask and zombie slippers.",
         "primary_image": "https://example.com/images/ghoulia_dt.jpg",
         "link": "https://monsterhigh.fandom.com/wiki/Ghoulia_Yelps_(Dead_Tired)",
-        "processing_state": "parsed",
+        "processing_state": ProcessingStates.INIT,
         "source": "monsterhigh_fandom",
         "original_html_content": "<html><body>Ghoulia data...</body></html>",
     }
     unique_field = ParsedRelease.NAME
     unique_field_value = "Ghoulia Yelps Dead Tired"
     update_field = "processing_state"
-    updated_value = "validated"
+    updated_value = ProcessingStates.INIT

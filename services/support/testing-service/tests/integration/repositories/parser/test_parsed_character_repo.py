@@ -1,5 +1,6 @@
 import logging
 import pytest
+from monstrino_core import ProcessingStates
 from monstrino_models.dto import ParsedCharacter
 from integration.common import BaseCrudRepoTest
 
@@ -16,11 +17,11 @@ class TestParsedCharacterRepo(BaseCrudRepoTest):
         "description": "Werewolf fashionista from Monster High.",
         "primary_image": "https://example.com/images/clawdeen.jpg",
         "link": "https://monsterhigh.fandom.com/wiki/Clawdeen_Wolf",
-        "processing_state": "parsed",
+        "processing_state": ProcessingStates.INIT,
         "source": "monsterhigh_fandom",
         "original_html_content": "<html><body>Clawdeen details...</body></html>",
     }
     unique_field = ParsedCharacter.NAME
     unique_field_value = "Clawdeen Wolf"
     update_field = "processing_state"
-    updated_value = "validated"
+    updated_value = ProcessingStates.INIT

@@ -1,5 +1,6 @@
 import logging
 import pytest
+from monstrino_core import ProcessingStates
 from monstrino_models.dto import ParsedPet
 from integration.common import BaseCrudRepoTest
 
@@ -16,11 +17,11 @@ class TestParsedPetRepo(BaseCrudRepoTest):
         "owner_name": "Lagoona Blue",
         "primary_image": "https://example.com/images/neptuna.jpg",
         "link": "https://monsterhigh.fandom.com/wiki/Neptuna",
-        "processing_state": "parsed",
+        "processing_state": ProcessingStates.INIT,
         "source": "monsterhigh_fandom",
         "original_html_content": "<html><body>Neptuna details...</body></html>",
     }
     unique_field = ParsedPet.NAME
     unique_field_value = "Neptuna"
     update_field = "processing_state"
-    updated_value = "validated"
+    updated_value = ProcessingStates.INIT

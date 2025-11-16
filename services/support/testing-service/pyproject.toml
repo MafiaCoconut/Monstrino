@@ -1,5 +1,5 @@
 [project]
-name = "sandbox-service"
+name = "testing-service"
 version = "0.1.0"
 description = ""
 authors = [
@@ -14,8 +14,8 @@ dependencies = [
     "asyncpg (>=0.30.0,<0.31.0)",
     "monstrino-core @ file:///home/coconut/Projects/Monstrino/packages/monstrino-core",
     "monstrino-models @ file:///home/coconut/Projects/Monstrino/packages/monstrino-models",
-    "monstrino-testing @ file:///home/coconut/Projects/Monstrino/packages/monstrino-testing",
-    "monstrino-repositories @ file:///home/coconut/Projects/Monstrino/packages/monstrino-repositories"
+    "monstrino-repositories @ file:///home/coconut/Projects/Monstrino/packages/monstrino-repositories",
+    "monstrino-testing @ file:///home/coconut/Projects/Monstrino/packages/monstrino-testing"
 ]
 
 [tool.poetry]
@@ -24,8 +24,8 @@ package-mode = false
 [tool.poetry.dependencies]
 monstrino-core = {develop = true}
 monstrino-models = {develop = true}
-monstrino-testing = {develop = true}
 monstrino-repositories = {develop = true}
+monstrino-testing = {develop = true}
 
 [tool.poetry.group.dev.dependencies]
 pytest-rich = "^0.2.0"

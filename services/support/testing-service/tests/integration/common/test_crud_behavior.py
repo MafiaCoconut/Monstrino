@@ -1,9 +1,10 @@
 import pytest
 import logging
-from monstrino_core import EntityAlreadyExists, EntityNotFound, ErrorTemplates, UnitOfWorkInterface
+
+from monstrino_core import UnitOfWorkInterface, EntityAlreadyExists, EntityNotFound
+from monstrino_repositories.repositories_impl import ParsedSeriesRepo
 from monstrino_testing.fixtures.db import Repositories
 from sqlalchemy.ext.asyncio import AsyncSession
-
 
 logger = logging.getLogger(__name__)
 
@@ -23,12 +24,10 @@ class BaseCrudRepoTest:
     @pytest.mark.asyncio
     async def test_save_and_get(self, uow: UnitOfWorkInterface[AsyncSession, Repositories], request):
         entity = self.entity_cls(**self.sample_create_data)
-
         async with uow:
             repo = getattr(uow.repos, self.repo_attr)
             await repo.save(entity)
-
-            fetched = await repo.get_one_by_field_or_none(**{self.unique_field: self.unique_field_value})
+            fetched = await repo.get_one_by(**{self.unique_field: self.unique_field_value})
 
         assert fetched is not None
         assert isinstance(fetched, self.entity_cls)
@@ -43,13 +42,14 @@ class BaseCrudRepoTest:
                 filters={self.unique_field: self.unique_field_value},
                 values={self.update_field: self.updated_value},
             )
-            updated = await repo.get_one_by_field_or_none(**{self.unique_field: self.unique_field_value})
+            updated = await repo.get_one_by(**{self.unique_field: self.unique_field_value})
         assert getattr(updated, self.update_field) == self.updated_value
 
     @pytest.mark.asyncio
     async def test_unique_conflict_raises(self, uow: UnitOfWorkInterface[AsyncSession, Repositories], request):
         async with uow:
             repo = getattr(uow.repos, self.repo_attr)
+            first = self.entity_cls(**self.sample_create_data)
             first = self.entity_cls(**self.sample_create_data)
             await repo.save(first)
             duplicate = self.entity_cls(**self.sample_create_data)
@@ -62,9 +62,9 @@ class BaseCrudRepoTest:
         async with uow:
             repo = getattr(uow.repos, self.repo_attr)
             if isinstance(self.unique_field_value, str):
-                result = await repo.get_one_by_field_or_none(**{self.unique_field: "NON_EXISTENT"})
+                result = await repo.get_one_by(**{self.unique_field: "NON_EXISTENT"})
             elif isinstance(self.unique_field_value, int):
-                result = await repo.get_one_by_field_or_none(**{self.unique_field: -99999})
+                result = await repo.get_one_by(**{self.unique_field: -99999})
             else:
                 raise ValueError(
                     "unique_field must be str or int for this test")
@@ -72,14 +72,14 @@ class BaseCrudRepoTest:
         assert result is None
 
     @pytest.mark.asyncio
-    async def test_get_one_by_field_or_raise(self, uow: UnitOfWorkInterface[AsyncSession, Repositories], request):
+    async def test_get_one_by_or_raise(self, uow: UnitOfWorkInterface[AsyncSession, Repositories], request):
         async with uow:
             repo = getattr(uow.repos, self.repo_attr)
             with pytest.raises(EntityNotFound):
                 if isinstance(self.unique_field_value, str):
-                    await repo.get_one_by_field_or_raise(**{self.unique_field: "NON_EXISTENT"})
+                    await repo.get_one_by_or_raise(**{self.unique_field: "NON_EXISTENT"})
                 elif isinstance(self.unique_field_value, int):
-                    await repo.get_one_by_field_or_raise(**{self.unique_field: -99999})
+                    await repo.get_one_by_or_raise(**{self.unique_field: -99999})
                 else:
                     raise ValueError(
                         "unique_field must be str or int for this test")
@@ -106,7 +106,7 @@ class BaseCrudRepoTest:
                 values={self.update_field: self.updated_value},
             )
 
-            updated = await repo.get_one_by_field_or_none(**{self.unique_field: self.unique_field_value})
+            updated = await repo.get_one_by(**{self.unique_field: self.unique_field_value})
             assert getattr(updated, self.update_field) == self.updated_value
             assert getattr(
                 updated, self.unique_field) == self.unique_field_value
@@ -116,7 +116,7 @@ class BaseCrudRepoTest:
         async with uow:
             repo = getattr(uow.repos, self.repo_attr)
             with pytest.raises(ValueError):
-                await repo.get_one_by_field_or_none(**{"nonexistent_field": "X"})
+                await repo.get_one_by(**{"nonexistent_field": "X"})
 
     @pytest.mark.asyncio
     async def test_delete_by_id(self, uow: UnitOfWorkInterface[AsyncSession, Repositories], request):
@@ -126,7 +126,7 @@ class BaseCrudRepoTest:
             saved = await repo.save(entity)
             deleted_count = await repo.delete_by_id(saved.id)
             assert deleted_count == 1
-            result = await repo.get_one_by_field_or_none(**{"id": saved.id})
+            result = await repo.get_one_by(**{"id": saved.id})
             assert result is None
 
     @pytest.mark.asyncio

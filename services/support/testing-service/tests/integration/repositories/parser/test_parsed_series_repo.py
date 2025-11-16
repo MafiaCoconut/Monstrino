@@ -1,11 +1,13 @@
 import logging
 import pytest
+from monstrino_core import ParsedSeriesTypes, ProcessingStates
 from monstrino_models.dto import ParsedSeries
 from integration.common import BaseCrudRepoTest
 
 logger = logging.getLogger(__name__)
 
 
+# @pytest.mark.usefixtures()
 @pytest.mark.usefixtures("seed_parsed_series_db")
 class TestParsedSeriesRepo(BaseCrudRepoTest):
     entity_cls = ParsedSeries
@@ -16,11 +18,11 @@ class TestParsedSeriesRepo(BaseCrudRepoTest):
         "series_type": "dolls",
         "primary_image": "https://example.com/images/fca_series.jpg",
         "link": "https://monsterhigh.fandom.com/wiki/Frights,_Camera,_Action!",
-        "processing_state": "parsed",
+        "processing_state": ProcessingStates.INIT,
         "source": "monsterhigh_fandom",
         "original_html_content": "<html><body>FCA parsed content...</body></html>",
     }
     unique_field = ParsedSeries.NAME
     unique_field_value = "Frights, Camera, Action!"
     update_field = "processing_state"
-    updated_value = "validated"
+    updated_value = ProcessingStates.INIT

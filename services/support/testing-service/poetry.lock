@@ -721,7 +721,7 @@ twine = ">=6.2.0,<7.0.0"
 
 [package.source]
 type = "directory"
-url = "../../packages/monstrino-core"
+url = "../../../packages/monstrino-core"
 
 [[package]]
 name = "monstrino-models"
@@ -739,7 +739,7 @@ sqlalchemy = ">=2.0,<3.0"
 
 [package.source]
 type = "directory"
-url = "../../packages/monstrino-models"
+url = "../../../packages/monstrino-models"
 
 [[package]]
 name = "monstrino-repositories"
@@ -759,7 +759,7 @@ sqlalchemy = ">=2.0,<3.0"
 
 [package.source]
 type = "directory"
-url = "../../packages/monstrino-repositories"
+url = "../../../packages/monstrino-repositories"
 
 [[package]]
 name = "monstrino-testing"
@@ -781,7 +781,7 @@ twine = ">=6.2.0,<7.0.0"
 
 [package.source]
 type = "directory"
-url = "../../packages/monstrino-testing"
+url = "../../../packages/monstrino-testing"
 
 [[package]]
 name = "more-itertools"
@@ -1408,4 +1408,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13"
-content-hash = "271d4ce8d129ffa4bfb548bce77eae69b9204e7a6c18aa62bb7c5f719305c9b5"
+content-hash = "0a9be74ab648b4d4420a0115634fdf61941cd2c4ab8cf8088f573f9c8f81eae4"

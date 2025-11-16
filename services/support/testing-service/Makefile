@@ -16,7 +16,7 @@ ENV ?= dev
 SERVICE_NAME := sandbox-service
 
 #
-include ../../Makefiles/common.mk
+include ../../../Makefiles/common.mk
 include $(ROOT_DIR)/Makefiles/monstrino-packages.mk
 include $(ROOT_DIR)/Makefiles/run.mk
 include $(ROOT_DIR)/Makefiles/pytest.mk
@@ -25,7 +25,7 @@ include $(ROOT_DIR)/Makefiles/pytest.mk
 MONSTRINO_CORE_PACKAGE_NAME := monstrino-core
 MONSTRINO_CORE_PACKAGE_PATH := $(ROOT_DIR)/packages/monstrino-core
 MONSTRINO_CORE_PACKAGE_GIT  := git@github.com:MafiaCoconut/monstrino-core.git
-MONSTRINO_CORE_PACKAGE_TAG  := 0.1.0
+MONSTRINO_CORE_PACKAGE_TAG  := 0.1.1
 
 MONSTRINO_MODELS_PACKAGE_NAME := monstrino-models
 MONSTRINO_MODELS_PACKAGE_PATH := $(ROOT_DIR)/packages/monstrino-models
@@ -62,6 +62,7 @@ pytest:
 
 pytest-with-logs:
 	poetry run pytest --log-cli-level=INFO -s -ra $(ARGS)
+
 dev: switch-monstrino-core-dev switch-monstrino-models-dev switch-monstrino-repositories-dev switch-monstrino-testing-dev
 prod: switch-monstrino-core-prod switch-monstrino-models-prod switch-monstrino-repositories-prod switch-monstrino-testing-prod
 
