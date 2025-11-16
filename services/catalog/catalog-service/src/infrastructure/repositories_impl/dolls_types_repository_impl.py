@@ -1,5 +1,5 @@
 import logging
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy import select, update, or_
 
 from application.repositories.dolls_types_repository import DollsTypesRepository

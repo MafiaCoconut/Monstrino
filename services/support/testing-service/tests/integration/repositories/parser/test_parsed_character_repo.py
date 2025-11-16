@@ -7,7 +7,7 @@ from integration.common import BaseCrudRepoTest
 logger = logging.getLogger(__name__)
 
 
-@pytest.mark.usefixtures("seed_parsed_character_db")
+@pytest.mark.usefixtures("seed_parsed_characters")
 class TestParsedCharacterRepo(BaseCrudRepoTest):
     entity_cls = ParsedCharacter
     repo_attr = "parsed_character"

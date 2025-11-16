@@ -3,7 +3,7 @@ from domain.entities.dolls.doll import Doll
 from domain.entities.new_doll import NewDoll
 from infrastructure.db.base import async_engine
 
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy import select
 
 # from infrastructure.db.models.dolls_orm import DollsORM
@@ -29,7 +29,7 @@ class DollsRepositoryImpl():
         pass
 
     @staticmethod
-    async def _refactor_orm_to_pydantic(doll ):
+    async def _refactor_orm_to_pydantic(doll):
         return Doll(
             id=doll.id,
             owner_id=doll.owner_id,
@@ -58,7 +58,6 @@ class DollsRepositoryImpl():
         #     doll_orm = await self._refactor_new_doll_to_orm(doll)
         #     session.add(doll_orm)
         #     await session.commit()
-
 
     async def get_doll(self, doll_id: int):
         session = await self._get_session()

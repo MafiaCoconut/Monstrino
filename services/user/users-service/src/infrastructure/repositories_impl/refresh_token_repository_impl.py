@@ -1,4 +1,4 @@
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy import select, delete, text, update, func, cast, or_, and_
 
 from application.repositories.refresh_token_repository import RefreshTokensRepository

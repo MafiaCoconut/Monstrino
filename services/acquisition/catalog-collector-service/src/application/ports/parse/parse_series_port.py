@@ -4,4 +4,5 @@ from monstrino_models.dto import ParsedSeries
 
 
 class ParseSeriesPort(Protocol):
+
     def parse(self) -> AsyncGenerator[list[ParsedSeries]]: ...

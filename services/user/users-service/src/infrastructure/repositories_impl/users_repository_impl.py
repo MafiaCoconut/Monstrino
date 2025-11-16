@@ -1,4 +1,4 @@
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy import select, update, or_
 from application.repositories.users_repository import UsersRepository
 from domain.entities.user import UserRegistration, UserBaseInfo
@@ -42,21 +42,24 @@ class UsersRepositoryImpl(UsersRepository):
     async def update_username(self, user_id: int, new_username: str):
         session = await self._get_session()
         async with session.begin():
-            query = update(UserORM).where(UserORM.id == user_id).values(username=new_username)
+            query = update(UserORM).where(
+                UserORM.id == user_id).values(username=new_username)
             await session.execute(query)
             await session.commit()
 
     async def update_refresh_token(self, user_id: int, new_refresh_token: str) -> None:
         session = await self._get_session()
         async with session.begin():
-            query = update(UserORM).where(UserORM.id == user_id).values(refresh_token=new_refresh_token)
+            query = update(UserORM).where(UserORM.id == user_id).values(
+                refresh_token=new_refresh_token)
             await session.execute(query)
             await session.commit()
 
     async def login(self, email: str, password: str) -> UserBaseInfo | None:
         session = await self._get_session()
         async with session.begin():
-            query = select(UserORM).where(UserORM.email == email, UserORM.password == password)
+            query = select(UserORM).where(UserORM.email ==
+                                          email, UserORM.password == password)
             result = await session.execute(query)
             user_orm = result.scalars().first()
             if user_orm:
