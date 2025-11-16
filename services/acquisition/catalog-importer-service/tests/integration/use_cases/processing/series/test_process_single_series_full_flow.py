@@ -4,14 +4,15 @@ from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
 from app.container_components import Repositories
 from application.services.series.parent_resolver_svc import ParentResolverService
-from application.use_cases.processing.series import ProcessSingleSeriesUseCase
+from application.use_cases.processing.series import ProcessSeriesSingleUseCase
 
 
 @pytest.mark.asyncio
 async def test_process_single_series_full_flow(
         uow_factory: UnitOfWorkFactory[Repositories],
-        seed_parsed_series_parent_and_child,   # parsed-series
-        seed_series_parent,                    # series parent
+        seed_parsed_series_parent_and_child,
+        seed_series_parent,
+        processing_states_svc_mock,
 ):
     """
     Полный тест "от А до Б":
@@ -25,9 +26,10 @@ async def test_process_single_series_full_flow(
     parent_series = seed_series_parent
 
     # Создаём UseCase
-    uc = ProcessSingleSeriesUseCase(
+    uc = ProcessSeriesSingleUseCase(
         uow_factory=uow_factory,
         parent_resolver_svc=ParentResolverService(),
+        processing_states_svc=processing_states_svc_mock
     )
 
     # ---- ACT ----
@@ -36,7 +38,7 @@ async def test_process_single_series_full_flow(
     # ---- ASSERT ----
     async with uow_factory.create() as uow:
         # 1. Проверяем, что создан объект Series (child)
-        series_child = await uow.repos.series.get_one_by_fields_or_none(
+        series_child = await uow.repos.series.get_one_by(
             name=NameFormatter.format_name(child_parsed.name)
         )
         assert series_child is not None
@@ -50,7 +52,7 @@ async def test_process_single_series_full_flow(
         assert series_child.parent_id == parent_series.id
 
         # 4. Проверяем, что parsed_series помечен как PROCESSED
-        parsed_child_after = await uow.repos.parsed_series.get_one_by_fields_or_none(
+        parsed_child_after = await uow.repos.parsed_series.get_one_by(
             id=child_parsed.id
         )
         assert parsed_child_after.processing_state == ProcessingStates.PROCESSED

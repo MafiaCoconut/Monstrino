@@ -3,7 +3,7 @@ import logging
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 
 from app.container_components import Repositories
-from application.use_cases.processing.series import ProcessSingleSeriesUseCase
+from application.use_cases.processing.series import ProcessSeriesSingleUseCase
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ class ProcessSeriesBatchUseCase:
     def __init__(
         self,
         uow_factory: UnitOfWorkFactoryInterface[TSession, Repositories],
-        single_uc: ProcessSingleSeriesUseCase,
+        single_uc: ProcessSeriesSingleUseCase,
         batch_size: int = 200,
     ):
         self.uow_factory = uow_factory
@@ -24,7 +24,7 @@ class ProcessSeriesBatchUseCase:
     async def execute(self):
         # --- 1. Получаем список ID ---
         async with self.uow_factory.create() as uow:
-            ids = await uow.repos.parsed_series.get_unprocessed_series_ids(self.batch_size)
+            ids = await uow.repos.parsed_series.get_unprocessed_record_ids(self.batch_size)
 
         if not ids:
             return

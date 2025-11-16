@@ -1,1 +1,2 @@
-from .process_series_use_case import ProcessSingleSeriesUseCase
+from .process_series_single_use_case import ProcessSeriesSingleUseCase
+from .process_series_batch_use_case import ProcessSeriesBatchUseCase

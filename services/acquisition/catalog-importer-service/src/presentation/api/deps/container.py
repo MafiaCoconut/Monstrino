@@ -1,6 +1,5 @@
-from fastapi import Request, Depends
-from app.container import AppContainer, Services
-from application.services.processing_service import ProcessingService
+from fastapi import Request
+from app.container import AppContainer
 
 
 def get_container(request: Request) -> AppContainer:

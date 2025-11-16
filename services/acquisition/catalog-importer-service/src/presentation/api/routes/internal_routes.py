@@ -1,11 +1,7 @@
-import json
-
 from fastapi import APIRouter, Response, BackgroundTasks, FastAPI, Request
 from fastapi.params import Depends
-import logging
 
 from fastapi.security import HTTPBearer
-from pydantic import BaseModel
 
 from application.services.processing_service import ProcessingService
 from application.use_cases.auth.verify_token_use_case import VerifyToken

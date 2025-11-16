@@ -45,10 +45,12 @@ def character_gender_orms() -> list[CharacterGendersORM]:
 
 
 @pytest.fixture
-async def seed_character_gender_db(engine, session_factory, character_gender_orms):
+async def seed_character_gender_list(
+        uow_factory: UnitOfWorkFactory[Repositories],
+        , character_gender_orms):
     """Асинхронное наполнение БД начальными данными для тестов."""
-    async with session_factory() as session:
-        session.add_all(character_gender_orms)
+    async with uow_factory.create() as uow:
+        return await uow.repos.needReplacement.save_many(character_gender_orms)
         await session.commit()
 
     # Передача управления тесту
