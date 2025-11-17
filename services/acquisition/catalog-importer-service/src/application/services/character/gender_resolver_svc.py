@@ -1,4 +1,4 @@
-from monstrino_core import UnitOfWorkInterface
+from monstrino_core import UnitOfWorkInterface, NameFormatter
 from monstrino_models.dto import ParsedCharacter, Character
 
 from app.container_components import Repositories
@@ -13,5 +13,5 @@ class GenderResolverService:
             parsed: ParsedCharacter,
             character: Character
     ) -> None:
-        gender_id = await uow.repos.character_gender.get_id_by(display_name=parsed.gender)
+        gender_id = await uow.repos.character_gender.get_id_by(name=NameFormatter.format_name(parsed.gender))
         character.gender_id = gender_id

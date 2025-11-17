@@ -1,23 +1,25 @@
 import pytest
 from monstrino_core import NameFormatter, ProcessingStates
+from monstrino_models.enums import EntityName
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
 from app.container_components import Repositories
+from application.services.common import SeriesProcessingStatesService, ImageReferenceService
 from application.services.series.parent_resolver_svc import ParentResolverService
 from application.use_cases.processing.series import ProcessSeriesSingleUseCase
 
 
 @pytest.mark.asyncio
-async def test_process_single_series_full_flow(
+async def test_process_series_single_full_flow_success(
         uow_factory: UnitOfWorkFactory[Repositories],
+        seed_image_reference_all,
         seed_parsed_series_parent_and_child,
         seed_series_parent,
         processing_states_svc_mock,
+        image_reference_svc_mock,
 ):
     """
-    Полный тест "от А до Б":
-    А — запускаем UseCase
-    Б — в БД лежит полностью корректный Series (child), связанный с parent.
+    Тест проверяет полный цикл обработки дочерней серии уже с существующим родителем в релизной таблице
     """
 
     # ---- ARRANGE ----
@@ -29,7 +31,8 @@ async def test_process_single_series_full_flow(
     uc = ProcessSeriesSingleUseCase(
         uow_factory=uow_factory,
         parent_resolver_svc=ParentResolverService(),
-        processing_states_svc=processing_states_svc_mock
+        processing_states_svc=SeriesProcessingStatesService(),
+        image_reference_svc=ImageReferenceService(),
     )
 
     # ---- ACT ----
@@ -56,3 +59,8 @@ async def test_process_single_series_full_flow(
             id=child_parsed.id
         )
         assert parsed_child_after.processing_state == ProcessingStates.PROCESSED
+
+        # 5 Проверяем что фото корректно установлено на обработку
+        images = await uow.repos.image_import_queue.get_all()
+        assert len(images) == 1
+

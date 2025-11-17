@@ -16,10 +16,11 @@ async def test_process_single_series_success(
         parsed_series: ParsedSeries,
         parent_resolver_svc_mock,
         processing_states_svc_mock,
+        image_reference_svc_mock,
 ):
     async with uow_factory.create() as uow:
         async with uow:
-            await uow.repos.parsed_series.save(parsed_series)
+            parsed_series = await uow.repos.parsed_series.save(parsed_series)
 
 
         parent_resolver_svc_mock.resolve.return_value = None
@@ -27,10 +28,11 @@ async def test_process_single_series_success(
     uc = ProcessSeriesSingleUseCase(
         uow_factory=uow_factory,
         parent_resolver_svc=parent_resolver_svc_mock,
-        processing_states_svc=processing_states_svc_mock
+        processing_states_svc=processing_states_svc_mock,
+        image_reference_svc=image_reference_svc_mock
     )
 
-    await uc.execute(parsed_series_id=1)
+    await uc.execute(parsed_series_id=parsed_series.id)
 
     async with uow_factory.create() as uow:
         series = await uow.repos.series.get_one_by(display_name=parsed_series.name)

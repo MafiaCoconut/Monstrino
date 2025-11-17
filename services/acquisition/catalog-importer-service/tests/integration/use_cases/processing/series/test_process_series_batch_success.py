@@ -13,13 +13,15 @@ async def test_process_series_batch_success(
         uow_factory: UnitOfWorkFactory[Repositories],
         seed_parsed_series_parent_and_child,
         processing_states_svc_mock,
+        image_reference_svc_mock,
 ):
     # --- ARRANGE ---
     parent_parsed, child_parsed = seed_parsed_series_parent_and_child
     single_uc = ProcessSeriesSingleUseCase(
         uow_factory=uow_factory,
         parent_resolver_svc=ParentResolverService(),
-        processing_states_svc=processing_states_svc_mock
+        processing_states_svc=processing_states_svc_mock,
+        image_reference_svc=image_reference_svc_mock
     )
     batch_uc = ProcessSeriesBatchUseCase(
         uow_factory=uow_factory,
