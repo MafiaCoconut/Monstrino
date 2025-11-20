@@ -175,3 +175,4 @@ test.json
 jwt-private.pem
 jwt-public.pem
 packages/*
+pyproject.dev.toml
