@@ -35,11 +35,14 @@ dependencies = [
     "colorlog (>=6.9.0,<7.0.0)",
     "pytest (>=8.4.2,<9.0.0)",
     "pytest-asyncio (>=1.2.0,<2.0.0)",
-    "monstrino-core @ file:///home/coconut/Projects/Monstrino/packages/monstrino-core",
-    "monstrino-models @ file:///home/coconut/Projects/Monstrino/packages/monstrino-models",
-    "monstrino-repositories @ file:///home/coconut/Projects/Monstrino/packages/monstrino-repositories",
-    "monstrino-testing @ file:///home/coconut/Projects/Monstrino/packages/monstrino-testing",
+#    "monstrino-core"
+#    "monstrino-core @ file:///home/coconut/Projects/Monstrino/packages/monstrino-core",
+#    "monstrino-models @ file:///home/coconut/Projects/Monstrino/packages/monstrino-models",
+#    "monstrino-repositories @ file:///home/coconut/Projects/Monstrino/packages/monstrino-repositories",
+#    "monstrino-testing @ file:///home/coconut/Projects/Monstrino/packages/monstrino-testing",
     "pytest-mock (>=3.15.1,<4.0.0)",
+    "monstrino-core @ git+ssh://git@github.com/MafiaCoconut/monstrino-core.git",
+    "monstrino-models @ git+ssh://git@github.com/MafiaCoconut/monstrino-models.git",
 ]
 
 [tool.poetry]
@@ -51,9 +54,6 @@ pythonpath = [
 ]
 
 [tool.poetry.dependencies]
-monstrino-core = {develop = true}
-monstrino-models = {develop = true}
-monstrino-repositories = {develop = true}
 monstrino-testing = {develop = true}
 
 [build-system]

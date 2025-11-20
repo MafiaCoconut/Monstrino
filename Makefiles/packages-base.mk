@@ -9,7 +9,6 @@ SHELL := /bin/bash
 # PACKAGE_DIR  (опционально, default = src/$(PACKAGE_NAME))
 
 PACKAGE_DIR ?= $(PACKAGE_NAME)
-POETRY ?= poetry
 PYTHON ?= $(shell which python3)
 
 .PHONY: build clean test tag publish bump-version check-version info
@@ -20,12 +19,12 @@ PYTHON ?= $(shell which python3)
 
 build:
 	@echo "🔧 Building $(PACKAGE_NAME)..."
-	$(POETRY) build
+	uv build
 	@echo "✅ Built successfully."
 
 test:
 	@echo "🧪 Running tests for $(PACKAGE_NAME)..."
-	$(POETRY) run pytest -q --disable-warnings --tb=short
+	uv run pytest -q --disable-warnings --tb=short
 
 clean:
 	@echo "🧹 Cleaning $(PACKAGE_NAME)..."
