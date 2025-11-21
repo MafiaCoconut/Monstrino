@@ -38,9 +38,8 @@ class CharacterResolverService:
             else:
                 # TODO: нужно добавить логику добавления персонажа в бд если его нет
                 logger.error(
-                    "Character exist in parsed release "
-                    "but not found in character db: %s",
-                    character.get('text', None)
+                    f"Character exist in parsed release "
+                    f"but not found in character db: {character.get('text')}"
                 )
                 # raise CharacterParsedButNotFoundError
 

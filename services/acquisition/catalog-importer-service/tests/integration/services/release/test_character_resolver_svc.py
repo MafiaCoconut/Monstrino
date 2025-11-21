@@ -7,7 +7,7 @@ from app.container_components import Repositories
 from application.services.releases import CharacterResolverService
 
 
-def сharacters_data() -> list:
+def characters_data() -> list:
     return [
         {
             "link": "https://monster_high/frankie-stein",
@@ -28,7 +28,7 @@ async def test_character_resolver_svc(
 ):
 
     service = CharacterResolverService()
-    release_characters = сharacters_data()
+    release_characters = characters_data()
     async with uow_factory.create() as uow:
         await service.resolve(
             uow=uow,

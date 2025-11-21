@@ -1,21 +1,36 @@
+from typing import Any
+import logging
 
-from monstrino_models.dto import ParsedRelease
+from icecream import ic
+from monstrino_core import UnitOfWorkInterface, NameFormatter
+from monstrino_models.dto import ReleaseExclusiveLink
 
+from app.container_components import Repositories
+
+logger = logging.getLogger(__name__)
 
 class ExclusiveResolverService:
-    async def resolve(self, uow, parsed: ParsedRelease) -> None:
-        if not parsed.exclusives:
-            parsed.exclusive_ids = []
-            return
+    async def resolve(
+            self,
+            uow: UnitOfWorkInterface[Any, Repositories],
+            release_id: int,
+            exclusive_list: list[dict]
+    ) -> None:
+        for exclusive in exclusive_list:
+            name = exclusive.get('text')
+            if name:
+                vendor_id = await uow.repos.exclusive_vendor.get_id_by(
+                    name=NameFormatter.format_name(name)
+                )
+                if vendor_id:
+                    link = ReleaseExclusiveLink(
+                        release_id=release_id,
+                        vendor_id=vendor_id
+                    )
+                    await uow.repos.release_exclusive_link.save(link)
+                else:
+                    logger.error(
+                        f"Exclusive vendor found in parser data, "
+                        f"but not found in db for name: {name}",
+                    )
 
-        exclusive_ids: list[int] = []
-        for name in parsed.exclusives:
-            ex_id = await uow.repos.release_exclusives.get_id_by_name(name)
-            if ex_id:
-                exclusive_ids.append(ex_id)
-
-        parsed.exclusive_ids = exclusive_ids
-
-        exclusive_type_id = await uow.repos.release_types.get_id_by_name("exclusive")
-        if exclusive_type_id:
-            parsed.type_ids = (parsed.type_ids or []) + [exclusive_type_id]
