@@ -6,7 +6,7 @@ from integration.common import BaseCrudRepoTest
 logger = logging.getLogger(__name__)
 
 
-@pytest.mark.usefixtures("seed_character_db", "seed_pet_db")
+@pytest.mark.usefixtures("seed_character_list", "seed_pet_list")
 class TestCharacterPetLinkRepo(BaseCrudRepoTest):
     entity_cls = CharacterPetLink
     repo_attr = "character_pet_link"
