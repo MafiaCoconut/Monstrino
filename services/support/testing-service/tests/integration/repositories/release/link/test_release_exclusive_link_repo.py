@@ -7,7 +7,7 @@ from integration.common import BaseCrudRepoTest
 logger = logging.getLogger(__name__)
 
 
-@pytest.mark.usefixtures("seed_release_db", "seed_exclusive_vendor_db")
+@pytest.mark.usefixtures("seed_release_list", "seed_exclusive_vendor_list")
 class TestReleaseExclusiveLinkRepo(BaseCrudRepoTest):
     entity_cls = ReleaseExclusiveLink
     repo_attr = "release_exclusive_link"

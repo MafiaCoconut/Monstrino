@@ -6,7 +6,7 @@ from integration.common import BaseCrudRepoTest
 logger = logging.getLogger(__name__)
 
 
-@pytest.mark.usefixtures("seed_auth_users_db")
+@pytest.mark.usefixtures("seed_auth_users_list")
 class TestRefreshTokenRepo(BaseCrudRepoTest):
     entity_cls = RefreshToken
     repo_attr = "refresh_token"

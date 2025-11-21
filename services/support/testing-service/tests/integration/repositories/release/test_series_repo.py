@@ -6,7 +6,7 @@ from integration.common import BaseCrudRepoTest
 logger = logging.getLogger(__name__)
 
 
-@pytest.mark.usefixtures("seed_series_db")
+@pytest.mark.usefixtures("seed_series_list")
 class TestSeriesRepo(BaseCrudRepoTest):
     entity_cls = Series
     repo_attr = "series"

@@ -6,7 +6,7 @@ from integration.common import BaseCrudRepoTest
 logger = logging.getLogger(__name__)
 
 
-@pytest.mark.usefixtures("seed_relation_type_db")
+@pytest.mark.usefixtures("seed_relation_type_list")
 class TestRelationTypesRepo(BaseCrudRepoTest):
     entity_cls = RelationType
     repo_attr = "relation_type"

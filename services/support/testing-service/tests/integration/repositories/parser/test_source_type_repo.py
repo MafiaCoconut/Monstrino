@@ -6,7 +6,7 @@ from integration.common import BaseCrudRepoTest
 logger = logging.getLogger(__name__)
 
 
-@pytest.mark.usefixtures("seed_source_type_db")
+@pytest.mark.usefixtures("seed_source_type_list")
 class TestSourceTypeRepo(BaseCrudRepoTest):
     entity_cls = SourceType
     repo_attr = "source_type"

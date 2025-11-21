@@ -6,7 +6,7 @@ from integration.common import BaseCrudRepoTest
 logger = logging.getLogger(__name__)
 
 
-@pytest.mark.usefixtures("seed_release_series_link_db")
+@pytest.mark.usefixtures("seed_release_series_link_list")
 class TestReleaseSeriesLinkRepo(BaseCrudRepoTest):
     entity_cls = ReleaseSeriesLink
     repo_attr = "release_series_link"

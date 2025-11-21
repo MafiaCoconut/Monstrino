@@ -1,7 +1,7 @@
 import pytest
 import logging
 
-from monstrino_core import UnitOfWorkInterface, EntityAlreadyExists, EntityNotFound
+from monstrino_core import UnitOfWorkInterface, EntityNotFoundError, DuplicateEntityError
 from monstrino_repositories.repositories_impl import ParsedSeriesRepo
 from monstrino_testing.fixtures.db import Repositories
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -53,7 +53,7 @@ class BaseCrudRepoTest:
             first = self.entity_cls(**self.sample_create_data)
             await repo.save(first)
             duplicate = self.entity_cls(**self.sample_create_data)
-            with pytest.raises(EntityAlreadyExists):
+            with pytest.raises(DuplicateEntityError):
                 async with uow.savepoint():
                     await repo.save(duplicate)
 
@@ -75,7 +75,7 @@ class BaseCrudRepoTest:
     async def test_get_one_by_or_raise(self, uow: UnitOfWorkInterface[AsyncSession, Repositories], request):
         async with uow:
             repo = getattr(uow.repos, self.repo_attr)
-            with pytest.raises(EntityNotFound):
+            with pytest.raises(EntityNotFoundError):
                 if isinstance(self.unique_field_value, str):
                     await repo.get_one_by_or_raise(**{self.unique_field: "NON_EXISTENT"})
                 elif isinstance(self.unique_field_value, int):

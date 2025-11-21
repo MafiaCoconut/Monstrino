@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 # @pytest.mark.usefixtures()
-@pytest.mark.usefixtures("seed_parsed_series_db")
+@pytest.mark.usefixtures("seed_parsed_series_list")
 class TestParsedSeriesRepo(BaseCrudRepoTest):
     entity_cls = ParsedSeries
     repo_attr = "parsed_series"

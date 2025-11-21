@@ -6,7 +6,7 @@ from integration.common import BaseCrudRepoTest
 logger = logging.getLogger(__name__)
 
 
-@pytest.mark.usefixtures("seed_image_reference_origin_db")
+@pytest.mark.usefixtures("seed_image_reference_origin_list")
 class TestImageReferenceOriginRepo(BaseCrudRepoTest):
     entity_cls = ImageReferenceOrigin
     repo_attr = "image_reference_origin"
