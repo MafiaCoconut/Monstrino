@@ -1,20 +1,30 @@
 
 import logging
 
+from monstrino_repositories.unit_of_work import UnitOfWorkFactory
+from monstrino_testing.fixtures import Repositories
+
+from application.use_cases.processing.pet.process_pet_single_use_case import ProcessPetSingleUseCase
+
 logger = logging.getLogger(__name__)
 
 
-class ProcessPetsBatchUseCase:
+class ProcessPetBatchUseCase:
     """Batch use case for processing multiple pets."""
 
-    def __init__(self, uow_factory, single_uc, batch_size: int = 150) -> None:
+    def __init__(
+            self,
+            uow_factory: UnitOfWorkFactory[Repositories],
+            single_uc: ProcessPetSingleUseCase,
+            batch_size: int = 150
+    ) -> None:
         self.uow_factory = uow_factory
         self.single_uc = single_uc
         self.batch_size = batch_size
 
     async def execute(self) -> None:
         async with self.uow_factory.create() as uow:
-            ids: list[int] = await uow.repos.parsed_pets.get_unprocessed_ids(self.batch_size)
+            ids: list[int] = await uow.repos.parsed_pet.get_unprocessed_record_ids(self.batch_size)
 
         if not ids:
             return

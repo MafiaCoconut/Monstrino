@@ -10,7 +10,7 @@ def build_repositories(session: AsyncSession) -> Repositories:
         # Character
         character_gender=CharacterGenderRepoImpl(session),
         character=CharacterRepoImpl(session),
-        character_pet_link=CharacterPetLinkRepoImpl(session),
+        character_pet_ownership=CharacterPetOwnershipRepoImpl(session),
         pet=PetRepoImpl(session),
 
         # Image

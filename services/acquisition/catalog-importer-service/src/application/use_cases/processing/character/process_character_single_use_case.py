@@ -80,7 +80,6 @@ class ProcessCharacterSingleUseCase:
                 logger.error(f"Error processing character ID {parsed_character_id}: {e}", )
                 await self._handle_error(parsed_character_id)
 
-
     async def _handle_error(self, parsed_character_id: int):
         async with self.uow_factory.create() as uow:
             await self.processing_states_svc.set_with_errors(uow, parsed_character_id)

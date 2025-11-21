@@ -8,7 +8,7 @@ class Repositories:
     # Characters
     character_gender: CharacterGenderRepoInterface
     character: CharacterRepoInterface
-    character_pet_link: CharacterPetLinkRepoInterface
+    character_pet_ownership: CharacterPetOwnershipRepoInterface
     pet: PetRepoInterface
 
     # Image

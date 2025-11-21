@@ -4,7 +4,7 @@ import logging
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
 from app.container_components import Repositories
-from application.use_cases.processing.characters.process_character_single_use_case import ProcessCharacterSingleUseCase
+from application.use_cases.processing.character.process_character_single_use_case import ProcessCharacterSingleUseCase
 
 logger = logging.getLogger(__name__)
 
