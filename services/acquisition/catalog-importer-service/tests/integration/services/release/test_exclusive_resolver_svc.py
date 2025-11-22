@@ -1,5 +1,5 @@
 import pytest
-from monstrino_core import CharacterRoleEnum, NameFormatter
+from monstrino_core import NameFormatter
 from monstrino_models.dto import ReleaseCharacterLink, ReleaseExclusiveLink
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 

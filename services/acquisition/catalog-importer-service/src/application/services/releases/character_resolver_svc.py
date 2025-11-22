@@ -1,7 +1,7 @@
 from typing import Any
 import logging
 from icecream import ic
-from monstrino_core import NameFormatter, UnitOfWorkInterface, CharacterRoleEnum, CharacterParsedButNotFoundError
+from monstrino_core import NameFormatter, UnitOfWorkInterface, CharacterRole, CharacterParsedButNotFoundError
 from monstrino_models.dto import ParsedRelease, ReleaseCharacterLink
 from monstrino_testing.fixtures import Repositories
 
@@ -25,9 +25,9 @@ class CharacterResolverService:
                 if character_id:
                     character_count += 1
                     if character_count == 1:
-                        role_name = CharacterRoleEnum.MAIN
+                        role_name = CharacterRole.MAIN
                     else:
-                        role_name = CharacterRoleEnum.SECONDARY
+                        role_name = CharacterRole.SECONDARY
                     link = ReleaseCharacterLink(
                         release_id=release_id,
                         character_id=character_id,

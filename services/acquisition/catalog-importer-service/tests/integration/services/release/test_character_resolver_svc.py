@@ -1,5 +1,5 @@
 import pytest
-from monstrino_core import CharacterRoleEnum
+from monstrino_core import CharacterRole
 from monstrino_models.dto import ReleaseCharacterLink
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
@@ -43,5 +43,5 @@ async def test_character_resolver_svc(
         assert links[0].position == 1
         assert links[1].position == 2
 
-        assert links[0].role_id == await uow.repos.character_role.get_id_by(name=CharacterRoleEnum.MAIN)
-        assert links[1].role_id == await uow.repos.character_role.get_id_by(name=CharacterRoleEnum.SECONDARY)
+        assert links[0].role_id == await uow.repos.character_role.get_id_by(name=CharacterRole.MAIN)
+        assert links[1].role_id == await uow.repos.character_role.get_id_by(name=CharacterRole.SECONDARY)

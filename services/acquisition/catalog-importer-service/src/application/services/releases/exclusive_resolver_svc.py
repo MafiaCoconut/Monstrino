@@ -33,5 +33,6 @@ class ExclusiveResolverService:
                         f"Exclusive vendor found in parser data, "
                         f"but not found in db with name: {name}",
                     )
-            raise ExclusiveDataInvalidError
+            else:
+                raise ExclusiveDataInvalidError("Exclusive vendor {name}")
 
