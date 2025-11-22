@@ -1,0 +1,8 @@
+{
+  "label": "Exclusive Resolver Service",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "List of use cases for Catalog Importer Service."
+  }
+}

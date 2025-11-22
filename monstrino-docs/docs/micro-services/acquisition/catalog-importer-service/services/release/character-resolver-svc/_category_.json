@@ -1,0 +1,8 @@
+{
+  "label": "Character Resolver Service",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "List of use cases for Catalog Importer Service."
+  }
+}
