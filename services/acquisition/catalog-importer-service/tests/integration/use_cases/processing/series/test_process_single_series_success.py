@@ -1,7 +1,7 @@
 from typing import Optional
 
 import pytest
-from monstrino_core import UnitOfWorkInterface, ProcessingStates, ParsedSeriesTypes
+from monstrino_core import UnitOfWorkInterface, ProcessingStates, SeriesTypes
 from monstrino_models.dto import ParsedSeries
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 from monstrino_testing.fixtures import Repositories
@@ -41,7 +41,7 @@ async def test_process_single_series_success(
         assert series.series_type == parsed_series.series_type
         assert series.primary_image == parsed_series.primary_image
 
-        if parsed_series.series_type == ParsedSeriesTypes.SERIES_SECONDARY:
+        if parsed_series.series_type == SeriesTypes.SECONDARY:
             assert series.parent_id is not None
 
         parsed_series_after: ParsedSeries = await uow.repos.parsed_series.get_one_by(name=parsed_series.name, processing_state=ProcessingStates.PROCESSED)

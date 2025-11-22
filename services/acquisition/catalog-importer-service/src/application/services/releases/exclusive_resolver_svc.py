@@ -2,7 +2,7 @@ from typing import Any
 import logging
 
 from icecream import ic
-from monstrino_core import UnitOfWorkInterface, NameFormatter
+from monstrino_core import UnitOfWorkInterface, NameFormatter, ExclusiveDataInvalidError
 from monstrino_models.dto import ReleaseExclusiveLink
 
 from app.container_components import Repositories
@@ -31,6 +31,7 @@ class ExclusiveResolverService:
                 else:
                     logger.error(
                         f"Exclusive vendor found in parser data, "
-                        f"but not found in db for name: {name}",
+                        f"but not found in db with name: {name}",
                     )
+            raise ExclusiveDataInvalidError
 

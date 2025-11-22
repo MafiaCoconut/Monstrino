@@ -7,7 +7,7 @@ from monstrino_models.dto import ParsedRelease, Release
 from monstrino_testing.fixtures import Repositories
 
 from application.services.common import ReleaseProcessingStatesService, ImageReferenceService
-from application.services.releases import CharacterResolverService
+from application.services.releases import CharacterResolverService, ExclusiveResolverService
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,8 @@ class ProcessReleaseSingleUseCase:
             uow_factory: UnitOfWorkFactoryInterface[Any, Repositories],
             processing_states_svc: ReleaseProcessingStatesService,
             image_reference_svc: ImageReferenceService,
-            character_resolver_svc: CharacterResolverService
+            character_resolver_svc: CharacterResolverService,
+            exclusive_resolver_svc: ExclusiveResolverService,
 
     ) -> None:
         self.uow_factory = uow_factory
@@ -25,6 +26,7 @@ class ProcessReleaseSingleUseCase:
         self.image_reference_svc = image_reference_svc
 
         self.character_resolver_svc = character_resolver_svc
+        self.exclusive_resolver_svc = exclusive_resolver_svc
 
     """
     1.  Fetch a single release by ID
@@ -64,6 +66,13 @@ class ProcessReleaseSingleUseCase:
                     uow=uow,
                     release_id=release.id,
                     characters=parsed_release.characters
+                )
+
+                # Step 9: Resolve exclusives
+                await self.exclusive_resolver_svc.resolve(
+                    uow=uow,
+                    release_id=release.id,
+                    exclusive_list=parsed_release.exclusive_of_names
                 )
 
 

@@ -2,7 +2,7 @@ import logging
 from typing import TypeVar, Any
 
 from icecream import ic
-from monstrino_core import ParsedSeriesTypes, NameFormatter, ProcessingStates, ParentSeriesNotFoundError
+from monstrino_core import SeriesTypes, NameFormatter, ProcessingStates, ParentSeriesNotFoundError
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_models.dto import Series
 from monstrino_models.dto import ParsedSeries
@@ -55,7 +55,7 @@ class ProcessSeriesSingleUseCase:
                         primary_image=parsed_series.primary_image,
                     )
 
-                    if series.series_type == ParsedSeriesTypes.SERIES_SECONDARY:
+                    if series.series_type == SeriesTypes.SECONDARY:
                         await self.parent_resolver_svc.resolve(uow, parsed_series, series)
 
                     series = await uow.repos.series.save(series)

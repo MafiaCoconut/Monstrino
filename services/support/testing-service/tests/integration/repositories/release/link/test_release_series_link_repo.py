@@ -1,5 +1,6 @@
 import logging
 import pytest
+from monstrino_core import SeriesRelationTypes
 from monstrino_models.dto import ReleaseSeriesLink
 from integration.common import BaseCrudRepoTest
 
@@ -11,11 +12,11 @@ class TestReleaseSeriesLinkRepo(BaseCrudRepoTest):
     entity_cls = ReleaseSeriesLink
     repo_attr = "release_series_link"
     sample_create_data = {
-        "release_id": 1,
+        "release_id": 3,
         "series_id": 2,
-        "relation_type": "collection_inclusion",
+        "relation_type": SeriesRelationTypes.PRIMARY
     }
     unique_field = ReleaseSeriesLink.RELEASE_ID
     unique_field_value = 1
-    update_field = "relation_type"
-    updated_value = "reissue"
+    update_field = "series_id"
+    updated_value = 1

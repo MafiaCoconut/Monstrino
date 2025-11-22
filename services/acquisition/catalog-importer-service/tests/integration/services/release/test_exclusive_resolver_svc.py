@@ -37,7 +37,7 @@ async def test_exclusive_resolver_svc(
         )
 
     async with uow_factory.create() as uow:
-        links: list[ReleaseExclusiveLink] = await uow.repos.release_exclusive_link.get_()
+        links: list[ReleaseExclusiveLink] = await uow.repos.release_exclusive_link.get_all()
         assert len(links) == len(release_exclusives)
 
         assert links[0].vendor_id == await uow.repos.exclusive_vendor.get_id_by(name=NameFormatter.format_name(release_exclusives[0]['text']))
