@@ -23,16 +23,24 @@ class ExclusiveResolverService:
                     name=NameFormatter.format_name(name)
                 )
                 if vendor_id:
-                    link = ReleaseExclusiveLink(
+                    if await uow.repos.release_exclusive_link.exists_by(
                         release_id=release_id,
                         vendor_id=vendor_id
+                    ):
+                        logger.error(
+                            f"Exclusive vendor link already exists for release_id={release_id} and vendor={vendor_id}. Skipping")
+                        continue
+
+                    await uow.repos.release_exclusive_link.save(
+                        ReleaseExclusiveLink(
+                            release_id=release_id,
+                            vendor_id=vendor_id
+                        )
                     )
-                    await uow.repos.release_exclusive_link.save(link)
                 else:
                     logger.error(
-                        f"Exclusive vendor found in parser data, "
-                        f"but not found in db with name: {name}",
+                        f"Exclusive vendor found in parser data, but not found in db with name: {name}",
                     )
             else:
-                raise ExclusiveDataInvalidError("Exclusive vendor {name}")
+                raise ExclusiveDataInvalidError(f"Exclusive vendor missing 'text' field in data: {exclusive}")
 
