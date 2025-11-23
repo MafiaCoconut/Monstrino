@@ -7,7 +7,7 @@ from monstrino_models.dto import ParsedRelease, Release
 from monstrino_testing.fixtures import Repositories
 
 from application.services.common import ReleaseProcessingStatesService, ImageReferenceService
-from application.services.releases import CharacterResolverService, ExclusiveResolverService
+from application.services.releases import CharacterResolverService, ExclusiveResolverService, SeriesResolverService
 
 logger = logging.getLogger(__name__)
 
@@ -17,8 +17,11 @@ class ProcessReleaseSingleUseCase:
             uow_factory: UnitOfWorkFactoryInterface[Any, Repositories],
             processing_states_svc: ReleaseProcessingStatesService,
             image_reference_svc: ImageReferenceService,
+
             character_resolver_svc: CharacterResolverService,
+            series_resolver_svc: SeriesResolverService,
             exclusive_resolver_svc: ExclusiveResolverService,
+
 
     ) -> None:
         self.uow_factory = uow_factory
@@ -26,6 +29,7 @@ class ProcessReleaseSingleUseCase:
         self.image_reference_svc = image_reference_svc
 
         self.character_resolver_svc = character_resolver_svc
+        self.series_resolver_svc = series_resolver_svc
         self.exclusive_resolver_svc = exclusive_resolver_svc
 
     """
@@ -68,12 +72,29 @@ class ProcessReleaseSingleUseCase:
                     characters=parsed_release.characters
                 )
 
+                # Step 6: Resolve series
+                await self.series_resolver_svc.resolve(
+                    uow=uow,
+                    release_id=release.id,
+                    series_list=parsed_release.series
+                )
+
+                # Step 7: Resolve release type
+
+                # Step 8: Resolve multi pack
+
                 # Step 9: Resolve exclusives
                 await self.exclusive_resolver_svc.resolve(
                     uow=uow,
                     release_id=release.id,
                     exclusive_list=parsed_release.exclusive_of_names
                 )
+
+                # Step 10: Resolve pets
+
+                # Step 11: Resolve images
+
+
 
 
 

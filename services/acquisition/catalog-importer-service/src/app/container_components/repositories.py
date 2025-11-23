@@ -33,6 +33,7 @@ class Repositories:
     release_image: ReleaseImageRepoInterface
     release_type: ReleaseTypeRepoInterface
     series: SeriesRepoInterface
+    product_line: ProductLineRepoInterface
 
     # Release Link
     release_character_link: ReleaseCharacterLinkRepoInterface
@@ -41,3 +42,4 @@ class Repositories:
     release_series_link: ReleaseSeriesLinkRepoInterface
     release_exclusive_link: ReleaseExclusiveLinkRepoInterface
     release_type_link: ReleaseTypeLinkRepoInterface
+    product_line_content_type_link: ProductLineContentTypeLinkRepoInterface
