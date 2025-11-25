@@ -1,6 +1,6 @@
 import logging
 import pytest
-from monstrino_core import SeriesRelationTypes
+from monstrino_core.domain.value_objects import SeriesRelationTypes
 from monstrino_models.dto import ReleaseSeriesLink
 from integration.common import BaseCrudRepoTest
 

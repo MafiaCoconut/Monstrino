@@ -1,6 +1,6 @@
 from typing import Protocol, List
 
-from monstrino_core import Job
+from apscheduler.job import Job
 
 
 class SchedulerPort(Protocol):

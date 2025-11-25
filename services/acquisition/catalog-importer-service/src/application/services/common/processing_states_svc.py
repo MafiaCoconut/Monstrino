@@ -1,4 +1,4 @@
-from monstrino_core import ProcessingStates
+from monstrino_core.shared.enums import ProcessingStates
 
 
 class SeriesProcessingStatesService:

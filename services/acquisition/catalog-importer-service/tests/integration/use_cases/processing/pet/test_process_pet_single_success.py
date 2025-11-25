@@ -2,7 +2,8 @@ from unittest.mock import AsyncMock
 
 import pytest
 from icecream import ic
-from monstrino_core import NameFormatter, ProcessingStates
+from monstrino_core.domain.services import NameFormatter
+from monstrino_core.shared.enums import ProcessingStates
 from monstrino_models.dto import ParsedPet, Character, Pet
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 from monstrino_testing.fixtures import parsed_pet

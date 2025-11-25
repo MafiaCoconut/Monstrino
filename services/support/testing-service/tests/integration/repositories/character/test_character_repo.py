@@ -1,6 +1,7 @@
 import logging
 
 import pytest
+from monstrino_core.domain.value_objects.character.character_gender import CharacterGender
 from monstrino_models.dto import Character
 
 from integration.common import BaseCrudRepoTest
@@ -15,7 +16,7 @@ class TestCharacterRepo(BaseCrudRepoTest):
     sample_create_data = {
         "name": "Clawdeen Wolf",
         "display_name": "Clawdeen Wolf",
-        "gender_id": 1,
+        "gender": CharacterGender.GHOUL,
         "description": "Werewolf fashionista with fierce confidence.",
         "primary_image": "https://example.com/images/clawdeen.jpg",
         "alt_names": "Clawdeen",

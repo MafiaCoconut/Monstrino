@@ -1,5 +1,7 @@
 import pytest
-from monstrino_core import NameFormatter, SeriesRelationTypes, SeriesDataInvalidError
+from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.value_objects import SeriesRelationTypes
+from monstrino_core.domain.errors import SeriesDataInvalidError
 from monstrino_models.dto import ReleaseSeriesLink
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 

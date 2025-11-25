@@ -1,7 +1,8 @@
 from typing import Optional
 
 import pytest
-from monstrino_core import UnitOfWorkInterface, ProcessingStates, SeriesTypes
+from monstrino_core.shared.enums import ProcessingStates
+from monstrino_core.domain.value_objects import SeriesTypes
 from monstrino_models.dto import ParsedSeries
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 from monstrino_testing.fixtures import Repositories

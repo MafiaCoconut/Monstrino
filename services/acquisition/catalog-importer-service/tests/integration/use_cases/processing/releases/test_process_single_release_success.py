@@ -1,6 +1,7 @@
 
 import pytest
-from monstrino_core import NameFormatter, ProcessingStates
+from monstrino_core.domain.services import NameFormatter
+from monstrino_core.shared.enums import ProcessingStates
 
 from application.use_cases.processing.releases.process_single_release_use_case import (
     ProcessSingleReleaseUseCase,

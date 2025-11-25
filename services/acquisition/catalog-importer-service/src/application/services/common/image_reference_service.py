@@ -1,6 +1,6 @@
 from typing import Any
 
-from monstrino_core import UnitOfWorkInterface
+from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ImageImportQueue
 
 from app.container_components import Repositories

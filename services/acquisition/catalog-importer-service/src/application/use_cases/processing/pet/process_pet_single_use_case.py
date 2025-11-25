@@ -2,7 +2,8 @@ from typing import Any
 import logging
 
 from icecream import ic
-from monstrino_core import NameFormatter, EntityNotFoundError, DuplicateEntityError
+from monstrino_core.domain.errors import EntityNotFoundError, DuplicateEntityError
+from monstrino_core.domain.services import NameFormatter
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_models.dto import Pet, ParsedPet
 from monstrino_models.enums import EntityName

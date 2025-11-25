@@ -1,7 +1,8 @@
 import pytest
 import logging
 
-from monstrino_core import UnitOfWorkInterface, EntityNotFoundError, DuplicateEntityError
+from monstrino_core.domain.errors import DuplicateEntityError, EntityNotFoundError
+from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_repositories.repositories_impl import ParsedSeriesRepo
 from monstrino_testing.fixtures.db import Repositories
 from sqlalchemy.ext.asyncio import AsyncSession

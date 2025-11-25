@@ -1,6 +1,6 @@
 
 import pytest
-from monstrino_core import ProcessingStates
+from monstrino_core.shared.enums import ProcessingStates
 
 from application.use_cases.processing.releases.process_single_release_use_case import (
     ProcessSingleReleaseUseCase,

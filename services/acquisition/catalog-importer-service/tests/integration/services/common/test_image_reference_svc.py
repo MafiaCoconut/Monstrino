@@ -1,7 +1,8 @@
 import pytest
 from asyncpg import ForeignKeyViolationError, UniqueViolationError
+from monstrino_core.domain.errors import DuplicateEntityError
+from monstrino_core.shared.enums import ProcessingStates
 
-from monstrino_core import ProcessingStates, DuplicateEntityError
 from monstrino_models.dto import ImageReferenceOrigin, Character, ImageImportQueue
 from monstrino_models.enums import EntityName
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory

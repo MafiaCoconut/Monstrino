@@ -1,6 +1,6 @@
 import logging
 import pytest
-from monstrino_core import ProcessingStates
+from monstrino_core.shared.enums import ProcessingStates
 from monstrino_models.dto import ParsedCharacter
 from integration.common import BaseCrudRepoTest
 
