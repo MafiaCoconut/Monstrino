@@ -1,0 +1,13 @@
+{
+  "label": "Flows",
+  "position": 2,
+  "collapsed": false,
+  "collapsible": true,
+  "className": "monstrino-subcategory",
+  "link": {
+    "type": "generated-index",
+    "title": "catalog-importer — Execution Flows",
+    "description": "Execution flows, diagrams, and lifecycle steps for the catalog-importer microservice.",
+    "slug": "/acquisition/microservices/catalog-importer/flows"
+  }
+}

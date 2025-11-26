@@ -1,0 +1,13 @@
+{
+  "label": "Testing",
+  "position": 4,
+  "collapsed": false,
+  "collapsible": true,
+  "className": "monstrino-subcategory",
+  "link": {
+    "type": "generated-index",
+    "title": "catalog-importer — Testing",
+    "description": "Testing strategy, fixtures and test scenarios of the catalog-importer microservice.",
+    "slug": "/acquisition/microservices/catalog-importer/testing"
+  }
+}

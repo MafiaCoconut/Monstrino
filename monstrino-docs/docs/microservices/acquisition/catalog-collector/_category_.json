@@ -1,0 +1,19 @@
+{
+  "label": "catalog-collector",
+  "position": 1,
+  "collapsed": false,
+  "collapsible": true,
+  "className": "monstrino-category",
+  "link": {
+    "type": "generated-index",
+    "title": "catalog-collector Documentation",
+    "description": "Documentation for the catalog-collector microservice inside the acquisition domain.",
+    "slug": "/acquisition/microservices/catalog-collector"
+  },
+  "customProps": {
+    "domain": "acquisition",
+    "service": "catalog-collector",
+    "maintainer": "Monstrino Team",
+    "updated": "auto"
+  }
+}

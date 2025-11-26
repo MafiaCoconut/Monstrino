@@ -1,0 +1,12 @@
+{
+  "label": "Guides",
+  "position": 7,
+  "collapsed": false,
+  "collapsible": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Guides & How-To",
+    "description": "Practical instructions for extending Monstrino: writing parsers, adding releases, development setup.",
+    "slug": "/guides"
+  }
+}

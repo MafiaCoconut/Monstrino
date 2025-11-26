@@ -1,0 +1,13 @@
+{
+  "label": "Use Cases",
+  "position": 1,
+  "collapsed": false,
+  "collapsible": true,
+  "className": "monstrino-subcategory",
+  "link": {
+    "type": "generated-index",
+    "title": "catalog-collector — Use Cases",
+    "description": "All functional use cases implemented inside the catalog-collector microservice.",
+    "slug": "/acquisition/microservices/catalog-collector/use-cases"
+  }
+}

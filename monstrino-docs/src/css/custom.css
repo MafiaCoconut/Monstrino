@@ -5,7 +5,7 @@
  */
 
 /* You can override the default Infima variables here. */
-:root {
+/* :root {
   --ifm-color-primary: #2e8555;
   --ifm-color-primary-dark: #29784c;
   --ifm-color-primary-darker: #277148;
@@ -15,10 +15,23 @@
   --ifm-color-primary-lightest: #3cad6e;
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+} */
+ :root {
+  --ifm-color-primary: #ff2ca8;          /* ваш фирменный розовый */
+  --ifm-color-primary-dark: #e02594;
+  --ifm-color-primary-darker: #c41f83;
+  --ifm-color-primary-light: #ff4ab6;
+  --ifm-color-primary-lighter: #ff74ca;
+  --ifm-background-color: #0d0d0f;       /* глубокий тёмный фон */
+  --ifm-navbar-background-color: #111114;
+  --ifm-card-background-color: #16161a;
+  --ifm-footer-background-color: #111114;
+  --ifm-code-font-size: 95%;
+  --ifm-font-family-base: 'Inter', sans-serif;
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme='dark'] {
+/* [data-theme='dark'] {
   --ifm-color-primary: #25c2a0;
   --ifm-color-primary-dark: #21af90;
   --ifm-color-primary-darker: #1fa588;
@@ -27,4 +40,81 @@
   --ifm-color-primary-lighter: #32d8b4;
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+} */
+
+[data-theme='dark'] {
+  --ifm-color-primary: #ff2ca8;
+  --ifm-color-primary-dark: #e02594;
+  --ifm-color-primary-darker: #c41f83;
+  --ifm-color-primary-darkest: #a11a6c;
+  --ifm-color-primary-light: #ff4ab6;
+  --ifm-color-primary-lighter: #ff74ca;
+  --ifm-color-primary-lightest: #ff9edf;
+
+  --docusaurus-highlighted-code-line-bg: rgba(255, 44, 168, 0.08);
+}
+
+
+.card,
+.navbar,
+.navbar__items,
+.menu__list-item,
+.table-of-contents__link,
+.alert,
+.pagination-nav__link {
+  border-radius: 14px !important;
+}
+
+button,
+input,
+.navbar__toggle,
+.navbar__link {
+  border-radius: 12px !important;
+}
+
+/* ===== OPTIONAL: hover эффекты, градиенты, анимации ===== */
+.monstrino-hover {
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.monstrino-gradient {
+  background: linear-gradient(135deg, #ff2ca8 0%, #8c3bff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.menu__link {
+  padding: 6px 12px;
+  border-radius: 10px;
+}
+
+.menu__link--active {
+  background: rgba(255,44,168,0.12);
+  color: #ff2ca8;
+  font-weight: 600;
+}
+
+.card {
+  border: 1px solid rgba(255,44,168,0.12);
+  background-color: #16161a;
+}
+
+.theme-code-block {
+  border-radius: 12px;
+  border: 1px solid rgba(255,44,168,0.1);
+}
+
+
+.footer {
+  background: #0d0d0f;
+  border-top: 1px solid rgba(255,44,168,0.15);
+}
+
+.monstrino-hover {
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.monstrino-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(255,44,168,0.25);
 }
