@@ -1,5 +1,5 @@
 import pytest
-from monstrino_core import CharacterRole
+from monstrino_core.domain.value_objects import CharacterRoleType
 from monstrino_models.dto import ReleaseCharacterLink
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
@@ -48,8 +48,8 @@ async def test_character_resolver_svc(
         assert links[0].position == 1
         assert links[1].position == 2
 
-        assert links[0].role_id == await uow.repos.character_role.get_id_by(name=CharacterRole.MAIN)
-        assert links[1].role_id == await uow.repos.character_role.get_id_by(name=CharacterRole.SECONDARY)
+        assert links[0].role_id == await uow.repos.character_role.get_id_by(name=CharacterRoleType.MAIN)
+        assert links[1].role_id == await uow.repos.character_role.get_id_by(name=CharacterRoleType.SECONDARY)
 
 
 @pytest.mark.asyncio
@@ -85,7 +85,7 @@ async def test_character_resolver_svc_duplicate_character_in_list(
 
         # Проверяем, что Frankie получила MAIN роль и position=1
         frankie_link = next(link for link in links if link.position == 1)
-        assert frankie_link.role_id == await uow.repos.character_role.get_id_by(name=CharacterRole.MAIN)
+        assert frankie_link.role_id == await uow.repos.character_role.get_id_by(name=CharacterRoleType.MAIN)
 
 
 import logging
@@ -128,7 +128,7 @@ async def test_character_resolver_svc_character_not_found_logs_error(
 
         # Проверяем, что Draculaura получила position=2 и SECONDARY роль
         draculaura_link = next(link for link in links if link.position == 2)
-        assert draculaura_link.role_id == await uow.repos.character_role.get_id_by(name=CharacterRole.SECONDARY)
+        assert draculaura_link.role_id == await uow.repos.character_role.get_id_by(name=CharacterRoleType.SECONDARY)
 
         # Проверяем, что ошибка для MissingCharacterName была залогирована
         assert "Character found in parsed data, but not found in character db: MissingCharacterName" in caplog.text

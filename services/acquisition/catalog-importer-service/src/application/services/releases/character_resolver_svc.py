@@ -1,9 +1,11 @@
 from typing import Any
 import logging
 from icecream import ic
-from monstrino_core import NameFormatter, UnitOfWorkInterface, CharacterRole, CharacterParsedButNotFoundError, \
-    CharacterDataInvalidError
+from monstrino_core.domain.errors import CharacterDataInvalidError
+from monstrino_core.domain.services import NameFormatter
+from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ParsedRelease, ReleaseCharacterLink
+from monstrino_core.domain.value_objects import CharacterRoleType
 from monstrino_testing.fixtures import Repositories
 
 logger = logging.getLogger(__name__)
@@ -18,8 +20,8 @@ class CharacterResolverService:
 
     ) -> None:
         if characters:
-            main_role_id = await uow.repos.character_role.get_id_by(name=CharacterRole.MAIN)
-            secondary_role_id = await uow.repos.character_role.get_id_by(name=CharacterRole.SECONDARY)
+            main_role_id = await uow.repos.character_role.get_id_by(name=CharacterRoleType.MAIN)
+            secondary_role_id = await uow.repos.character_role.get_id_by(name=CharacterRoleType.SECONDARY)
 
             character_count = 0
             for character in characters:

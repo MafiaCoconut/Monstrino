@@ -1,4 +1,5 @@
-from monstrino_core import UnitOfWorkInterface, NameFormatter
+from monstrino_core.domain.services import NameFormatter
+from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ParsedCharacter, Character
 
 from app.container_components import Repositories

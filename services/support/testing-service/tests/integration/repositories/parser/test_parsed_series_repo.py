@@ -1,6 +1,6 @@
 import logging
 import pytest
-from monstrino_core import ParsedSeriesTypes, ProcessingStates
+from monstrino_core.shared.enums import ProcessingStates
 from monstrino_models.dto import ParsedSeries
 from integration.common import BaseCrudRepoTest
 

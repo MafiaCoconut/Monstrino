@@ -1,5 +1,6 @@
 import pytest
-from monstrino_core import NameFormatter, ProcessingStates
+from monstrino_core.domain.services import NameFormatter
+from monstrino_core.shared.enums import ProcessingStates
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
 from app.container_components import Repositories

@@ -1,7 +1,7 @@
 
 import logging
 
-from monstrino_core import NameFormatter
+from monstrino_core.domain.services import NameFormatter
 from monstrino_models.dto import ParsedRelease, Release
 
 logger = logging.getLogger(__name__)

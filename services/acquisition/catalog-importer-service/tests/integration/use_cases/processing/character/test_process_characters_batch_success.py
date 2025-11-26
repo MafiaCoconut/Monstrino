@@ -1,5 +1,5 @@
 import pytest
-from monstrino_core import ProcessingStates
+from monstrino_core.shared.enums import ProcessingStates
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 from monstrino_testing.fixtures import Repositories
 

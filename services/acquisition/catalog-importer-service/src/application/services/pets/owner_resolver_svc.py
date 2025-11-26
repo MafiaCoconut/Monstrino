@@ -1,6 +1,7 @@
 from typing import Any
 
-from monstrino_core import NameFormatter, UnitOfWorkInterface
+from monstrino_core.domain.services import NameFormatter
+from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ParsedPet, CharacterPetOwnership, Pet
 
 from app.container_components import Repositories

@@ -2,11 +2,14 @@ import logging
 from typing import TypeVar, Any
 
 from icecream import ic
-from monstrino_core import SeriesTypes, NameFormatter, ProcessingStates, ParentSeriesNotFoundError
+from monstrino_core.domain.value_objects import SeriesTypes
+from monstrino_core.domain.services import NameFormatter
+from monstrino_core.shared.enums import ProcessingStates
+from monstrino_core.domain.errors import ParentSeriesNotFoundError
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_models.dto import Series
 from monstrino_models.dto import ParsedSeries
-from monstrino_core.exceptions import EntityNotFoundError
+from monstrino_core.domain.errors import EntityNotFoundError
 from monstrino_models.enums import EntityName
 
 from app.container_components import Repositories

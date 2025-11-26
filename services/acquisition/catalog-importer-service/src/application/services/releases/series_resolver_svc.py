@@ -2,7 +2,10 @@ from typing import Any
 import logging
 
 from icecream import ic
-from monstrino_core import NameFormatter, UnitOfWorkInterface, SeriesDataInvalidError, SeriesRelationTypes, SeriesTypes
+from monstrino_core.domain.errors import SeriesDataInvalidError
+from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.value_objects import SeriesTypes, SeriesRelationTypes
+from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ParsedRelease, ReleaseSeriesLink
 
 from app.container_components import Repositories
