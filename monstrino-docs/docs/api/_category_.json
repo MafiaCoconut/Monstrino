@@ -1,0 +1,12 @@
+{
+  "label": "API",
+  "position": 6,
+  "collapsed": false,
+  "collapsible": true,
+  "link": {
+    "type": "generated-index",
+    "title": "API Reference",
+    "description": "REST API endpoints, schemas, authentication rules and usage examples.",
+    "slug": "/api"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "label": "Models",
+  "position": 2,
+  "collapsed": false,
+  "collapsible": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Domain Models",
+    "description": "Release, Character, Series, Image and auxiliary canonical domain models.",
+    "slug": "/models"
+  }
+}

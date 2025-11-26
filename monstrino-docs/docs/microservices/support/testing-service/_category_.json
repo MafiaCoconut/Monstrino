@@ -1,0 +1,19 @@
+{
+  "label": "testing-service",
+  "position": 1,
+  "collapsed": false,
+  "collapsible": true,
+  "className": "monstrino-category",
+  "link": {
+    "type": "generated-index",
+    "title": "testing-service Documentation",
+    "description": "Documentation for the testing-service microservice inside the support domain.",
+    "slug": "/support/microservices/testing-service"
+  },
+  "customProps": {
+    "domain": "support",
+    "service": "testing-service",
+    "maintainer": "Monstrino Team",
+    "updated": "auto"
+  }
+}
