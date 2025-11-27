@@ -1,32 +1,65 @@
+from typing import Any
+import logging
+from monstrino_core.interfaces import UnitOfWorkInterface
+from monstrino_models.dto import ParsedRelease, ReleaseRelationLink, ReleaseImage
+from monstrino_models.enums import EntityName
+
+from app.container_components import Repositories
 
 from monstrino_models.dto import ParsedRelease, Release
 
+from application.services.common import ImageReferenceService
+
+logger = logging.getLogger(__name__)
+
 
 class ImageProcessingService:
-    async def process_images(self, uow, parsed: ParsedRelease, release: Release) -> None:
-        # Primary image
-        if parsed.primary_image:
-            await uow.repos.release_images.save_primary(
-                release_id=release.id,
-                url=parsed.primary_image,
-            )
+    async def process_images(
+            self,
+            uow: UnitOfWorkInterface[Any, Repositories],
+            image_resolver_svc: ImageReferenceService,
+            release_id: int,
+            primary_image: str,
+            other_images_list: list[str],
 
-        # Other images
-        for url in parsed.other_images or []:
-            await uow.repos.release_images.save_secondary(
-                release_id=release.id,
-                url=url,
-            )
 
-        # Parsed images for downstream processing
-        if parsed.primary_image:
-            origin_id = await uow.repos.image_reference_origins.get_id_by_table_and_column(
-                table="releases",
-                column="primary_image",
-            )
-            if origin_id:
-                await uow.repos.parsed_images.add_image(
-                    link=parsed.primary_image,
-                    origin_reference_id=origin_id,
-                    origin_record_id=release.id,
+    ) -> None:
+
+        if primary_image:
+            release_primary_image = await uow.repos.release_image.save(
+                ReleaseImage(
+                    release_id=release_id,
+                    image_url=primary_image,
+                    is_primary=True
                 )
+            )
+
+            await image_resolver_svc.set_image_to_process(
+                uow=uow,
+                table=EntityName.RELEASE_IMAGE,
+                field=ReleaseImage.IMAGE_URL,
+                image_link=primary_image,
+                record_id=release_primary_image.id,
+            )
+        else:
+            logger.warning("No primary image for release ID %s", release_id)
+
+
+        for url in other_images_list:
+            release_image = await uow.repos.release_image.save(
+                ReleaseImage(
+                    release_id=release_id,
+                    image_url=url,
+                    is_primary=False
+                )
+            )
+
+            await image_resolver_svc.set_image_to_process(
+                uow=uow,
+                table=EntityName.RELEASE_IMAGE,
+                field=ReleaseImage.IMAGE_URL,
+                image_link=url,
+                record_id=release_image.id,
+            )
+
+
