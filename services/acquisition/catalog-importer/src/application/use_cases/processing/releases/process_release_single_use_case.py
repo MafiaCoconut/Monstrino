@@ -5,11 +5,13 @@ from monstrino_core.domain.errors import EntityNotFoundError, DuplicateEntityErr
 from monstrino_core.domain.services import NameFormatter
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_models.dto import ParsedRelease, Release
+from monstrino_models.enums import EntityName
 from monstrino_testing.fixtures import Repositories
 
 from application.services.common import ReleaseProcessingStatesService, ImageReferenceService
 from application.services.releases import CharacterResolverService, ExclusiveResolverService, SeriesResolverService, \
-    ContentTypeResolverService, PackTypeResolverService, TierTypeResolverService
+    ContentTypeResolverService, PackTypeResolverService, TierTypeResolverService, PetResolverService, \
+    ReissueRelationResolverService
 
 logger = logging.getLogger(__name__)
 
@@ -23,10 +25,13 @@ class ProcessReleaseSingleUseCase:
             character_resolver_svc: CharacterResolverService,
             series_resolver_svc: SeriesResolverService,
             exclusive_resolver_svc: ExclusiveResolverService,
+            pet_resolver_svc: PetResolverService,
+            reissue_relation_svc: ReissueRelationResolverService,
 
             content_type_resolver_svc: ContentTypeResolverService,
             pack_type_resolver_svc: PackTypeResolverService,
             tier_type_resolver_svc: TierTypeResolverService,
+
 
 
     ) -> None:
@@ -37,10 +42,13 @@ class ProcessReleaseSingleUseCase:
         self.character_resolver_svc = character_resolver_svc
         self.series_resolver_svc = series_resolver_svc
         self.exclusive_resolver_svc = exclusive_resolver_svc
+        self.pet_resolver_svc = pet_resolver_svc
+        self.reissue_relation_svc = reissue_relation_svc
 
         self.content_type_resolver_svc = content_type_resolver_svc
         self.pack_type_resolver_svc = pack_type_resolver_svc
         self.tier_type_resolver_svc = tier_type_resolver_svc
+
 
     """
     1.  Fetch a single release by ID
@@ -53,7 +61,8 @@ class ProcessReleaseSingleUseCase:
     8.  Resolve multi pack
     9.  Resolve exclusive
     10. Resolve pet
-    11. Resolve images
+    11. Resolve reissue of
+    12. Resolve images
     """
 
     async def execute(self, parsed_release_id: int) -> None:
@@ -118,8 +127,21 @@ class ProcessReleaseSingleUseCase:
                 )
 
                 # Step 10: Resolve pets
+                await self.pet_resolver_svc.resolve(
+                    uow=uow,
+                    release_id=release.id,
+                    pets_list=parsed_release.pet_names_raw
+                )
 
-                # Step 11: Resolve images
+                # Step 11: Resolve reissue of
+                await self.reissue_relation_svc.resolve(
+                    uow=uow,
+                    release_id=release.id,
+                    reissue_list=parsed_release.reissue_of_raw
+                )
+
+                # Step 12: Resolve images
+
 
 
 

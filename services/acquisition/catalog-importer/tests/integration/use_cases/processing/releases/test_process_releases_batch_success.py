@@ -12,7 +12,7 @@ from application.services.releases.character_resolver_svc import CharacterResolv
 from application.services.releases.series_resolver_svc import SeriesResolverService
 from application.services.releases.type_resolver_svc import TypeResolverService
 from application.services.releases.exclusive_resolver_svc import ExclusiveResolverService
-from application.services.releases.reissue_relation_svc import ReissueRelationService
+from application.services.releases.reissue_relation_resolver_svc import ReissueRelationResolverService
 from application.services.releases.pet_resolver_svc import PetResolverService
 from application.services.releases.image_processing_svc import ImageProcessingService
 from application.services.common.processing_states_svc import ReleaseProcessingStatesService
@@ -36,7 +36,7 @@ async def test_process_releases_batch_success(
         series_resolver_svc=SeriesResolverService(),
         type_resolver_svc=TypeResolverService(),
         exclusive_resolver_svc=ExclusiveResolverService(),
-        reissue_relation_svc=ReissueRelationService(),
+        reissue_relation_svc=ReissueRelationResolverService(),
         pet_resolver_svc=PetResolverService(),
         image_processing_svc=ImageProcessingService(),
         processing_states_svc=ReleaseProcessingStatesService(),
