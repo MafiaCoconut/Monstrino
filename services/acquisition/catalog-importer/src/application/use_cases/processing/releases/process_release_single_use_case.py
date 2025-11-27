@@ -8,7 +8,8 @@ from monstrino_models.dto import ParsedRelease, Release
 from monstrino_testing.fixtures import Repositories
 
 from application.services.common import ReleaseProcessingStatesService, ImageReferenceService
-from application.services.releases import CharacterResolverService, ExclusiveResolverService, SeriesResolverService
+from application.services.releases import CharacterResolverService, ExclusiveResolverService, SeriesResolverService, \
+    ContentTypeResolverService, PackTypeResolverService, TierTypeResolverService
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +24,10 @@ class ProcessReleaseSingleUseCase:
             series_resolver_svc: SeriesResolverService,
             exclusive_resolver_svc: ExclusiveResolverService,
 
+            content_type_resolver_svc: ContentTypeResolverService,
+            pack_type_resolver_svc: PackTypeResolverService,
+            tier_type_resolver_svc: TierTypeResolverService,
+
 
     ) -> None:
         self.uow_factory = uow_factory
@@ -32,6 +37,10 @@ class ProcessReleaseSingleUseCase:
         self.character_resolver_svc = character_resolver_svc
         self.series_resolver_svc = series_resolver_svc
         self.exclusive_resolver_svc = exclusive_resolver_svc
+
+        self.content_type_resolver_svc = content_type_resolver_svc
+        self.pack_type_resolver_svc = pack_type_resolver_svc
+        self.tier_type_resolver_svc = tier_type_resolver_svc
 
     """
     1.  Fetch a single release by ID
@@ -81,8 +90,25 @@ class ProcessReleaseSingleUseCase:
                 )
 
                 # Step 7: Resolve release type
-
-                # Step 8: Resolve multi pack
+                await self.content_type_resolver_svc.resolve(
+                    uow=uow,
+                    release_id=release.id,
+                    type_list=parsed_release.content_type_raw
+                )
+                await self.pack_type_resolver_svc.resolve(
+                    uow=uow,
+                    release_id=release.id,
+                    pack_type_list=parsed_release.pack_type_raw,
+                    release_character_count=len(parsed_release.characters_raw)
+                )
+                await self.tier_type_resolver_svc.resolve(
+                    uow=uow,
+                    release_id=release.id,
+                    tier_type=parsed_release.tier_type_raw,
+                    release_name=release.name,
+                    release_source=(await uow.repos.source.get_one_by(id=parsed_release.source_id)).name,
+                    has_deluxe_packaging=False
+                )
 
                 # Step 9: Resolve exclusives
                 await self.exclusive_resolver_svc.resolve(

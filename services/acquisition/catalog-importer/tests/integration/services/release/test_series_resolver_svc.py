@@ -9,23 +9,11 @@ from app.container_components import Repositories
 from application.services.releases import SeriesResolverService
 
 
-series = \
-    {
-        "link": "https://just_url.com",
-        "text": "Skullector"
-    }
+series = "Skullector"
 
-series_parent = \
-    {
-        "link": "https://target.com",
-        "text": "Great Scarrier Reef"
-    }
+series_parent = "Great Scarrier Reef"
 
-series_child = \
-    {
-        "link": "https://target.com",
-        "text": "Down Under Ghouls"
-    }
+series_child = "Down Under Ghouls"
 
 def series_list_data_single() -> list:
     return [
@@ -188,29 +176,29 @@ async def test_series_resolver_svc_child_then_parent_series(
         assert len(secondary_links) == 1
 
 
-@pytest.mark.asyncio
-async def test_series_resolver_svc_invalid_input_data(
-        uow_factory: UnitOfWorkFactory[Repositories],
-        seed_release_list
-):
-    """
-    Test that SeriesDataInvalidError is raised when required 'text' field is missing.
-    """
-    service = SeriesResolverService()
-    # Элемент без ключа 'text'
-    release_series = [
-        {"link": "https://invalid.com", "other_field": 123},
-    ]
-
-    async with uow_factory.create() as uow:
-        with pytest.raises(SeriesDataInvalidError):
-            await service.resolve(
-                uow=uow,
-                release_id=1,
-                series_list=release_series
-            )
-
-    # Дополнительная проверка: убедимся, что связи не были созданы
-    async with uow_factory.create() as uow:
-        links: list[ReleaseSeriesLink] = await uow.repos.release_series_link.get_all()
-        assert len(links) == 0
+# @pytest.mark.asyncio
+# async def test_series_resolver_svc_invalid_input_data(
+#         uow_factory: UnitOfWorkFactory[Repositories],
+#         seed_release_list
+# ):
+#     """
+#     Test that SeriesDataInvalidError is raised when required 'text' field is missing.
+#     """
+#     service = SeriesResolverService()
+#     # Элемент без ключа 'text'
+#     release_series = [
+#         {"link": "https://invalid.com", "other_field": 123},
+#     ]
+#
+#     async with uow_factory.create() as uow:
+#         with pytest.raises(SeriesDataInvalidError):
+#             await service.resolve(
+#                 uow=uow,
+#                 release_id=1,
+#                 series_list=release_series
+#             )
+#
+#     # Дополнительная проверка: убедимся, что связи не были созданы
+#     async with uow_factory.create() as uow:
+#         links: list[ReleaseSeriesLink] = await uow.repos.release_series_link.get_all()
+#         assert len(links) == 0

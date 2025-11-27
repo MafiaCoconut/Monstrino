@@ -15,7 +15,6 @@ from application.use_cases.processing.character.process_character_single_use_cas
 @pytest.mark.asyncio
 async def test_process_character_single_full_flow_success(
         uow_factory: UnitOfWorkFactory[Repositories],
-        seed_character_gender_list,
         parsed_character: ParsedCharacter,
 ):
 

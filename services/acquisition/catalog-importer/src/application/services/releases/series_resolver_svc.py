@@ -17,49 +17,45 @@ class SeriesResolverService:
             self,
             uow: UnitOfWorkInterface[Any, Repositories],
             release_id: int,
-            series_list: list[dict]
+            series_list: list[str]
     ) -> None:
-        for parsed_series in series_list:
-            name = parsed_series.get('text')
-            if name:
-                series = await uow.repos.series.get_one_by(name=NameFormatter.format_name(name))
-                if series:
-                    if series.series_type == SeriesTypes.PRIMARY:
+        for parsed_series_name in series_list:
+            series = await uow.repos.series.get_one_by(name=NameFormatter.format_name(parsed_series_name))
+            if series:
+                if series.series_type == SeriesTypes.PRIMARY:
+                    await self._set_series_relation(
+                        uow=uow,
+                        release_id=release_id,
+                        series_id=series.id,
+                        relation_type=SeriesRelationTypes.PRIMARY
+                    )
+                elif series.series_type == SeriesTypes.SECONDARY:
+                    # TODO проверять что если добавляются поочередно primary and secondary тогда не нужно добавлять primary еще раз
+                    series_parent = await uow.repos.series.get_one_by_id(series.parent_id)
+                    if series_parent:
+                        await self._set_series_relation(
+                            uow=uow,
+                            release_id=release_id,
+                            series_id=series_parent.id,
+                            relation_type=SeriesRelationTypes.PRIMARY
+                        )
                         await self._set_series_relation(
                             uow=uow,
                             release_id=release_id,
                             series_id=series.id,
-                            relation_type=SeriesRelationTypes.PRIMARY
+                            relation_type=SeriesRelationTypes.SECONDARY
                         )
-                    elif series.series_type == SeriesTypes.SECONDARY:
-                        # TODO проверять что если добавляются поочередно primary and secondary тогда не нужно добавлять primary еще раз
-                        series_parent = await uow.repos.series.get_one_by_id(series.parent_id)
-                        if series_parent:
-                            await self._set_series_relation(
-                                uow=uow,
-                                release_id=release_id,
-                                series_id=series_parent.id,
-                                relation_type=SeriesRelationTypes.PRIMARY
-                            )
-                            await self._set_series_relation(
-                                uow=uow,
-                                release_id=release_id,
-                                series_id=series.id,
-                                relation_type=SeriesRelationTypes.SECONDARY
-                            )
-                        else:
-                            logger.error(f"Parent series not found for secondary series: {name}")
-
                     else:
-                        logger.error(
-                            f"Series found in parser data, but has invalid series type: {series.series_type}",
-                        )
+                        logger.error(f"Parent series not found for secondary series: {parsed_series_name}")
+
                 else:
                     logger.error(
-                        f"Series found in parser data, but not found in db with name: {name}",
+                        f"Series found in parser data, but has invalid series type: {series.series_type}",
                     )
             else:
-                raise SeriesDataInvalidError(f"Invalid series data: {parsed_series}")
+                logger.error(
+                    f"Series found in parser data, but not found in db with name: {name}",
+                )
 
 
     async def _set_series_relation(

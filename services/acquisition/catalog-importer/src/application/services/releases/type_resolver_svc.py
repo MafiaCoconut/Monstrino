@@ -42,7 +42,7 @@ class TypeResolverService:
 
     """
     @staticmethod
-    async def set_type(uow: UnitOfWorkInterface[Any, Repositories], release_id: int, type_f: str):
+    async def _set_type(uow: UnitOfWorkInterface[Any, Repositories], release_id: int, type_f: str):
         type_id = await uow.repos.release_type.get_id_by(name=type_f)
         if not type_id:
             raise ReleaseTypeNotFoundError(f"Pack type found in parser data, but not found in db with name {type_f}")
@@ -65,7 +65,7 @@ class ContentTypeResolverService(TypeResolverService):
             return
         normalized_type_list = {NameFormatter.format_name(t) for t in type_list}
         for type_name in normalized_type_list:
-            await self.set_type(uow, release_id, type_name)
+            await self._set_type(uow, release_id, type_name)
 
 
 class PackTypeResolverService(TypeResolverService):
@@ -94,7 +94,7 @@ class PackTypeResolverService(TypeResolverService):
             )
         if resolved_types:
             for pack_f in resolved_types:
-                await self.set_type(uow, release_id, pack_f)
+                await self._set_type(uow, release_id, pack_f)
                 if pack_f in ReleaseTypePackCountType:
                     is_multipack_count_found = True
 
@@ -106,13 +106,13 @@ class PackTypeResolverService(TypeResolverService):
         if release_character_count > 0:
             mapped = ReleaseTypePackTypeResolver().map_n_pack(release_character_count)
 
-            await self.set_type(uow, release_id, mapped)
+            await self._set_type(uow, release_id, mapped)
 
             if mapped != ReleaseTypePackCountType.SINGLE_PACK:
                 await self._set_multi_pack(uow, release_id)
 
     async def _set_multi_pack(self, uow, release_id: int):
-        await self.set_type(uow, release_id, ReleaseTypePackCountType.MULTIPACK)
+        await self._set_type(uow, release_id, ReleaseTypePackCountType.MULTIPACK)
 
 
 class TierTypeResolverService(TypeResolverService):
@@ -135,5 +135,5 @@ class TierTypeResolverService(TypeResolverService):
             logger.info(f"Resolved tier type for release_id={release_id}: {result.tier} (reason: {result.reason})")
             tier_type_result = result.tier
 
-        await self.set_type(uow, release_id, tier_type_result)
+        await self._set_type(uow, release_id, tier_type_result)
 

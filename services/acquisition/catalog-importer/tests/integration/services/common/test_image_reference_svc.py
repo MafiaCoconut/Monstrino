@@ -52,7 +52,6 @@ def dummy_character() -> Character:
 @pytest.mark.asyncio
 async def test_set_image_to_process(
         uow_factory: UnitOfWorkFactory[Repositories],
-        seed_character_gender_list
 ):
 
     svc = ImageReferenceService()
@@ -82,7 +81,7 @@ async def test_set_image_to_process(
 # 2. Reference not found → queue not created
 # =========================================================
 @pytest.mark.asyncio
-async def test_reference_not_found(uow_factory: UnitOfWorkFactory[Repositories], seed_character_gender_list):
+async def test_reference_not_found(uow_factory: UnitOfWorkFactory[Repositories]):
     svc = ImageReferenceService()
     async with uow_factory.create() as uow:
         ch = await uow.repos.character.save(dummy_character())
@@ -105,7 +104,7 @@ async def test_reference_not_found(uow_factory: UnitOfWorkFactory[Repositories],
 # 3. image_link = "" or None → no queue entry
 # =========================================================
 @pytest.mark.asyncio
-async def test_empty_image_link(uow_factory: UnitOfWorkFactory[Repositories], seed_character_gender_list):
+async def test_empty_image_link(uow_factory: UnitOfWorkFactory[Repositories]):
 
     svc = ImageReferenceService()
     async with uow_factory.create() as uow:
@@ -160,7 +159,7 @@ async def test_empty_image_link(uow_factory: UnitOfWorkFactory[Repositories], se
 # 5. Rollback on failure (simulate error during save)
 # =========================================================
 @pytest.mark.asyncio
-async def test_rollback_on_error(uow_factory: UnitOfWorkFactory[Repositories], seed_character_gender_list, monkeypatch):
+async def test_rollback_on_error(uow_factory: UnitOfWorkFactory[Repositories], monkeypatch):
 
     svc = ImageReferenceService()
 
@@ -193,7 +192,7 @@ async def test_rollback_on_error(uow_factory: UnitOfWorkFactory[Repositories], s
 # 6. Idempotency / duplicates not allowed
 # =========================================================
 @pytest.mark.asyncio
-async def test_duplicates_not_allowed(uow_factory: UnitOfWorkFactory[Repositories], seed_character_gender_list):
+async def test_duplicates_not_allowed(uow_factory: UnitOfWorkFactory[Repositories]):
 
     svc = ImageReferenceService()
     async with uow_factory.create() as uow:
@@ -220,7 +219,7 @@ async def test_duplicates_not_allowed(uow_factory: UnitOfWorkFactory[Repositorie
 # 7. Initial state is ProcessingStates.INIT
 # =========================================================
 @pytest.mark.asyncio
-async def test_initial_state_is_init(uow_factory: UnitOfWorkFactory[Repositories], seed_character_gender_list):
+async def test_initial_state_is_init(uow_factory: UnitOfWorkFactory[Repositories]):
 
     svc = ImageReferenceService()
     async with uow_factory.create() as uow:
@@ -241,7 +240,7 @@ async def test_initial_state_is_init(uow_factory: UnitOfWorkFactory[Repositories
 # 8. Nested / unusual field name is supported
 # =========================================================
 @pytest.mark.asyncio
-async def test_nested_field_supported(uow_factory: UnitOfWorkFactory[Repositories], seed_character_gender_list):
+async def test_nested_field_supported(uow_factory: UnitOfWorkFactory[Repositories]):
 
     svc = ImageReferenceService()
     nested_field = "profile.avatar"  # unusual field
@@ -275,7 +274,7 @@ async def test_nested_field_supported(uow_factory: UnitOfWorkFactory[Repositorie
 # 9. Batch performance (10 items)
 # =========================================================
 @pytest.mark.asyncio
-async def test_batch_10_items(uow_factory: UnitOfWorkFactory[Repositories], seed_character_gender_list):
+async def test_batch_10_items(uow_factory: UnitOfWorkFactory[Repositories]):
 
     svc = ImageReferenceService()
     async with uow_factory.create() as uow:
