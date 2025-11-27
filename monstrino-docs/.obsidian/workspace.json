@@ -1,0 +1,235 @@
+{
+  "main": {
+    "id": "806a55510588fa9b",
+    "type": "split",
+    "children": [
+      {
+        "id": "18b503421f7a24e6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e66b3314e565d7af",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/models/domains/release/ReleaseType.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "ReleaseType"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "f7daa243993ab9a1",
+    "type": "split",
+    "children": [
+      {
+        "id": "2603c36897fe59a1",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1a975ca53af42356",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "3cbd35bfbde28792",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "f73d3aaec5de5bfd",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 233.5
+  },
+  "right": {
+    "id": "5ae337b5a8d699ec",
+    "type": "split",
+    "children": [
+      {
+        "id": "7053f66ba7182cab",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "08d567d970f6960c",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "docs/models/domains/release/ReleaseType.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": false
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for ReleaseType"
+            }
+          },
+          {
+            "id": "5a3c95bf3b360d50",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "docs/models/domains/release/ReleaseType.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from ReleaseType"
+            }
+          },
+          {
+            "id": "4f78bda7df98f96e",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "44c579fff956c377",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "76f42cfe1930bc9b",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "docs/models/domains/release/ReleaseType.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of ReleaseType"
+            }
+          },
+          {
+            "id": "8cf29633d320e0b2",
+            "type": "leaf",
+            "state": {
+              "type": "calendar",
+              "state": {},
+              "icon": "lucide-ghost",
+              "title": "calendar"
+            }
+          },
+          {
+            "id": "386fa8f1e757a4b2",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
+          }
+        ],
+        "currentTab": 6
+      }
+    ],
+    "direction": "horizontal",
+    "width": 357.5
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "obsidian-git:Open Git source control": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false,
+      "obsidian-excalidraw-plugin:New drawing": false,
+      "templater-obsidian:Templater": false,
+      "table-editor-obsidian:Advanced Tables Toolbar": false,
+      "templates:Insert template": false,
+      "hidden-folder-obsidian:Hidden Folders": false
+    }
+  },
+  "active": "e66b3314e565d7af",
+  "lastOpenFiles": [
+    "docs/models/domains/release/Release.md",
+    "docs/models/domains/release/ReleaseType.md",
+    "docs/models/domains",
+    "docs/models/enums",
+    "templates/model.md",
+    "templates",
+    "docs/models/domains/release",
+    "docs/models/domains/character",
+    "templates/use_case.md",
+    "templates/flow.md",
+    "templates/_category_.json.md",
+    "templates",
+    "docs/api/overview.md",
+    "node_modules/entities/readme.md",
+    "node_modules/proxy-addr/README.md",
+    "node_modules/ms/license.md",
+    "Excalidraw/Drawing 2025-11-27 00.44.06.excalidraw.md",
+    "Excalidraw",
+    "docs/microservices/acquisition/catalog-collector/intro.md",
+    "docs/microservices/acquisition/catalog-collector/use-cases/overview.md",
+    "docs/Tutorial/tutorial-basics/create-a-document.md"
+  ]
+}
