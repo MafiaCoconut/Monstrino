@@ -1,0 +1,12 @@
+{
+  "label": "Release Type",
+  "position": 1,
+  "collapsed": true,
+  "collapsible": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Release type enums",
+    "description": "Enumeration of different release types in the Monstrino architecture.",
+    "slug": "docs/architecture/domain/enums/release/release_type"
+  }
+}

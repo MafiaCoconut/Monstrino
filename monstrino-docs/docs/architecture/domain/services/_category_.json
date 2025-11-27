@@ -1,0 +1,12 @@
+{
+  "label": "Domain services",
+  "position": 1,
+  "collapsed": true,
+  "collapsible": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Domain Services",
+    "description": "Services that encapsulate domain logic not naturally fitting within entities or value objects.",
+    "slug": "/architecture/domain/services"
+  }
+}

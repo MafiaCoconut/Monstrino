@@ -1,7 +1,7 @@
 {
   "label": "API",
   "position": 6,
-  "collapsed": false,
+  "collapsed": true,
   "collapsible": true,
   "link": {
     "type": "generated-index",

@@ -205,11 +205,16 @@
       "templater-obsidian:Templater": false,
       "table-editor-obsidian:Advanced Tables Toolbar": false,
       "templates:Insert template": false,
-      "hidden-folder-obsidian:Hidden Folders": false
+      "hidden-folder-obsidian:Hidden Folders": false,
+      "obsidian-import-json:JSON/CSV Importer": false
     }
   },
   "active": "e66b3314e565d7af",
   "lastOpenFiles": [
+    "docs/models/domains/release/ReleaseType.md~",
+    "docs/models/domains/release/Release.md~",
+    "docs/models/domains/release/_category_.json~",
+    "docs/models/domains/release/_category_.json",
     "docs/models/domains/release/Release.md",
     "docs/models/domains/release/ReleaseType.md",
     "docs/models/domains",

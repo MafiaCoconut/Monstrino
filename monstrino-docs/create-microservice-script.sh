@@ -28,7 +28,7 @@ cat > "$BASE_DIR/_category_.json" <<EOF
 {
   "label": "$SERVICE_NAME",
   "position": 1,
-  "collapsed": false,
+  "collapsed": true,
   "collapsible": true,
   "className": "monstrino-category",
   "link": {
@@ -74,7 +74,7 @@ cat > "$BASE_DIR/use-cases/_category_.json" <<EOF
 {
   "label": "Use Cases",
   "position": 1,
-  "collapsed": false,
+  "collapsed": true,
   "collapsible": true,
   "className": "monstrino-subcategory",
   "link": {
@@ -103,7 +103,7 @@ cat > "$BASE_DIR/flows/_category_.json" <<EOF
 {
   "label": "Flows",
   "position": 2,
-  "collapsed": false,
+  "collapsed": true,
   "collapsible": true,
   "className": "monstrino-subcategory",
   "link": {
@@ -132,7 +132,7 @@ cat > "$BASE_DIR/internal-services/_category_.json" <<EOF
 {
   "label": "Internal Services",
   "position": 3,
-  "collapsed": false,
+  "collapsed": true,
   "collapsible": true,
   "className": "monstrino-subcategory",
   "link": {
@@ -161,7 +161,7 @@ cat > "$BASE_DIR/testing/_category_.json" <<EOF
 {
   "label": "Testing",
   "position": 4,
-  "collapsed": false,
+  "collapsed": true,
   "collapsible": true,
   "className": "monstrino-subcategory",
   "link": {

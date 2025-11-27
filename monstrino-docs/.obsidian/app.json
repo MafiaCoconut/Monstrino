@@ -1,1 +1,8 @@
-{}
+{
+  "userIgnoreFilters": [
+    "node_modules/",
+    "src/",
+    "static/"
+  ],
+  "showUnsupportedFiles": true
+}

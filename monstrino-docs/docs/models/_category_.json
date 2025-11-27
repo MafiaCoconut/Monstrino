@@ -1,7 +1,7 @@
 {
   "label": "Models",
   "position": 2,
-  "collapsed": false,
+  "collapsed": true,
   "collapsible": true,
   "link": {
     "type": "generated-index",

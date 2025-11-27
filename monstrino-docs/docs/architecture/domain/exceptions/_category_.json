@@ -1,0 +1,12 @@
+{
+  "label": "Domain services",
+  "position": 1,
+  "collapsed": true,
+  "collapsible": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Domain Exceptions",
+    "description": "Exceptions that represent domain-specific errors and violations.",
+    "slug": "/architecture/domain/exceptions"
+  }
+}

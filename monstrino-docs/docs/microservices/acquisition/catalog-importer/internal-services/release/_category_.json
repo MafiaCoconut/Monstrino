@@ -1,0 +1,13 @@
+{
+  "label": "Release Services",
+  "position": 1,
+  "collapsed": false,
+  "collapsible": true,
+  "className": "monstrino-subcategory",
+  "link": {
+    "type": "generated-index",
+    "title": "catalog-importer — Release Services",
+    "description": "Internal services in catalog-importer microservice.",
+    "slug": "/acquisition/microservices/catalog-importer/internal-services/release"
+  }
+}

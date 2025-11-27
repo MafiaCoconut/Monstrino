@@ -11,6 +11,7 @@ class TestImageReferenceOriginRepo(BaseCrudRepoTest):
     entity_cls = ImageReferenceOrigin
     repo_attr = "image_reference_origin"
     sample_create_data = {
+
         "entity": "Pet",
         "table": "pets",
         "field": "primary_image",

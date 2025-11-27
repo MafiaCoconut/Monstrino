@@ -1,8 +1,8 @@
 {
-  "label": "Micro-services",
+  "label": "Microservices",
   "position": 1,
   "link": {
     "type": "generated-index",
-    "description": "List of micro-services."
+    "description": "List of microservices."
   }
 }

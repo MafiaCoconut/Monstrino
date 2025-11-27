@@ -1,7 +1,7 @@
 {
   "label": "catalog-importer",
   "position": 1,
-  "collapsed": false,
+  "collapsed": true,
   "collapsible": true,
   "className": "monstrino-category",
   "link": {

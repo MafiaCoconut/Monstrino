@@ -1,7 +1,7 @@
 {
   "label": "Pipelines",
   "position": 4,
-  "collapsed": false,
+  "collapsed": true,
   "collapsible": true,
   "link": {
     "type": "generated-index",

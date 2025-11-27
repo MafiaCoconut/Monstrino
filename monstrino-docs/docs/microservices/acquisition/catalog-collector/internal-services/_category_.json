@@ -1,7 +1,7 @@
 {
   "label": "Internal Services",
   "position": 3,
-  "collapsed": false,
+  "collapsed": true,
   "collapsible": true,
   "className": "monstrino-subcategory",
   "link": {

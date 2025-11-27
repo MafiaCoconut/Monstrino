@@ -1,0 +1,12 @@
+{
+  "label": "Data Flow",
+  "position": 1,
+  "collapsed": true,
+  "collapsible": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Architecture data flow",
+    "description": "Data flow architecture overview",
+    "slug": "/architecture/data-flow"
+  }
+}
