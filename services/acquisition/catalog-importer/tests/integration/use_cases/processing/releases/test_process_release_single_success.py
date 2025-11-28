@@ -1,0 +1,100 @@
+import pytest
+from unittest.mock import AsyncMock
+
+from monstrino_repositories.unit_of_work import UnitOfWorkFactory
+from monstrino_models.dto import Release
+
+from app.container_components import Repositories
+from application.use_cases.processing.releases.process_release_single_use_case import ProcessReleaseSingleUseCase
+
+
+@pytest.mark.asyncio
+async def test_process_release_single_usecase_success(
+        uow_factory: UnitOfWorkFactory[Repositories],
+        parsed_release,               # Фикстура ParsedRelease (НЕ ORM)
+        seed_parsed_release_list,     # Фикстура, которая добавляет ParsedReleaseORM
+        seed_source_list              # Чтобы source_id=1 существовал
+):
+    """
+    Проверяет, что:
+    - ParsedRelease извлечён
+    - Release создан
+    - ВСЕ resolver-сервисы вызваны
+    - порядок вызовов корректен
+    - image_processing_svc вызывается правильно
+    """
+
+    # --------- Mock resolver services ----------
+    character_resolver = AsyncMock()
+    series_resolver = AsyncMock()
+    exclusive_resolver = AsyncMock()
+    pet_resolver = AsyncMock()
+    reissue_resolver = AsyncMock()
+    image_processing = AsyncMock()
+
+    content_resolver = AsyncMock()
+    pack_resolver = AsyncMock()
+    tier_resolver = AsyncMock()
+
+    processing_states_svc = AsyncMock()
+    image_reference_svc = AsyncMock()
+
+    # --------- Create UseCase ----------
+    usecase = ProcessReleaseSingleUseCase(
+        uow_factory=uow_factory,
+        processing_states_svc=processing_states_svc,
+        image_reference_svc=image_reference_svc,
+
+        character_resolver_svc=character_resolver,
+        series_resolver_svc=series_resolver,
+        exclusive_resolver_svc=exclusive_resolver,
+        pet_resolver_svc=pet_resolver,
+        reissue_relation_svc=reissue_resolver,
+
+        image_processing_svc=image_processing,
+
+        content_type_resolver_svc=content_resolver,
+        pack_type_resolver_svc=pack_resolver,
+        tier_type_resolver_svc=tier_resolver,
+    )
+
+    # --------- EXECUTE ----------
+    await usecase.execute(parsed_release_id=1)
+
+    # --------- VALIDATE DB: Release created ----------
+    async with uow_factory.create() as uow:
+        releases = await uow.repos.release.get_all()
+        assert len(releases) == 1
+
+        rel = releases[0]
+        assert rel.name == "draculaura ghouls rule"  # formatted
+        assert rel.display_name == "Draculaura Ghouls Rule"
+        assert rel.year == 2012
+        assert rel.mpn == "MPN123"
+
+    # --------- VALIDATE calls to resolver services ---------
+
+    character_resolver.resolve.assert_awaited_once()
+    args = character_resolver.resolve.await_args.kwargs
+    assert args["release_id"] == rel.id
+    assert args["characters"] == parsed_release.characters_raw
+
+    series_resolver.resolve.assert_awaited_once()
+    content_resolver.resolve.assert_awaited_once()
+    pack_resolver.resolve.assert_awaited_once()
+    tier_resolver.resolve.assert_awaited_once()
+    exclusive_resolver.resolve.assert_awaited_once()
+    pet_resolver.resolve.assert_awaited_once()
+    reissue_resolver.resolve.assert_awaited_once()
+
+    # --------- Image processing call ---------
+
+    image_processing.process_images.assert_awaited_once()
+    img_call = image_processing.process_images.await_args.kwargs
+
+    assert img_call["release_id"] == rel.id
+    assert img_call["primary_image"] == parsed_release.primary_image
+    assert img_call["other_images_list"] == parsed_release.images
+    assert img_call["image_reference_svc"] is image_reference_svc
+
+

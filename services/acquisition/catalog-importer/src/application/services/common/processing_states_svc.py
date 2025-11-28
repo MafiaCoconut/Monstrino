@@ -30,3 +30,6 @@ class ReleaseProcessingStatesService:
 
     async def set_with_errors(self, uow, parsed_id: int) -> None:
         await uow.repos.parsed_release.set_processing_state(parsed_id, ProcessingStates.WITH_ERRORS)
+
+    async def set_processing(self, uow, parsed_id: int) -> None:
+        await uow.repos.parsed_release.set_processing_state(parsed_id, ProcessingStates.PROCESSING)

@@ -17,7 +17,7 @@ class ImageProcessingService:
     async def process_images(
             self,
             uow: UnitOfWorkInterface[Any, Repositories],
-            image_resolver_svc: ImageReferenceService,
+            image_reference_svc: ImageReferenceService,
             release_id: int,
             primary_image: str,
             other_images_list: list[str],
@@ -34,7 +34,7 @@ class ImageProcessingService:
                 )
             )
 
-            await image_resolver_svc.set_image_to_process(
+            await image_reference_svc.set_image_to_process(
                 uow=uow,
                 table=EntityName.RELEASE_IMAGE,
                 field=ReleaseImage.IMAGE_URL,
@@ -54,7 +54,7 @@ class ImageProcessingService:
                 )
             )
 
-            await image_resolver_svc.set_image_to_process(
+            await image_reference_svc.set_image_to_process(
                 uow=uow,
                 table=EntityName.RELEASE_IMAGE,
                 field=ReleaseImage.IMAGE_URL,

@@ -32,7 +32,7 @@ async def test_image_processing_service_success(
     async with uow_factory.create() as uow:
         await service.process_images(
             uow=uow,
-            image_resolver_svc=image_resolver_svc,
+            image_reference_svc=image_resolver_svc,
             release_id=1,
             primary_image=PRIMARY,
             other_images_list=[IMG_1, IMG_2],
@@ -85,7 +85,7 @@ async def test_image_processing_service_no_primary(
         async with uow_factory.create() as uow:
             await service.process_images(
                 uow=uow,
-                image_resolver_svc=image_resolver_svc,
+                image_reference_svc=image_resolver_svc,
                 release_id=1,
                 primary_image="",
                 other_images_list=[IMG_1, IMG_2],
@@ -126,7 +126,7 @@ async def test_image_processing_service_empty_other_images(
     async with uow_factory.create() as uow:
         await service.process_images(
             uow=uow,
-            image_resolver_svc=image_resolver_svc,
+            image_reference_svc=image_resolver_svc,
             release_id=1,
             primary_image=PRIMARY,
             other_images_list=[],
@@ -164,7 +164,7 @@ async def test_image_processing_service_with_image_reference_end_to_end(
     async with uow_factory.create() as uow:
         await service.process_images(
             uow=uow,
-            image_resolver_svc=image_reference_svc,
+            image_reference_svc=image_reference_svc,
             release_id=1,
             primary_image=PRIMARY,
             other_images_list=[IMG_1, IMG_2],

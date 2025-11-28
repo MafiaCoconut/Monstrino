@@ -1,7 +1,7 @@
 from typing import Any
 import logging
 
-from monstrino_core.domain.errors import EntityNotFoundError, DuplicateEntityError
+from monstrino_core.domain.errors import EntityNotFoundError, DuplicateEntityError, SourceNotFoundError
 from monstrino_core.domain.services import NameFormatter
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_models.dto import ParsedRelease, Release
@@ -11,7 +11,7 @@ from monstrino_testing.fixtures import Repositories
 from application.services.common import ReleaseProcessingStatesService, ImageReferenceService
 from application.services.releases import CharacterResolverService, ExclusiveResolverService, SeriesResolverService, \
     ContentTypeResolverService, PackTypeResolverService, TierTypeResolverService, PetResolverService, \
-    ReissueRelationResolverService
+    ReissueRelationResolverService, ImageProcessingService
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +27,8 @@ class ProcessReleaseSingleUseCase:
             exclusive_resolver_svc: ExclusiveResolverService,
             pet_resolver_svc: PetResolverService,
             reissue_relation_svc: ReissueRelationResolverService,
+
+            image_processing_svc: ImageProcessingService,
 
             content_type_resolver_svc: ContentTypeResolverService,
             pack_type_resolver_svc: PackTypeResolverService,
@@ -44,6 +46,7 @@ class ProcessReleaseSingleUseCase:
         self.exclusive_resolver_svc = exclusive_resolver_svc
         self.pet_resolver_svc = pet_resolver_svc
         self.reissue_relation_svc = reissue_relation_svc
+        self.image_processing_svc = image_processing_svc
 
         self.content_type_resolver_svc = content_type_resolver_svc
         self.pack_type_resolver_svc = pack_type_resolver_svc
@@ -70,6 +73,7 @@ class ProcessReleaseSingleUseCase:
             async with self.uow_factory.create() as uow:
                 # Step 1: Fetch a single release by ID
                 parsed_release: ParsedRelease = await uow.repos.parsed_release.get_one_by_id(obj_id=parsed_release_id)
+                await self.processing_states_svc.set_processing(uow, parsed_release_id)
 
                 # Step 2-3: Create release entity and format name
                 release = Release(
@@ -110,14 +114,18 @@ class ProcessReleaseSingleUseCase:
                     pack_type_list=parsed_release.pack_type_raw,
                     release_character_count=len(parsed_release.characters_raw)
                 )
-                await self.tier_type_resolver_svc.resolve(
-                    uow=uow,
-                    release_id=release.id,
-                    tier_type=parsed_release.tier_type_raw,
-                    release_name=release.name,
-                    release_source=(await uow.repos.source.get_one_by(id=parsed_release.source_id)).name,
-                    has_deluxe_packaging=False
-                )
+                source = await uow.repos.source.get_one_by(id=parsed_release.source_id)
+                if source:
+                    await self.tier_type_resolver_svc.resolve(
+                        uow=uow,
+                        release_id=release.id,
+                        tier_type=parsed_release.tier_type_raw,
+                        release_name=release.name,
+                        release_source=source.name,
+                        has_deluxe_packaging=False
+                    )
+                else:
+                    raise SourceNotFoundError(f"Entity source with ID {parsed_release.source_id} not found")
 
                 # Step 9: Resolve exclusives
                 await self.exclusive_resolver_svc.resolve(
@@ -141,22 +149,25 @@ class ProcessReleaseSingleUseCase:
                 )
 
                 # Step 12: Resolve images
-
-
-
-
+                await self.image_processing_svc.process_images(
+                    uow=uow,
+                    release_id=release.id,
+                    primary_image=parsed_release.primary_image,
+                    other_images_list=parsed_release.images,
+                    image_reference_svc=self.image_reference_svc
+                )
 
 
         except EntityNotFoundError as e:
-            logger.error(f"Entity parsed_pet with ID {parsed_release_id} not found")
+            logger.error(f"Entity parsed_release with ID {parsed_release_id} not found")
             await self._handle_error(parsed_release_id)
         except DuplicateEntityError as e:
-            logger.error(f"Duplicate entity error for pet ID {parsed_release_id}: {e}")
+            logger.error(f"Duplicate entity error for release ID {parsed_release_id}: {e}")
             await self._handle_error(parsed_release_id)
         except Exception as e:
-            logger.exception(f"Error processing parsed_pet ID {parsed_release_id}: {e}", )
+            logger.exception(f"Error processing parsed_release ID {parsed_release_id}: {e}", )
             await self._handle_error(parsed_release_id)
 
-    async def _handle_error(self, parsed_character_id: int):
+    async def _handle_error(self, parsed_release_id: int):
         async with self.uow_factory.create() as uow:
-            await self.processing_states_svc.set_with_errors(uow, parsed_character_id)
+            await self.processing_states_svc.set_with_errors(uow, parsed_release_id)
