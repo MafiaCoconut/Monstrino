@@ -1,0 +1,29 @@
+from monstrino_models.dto import ReleasePet
+
+from integration.common import BaseCrudRepoTest
+
+
+class TestReleasePetRepo(BaseCrudRepoTest):
+    entity_cls = ReleasePet
+    repo_attr = "release_pet"
+
+    sample_create_data = {
+        "release_id": 1,
+        "pet_id": 3,
+        "standalone_release_id": None,
+        "position": 2,
+        "name": "perseus",
+        "display_name": "Perseus",
+        "notes": "Clawdeen’s panther pet.",
+        "description": "Black panther cub.",
+        "is_uniq_to_release": False,
+        "finish_type": "matte",
+        "size_variant": "medium",
+        "pose_variant": "prowling",
+        "colorway": "black-gold",
+    }
+
+    unique_field = ReleasePet.NAME
+    unique_field_value = "perseus"
+    update_field = ReleasePet.DISPLAY_NAME
+    updated_value = "Perseus Updated"

@@ -9,7 +9,6 @@ from integration.common import BaseCrudRepoTest
 logger = logging.getLogger(__name__)
 
 
-@pytest.mark.usefixtures("seed_character_gender_list")
 class TestCharacterRepo(BaseCrudRepoTest):
     entity_cls = Character
     repo_attr = "character"

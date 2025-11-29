@@ -1,6 +1,7 @@
 import logging
 import pytest
-from monstrino_core.domain.value_objects import ReleaseTypeTierType, ReleaseTypePackagingType
+from monstrino_core.domain.value_objects import ReleaseTypeTierType, ReleaseTypePackType, ReleaseTypePackCountType, \
+    CharacterGender, ReleaseTypeContentType
 from monstrino_core.shared.enums import ProcessingStates
 from monstrino_models.dto import ParsedRelease
 from integration.common import BaseCrudRepoTest
@@ -19,16 +20,16 @@ class TestParsedReleaseRepo(BaseCrudRepoTest):
         "year":2013,
         "characters_raw":["clawdeen"],
         "series_raw":["Howleen"],
-        "gender_raw": "ghoul",
-        "content_type_raw":["doll"],
-        "pack_type_raw": [ReleaseTypePackagingType.SINGLE_PACK],
+        "gender_raw": [CharacterGender.GHOUL],
+        "content_type_raw":[ReleaseTypeContentType.DOLL],
+        "pack_type_raw": [ReleaseTypePackCountType.SINGLE_PACK],
         "tier_type_raw": ReleaseTypeTierType.STANDARD,
         "exclusive_vendor_raw":["amazon"],
         "pet_names_raw":["crescent"],
-        "reissue_of_raw":{"name":"none"},
+        "reissue_of_raw":[],
         "extra":{},
         "primary_image":"https://img",
-        "images":{},
+        "images":[],
         "images_link":"https://all",
         "description_raw":"desc",
         "from_the_box_text_raw":"box",
