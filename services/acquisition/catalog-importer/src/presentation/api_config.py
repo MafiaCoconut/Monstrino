@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from presentation.api import cors
-from presentation.api.responces import rewrite_http_exception_response
+# from presentation.api.responces import rewrite_http_exception_response
 from presentation.api.routes import internal_routes as internal_api
 
 
@@ -14,7 +14,8 @@ def configure_endpoints(app: FastAPI):
 
 
 def config_exceptions(app: FastAPI):
-    rewrite_http_exception_response(app=app)
+    ...
+    # rewrite_http_exception_response(app=app)
 
 
 def config_cors(app: FastAPI):
