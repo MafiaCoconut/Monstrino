@@ -27,10 +27,7 @@ include $(ROOT_DIR)/Makefiles/pytest.mk
 PACKAGES_DIR := ../../../packages
 
 LOCAL_DEPS := \
-    $(PACKAGES_DIR)/monstrino-core \
-    $(PACKAGES_DIR)/monstrino-models \
-    $(PACKAGES_DIR)/monstrino-repositories \
-    $(PACKAGES_DIR)/monstrino-testing
+    $(PACKAGES_DIR)/monstrino-api \
 
 
 # =========== Commands ===========

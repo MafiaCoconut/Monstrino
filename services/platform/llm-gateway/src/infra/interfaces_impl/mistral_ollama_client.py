@@ -26,7 +26,7 @@ class MistralOllamaClient(OllamaClient):
             prompt: str,
             system: str,
             response_format: Optional[dict | BaseModel | str] = None
-    ):
+    ) -> str:
         if response_format:
             if isinstance(response_format, dict):
                 format_r = JsonSchemaGenerator.make_schema_from_dict(response_format)
@@ -35,7 +35,7 @@ class MistralOllamaClient(OllamaClient):
         else:
             format_r = "json"
 
-        await self._generate(
+        return await self._generate(
             OllamaRequest(
                 model=OllamaModels.MISTRAL,
                 system=system,
@@ -43,3 +43,4 @@ class MistralOllamaClient(OllamaClient):
                 format=format_r
             )
         )
+

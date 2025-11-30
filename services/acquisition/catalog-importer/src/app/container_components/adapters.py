@@ -4,5 +4,4 @@ from application.ports.scheduler_port import SchedulerPort
 
 @dataclass
 class Adapters:
-    logger: LoggerPort
     scheduler: SchedulerPort

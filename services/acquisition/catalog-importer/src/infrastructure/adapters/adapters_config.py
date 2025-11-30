@@ -7,8 +7,7 @@ from infrastructure.logging.logger_adapter import LoggerAdapter
 from infrastructure.scheduling.scheduler_adapter import SchedulerAdapter
 
 
-def build_adapters(logger: LoggerAdapter, aps: AsyncIOScheduler) -> Adapters:
+def build_adapters(aps: AsyncIOScheduler) -> Adapters:
     return Adapters(
-        logger=logger,
         scheduler=SchedulerAdapter(aps),
     )

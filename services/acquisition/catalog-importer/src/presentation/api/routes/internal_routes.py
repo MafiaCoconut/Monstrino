@@ -2,7 +2,7 @@ from fastapi import APIRouter, Response, BackgroundTasks, FastAPI, Request
 from fastapi.params import Depends
 
 from fastapi.security import HTTPBearer
-from monstrino_api.auth import VerifyToken
+from monstrino_infra.auth import VerifyToken
 
 from application.services.processing_service import ProcessingService
 

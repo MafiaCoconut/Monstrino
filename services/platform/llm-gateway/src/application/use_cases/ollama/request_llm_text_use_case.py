@@ -22,9 +22,9 @@ class RequestLLMTextUseCase:
             prompt: str,
             system: Optional[str],
             response_format: Optional[dict | BaseModel | str] = None
-    ):
+    ) -> str:
         logger.info(f"GenerateTextUseCase execute called with model: {self.text_model.model}")
-        await self.text_model.generate(
+        return await self.text_model.generate(
             prompt=prompt,
             system=system,
             response_format=response_format

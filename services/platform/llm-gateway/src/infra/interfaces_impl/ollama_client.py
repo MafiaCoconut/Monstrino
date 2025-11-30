@@ -1,5 +1,6 @@
 from icecream import ic
-from application.interfaces.http_client_interface import HttpClientInterface
+from monstrino_api.interface import HttpClientInterface
+
 from domain.vault_obj import OllamaRequest, OllamaResponse, OllamaResponseTags
 
 
@@ -32,11 +33,11 @@ class OllamaClient:
             payload=ollama_request,
             response_model=OllamaResponse
         )
-        ic(response.response)
+        return response.response
 
     async def _tags(self) -> str:
         response = await self.http_client.get(
             url=self.base_url+self.path_tags,
             response_model=OllamaResponseTags
         )
-        ic(response.response)
+        return response.response

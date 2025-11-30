@@ -1,11 +1,13 @@
+import logging
 from app.container import AppContainer
 from app.bootstrap import *
 from infrastructure.adapters.adapters_config import build_adapters
 from infrastructure.logging.logger_adapter import LoggerAdapter
 
+logger = logging.getLogger(__name__)
+
 
 def build_app():
-    logger = LoggerAdapter()
     logger.debug("Processing wiring")
 
     logger.debug("Processing scheduler configuration")
@@ -13,7 +15,7 @@ def build_app():
     logger.debug("Finishing scheduler configuration")
 
     logger.debug("Starting adapters configuration")
-    adapters = build_adapters(logger, aps)
+    adapters = build_adapters(aps)
     logger.debug("Finishing adapters configuration")
 
     logger.debug("Starting repositories configuration")
@@ -24,9 +26,15 @@ def build_app():
     services = build_services(repositories=repositories, adapters=adapters)
     logger.debug("Finishing services configuration")
 
+    logger.debug("Processing gateways configuration")
+    gateways = build_gateways()
+    logger.debug("Finishing gateways configuration")
+
+
     return AppContainer(
         services=services,
         adapters=adapters,
         repositories=repositories,
+        gateways=gateways,
     )
 

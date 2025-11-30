@@ -12,6 +12,6 @@ class TextOllamaModelInterface(Protocol[ModelT]):
             prompt: str,
             system: str,
             response_format: Optional[dict | BaseModel | str] = None
-    ):
+    ) -> str:
         ...
 

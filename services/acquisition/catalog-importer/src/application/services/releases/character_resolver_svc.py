@@ -1,6 +1,7 @@
 from typing import Any
 import logging
 from icecream import ic
+from monstrino_api.interface.lllm_gateway_interface import LLMGatewayInterface
 from monstrino_core.domain.errors import CharacterDataInvalidError
 from monstrino_core.domain.services import NameFormatter
 from monstrino_core.interfaces import UnitOfWorkInterface
@@ -15,15 +16,30 @@ class CharacterResolverService:
     async def resolve(
             self,
             uow: UnitOfWorkInterface[Any, Repositories],
+            llm_gateway: LLMGatewayInterface,
             release_id: int,
             characters: list # ["Clawdeen Wolf", "Cleo de Nile", "Draculaura", "Frankie Stein", "Toralei Stripe", "Deuce Gorgon"]
 
     ) -> None:
         if characters:
-            main_role_id = await uow.repos.character_role.get_id_by(name=CharacterRoleType.MAIN)
-            secondary_role_id = await uow.repos.character_role.get_id_by(name=CharacterRoleType.SECONDARY)
+            # main_role_id = await uow.repos.character_role.get_id_by(name=CharacterRoleType.MAIN)
+            # secondary_role_id = await uow.repos.character_role.get_id_by(name=CharacterRoleType.SECONDARY)
 
-
+            response = await llm_gateway.post(
+                prompt="Process the following character list and description to release, and return a structured json info about each character",
+                system_prompt="""
+                    You are a Monster High JSON data extraction engine.
+                    Goal: Read INPUT JSON, extract specified fields from payload.description, and return OUTPUT JSON.
+                    **MUST** output ONLY a single, valid JSON object. **NEVER** output natural language, explanations, or chain-of-thought.
+                    
+                    **STRICT FAILURE/ERROR RULE:**
+                    If input is invalid JSON or missing required keys, output:
+                    {"error": "INVALID_INPUT"}
+                """,
+                response_format={
+                     "characters": {"name":str, "clothes": str, "accessories": [str]}}
+            )
+            ic(response)
 
 
 
