@@ -1,15 +1,16 @@
+import pytest
 from monstrino_models.dto import ReleaseCharacter
 
 from integration.common import BaseCrudRepoTest
 
-
+@pytest.mark.usefixtures("seed_release_list", "seed_character_list", "seed_character_role_list")
 class TestReleaseCharacterRepo(BaseCrudRepoTest):
     entity_cls = ReleaseCharacter
     repo_attr = "release_character"
 
     sample_create_data = {
         "release_id": 1,
-        "character_id": 3,
+        "character_id": 2,
         "role_id": 1,
         "standalone_release_id": None,
         "position": 2,

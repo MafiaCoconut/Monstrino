@@ -1,5 +1,6 @@
 import logging
 import pytest
+from monstrino_core.domain.value_objects import ReleaseTypeCategory
 from monstrino_models.dto import ReleaseType
 from integration.common import BaseCrudRepoTest
 
@@ -13,6 +14,7 @@ class TestReleaseTypeRepo(BaseCrudRepoTest):
     sample_create_data = {
         "name": "accessory_pack",
         "display_name": "Accessory Pack",
+        "category": ReleaseTypeCategory.CONTENT
     }
     unique_field = ReleaseType.NAME
     unique_field_value = "accessory_pack"
