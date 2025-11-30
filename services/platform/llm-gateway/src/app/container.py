@@ -1,12 +1,10 @@
 from dataclasses import dataclass
 
-from app.container_components.adapters import Adapters
-from app.container_components.repositories import Repositories
-from app.container_components.services import Services
+from app.container_components import UseCases, Models
+
 
 @dataclass
 class AppContainer:
-    adapters: Adapters
-    services: Services
-    repositories: Repositories
+    use_cases: UseCases
+    models: Models
 

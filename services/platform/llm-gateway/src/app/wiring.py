@@ -5,28 +5,13 @@ from app.bootstrap import *
 
 
 def build_app():
-    # logger = LoggerAdapter()
-    # logger.debug("Processing wiring")
-    #
-    # logger.debug("Processing scheduler configuration")
-    # aps = build_apscheduler()
-    # logger.debug("Finishing scheduler configuration")
-    #
-    # logger.debug("Starting adapters configuration")
-    # adapters = build_adapters(logger, aps)
-    # logger.debug("Finishing adapters configuration")
-    #
-    # logger.debug("Starting repositories configuration")
-    # repositories = build_repositories()
-    # logger.debug("Finishing repositories configuration")
-    #
-    # logger.debug("Processing services configuration")
-    # services = build_services(repositories=repositories, adapters=adapters)
-    # logger.debug("Finishing services configuration")
+
+    models = build_models()
+
+    use_cases = build_use_cases(text_model=models.mistral)
 
     return AppContainer(
-        # services=services,
-        # adapters=adapters,
-        # repositories=repositories,
+        models=models,
+        use_cases=use_cases
     )
 

@@ -1,4 +1,2 @@
-from .adapters import Adapters
-from .repositories import Repositories
-from .services import Services
+from .models import Models
 from .use_cases import UseCases
