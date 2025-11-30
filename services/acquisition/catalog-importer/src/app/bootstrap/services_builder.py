@@ -1,5 +1,4 @@
-from app.container import Services, Repositories
-from app.container_components.adapters import Adapters
+from app.container_components import Adapters, Services, Repositories
 from application.services.processing_service import ProcessingService
 from application.services.scheduler_service import SchedulerService
 

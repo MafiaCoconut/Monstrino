@@ -1,3 +1,0 @@
-from infrastructure.interfaces_impl.scheduler_interface_impl import SchedulerInterfaceImpl
-
-scheduler_interface = SchedulerInterfaceImpl()
