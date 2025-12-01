@@ -29,7 +29,7 @@ def config_routes(app: FastAPI):
 async def root():
     return await get_success_json_response(data={"message": "LLM Gateway is running"})
 
-@private.post('/generate_text')
+@private.post('/generate-text')
 async def generate_text(
         request: GenerateTextRequest,
         request_llm_text_uc: RequestLLMTextUseCase = Depends(get_request_llm_text_uc)

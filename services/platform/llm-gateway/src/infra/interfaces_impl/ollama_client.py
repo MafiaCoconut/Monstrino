@@ -25,7 +25,7 @@ class OllamaClient:
             self,
             ollama_request: OllamaRequest,
     ) -> str:
-        # ic(ollama_request)
+        ic(ollama_request)
         ollama_request.options = self.options
 
         response: OllamaResponse = await self.http_client.post(
