@@ -28,16 +28,10 @@ class CharacterResolverService:
             response = await llm_gateway.post(
                 prompt="Process the following character list and description to release, and return a structured json info about each character",
                 system_prompt="""
-                    You are a Monster High JSON data extraction engine.
-                    Goal: Read INPUT JSON, extract specified fields from payload.description, and return OUTPUT JSON.
-                    **MUST** output ONLY a single, valid JSON object. **NEVER** output natural language, explanations, or chain-of-thought.
                     
-                    **STRICT FAILURE/ERROR RULE:**
-                    If input is invalid JSON or missing required keys, output:
-                    {"error": "INVALID_INPUT"}
                 """,
                 response_format={
-                     "characters": {"name":str, "clothes": str, "accessories": [str]}}
+                     "characters": {"name": "", "clothes": "", "accessories": [""]}}
             )
             ic(response)
 

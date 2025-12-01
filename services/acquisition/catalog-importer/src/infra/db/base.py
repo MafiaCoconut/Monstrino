@@ -4,7 +4,7 @@ from monstrino_repositories.base.session import Sessions
 from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
-from infrastructure.db.db_config import db_settings
+from infra.db.db_config import db_settings
 from dotenv import load_dotenv
 
 load_dotenv()

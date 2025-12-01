@@ -1,6 +1,6 @@
 from application.interfaces.scheduler_interface import SchedulerInterface
 from domain.entities.job import Job
-from infrastructure.config.scheduler_config import scheduler
+from infra.config.scheduler_config import scheduler
 
 
 class SchedulerInterfaceImpl(SchedulerInterface):

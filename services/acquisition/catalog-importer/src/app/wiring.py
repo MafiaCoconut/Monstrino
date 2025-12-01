@@ -1,8 +1,8 @@
 import logging
 from app.container import AppContainer
 from app.bootstrap import *
-from infrastructure.adapters.adapters_config import build_adapters
-from infrastructure.logging.logger_adapter import LoggerAdapter
+from infra.adapters.adapters_config import build_adapters
+from infra.logging.logger_adapter import LoggerAdapter
 
 logger = logging.getLogger(__name__)
 
