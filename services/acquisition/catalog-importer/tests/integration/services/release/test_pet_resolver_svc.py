@@ -44,7 +44,7 @@ async def test_pet_resolver_svc(
         )
 
     async with uow_factory.create() as uow:
-        links: list[ReleasePetLink] = await uow.repos.release_pet_link.get_all()
+        links = await uow.repos.release_pet.get_all()
 
         ids = [link.id for link in links]
         # Should match number of input pets
@@ -112,7 +112,7 @@ async def test_pet_resolver_svc_pet_not_found_logs_error(
             )
 
     async with uow_factory.create() as uow:
-        links: list[ReleasePetLink] = await uow.repos.release_pet_link.get_all()
+        links = await uow.repos.release_pet.get_all()
 
         # Only 2 valid pets create entries
         assert len(links) == 2

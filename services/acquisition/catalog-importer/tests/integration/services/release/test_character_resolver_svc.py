@@ -1,6 +1,7 @@
 import pytest
+from monstrino_core.domain.errors import DuplicateEntityError
 from monstrino_core.domain.value_objects import CharacterRoleType
-from monstrino_models.dto import ReleaseCharacterLink
+from monstrino_models.dto import ReleaseCharacterLink, ReleaseCharacter
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
 from app.container_components import Repositories
@@ -23,7 +24,6 @@ def characters_data() -> list:
 @pytest.mark.asyncio
 async def test_character_resolver_svc(
         uow_factory: UnitOfWorkFactory[Repositories],
-        llm_gateway,
         seed_character_list,
         seed_character_role_list,
         seed_release_list
@@ -34,20 +34,20 @@ async def test_character_resolver_svc(
     async with uow_factory.create() as uow:
         await service.resolve(
             uow=uow,
-            llm_gateway=llm_gateway,
             release_id=1,
             characters=release_characters
         )
 
-    # async with uow_factory.create() as uow:
-    #     links: list[ReleaseCharacterLink] = await uow.repos.release_character_link.get_all()
-    #     assert len(links) == len(release_characters)
-    #
-    #     assert links[0].position == 1
-    #     assert links[1].position == 2
-    #
-    #     assert links[0].role_id == await uow.repos.character_role.get_id_by(name=CharacterRoleType.MAIN)
-    #     assert links[1].role_id == await uow.repos.character_role.get_id_by(name=CharacterRoleType.SECONDARY)
+    async with uow_factory.create() as uow:
+        r_ch_list = await uow.repos.release_character.get_all()
+        assert len(r_ch_list) == 2
+
+        assert r_ch_list[0].is_uniq_to_release == False
+        assert r_ch_list[1].is_uniq_to_release == False
+
+        assert r_ch_list[0].role_id == await uow.repos.character_role.get_id_by(name=CharacterRoleType.MAIN)
+        assert r_ch_list[1].role_id == await uow.repos.character_role.get_id_by(name=CharacterRoleType.SECONDARY)
+
 
 
 @pytest.mark.asyncio
@@ -69,22 +69,13 @@ async def test_character_resolver_svc_duplicate_character_in_list(
         character_1(),  # Frankie Stein (дубликат)
     ]
 
-    async with uow_factory.create() as uow:
-        await service.resolve(
-            uow=uow,
-            release_id=1,
-            characters=release_characters
-        )
-
-    async with uow_factory.create() as uow:
-        links: list[ReleaseCharacterLink] = await uow.repos.release_character_link.get_all()
-        # Ожидается только 2 связи: Frankie (MAIN, pos=1) и Draculaura (SECONDARY, pos=2)
-        assert len(links) == 2
-
-        # Проверяем, что Frankie получила MAIN роль и position=1
-        frankie_link = next(link for link in links if link.position == 1)
-        assert frankie_link.role_id == await uow.repos.character_role.get_id_by(name=CharacterRoleType.MAIN)
-
+    with pytest.raises(DuplicateEntityError):
+        async with uow_factory.create() as uow:
+            await service.resolve(
+                uow=uow,
+                release_id=1,
+                characters=release_characters
+            )
 
 import logging
 
@@ -119,7 +110,8 @@ async def test_character_resolver_svc_character_not_found_logs_error(
             )
 
     async with uow_factory.create() as uow:
-        links: list[ReleaseCharacterLink] = await uow.repos.release_character_link.get_all()
+        links = await uow.repos.release_character.get_all()
+
 
         # Должны быть созданы 2 связи (Franckie Stein и Draculaura)
         assert len(links) == 2
