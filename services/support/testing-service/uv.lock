@@ -473,6 +473,29 @@ wheels = [
 ]
 
 [[package]]
+name = "monstrino-api"
+version = "0.1.0"
+source = { editable = "../../../packages/monstrino-api" }
+dependencies = [
+    { name = "aiobreaker" },
+    { name = "build" },
+    { name = "httpx" },
+    { name = "icecream" },
+    { name = "pydantic" },
+    { name = "twine" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiobreaker", specifier = ">=1.2.0" },
+    { name = "build", specifier = ">=1.3.0,<2.0.0" },
+    { name = "httpx", specifier = ">=0.28.1" },
+    { name = "icecream", specifier = ">=2.1.8" },
+    { name = "pydantic", specifier = ">=2.12.5" },
+    { name = "twine", specifier = ">=6.2.0,<7.0.0" },
+]
+
+[[package]]
 name = "monstrino-core"
 version = "0.1.2"
 source = { editable = "../../../packages/monstrino-core" }
@@ -882,7 +905,9 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "asyncpg" },
+    { name = "monstrino-api" },
     { name = "monstrino-core" },
+    { name = "monstrino-infra" },
     { name = "monstrino-models" },
     { name = "monstrino-repositories" },
     { name = "monstrino-testing" },
@@ -894,7 +919,9 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "asyncpg", specifier = ">=0.30.0" },
+    { name = "monstrino-api", editable = "../../../packages/monstrino-api" },
     { name = "monstrino-core", editable = "../../../packages/monstrino-core" },
+    { name = "monstrino-infra", editable = "../../../packages/monstrino-infra" },
     { name = "monstrino-models", editable = "../../../packages/monstrino-models" },
     { name = "monstrino-repositories", editable = "../../../packages/monstrino-repositories" },
     { name = "monstrino-testing", editable = "../../../packages/monstrino-testing" },
