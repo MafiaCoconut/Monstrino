@@ -17,10 +17,10 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-monstrino-core = { path = "../../../packages/monstrino-core", editable = true }
-monstrino-models = { path = "../../../packages/monstrino-models", editable = true }
-monstrino-repositories = { path = "../../../packages/monstrino-repositories", editable = true }
-monstrino-testing = { path = "../../../packages/monstrino-testing", editable = true }
+monstrino-core = { path = "ssh://git@github.com/MafiaCoconut/monstrino-core.git", rev = "v0.1.2" }
+monstrino-models = { path = "ssh://git@github.com/MafiaCoconut/monstrino-models.git", rev = "v0.1.3" }
+monstrino-repositories = { path = "ssh://git@github.com/MafiaCoconut/monstrino-repositories.git", rev = "v0.1.2" }
+monstrino-testing = { path = "ssh://git@github.com/MafiaCoconut/monstrino-testing.git", rev = "v0.1.1" }
 
 
 
