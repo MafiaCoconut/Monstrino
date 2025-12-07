@@ -1,7 +1,6 @@
 import pytest
 from monstrino_core.domain.errors import DuplicateEntityError
 from monstrino_core.domain.value_objects import CharacterRoleType
-from monstrino_models.dto import ReleaseCharacterLink, ReleaseCharacter
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
 from app.container_components import Repositories

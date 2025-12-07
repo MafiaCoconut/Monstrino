@@ -1,7 +1,7 @@
 import pytest
 from monstrino_core.domain.services import NameFormatter
 from monstrino_core.domain.errors import ExclusiveDataInvalidError
-from monstrino_models.dto import ReleaseCharacterLink, ReleaseExclusiveLink
+from monstrino_models.dto import ReleaseExclusiveLink
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
 from app.container_components import Repositories

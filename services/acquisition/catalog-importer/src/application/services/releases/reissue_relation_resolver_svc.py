@@ -1,6 +1,7 @@
 from typing import Any
 import logging
 
+from icecream import ic
 from monstrino_core.domain.errors import ReleaseRelationTypeNotFoundError, RelatedReleaseNotFoundError
 from monstrino_core.domain.services import NameFormatter
 from monstrino_core.domain.value_objects.release import ReleaseRelationType
@@ -35,11 +36,13 @@ class ReissueRelationResolverService:
         for reissue_release_name in reissue_list:
             rel_release = await uow.repos.release.get_one_by(name=NameFormatter.format_name(reissue_release_name))
             if rel_release:
-                await uow.repos.release_relation_link.save(ReleaseRelationLink(
+                release_relation_link = ReleaseRelationLink(
                     release_id=release_id,
                     related_release_id=rel_release.id,
                     relation_type_id=relation_type_id
-                ))
+                )
+                ic(release_relation_link)
+                await uow.repos.release_relation_link.save(release_relation_link)
             else:
                 raise RelatedReleaseNotFoundError(
                     f"Related release '{reissue_release_name}' not found in the database."

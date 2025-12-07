@@ -5,7 +5,7 @@ from monstrino_api.interface.lllm_gateway_interface import LLMGatewayInterface
 from monstrino_core.domain.errors import CharacterDataInvalidError
 from monstrino_core.domain.services import NameFormatter
 from monstrino_core.interfaces import UnitOfWorkInterface
-from monstrino_models.dto import ParsedRelease, ReleaseCharacterLink, ReleaseCharacter
+from monstrino_models.dto import ReleaseCharacter
 from monstrino_core.domain.value_objects import CharacterRoleType
 from monstrino_testing.fixtures import Repositories
 
@@ -51,17 +51,17 @@ class CharacterResolverService:
                     else:
                         role_id = secondary_role_id
 
-                    await uow.repos.release_character.save(
-                        ReleaseCharacter(
-                            release_id=release_id,
-                            character_id=character_id,
-                            role_id=role_id,
-                            position=character_count,
-                            name=formatted_name,
-                            display_name=character_name,
-                            is_uniq_to_release=True if len(characters) == 1 else False,
-                        )
+                    release_character = ReleaseCharacter(
+                        release_id=release_id,
+                        character_id=character_id,
+                        role_id=role_id,
+                        position=character_count,
+                        name=formatted_name,
+                        display_name=character_name,
+                        is_uniq_to_release=True if len(characters) == 1 else False,
                     )
+                    ic(release_character)
+                    await uow.repos.release_character.save(release_character)
                 else:
                     # TODO: нужно добавить логику добавления персонажа в бд если его нет
                     logger.error(

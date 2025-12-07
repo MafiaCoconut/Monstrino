@@ -1,5 +1,7 @@
 from typing import Any
 import logging
+
+from icecream import ic
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ParsedRelease, ReleaseRelationLink, ReleaseImage
 from monstrino_models.enums import EntityName
@@ -33,7 +35,7 @@ class ImageProcessingService:
                     is_primary=True
                 )
             )
-
+            ic(release_primary_image)
             await image_reference_svc.set_image_to_process(
                 uow=uow,
                 table=EntityName.RELEASE_IMAGE,
@@ -53,7 +55,7 @@ class ImageProcessingService:
                     is_primary=False
                 )
             )
-
+            ic(release_image)
             await image_reference_svc.set_image_to_process(
                 uow=uow,
                 table=EntityName.RELEASE_IMAGE,

@@ -1,8 +1,9 @@
 import pytest
 from unittest.mock import AsyncMock
 
+from monstrino_core.domain.services import NameFormatter
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
-from monstrino_models.dto import Release
+from monstrino_models.dto import Release, ParsedRelease
 
 from app.container_components import Repositories
 from application.use_cases.processing.releases.process_release_single_use_case import ProcessReleaseSingleUseCase
@@ -11,17 +12,19 @@ from application.use_cases.processing.releases.process_release_single_use_case i
 @pytest.mark.asyncio
 async def test_process_release_single_usecase_success(
         uow_factory: UnitOfWorkFactory[Repositories],
-        parsed_release,               # ParsedRelease Fixture
-        seed_parsed_release_list,     # Seed ParsedRelease Fixtures
+        seed_parsed_release_default: ParsedRelease # Seed fixture and returned record
 ):
     """
-    Проверяет, что:
+    Check, that:
     - ParsedRelease извлечён
     - Release создан
     - ВСЕ resolver-сервисы вызваны
     - порядок вызовов корректен
     - image_processing_svc вызывается правильно
     """
+
+    # --------- Arrange: ParsedRelease ----------
+    parsed_release = seed_parsed_release_default
 
     # --------- Mock resolver services ----------
     character_resolver = AsyncMock()
@@ -66,10 +69,12 @@ async def test_process_release_single_usecase_success(
         assert len(releases) == 1
 
         rel = releases[0]
-        assert rel.name == "draculaura ghouls rule"  # formatted
-        assert rel.display_name == "Draculaura Ghouls Rule"
-        assert rel.year == 2012
-        assert rel.mpn == "MPN123"
+        assert rel.name == NameFormatter.format_name(parsed_release.name)  # formatted
+        assert rel.display_name == parsed_release.name
+        assert rel.year == parsed_release.year
+        assert rel.mpn == parsed_release.mpn
+        assert rel.description == parsed_release.description_raw
+        assert rel.text_from_box == parsed_release.from_the_box_text_raw
 
     # --------- VALIDATE calls to resolver services ---------
 

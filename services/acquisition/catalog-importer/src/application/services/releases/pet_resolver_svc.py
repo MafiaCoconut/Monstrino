@@ -3,7 +3,7 @@ import logging
 
 from monstrino_core.domain.services import NameFormatter
 from monstrino_core.interfaces import UnitOfWorkInterface
-from monstrino_models.dto import ParsedRelease, ReleasePetLink, ReleasePet
+from monstrino_models.dto import  ReleasePet
 
 from app.container_components import Repositories
 

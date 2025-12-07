@@ -21,6 +21,7 @@ class SeriesResolverService:
     ) -> None:
         for parsed_series_name in series_list:
             series = await uow.repos.series.get_one_by(name=NameFormatter.format_name(parsed_series_name))
+            ic(series)
             if series:
                 if series.series_type == SeriesTypes.PRIMARY:
                     await self._set_series_relation(
@@ -54,7 +55,7 @@ class SeriesResolverService:
                     )
             else:
                 logger.error(
-                    f"Series found in parser data, but not found in db with name: {name}",
+                    f"Series found in parser data, but not found in db with name: {parsed_series_name}",
                 )
 
 
@@ -66,13 +67,13 @@ class SeriesResolverService:
             relation_type: SeriesRelationTypes
     ) -> None:
         if not await self._validate_series_exist(uow, release_id, series_id, relation_type):
-            await uow.repos.release_series_link.save(
-                ReleaseSeriesLink(
-                    release_id=release_id,
-                    series_id=series_id,
-                    relation_type=relation_type
-                )
+            release_series_link = ReleaseSeriesLink(
+                release_id=release_id,
+                series_id=series_id,
+                relation_type=relation_type
             )
+            ic(release_series_link)
+            await uow.repos.release_series_link.save(release_series_link)
 
     async def _validate_series_exist(
             self,

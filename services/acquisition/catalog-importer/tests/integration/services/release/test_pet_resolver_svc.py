@@ -2,7 +2,6 @@ import pytest
 import logging
 
 from monstrino_core.domain.errors import DuplicateEntityError
-from monstrino_models.dto import ReleasePetLink
 from monstrino_core.domain.services import NameFormatter
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 

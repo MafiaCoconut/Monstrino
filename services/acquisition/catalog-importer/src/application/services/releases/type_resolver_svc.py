@@ -46,12 +46,12 @@ class TypeResolverService:
         type_id = await uow.repos.release_type.get_id_by(name=type_f)
         if not type_id:
             raise ReleaseTypeNotFoundError(f"Pack type found in parser data, but not found in db with name {type_f}")
-        await uow.repos.release_type_link.save(
-            ReleaseTypeLink(
-                release_id=release_id,
-                type_id=type_id
-            )
+        release_type_link = ReleaseTypeLink(
+            release_id=release_id,
+            type_id=type_id
         )
+        ic(release_type_link)
+        await uow.repos.release_type_link.save(release_type_link)
 
 
 class ContentTypeResolverService(TypeResolverService):
@@ -130,7 +130,7 @@ class TierTypeResolverService(TypeResolverService):
             tier_type_result = tier_type
         else:
             result = ReleaseTypeTierResolver.resolve(
-                name=release_name, source=release_source, has_deluxe_packaging=has_deluxe_packaging
+                name=release_name, source=release_source, tier_type=tier_type, has_deluxe_packaging=has_deluxe_packaging
             )
             logger.info(f"Resolved tier type for release_id={release_id}: {result.tier} (reason: {result.reason})")
             tier_type_result = result.tier

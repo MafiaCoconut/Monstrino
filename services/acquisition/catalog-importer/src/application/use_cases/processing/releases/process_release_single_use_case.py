@@ -1,6 +1,6 @@
 from typing import Any
 import logging
-
+from icecream import ic
 from monstrino_core.domain.errors import EntityNotFoundError, DuplicateEntityError, SourceNotFoundError
 from monstrino_core.domain.services import NameFormatter
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
@@ -75,45 +75,54 @@ class ProcessReleaseSingleUseCase:
                 parsed_release: ParsedRelease = await uow.repos.parsed_release.get_one_by_id(obj_id=parsed_release_id)
                 await self.processing_states_svc.set_processing(uow, parsed_release_id)
 
+                ic(parsed_release)
                 # Step 2-3: Create release entity and format name
                 release = Release(
                     name=NameFormatter.format_name(parsed_release.name),
                     display_name=parsed_release.name,
                     year=parsed_release.year,
                     mpn=parsed_release.mpn,
-                    description=parsed_release.description,
-                    text_from_box=parsed_release.from_the_box_text
+                    description=parsed_release.description_raw,
+                    text_from_box=parsed_release.from_the_box_text_raw
                 )
 
                 # Step 4: Save release
                 release = await uow.repos.release.save(release)
-
+                ic(release)
+                ic('==================================================')
+                ic("Resolve characters")
                 # Step 5: Resolve characters
                 await self.character_resolver_svc.resolve(
                     uow=uow,
                     release_id=release.id,
-                    characters=parsed_release.characters
+                    characters=parsed_release.characters_raw
                 )
-
+                ic('==================================================')
+                ic("Resolve series")
                 # Step 6: Resolve series
                 await self.series_resolver_svc.resolve(
                     uow=uow,
                     release_id=release.id,
-                    series_list=parsed_release.series
+                    series_list=parsed_release.series_raw
                 )
-
+                ic('==================================================')
+                ic("Resolve content type")
                 # Step 7: Resolve release type
                 await self.content_type_resolver_svc.resolve(
                     uow=uow,
                     release_id=release.id,
                     type_list=parsed_release.content_type_raw
                 )
+                ic('==================================================')
+                ic("Resolve pack type")
                 await self.pack_type_resolver_svc.resolve(
                     uow=uow,
                     release_id=release.id,
                     pack_type_list=parsed_release.pack_type_raw,
                     release_character_count=len(parsed_release.characters_raw)
                 )
+                ic('==================================================')
+                ic("Resolve tier type")
                 source = await uow.repos.source.get_one_by(id=parsed_release.source_id)
                 if source:
                     await self.tier_type_resolver_svc.resolve(
@@ -126,28 +135,32 @@ class ProcessReleaseSingleUseCase:
                     )
                 else:
                     raise SourceNotFoundError(f"Entity source with ID {parsed_release.source_id} not found")
-
+                ic('==================================================')
+                ic("Resolve exclusives")
                 # Step 9: Resolve exclusives
                 await self.exclusive_resolver_svc.resolve(
                     uow=uow,
                     release_id=release.id,
-                    exclusive_list=parsed_release.exclusive_of_names
+                    exclusive_list=parsed_release.exclusive_vendor_raw
                 )
-
+                ic('==================================================')
+                ic("Resolve pets")
                 # Step 10: Resolve pets
                 await self.pet_resolver_svc.resolve(
                     uow=uow,
                     release_id=release.id,
                     pets_list=parsed_release.pet_names_raw
                 )
-
-                # Step 11: Resolve reissue of
+                ic('==================================================')
+                ic("Resolve reissue")
+                # Step 11: Resolve reissue
                 await self.reissue_relation_svc.resolve(
                     uow=uow,
                     release_id=release.id,
                     reissue_list=parsed_release.reissue_of_raw
                 )
-
+                ic('==================================================')
+                ic("Resolve images")
                 # Step 12: Resolve images
                 await self.image_processing_svc.process_images(
                     uow=uow,
