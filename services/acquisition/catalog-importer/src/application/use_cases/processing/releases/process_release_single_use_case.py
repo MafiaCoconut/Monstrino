@@ -3,6 +3,7 @@ import logging
 from icecream import ic
 from monstrino_core.domain.errors import EntityNotFoundError, DuplicateEntityError, SourceNotFoundError
 from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.value_objects import ReleaseTypeContentType
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_models.dto import ParsedRelease, Release
 from monstrino_models.enums import EntityName
@@ -111,7 +112,9 @@ class ProcessReleaseSingleUseCase:
                 await self.content_type_resolver_svc.resolve(
                     uow=uow,
                     release_id=release.id,
-                    type_list=parsed_release.content_type_raw
+                    type_list=parsed_release.content_type_raw,
+                    character_count=len(parsed_release.characters_raw),
+                    pet_count=len(parsed_release.pet_names_raw)
                 )
                 ic('==================================================')
                 ic("Resolve pack type")
@@ -119,7 +122,7 @@ class ProcessReleaseSingleUseCase:
                     uow=uow,
                     release_id=release.id,
                     pack_type_list=parsed_release.pack_type_raw,
-                    release_character_count=len(parsed_release.characters_raw)
+                    release_character_count=len(parsed_release.characters_raw),
                 )
                 ic('==================================================')
                 ic("Resolve tier type")

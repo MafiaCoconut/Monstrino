@@ -9,7 +9,7 @@ from monstrino_core.domain.services import NameFormatter, ReleaseTypePackTypeRes
 from monstrino_core.domain.value_objects import ReleaseTypeContentType, ReleaseTypeTierType, \
     ReleaseTypeTierDecision, ReleaseTypePackCountType, ReleaseTypePackType
 from monstrino_core.interfaces import UnitOfWorkInterface
-from monstrino_models.dto import ReleaseTypeLink
+from monstrino_models.dto import ReleaseTypeLink, ReleaseType
 
 from app.container_components import Repositories
 
@@ -60,11 +60,21 @@ class ContentTypeResolverService(TypeResolverService):
             uow: UnitOfWorkInterface[Any, Repositories],
             release_id: int,
             type_list: list[str],
+            character_count: int,
+            pet_count: int,
     ):
         if not type_list:
             return
+
         normalized_type_list = {NameFormatter.format_name(t) for t in type_list}
-        for type_name in normalized_type_list:
+        n_type_list = list(normalized_type_list)
+        if pet_count > 0 and ReleaseTypeContentType.PET_FIGURE not in type_list:
+            n_type_list.append(ReleaseTypeContentType.PET_FIGURE)
+
+        if character_count > 0 and ReleaseTypeContentType.DOLL_FIGURE not in type_list:
+            n_type_list.append(ReleaseTypeContentType.DOLL_FIGURE)
+
+        for type_name in n_type_list:
             await self._set_type(uow, release_id, type_name)
 
 
@@ -83,6 +93,7 @@ class PackTypeResolverService(TypeResolverService):
         3. IF pack_type is multipack, also set multipack type
         """
 
+
         # TODO Добавить дополнительную проверку описания релиза на наличие упоминнаний о дополнительных типах релиза
 
         is_multipack_count_found = False
@@ -98,9 +109,10 @@ class PackTypeResolverService(TypeResolverService):
                 if pack_f in ReleaseTypePackCountType:
                     is_multipack_count_found = True
 
-
-        if not is_multipack_count_found:
-            await self._set_single_multipack(uow, release_id, release_character_count)
+        # playset_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypeContentType.PLAYSET})
+        if await uow.repos.release_type_link.exists_by(**{ReleaseTypeLink.RELEASE_TYPE_NAME: ReleaseTypeContentType.PLAYSET}):
+            if not is_multipack_count_found:
+                await self._set_single_multipack(uow, release_id, release_character_count)
 
     async def _set_single_multipack(self, uow, release_id: int, release_character_count: int):
         if release_character_count > 0:
@@ -132,7 +144,7 @@ class TierTypeResolverService(TypeResolverService):
             result = ReleaseTypeTierResolver.resolve(
                 name=release_name, source=release_source, tier_type=tier_type, has_deluxe_packaging=has_deluxe_packaging
             )
-            logger.info(f"Resolved tier type for release_id={release_id}: {result.tier} (reason: {result.reason})")
+            # logger.info(f"Resolved tier type for release_id={release_id}: {result.tier} (reason: {result.reason})")
             tier_type_result = result.tier
 
         await self._set_type(uow, release_id, tier_type_result)
