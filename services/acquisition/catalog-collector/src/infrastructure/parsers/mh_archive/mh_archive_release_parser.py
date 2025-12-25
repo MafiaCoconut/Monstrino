@@ -15,13 +15,13 @@ from monstrino_models.dto import ParsedRelease
 from pydantic import BaseModel
 from bs4 import BeautifulSoup
 
-from application.ports.parse.parse_release_port import ParseReleasesPort
+from application.ports.parse.parse_release_port import ParseReleasePort
 from infrastructure.parsers.helper import Helper
 
 logger = logging.getLogger(__name__)
 
 
-class MHArchiveReleasesParser(ParseReleasesPort):
+class MHArchiveReleasesParser(ParseReleasePort):
     def __init__(self):
         self.domain_url = os.getenv("MHARCHIVE_LINK")
         self.batch_size = 10

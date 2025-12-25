@@ -3,7 +3,7 @@ from typing import Protocol, AsyncGenerator
 from monstrino_models.dto import ParsedCharacter
 
 
-class ParseCharactersPort(Protocol):
+class ParseCharacterPort(Protocol):
     async def parse(self): ...
 
     def parse_ghouls(self) -> AsyncGenerator[list[ParsedCharacter]]: ...
