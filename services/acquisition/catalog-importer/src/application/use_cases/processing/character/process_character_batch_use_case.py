@@ -32,5 +32,5 @@ class ProcessCharacterBatchUseCase:
         for char_id in ids:
             try:
                 await self.single_uc.execute(char_id)
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 logger.error("Batch error while processing character %s: %s", char_id, exc)

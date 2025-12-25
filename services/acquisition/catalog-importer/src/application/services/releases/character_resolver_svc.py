@@ -39,12 +39,10 @@ class CharacterResolverService:
             character_count = 0
 
             for character_name in characters:
-
                 formatted_name = NameFormatter.format_name(character_name)
                 character_id = await uow.repos.character.get_id_by(name=formatted_name)
 
                 if character_id:
-
                     character_count += 1
                     if character_count == 1:
                         role_id = main_role_id

@@ -1,4 +1,6 @@
+from icecream import ic
 from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.value_objects import CharacterGender
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ParsedCharacter, Character
 
@@ -10,9 +12,13 @@ class GenderResolverService:
 
     async def resolve(
             self,
-            uow: UnitOfWorkInterface[AsyncSession, Repositories],
             parsed: ParsedCharacter,
             character: Character
     ) -> None:
-        gender_id = await uow.repos.character_gender.get_id_by(name=NameFormatter.format_name(parsed.gender))
-        character.gender_id = gender_id
+        gender = parsed.gender
+        if gender in ["Ghoul", "ghoul"]:
+            character.gender = CharacterGender.GHOUL
+        elif gender in ["Manster", "manster"]:
+            character.gender = CharacterGender.MANSTER
+        else:
+            raise ValueError(f"Character: {character.display_name} has UNKNOWN GENDER: {gender}")

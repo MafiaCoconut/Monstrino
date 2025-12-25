@@ -15,7 +15,7 @@ from application.use_cases.processing.pet.process_pet_single_use_case import Pro
 @pytest.mark.asyncio
 async def test_process_pet_single_success(
         uow_factory: UnitOfWorkFactory[Repositories],
-        seed_character,
+        seed_character_frankie_stein,
         seed_parsed_pet,
         image_reference_svc_mock: AsyncMock,
         processing_states_svc_mock: AsyncMock,
@@ -30,7 +30,7 @@ async def test_process_pet_single_success(
 
     # Step 1: Seed pre data
     parsed_pet: ParsedPet = seed_parsed_pet
-    character: Character = seed_character
+    character: Character = seed_character_frankie_stein
 
     # Step 2: Init use case
     uc = ProcessPetSingleUseCase(

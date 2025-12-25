@@ -6,9 +6,8 @@ from application.services.character.gender_resolver_svc import GenderResolverSer
 
 @pytest.fixture
 def gender_resolver_svc_mock(mocker: MockerFixture):
-    async def _resolver(uow, parsed, character):
-        gender_id = await uow.repos.character_gender.get_id_by(name=NameFormatter.format_name(parsed.gender))
-        character.gender_id = gender_id  # ОБЯЗАТЕЛЬНО, иначе упадёт NOT NULL
+    async def _resolver(parsed, character):
+        character.gender = parsed.gender
         return None
     mock = mocker.Mock()
     mock.resolve = mocker.AsyncMock(side_effect=_resolver)

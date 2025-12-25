@@ -43,6 +43,7 @@ class TypeResolverService:
     """
     @staticmethod
     async def _set_type(uow: UnitOfWorkInterface[Any, Repositories], release_id: int, type_f: str):
+        ic(type_f)
         type_id = await uow.repos.release_type.get_id_by(name=type_f)
         if not type_id:
             raise ReleaseTypeNotFoundError(f"Pack type found in parser data, but not found in db with name {type_f}")
@@ -50,7 +51,6 @@ class TypeResolverService:
             release_id=release_id,
             type_id=type_id
         )
-        ic(release_type_link)
         await uow.repos.release_type_link.save(release_type_link)
 
 
@@ -90,7 +90,8 @@ class PackTypeResolverService(TypeResolverService):
         """
         1. If pack_type is not provided, set single pack
         2. If pack_type is provided, map it to PackagingType enum
-        3. IF pack_type is multipack, also set multipack type
+        3. If pack_type is multipack, also set multipack type
+        4. If pack_type is playset do not set single pack
         """
 
 
@@ -109,8 +110,7 @@ class PackTypeResolverService(TypeResolverService):
                 if pack_f in ReleaseTypePackCountType:
                     is_multipack_count_found = True
 
-        # playset_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypeContentType.PLAYSET})
-        if await uow.repos.release_type_link.exists_by(**{ReleaseTypeLink.RELEASE_TYPE_NAME: ReleaseTypeContentType.PLAYSET}):
+        if not await uow.repos.release_type_link.exists_by_release_type_name(ReleaseTypeContentType.PLAYSET):
             if not is_multipack_count_found:
                 await self._set_single_multipack(uow, release_id, release_character_count)
 

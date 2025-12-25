@@ -17,7 +17,7 @@ from application.use_cases.processing.pet.process_pet_single_use_case import Pro
 @pytest.mark.asyncio
 async def test_process_pet_single_full_flow_success(
         uow_factory: UnitOfWorkFactory[Repositories],
-        seed_character,
+        seed_character_frankie_stein,
         seed_parsed_pet,
         seed_image_reference_all,
 ):
@@ -30,7 +30,7 @@ async def test_process_pet_single_full_flow_success(
 
     # Step 1: Seed pre data
     parsed_pet: ParsedPet = seed_parsed_pet
-    character: Character = seed_character
+    character: Character = seed_character_frankie_stein
 
     # Step 2: Init use case
     uc = ProcessPetSingleUseCase(

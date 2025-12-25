@@ -1,6 +1,7 @@
 from unittest.mock import AsyncMock
 
 import pytest
+from icecream import ic
 from monstrino_core.domain.services import NameFormatter
 from monstrino_core.shared.enums import ProcessingStates
 from monstrino_models.dto import ParsedCharacter
@@ -16,13 +17,11 @@ async def test_process_character_single_success(
         gender_resolver_svc_mock: AsyncMock,
         processing_states_svc_mock: AsyncMock,
         image_reference_svc_mock: AsyncMock,
-        parsed_character: ParsedCharacter,
+        seed_parsed_character
 ):
 
-    async with uow_factory.create() as uow:
-        async with uow:
-            parsed_character = await uow.repos.parsed_character.save(parsed_character)
-
+    parsed_character = seed_parsed_character
+    ic(parsed_character)
     uc = ProcessCharacterSingleUseCase(
         uow_factory=uow_factory,
         processing_states_svc=processing_states_svc_mock,

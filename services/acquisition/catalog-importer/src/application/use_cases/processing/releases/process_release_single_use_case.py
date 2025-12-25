@@ -67,6 +67,7 @@ class ProcessReleaseSingleUseCase:
     10. Resolve pet
     11. Resolve reissue of
     12. Resolve images
+    13. Set release as processed
     """
 
     async def execute(self, parsed_release_id: int) -> None:
@@ -172,6 +173,9 @@ class ProcessReleaseSingleUseCase:
                     other_images_list=parsed_release.images,
                     image_reference_svc=self.image_reference_svc
                 )
+
+                # Step 13: Set release as processed
+                await self.processing_states_svc.set_processed(uow, parsed_release_id)
 
 
         except EntityNotFoundError as e:

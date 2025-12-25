@@ -1,6 +1,7 @@
 from typing import Any
 import logging
 
+from icecream import ic
 from monstrino_core.domain.errors import EntityNotFoundError, DuplicateEntityError
 from monstrino_core.domain.services import NameFormatter
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
@@ -32,7 +33,7 @@ class ProcessCharacterSingleUseCase:
     1. Take parsed character
     2. Init character object
     3. Format name
-    4. Find gender_id 
+    4. Resolve gender
     5. Save character to get id
     6. Set image to process with id
     7. Mark parsed character as processed
@@ -52,9 +53,10 @@ class ProcessCharacterSingleUseCase:
                     primary_image=p_character.primary_image,
                 )
 
-                # Step 4: Find gender_id
-                await self.gender_resolver_svc.resolve(uow, p_character, character)
-
+                # Step 4: Resolve gender
+                ic(character)
+                await self.gender_resolver_svc.resolve(p_character, character)
+                ic(character)
                 # Step 5: Save character to get id
                 character = await uow.repos.character.save(character)
 

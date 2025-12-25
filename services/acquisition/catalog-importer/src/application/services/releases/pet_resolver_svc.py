@@ -27,19 +27,16 @@ class PetResolverService:
                 pet_id = await uow.repos.pet.get_id_by(name=formatted_pet_name)
 
                 if pet_id:
-
                     pet_count += 1
-
-                    await uow.repos.release_pet.save(
-                        ReleasePet(
-                            release_id=release_id,
-                            pet_id=pet_id,
-                            position=pet_count,
-                            name=formatted_pet_name,
-                            display_name=pet_name,
-                            is_uniq_to_release=True if len(pets_list) == 1 else False,
-                        )
+                    release_pet = ReleasePet(
+                        release_id=release_id,
+                        pet_id=pet_id,
+                        position=pet_count,
+                        name=formatted_pet_name,
+                        display_name=pet_name,
+                        is_uniq_to_release=True if len(pets_list) == 1 else False,
                     )
+                    await uow.repos.release_pet.save(release_pet)
 
                 else:
                     logger.error(

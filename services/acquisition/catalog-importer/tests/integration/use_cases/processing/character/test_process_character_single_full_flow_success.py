@@ -38,7 +38,7 @@ async def test_process_character_single_full_flow_success(
         assert character.display_name == parsed_character.name
         assert character.description == parsed_character.description
         assert character.primary_image == parsed_character.primary_image
-        assert character.gender_id is not None
+        assert character.gender is not None
 
         parsed_character_after = await uow.repos.parsed_character.get_one_by(id=parsed_character.id)
         assert parsed_character_after is not None

@@ -21,7 +21,6 @@ class SeriesResolverService:
     ) -> None:
         for parsed_series_name in series_list:
             series = await uow.repos.series.get_one_by(name=NameFormatter.format_name(parsed_series_name))
-            ic(series)
             if series:
                 if series.series_type == SeriesTypes.PRIMARY:
                     await self._set_series_relation(

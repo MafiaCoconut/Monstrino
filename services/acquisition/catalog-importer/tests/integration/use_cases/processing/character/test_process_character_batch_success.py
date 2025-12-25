@@ -14,7 +14,7 @@ async def test_process_character_batch_success(
         uow_factory: UnitOfWorkFactory[Repositories],
         seed_image_reference_all,
         seed_parsed_character_list,
-        character_list,
+        parsed_character_list,
 
 ):
     single_uc = ProcessCharacterSingleUseCase(
@@ -26,21 +26,21 @@ async def test_process_character_batch_success(
     batch_uc = ProcessCharacterBatchUseCase(
         uow_factory=uow_factory,
         single_uc=single_uc,
-        batch_size=len(character_list)
+        batch_size=len(parsed_character_list)
     )
 
     await batch_uc.execute()
 
     async with uow_factory.create() as uow:
         all_characters = await uow.repos.character.get_all()
-        assert len(all_characters) == len(character_list)
+        assert len(all_characters) == len(parsed_character_list)
 
         processed = await uow.repos.parsed_character.get_all()
         assert all(pc.processing_state == ProcessingStates.PROCESSED for pc in processed)
 
         assert set(c.display_name for c in all_characters) == set(pc.name for pc in seed_parsed_character_list)
 
-        assert all(c.gender_id is not None for c in all_characters)
+        assert all(c.gender is not None for c in all_characters)
 
         queue_items = await uow.repos.image_import_queue.get_all()
-        assert len(queue_items) == len(character_list)
+        assert len(queue_items) == len(parsed_character_list)

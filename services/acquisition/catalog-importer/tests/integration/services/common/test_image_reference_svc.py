@@ -1,6 +1,7 @@
 import pytest
 from asyncpg import ForeignKeyViolationError, UniqueViolationError
 from monstrino_core.domain.errors import DuplicateEntityError
+from monstrino_core.domain.value_objects import CharacterGender
 from monstrino_core.shared.enums import ProcessingStates
 
 from monstrino_models.dto import ImageReferenceOrigin, Character, ImageImportQueue
@@ -39,7 +40,7 @@ def dummy_character() -> Character:
     return Character(
         name="Frankie",
         display_name="Frankie",
-        gender_id=1,
+        gender=CharacterGender.GHOUL,
         description="Monster",
         primary_image="https://example.com/x.jpg",
         alt_names=None,
@@ -285,7 +286,7 @@ async def test_batch_10_items(uow_factory: UnitOfWorkFactory[Repositories]):
             ch = Character(
                 name=f"C{i}",
                 display_name=f"C{i}",
-                gender_id=1,
+                gender=CharacterGender.GHOUL,
                 description="",
                 primary_image=f"https://example.com/{i}.jpg",
                 alt_names=None,
