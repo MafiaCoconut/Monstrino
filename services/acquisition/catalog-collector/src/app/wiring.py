@@ -1,30 +1,31 @@
+import logging
 from dataclasses import dataclass
 
+from app.bootstrap import build_apscheduler, build_adapters, registry_config, build_repositories, build_services
+from app.bootstrap.registry_config import registry
 from app.container import AppContainer
 from application.services.scheduler_service import SchedulerService
-from infrastructure.adapters.adapters_config import build_adapters
-from infrastructure.config.repositories_config import build_repositories
-from infrastructure.config.services_config import build_services
 from infrastructure.logging.logger_adapter import LoggerAdapter
 from infrastructure.scheduling.scheduler_adapter import SchedulerAdapter
-from infrastructure.scheduling.scheduler_config import build_apscheduler
-from infrastructure.config.registry_config import config as registry_config
+
+logger = logging.getLogger(__name__)
 
 
 def build_app():
-    logger = LoggerAdapter()
-    logger.debug("Starting wiring")
+    # logger = LoggerAdapter()
+    # logger.debug("Starting wiring")
+    logger.debug("Processing wiring")
 
     logger.debug("Starting scheduler configuration")
     aps = build_apscheduler()
     logger.debug("Finishing scheduler configuration")
 
     logger.debug("Starting adapters configuration")
-    adapters = build_adapters(logger, aps)
+    adapters = build_adapters(aps)
     logger.debug("Finishing adapters configuration")
 
     logger.debug("Starting registry configuration")
-    registry = registry_config(adapters)
+    registry_config(adapters)
     logger.debug("Finishing registry configuration")
 
     logger.debug("Starting repositories configuration")

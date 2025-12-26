@@ -3,9 +3,8 @@ import logging
 from monstrino_models.dto import ParsedRelease
 
 from application.ports.logger_port import LoggerPort
-from application.ports.parse.parse_release_port import ParseReleasesPort
+from application.ports.parse.parse_release_port import ParseReleasePort
 from application.registries.ports_registry import PortsRegistry
-from application.repositories.parsed_release_repository import ParsedReleasesRepository
 from domain.enums.website_key import WebsiteKey
 
 logger = logging.getLogger(__name__)
@@ -21,7 +20,7 @@ class ParseReleasesUseCase:
         self._r = registry
 
     async def execute(self, site: WebsiteKey):
-        port: ParseReleasesPort = self._r.get(site, ParseReleasesPort)
+        port: ParseReleasePort = self._r.get(site, ParseReleasePort)
         async for batch in port.parse():
             await self._save_batch(batch)
 

@@ -44,19 +44,19 @@ class ParserService:
         )
 
     async def parse(self):
-        await self.parse_website_uc.by_year(WebsiteKey.HMArchive, 2024)
+        await self.parse_website_uc.by_year(WebsiteKey.MHArchive, 2024)
 
     async def publish_message(self, payload: dict):
         await self.kafka_uc.execute(payload)
 
     async def parse_characters(self,):
-        await self.parse_characters_uc.execute(WebsiteKey.HMArchive)
+        await self.parse_characters_uc.execute(WebsiteKey.MHArchive)
 
     async def parse_pets(self):
-        await self.parse_pets_uc.execute(WebsiteKey.HMArchive)
+        await self.parse_pets_uc.execute(WebsiteKey.MHArchive)
 
     async def parse_series(self):
-        await self.parse_series_uc.execute(WebsiteKey.HMArchive)
+        await self.parse_series_uc.execute(WebsiteKey.MHArchive)
 
     async def parse_release(self):
-        await self.parse_release_uc.execute(WebsiteKey.HMArchive)
+        await self.parse_release_uc.execute(WebsiteKey.MHArchive)

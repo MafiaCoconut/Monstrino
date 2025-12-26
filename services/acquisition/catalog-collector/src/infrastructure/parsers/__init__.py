@@ -1,4 +1,4 @@
 from .mh_archive.mh_archive_pets_parser import MHArchivePetsParser
 from .mh_archive.mh_archive_series_parser import MHArchiveSeriesParser
-from .mh_archive.mh_archive_characters_parser import MHArchiveCharactersParser
+from .mh_archive.mh_archive_characters_parser import MHArchiveCharacterParser
 from .mh_archive.mh_archive_release_parser import MHArchiveReleasesParser

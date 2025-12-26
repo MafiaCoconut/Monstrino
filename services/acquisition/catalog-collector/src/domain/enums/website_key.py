@@ -2,4 +2,4 @@ from enum import Enum
 
 
 class WebsiteKey(Enum):
-    HMArchive = "HMArchive"
+    MHArchive = "MHArchive"

@@ -1,4 +1,7 @@
 import asyncio
+import json
+import logging.config
+from pathlib import Path
 
 import pytest
 
@@ -12,5 +15,16 @@ def event_loop():
 
 pytest_plugins = [
     "monstrino_testing.fixtures",
-    "tests.mocks"
+    "tests.fixtures",
 ]
+
+# def pytest_configure():
+#     cfg_path = Path(__file__).resolve().parent.parent / "src/infrastructure/logging/logging_config.json"  # поправь путь при необходимости
+#
+#     with cfg_path.open("r", encoding="utf-8") as f:
+#         logging_config = json.load(f)
+#
+#     # важно: создать папку logs, иначе FileHandler упадёт
+#     Path("../logs").mkdir(parents=True, exist_ok=True)
+#
+#     logging.config.dictConfig(logging_config)

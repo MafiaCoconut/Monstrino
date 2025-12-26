@@ -14,43 +14,54 @@ from monstrino_models.dto import ParsedPet
 from pydantic import BaseModel
 from bs4 import BeautifulSoup
 
-from application.ports.parse.parse_pets_port import ParsePetsPort
+from application.ports.parse.parse_pet_port import ParsePetPort
 from infrastructure.parsers.helper import Helper
 
 logger = logging.getLogger(__name__)
 
 
-class MHArchivePetsParser(ParsePetsPort):
+class MHArchivePetsParser(ParsePetPort):
     def __init__(self):
         self.domain_url = os.getenv("MHARCHIVE_LINK")
-        self.batch_size = 10
         self.source_name = "mh-archive"
         self.sleep_between_requests = 5
         self.debug_mode = False
 
+    async def parse(self, batch_size: int = 10, limit: int = 9999999):
+        """
+        FLOW:
+        1. Open page with list of all pets
+        2. Process link to every pet on page
+        3. Iterate every pet link and parse info
+        4. Return batch
+        """
+        logger.info(f"============== Starting pets parser ==============")
 
-    async def parse(self):
+        # Step 1
         html = await Helper.get_page(self.domain_url + '/category/characters/pets/')
+
+        # Step 2
         list_of_pets = await self._parse_pets_list(html)
         logger.info(f"Found pets count: {len(list_of_pets)}")
 
-        last_return_ghoul_index = 0
+        # Step 3
+        for i in range(0, len(list_of_pets), batch_size):
+            if i >= limit:
+                break
 
-        for i in range(1, len(list_of_pets) + 1):
-            await self._parse_pet_info(list_of_pets[i - 1])
+            if i + batch_size > len(list_of_pets):
+                batch_last_index = len(list_of_pets)
+            elif i + batch_size > limit:
+                batch_last_index = limit
+            else:
+                batch_last_index = i + batch_size
 
-            if i % self.batch_size == 0:
-                logger.info(f"Returning batch: {i - self.batch_size} - {i}")
-                yield list_of_pets[i - self.batch_size: i]
-                last_return_ghoul_index = i
-                await asyncio.sleep(self.sleep_between_requests)
-                if self.debug_mode:
-                    break
+            logger.info(f"Processing batch: {i}-{batch_last_index}")
+            batch = list_of_pets[i: batch_last_index]
 
-        if not self.debug_mode:
-            if last_return_ghoul_index < len(list_of_pets):
-                logger.info(f"Returning batch: {last_return_ghoul_index} - {len(list_of_pets)}")
-                yield list_of_pets[last_return_ghoul_index:]
+            tasks = [self._parse_pet_info(p) for p in batch]
+            batch_results = await asyncio.gather(*tasks, return_exceptions=True)
+            yield batch
 
     async def _parse_pets_list(self, html: str) -> list[ParsedPet]:
         soup = BeautifulSoup(html, "html.parser")
@@ -68,39 +79,50 @@ class MHArchivePetsParser(ParsePetsPort):
             image = img_tag["src"] if img_tag and img_tag.has_attr("src") else None
 
             if name and url:
-                results.append(ParsedPet(
-                    name=name,
-                    display_name=name,
-                    owner_name="",
-                    link=url,
-                    primary_image=image,
-                    source=self.source_name
-                ))
+                results.append(
+                    ParsedPet(
+                        name="",
+                        link=url,
+                        primary_image=image,
+                        source=self.source_name,
+                        original_html_content="",
+                    )
+                )
 
         return results
 
-    async def _parse_pet_info(self, data: ParsedPet):
-        html = await Helper.get_page(data.link)
-        # await Helper.save_page_in_file(html)
+    async def _parse_pet_info(self, parsed_pet: ParsedPet):
+        html = await Helper.get_page(parsed_pet.link)
         soup = BeautifulSoup(html, "html.parser")
-        owner_name, owner_link = None, None
+
+        # Get Name
+        h1 = soup.find("h1")
+        if h1:
+            name = h1.get_text(" ", strip=True)
+            name = re.sub(r"\s+", " ", name).strip()
+            if name:
+                parsed_pet.name = name
+
+        # Get Owner Name
         h2_tag = soup.find("h2")
         if h2_tag:
             owner_name_link = h2_tag.find("a")
             if owner_name_link:
                 owner_name_str = owner_name_link.get_text(strip=True)
                 owner_name_str = re.sub(r"\s*\([^)]*\)", "", owner_name_str).strip()
-                data.owner_name = owner_name_str
+                parsed_pet.owner_name = owner_name_str
             else:
                 text = h2_tag.get_text(" ", strip=True)
                 if "with" in text:
                     owner_name = text.split("with", 1)[-1].strip()
                     owner_name = re.sub(r"\s*\([^)]*\)", "", owner_name).strip()
-                    data.owner_name = owner_name
+                    parsed_pet.owner_name = owner_name
 
-        description = None
+        # Get Description
         for p in soup.find_all("p"):
             if not p.find("strong") and len(p.get_text(strip=True)) > 20:
-                data.description = p.get_text(" ", strip=True)
+                parsed_pet.description = p.get_text(" ", strip=True)
                 break
-        data.original_html_content = html
+
+        # Save original HTML
+        parsed_pet.original_html_content = html
