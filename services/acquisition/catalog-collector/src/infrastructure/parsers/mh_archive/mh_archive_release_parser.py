@@ -24,68 +24,63 @@ logger = logging.getLogger(__name__)
 class MHArchiveReleasesParser(ParseReleasePort):
     def __init__(self):
         self.domain_url = os.getenv("MHARCHIVE_LINK")
-        self.batch_size = 10
         self.sleep_between_requests = 5
         self.source_name = "mh-archive"
         self.debug_mode = False
 
-    async def parse(self, ):
-        for year in range(2019, 2009, -1):
+    async def parse(self, year_start: int = 2025, year_end: int = 2024, batch_size: int = 10, limit: int = 9999999):
+        """
+        FLOW
+        1. Iterate years from year_start to year_end
+        2. Open page with list of all releases for year
+        3. Process link to every release on page
+        4. Iterate every release link and parse info
+        5. Return batch
+        6. Repeat for next year
+        """
+        logger.info(f"============== Starting releases parser ==============")
+
+        # Step 1
+        for year in range(year_start, year_end, -1):
             start_time = datetime.now()
 
             logger.info(f"Starting parsing year: {year}")
 
+            # Step 2
             html = await Helper.get_page(self.domain_url + f'/category/release-dates/{year}/')
-            # await Helper.save_page_in_file(html)
-            release = await self._parse_links(html)
-            logger.info(
-                f"Found release count: {len(release)} for year: {year}")
 
-            # if self.debug_mode:
-            #     release = [ParsedRelease(
-            #         name="Test doll",
-            #         source="test",
-            #         link="https://mhcollector.com/skulltimate-secrets-hauntlywood-clawdeen-wolf/"
-            #         # link = "https://mhcollector.com/deadfast-ghoulia-yelps-2024/" # from the box
-            #         # link = "https://mhcollector.com/draculaura-and-clawdeen-wolf-eeekend-getaway/"
-            #         # link = "https://mhcollector.com/day-out-3-pack/"
-            #         # link = "https://mhcollector.com/draculaura-bite-in-the-park/"  # 2 pets
-            #         # link = "https://mhcollector.com/dawn-of-the-dance-lagoona-blue-reissue/"
-            #         # link = "https://mhcollector.com/skulltimate-secrets-neon-frights-draculaura/"
-            #         # link = "https://mhcollector.com/vinyl-count-fabulous/"
-            #         # link = "https://mhcollector.com/original-ghouls-collection-6-pack/" # 6 characters and reissues
-            #         # link = "https://mhcollector.com/freaky-fusion-catacombs/"
-            #         # link = "https://mhcollector.com/freaky-fusion-save-frankie-jackson-jekyll/"
-            #         #
-            #     )]
-            #     await self._parse_release_info(release[0])
-            #     yield release
-            #     return
+            # Step 3
+            list_of_release_links = await self._parse_links(html)
+            logger.info(f"Found release count: {len(list_of_release_links)} for year: {year}")
 
-            logger.info(f"Start processing info for every release")
-            last_return_release_index = 0
+            for i in range(0, len(list_of_release_links), batch_size):
+                if i >= limit:
+                    break
 
-            for i in range(1, len(release) + 1):
-                await self._parse_release_info(release[i - 1])
+                if i + batch_size > len(list_of_release_links):
+                    batch_last_index = len(list_of_release_links)
+                elif i + batch_size > limit:
+                    batch_last_index = limit
+                else:
+                    batch_last_index = i + batch_size
 
-                if i % self.batch_size == 0:
-                    logger.info(
-                        f"Returning batch: {i - self.batch_size} - {i}")
-                    yield release[i - self.batch_size: i]
-                    last_return_release_index = i
-                    await asyncio.sleep(self.sleep_between_requests)
+                logger.info(f"Processing batch: {i}-{batch_last_index}")
+                batch = list_of_release_links[i: batch_last_index]
 
-            if not self.debug_mode:
-                if last_return_release_index < len(release):
-                    logger.info(
-                        f"Returning batch: {last_return_release_index} - {len(release)}")
-                    yield release[last_return_release_index:]
+                tasks = [self._parse_release_info(p) for p in batch]
+                batch_results = await asyncio.gather(*tasks, return_exceptions=True)
+                yield batch_results
+
+                logger.info(f"Waiting sleep time: {self.sleep_between_requests} seconds")
                 await asyncio.sleep(self.sleep_between_requests)
-            end_time = datetime.now()
-            logger.info(
-                f"Finished parsing year: {year} in {end_time - start_time}")
 
-    async def _parse_links(self, html: str):
+            end_time = datetime.now()
+            logger.info(f"Finished parsing year: {year} in {end_time - start_time}")
+
+    async def parse_link(self, link: str) -> Optional[ParsedRelease]:
+        return await self._parse_release_info(link)
+
+    async def _parse_links(self, html: str) -> list[str]:
         soup = BeautifulSoup(html, "html.parser")
         links = set()
 
@@ -93,21 +88,19 @@ class MHArchiveReleasesParser(ParseReleasePort):
             a = div.find("h3").find("a")
             if a and a.get("href"):
                 href = a["href"].strip()
-                if href.startswith("https://mhcollector.com/") and "/category/" not in href:
+                if href.startswith(self.domain_url) and "/category/" not in href:
                     links.add(href)
 
         result = []
         for link in links:
-            result.append(ParsedRelease(
-                link=link,
-                source=self.source_name
-            ))
+            result.append(link)
         return result
 
-    async def _parse_release_info(self, dto: ParsedRelease):
+    # async def _parse_release_info(self, dto: ParsedRelease):
+    async def _parse_release_info(self, link: str) -> Optional[ParsedRelease]:
         logger.info("------------------------------------")
-        logger.info(f"Parsing release link: {dto.link}")
-        html = await Helper.get_page(dto.link)
+        logger.info(f"Parsing release link: {link}")
+        html = await Helper.get_page(link)
 
         soup = BeautifulSoup(html, "html.parser")
 
@@ -116,45 +109,55 @@ class MHArchiveReleasesParser(ParseReleasePort):
         primary_image = await self._get_prime_image(soup)
         from_the_box = await self._get_from_the_box(soup)
         stats = await self._get_stats_dict_v5(soup)
-
-        dto.name = name
-        dto.description = desc_html
-        dto.primary_image = primary_image
-        dto.from_the_box_text = from_the_box
-        dto.original_html_content = html
+        # ---------- Main Attributes ----------
+        dto = ParsedRelease(
+            name=name,
+            description_raw=desc_html,
+            primary_image=primary_image,
+            from_the_box_text_raw=from_the_box,
+            # original_html_content=html, # TODO УБРАТЬ КОММЕНТАРИЙ
+            link=link,
+        )
         for key in stats.keys():
             match key:
                 case "Character":
-                    dto.characters = stats[key]
+                    dto.characters_raw = stats[key]
                 case "Series":
-                    dto.series_name = stats[key]
+                    dto.series_raw = stats[key]
                 case "Type":
-                    dto.type_name = stats[key]
+                    dto.content_type_raw = stats[key]
                 case "Gender":
-                    dto.gender = stats[key]
+                    dto.gender_raw = stats[key]
                 case "Multi-Pack":
-                    dto.multi_pack = stats[key]
+                    dto.pack_type_raw = stats[key]
                 case "Released":
-                    dto.year = stats[key]
+                    dto.year = int(stats[key][0])
+                    dto.year_raw = stats[key][0]
                 case "Exclusiveof":
-                    dto.exclusive_of_names = stats[key]
+                    dto.exclusive_vendor_raw = stats[key]
                 case "Reissue of":
-                    dto.reissue_of = stats[key]
+                    dto.reissue_of_raw = stats[key]
                 case "Model Number":
-                    dto.mpn = stats[key]
+                    dto.mpn = stats[key][0]
                 case "Pet":
-                    dto.pet_names = stats[key]
+                    dto.pet_names_raw = stats[key]
                 case "Gallery":
-                    dto.images_link = self.domain_url + \
-                        stats["Gallery"][0]['link']
+                    dto.images_link = self.domain_url + stats["Gallery"][0]
+                case "Doll Type":
+                    dto.tier_type_raw = stats[key][0]
                 case _:
                     if dto.extra is None:
                         dto.extra = []
                     dto.extra.append({key: stats[key]})
         try:
-            dto.images = await self._get_images(self.domain_url + stats["Gallery"][0]['link'])
+            dto.images = await self._get_images(self.domain_url + stats["Gallery"][0])
         except Exception as e:
             logger.error("Error while getting images: " + str(e))
+
+        blocked_content_types = ["Minis", "Fash’ems", "Plush", "Keychain", "Pins", "Accessories", "Inner Monster", "Mega Bloks", "Monster Pen", "Ornaments", "Rock Candy", "Scary Cute Figures"]
+        if any(content_type in blocked_content_types for content_type in dto.content_type_raw):
+            return None
+        return dto
 
     @staticmethod
     async def _get_release_name(soup: BeautifulSoup) -> str:
@@ -176,9 +179,11 @@ class MHArchiveReleasesParser(ParseReleasePort):
         return "\n".join(parts)
 
     @staticmethod
-    async def _get_stats_dict_v5(soup: BeautifulSoup) -> dict[str, list[dict[str, str]]]:
+    # async def _get_stats_dict_v5(soup: BeautifulSoup) -> dict[str, list[dict[str, str]]]:
+    async def _get_stats_dict_v5(soup: BeautifulSoup) -> dict[str, list[str]]:
         stats_block = soup.find("div", class_="stats")
-        result: dict[str, list[dict[str, str]]] = {}
+        result: dict[str, list[str]] = {}
+        # result: dict[str, list[dict[str, str]]] = {}
 
         if not stats_block:
             return result
@@ -202,20 +207,28 @@ class MHArchiveReleasesParser(ParseReleasePort):
             if not key:
                 continue
 
+            if key == "Gallery":
+                value_elem = items[1]
+                a = value_elem.find("a")
+                link = a["href"] if a and a.get("href") else None
+                result["Gallery"] = [link]
+
             values = []
             for value_elem in items[1:]:
                 text = value_elem.get_text(strip=True)
                 if not text or text == ",":
                     continue
+                text = text.replace('\u200e', '')
+                text = text[1:] if text[0] == ',' else text
+                text = text[1:] if text[0] == ' ' else text
+                # a = value_elem.find("a")
+                # link = a["href"] if a and a.get("href") else None
+                #
+                # # игнорируем техническую ссылку /category/exclusives/
+                # if link and link.strip().endswith("/category/exclusives/"):
+                #     link = None
 
-                a = value_elem.find("a")
-                link = a["href"] if a and a.get("href") else None
-
-                # игнорируем техническую ссылку /category/exclusives/
-                if link and link.strip().endswith("/category/exclusives/"):
-                    link = None
-
-                values.append({"text": text, "link": link})
+                values.append(text)
 
             if key in result:
                 result[key].extend(values)

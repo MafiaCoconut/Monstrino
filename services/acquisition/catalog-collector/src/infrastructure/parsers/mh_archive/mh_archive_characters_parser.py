@@ -83,6 +83,9 @@ class MHArchiveCharacterParser(ParseCharacterPort):
             batch_results = await asyncio.gather(*tasks, return_exceptions=True)
             yield batch
 
+            logger.info(f"Waiting sleep time: {self.sleep_between_requests} seconds")
+            await asyncio.sleep(self.sleep_between_requests)
+
     @staticmethod
     async def _parse_character_info(data: ParsedCharacter):
         logger.info('-----------------------------------------------------------------')

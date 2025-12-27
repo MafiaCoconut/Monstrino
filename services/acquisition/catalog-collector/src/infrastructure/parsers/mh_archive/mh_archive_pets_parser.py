@@ -63,6 +63,9 @@ class MHArchivePetsParser(ParsePetPort):
             batch_results = await asyncio.gather(*tasks, return_exceptions=True)
             yield batch
 
+            logger.info(f"Waiting sleep time: {self.sleep_between_requests} seconds")
+            await asyncio.sleep(self.sleep_between_requests)
+
     async def _parse_pets_list(self, html: str) -> list[ParsedPet]:
         soup = BeautifulSoup(html, "html.parser")
         results = []

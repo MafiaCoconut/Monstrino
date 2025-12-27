@@ -24,8 +24,8 @@ class ParseCharactersUseCase:
 
     async def execute(self, site: WebsiteKey, batch_size: int = 10, limit: int = 9999999):
         port: ParseCharacterPort = self._r.get(site, ParseCharacterPort)
-        async for batch in port.parse_ghouls(batch_size=batch_size, limit=limit):
-            await self._save_batch(batch)
+        # async for batch in port.parse_ghouls(batch_size=batch_size, limit=limit):
+        #     await self._save_batch(batch)
         async for batch in port.parse_mansters(batch_size=batch_size, limit=limit):
             await self._save_batch(batch)
 

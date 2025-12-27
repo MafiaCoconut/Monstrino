@@ -1,11 +1,12 @@
-from monstrino_models.dto import ParsedPet, ParsedCharacter, ParsedRelease, ParsedSeries
-from monstrino_models.orm import ParsedPetORM, ParsedCharacterORM, ParsedReleaseORM, ParsedSeriesORM
+from monstrino_models.dto import ParsedPet, ParsedCharacter, ParsedRelease, ParsedSeries, SourceType, Source
+from monstrino_models.orm import ParsedPetORM, ParsedCharacterORM, ParsedReleaseORM, ParsedSeriesORM, SourceTypeORM, \
+    SourceORM
 from monstrino_repositories.base.factory import MapperFactory, SqlAlchemyRepoFactory
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.container import Repositories
 from monstrino_repositories.repositories_impl import ParsedPetRepo, ParsedCharacterRepo, ParsedSeriesRepo, \
-    ParsedReleaseRepo
+    ParsedReleaseRepo, SourceTypeRepo, SourceRepo
 
 mapper_factory = MapperFactory()
 repo_factory = SqlAlchemyRepoFactory(mapper_factory)
@@ -36,5 +37,17 @@ def build_repositories(session: AsyncSession) -> Repositories:
             session=session,
             orm_model=ParsedReleaseORM,
             dto_model=ParsedRelease,
+        ),
+        source_type=repo_factory.create_domain_repo(
+            repo_impl_cls=SourceTypeRepo,
+            session=session,
+            orm_model=SourceTypeORM,
+            dto_model=SourceType,
+        ),
+        source=repo_factory.create_domain_repo(
+            repo_impl_cls=SourceRepo,
+            session=session,
+            orm_model=SourceORM,
+            dto_model=Source,
         )
     )

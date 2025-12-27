@@ -67,6 +67,9 @@ class MHArchiveSeriesParser(ParseSeriesPort):
             ic(batch_results)
             yield batch_results
 
+            logger.info(f"Waiting sleep time: {self.sleep_between_requests} seconds")
+            await asyncio.sleep(self.sleep_between_requests)
+
     async def test(self, data):
         print(data)
 
