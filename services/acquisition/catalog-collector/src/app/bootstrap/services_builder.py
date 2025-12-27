@@ -7,14 +7,8 @@ from app.container import Services, Adapters
 from application.services.scheduler_service import SchedulerService
 
 
-def build_services(registry: PortsRegistry, adapters: Adapters, repositories: Repositories) -> Services:
+def build_services(adapters: Adapters) -> Services:
     return Services(
-        parser=ParserService(
-            registry=registry,
-            logger=adapters.logger,
-            kafka_producer=adapters.kafka_producer,
-            repositories=repositories
-        ),
         scheduler=SchedulerService(scheduler=adapters.scheduler)
     )
 

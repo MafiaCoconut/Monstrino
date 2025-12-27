@@ -5,5 +5,4 @@ from application.services.scheduler_service import SchedulerService
 
 @dataclass
 class Services:
-    parser: ParserService
     scheduler: SchedulerService

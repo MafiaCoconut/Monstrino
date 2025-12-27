@@ -1,19 +1,19 @@
 import logging
 from dataclasses import dataclass
 
-from app.bootstrap import build_apscheduler, build_adapters, registry_config, build_repositories, build_services
+from app.bootstrap import build_apscheduler, build_adapters, registry_config, build_services, \
+    uow_factory_config
 from app.bootstrap.registry_config import registry
 from app.container import AppContainer
 from application.services.scheduler_service import SchedulerService
 from infrastructure.logging.logger_adapter import LoggerAdapter
+from infrastructure.scheduling.scheduler import scheduler_config
 from infrastructure.scheduling.scheduler_adapter import SchedulerAdapter
 
 logger = logging.getLogger(__name__)
 
 
 def build_app():
-    # logger = LoggerAdapter()
-    # logger.debug("Starting wiring")
     logger.debug("Processing wiring")
 
     logger.debug("Starting scheduler configuration")
@@ -28,19 +28,22 @@ def build_app():
     registry_config(adapters)
     logger.debug("Finishing registry configuration")
 
-    logger.debug("Starting repositories configuration")
-    repositories = build_repositories()
-    logger.debug("Finishing registry configuration")
-
-
     logger.debug("Starting  services configuration")
-    services = build_services(registry=registry, adapters=adapters, repositories=repositories)
+    services = build_services(adapters=adapters)
     logger.debug("Finishing services configuration")
+
+    logger.debug("Starting uow_factory configuration")
+    uow_factory = uow_factory_config()
+    logger.debug("Finishing uow_factory configuration")
+
+    logger.debug("Start scheduler cron jobs setup")
+    scheduler_config(scheduler=adapters.scheduler, uow_factory=uow_factory, registry=registry)
+    logger.debug("Finished scheduler cron jobs setup")
 
     return AppContainer(
         services=services,
         adapters=adapters,
         registry=registry,
-        repositories=repositories
+        uow_factory=uow_factory
     )
 

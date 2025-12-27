@@ -21,7 +21,6 @@ def find_env_file(start: Path | None = None) -> Path | None:
     Ищет .env, двигаясь вверх от start (или от файла модуля),
     останавливается на корне. Возвращает Path или None.
     """
-    # Приоритет: ENV_FILE из окружения
     env_override = os.getenv("ENV_FILE")
     if env_override:
         p = Path(env_override).expanduser().resolve()

@@ -10,10 +10,10 @@ class SchedulerAdapter(SchedulerPort):
     def __init__(self, scheduler: AsyncIOScheduler):
         self.scheduler = scheduler
 
-    async def start(self) -> None:
+    def start(self) -> None:
         self.scheduler.start()
 
-    async def add_job(self, job: Job) -> None:
+    def add_job(self, job: Job) -> None:
         self.scheduler.add_job(
             func=job.func,
             trigger=job.trigger,
@@ -24,10 +24,10 @@ class SchedulerAdapter(SchedulerPort):
             id=job.id,
         )
 
-    async def delete_job(self, job_id: str) -> None:
+    def delete_job(self, job_id: str) -> None:
         self.scheduler.remove_job(job_id)
 
-    async def get_all_jobs(self) -> List[str]:
+    def get_all_jobs(self) -> List[str]:
         jobs = self.scheduler.get_jobs()
         return [f"{job.id} - {job.next_run_time}" for job in jobs]
 

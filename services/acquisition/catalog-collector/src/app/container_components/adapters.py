@@ -12,7 +12,7 @@ from application.ports.website_catalog_port import WebsiteCatalogPort
 @dataclass
 class Adapters:
     # MHArchive: WebsiteCatalogPort
-    kafka_producer: KafkaProducerPort
+    # kafka_producer: KafkaProducerPort
     scheduler: SchedulerPort
     mh_archive_parse_characters: ParseCharacterPort
     mh_archive_parse_pets: ParsePetPort

@@ -12,8 +12,8 @@ from infrastructure.scheduling.scheduler_adapter import SchedulerAdapter
 
 def build_adapters(aps: AsyncIOScheduler) -> Adapters:
     return Adapters(
-        kafka_producer=KafkaProducerAdapter(
-            servers=os.getenv("KAFKA_SERVERS")),
+        # kafka_producer=KafkaProducerAdapter(
+        #     servers=os.getenv("KAFKA_SERVERS")),
         scheduler=SchedulerAdapter(aps),
         mh_archive_parse_characters=MHArchiveCharacterParser(),
         mh_archive_parse_pets=MHArchivePetsParser(),
