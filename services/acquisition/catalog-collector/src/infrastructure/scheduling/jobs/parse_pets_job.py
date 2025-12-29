@@ -1,9 +1,9 @@
-from application.use_cases.parse.parse_characters_use_case import ParseCharactersUseCase
+from application.use_cases.parse import ParsePetsUseCase
 from domain.entities.parse_scope import ParseScope
 from domain.enums.website_key import SourceKey
 
 
-class ParseCharactersCronJob:
+class ParsePetsCronJob:
     def __init__(self, *, uow_factory, registry, website: SourceKey):
         self._uow_factory = uow_factory
         self._registry = registry
@@ -12,7 +12,7 @@ class ParseCharactersCronJob:
         self._batch_size = 10
 
     async def run(self, limit: int = 9999999) -> None:
-        uc = ParseCharactersUseCase(
+        uc = ParsePetsUseCase(
             uow_factory=self._uow_factory,
             registry=self._registry
         )

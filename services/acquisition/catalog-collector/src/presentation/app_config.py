@@ -13,20 +13,23 @@ from app.wiring import build_app
 dotenv.load_dotenv()
 
 logger = logging.getLogger(__name__)
-logger.info('-------------------------------------------------------')
-
 app = FastAPI()
 
 cors.config(app=app)
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
-    logger.info('Starting dolls-parser-service')
+async def lifespan(fastapi_app: FastAPI):
+    logger.info('=============================================')
+    logger.info('‖                                           ‖')
+    logger.info('‖       MONSTRINO CATALOG - COLLECTOR       ‖')
+    logger.info('‖                                           ‖')
+    logger.info('=============================================')
+
     async with async_engine.begin() as conn:
         await conn.run_sync(lambda conn: None)
 
-    app.state.container = build_app()
-    api_config.config(app=app)
+    fastapi_app.state.container = build_app()
+    api_config.config(app=fastapi_app)
     # ic(await scheduler_service.get_all_jobs())
     # kafka_task = asyncio.create_task(app.state.container.adapters.kafka_producer.start())
     yield

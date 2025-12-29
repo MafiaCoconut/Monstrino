@@ -9,7 +9,7 @@ from application.use_cases.parse.parse_releases_use_case import ParseReleasesUse
 from application.use_cases.parse.parse_series_use_case import ParseSeriesUseCase
 from application.use_cases.parse_website import ParseWebsiteUseCase
 from application.use_cases.publich_kafka_message_use_case import PublishKafkaMessageUseCase
-from domain.enums.website_key import WebsiteKey
+from domain.enums.website_key import SourceKey
 
 
 class ParserService:
@@ -44,7 +44,7 @@ class ParserService:
         # )
 
     async def parse(self):
-        await self.parse_website_uc.by_year(WebsiteKey.MHArchive, 2024)
+        await self.parse_website_uc.by_year(SourceKey.MHArchive, 2024)
 
     async def publish_message(self, payload: dict):
         await self.kafka_uc.execute(payload)

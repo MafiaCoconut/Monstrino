@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from presentation import cors
 from presentation.responces.exceptions import rewrite_http_exception_response
-from presentation.endpoints import parser_endpoints
+from presentation.api.routes import parser_endpoints
 
 
 def configure_endpoints(app: FastAPI):

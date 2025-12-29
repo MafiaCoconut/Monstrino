@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 logger = logging.getLogger(__name__)
 
 def config(app: FastAPI):
-    logger.info("Setup CORS middleware started")
+    logger.debug("Setup CORS middleware started")
 
     origins = [
         'http://localhost:3000',
@@ -20,4 +20,4 @@ def config(app: FastAPI):
         allow_headers=["*"],
     )
 
-    logger.info("Setup CORS middleware finished")
+    logger.debug("Setup CORS middleware finished")

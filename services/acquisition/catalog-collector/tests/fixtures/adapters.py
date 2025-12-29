@@ -20,7 +20,7 @@ async def kafka_adapter():
 @pytest.fixture
 async def adapters(kafka_adapter):
     return Adapters(
-        kafka_producer=kafka_adapter,
+        # kafka_producer=kafka_adapter,
         scheduler=SchedulerAdapter(AsyncIOScheduler(timezone=timezone("Europe/Berlin"))),
         mh_archive_parse_characters=MHArchiveCharacterParser(),
         mh_archive_parse_pets=MHArchivePetsParser(),

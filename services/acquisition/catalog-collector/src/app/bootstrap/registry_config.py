@@ -4,7 +4,7 @@ from app.container_components.adapters import Adapters
 from application.ports.parse import ParseCharacterPort, ParsePetPort, ParseSeriesPort, ParseReleasePort
 from application.ports.website_catalog_port import WebsiteCatalogPort
 from application.registries.ports_registry import PortsRegistry
-from domain.enums.website_key import WebsiteKey
+from domain.enums.website_key import SourceKey
 from infrastructure.adapters.mh_archive_adapter import MHArchiveAdapter
 
 logger = logging.getLogger(__name__)
@@ -15,19 +15,19 @@ registry = PortsRegistry()
 
 def config(adapters: Adapters):
     registry.register(
-        WebsiteKey.MHArchive, ParseCharacterPort,
+        SourceKey.MHArchive, ParseCharacterPort,
         adapters.mh_archive_parse_characters
     )
     registry.register(
-        WebsiteKey.MHArchive, ParsePetPort,
+        SourceKey.MHArchive, ParsePetPort,
       adapters.mh_archive_parse_pets
     )
     registry.register(
-        WebsiteKey.MHArchive, ParseSeriesPort,
+        SourceKey.MHArchive, ParseSeriesPort,
         adapters.mh_archive_parse_series
     )
     registry.register(
-        WebsiteKey.MHArchive, ParseReleasePort,
+        SourceKey.MHArchive, ParseReleasePort,
         adapters.mh_archive_parse_release
     )
 

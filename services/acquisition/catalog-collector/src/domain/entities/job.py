@@ -1,19 +1,21 @@
 from datetime import datetime
-from typing import List
+from typing import List, Any
 from typing import Optional, Callable
 from pydantic import BaseModel, Field
 
 
 class Job(BaseModel):
-    func: Callable = Field(default=None)
-    trigger: str = Field(default=None)
-    run_date: datetime = Field(default=None)
-    day: int | None = Field(default=None)
-    hour: int | None = Field(default=None)
-    minute: int | None = Field(default=None)
-    day_of_week: str | None = Field(default=None)
-    args: list = Field(default=None)
-    id: Optional[str] = Field(default=None)
-    job_type: Optional[str] = Field(default=None)
+    id:             Optional[str]       = Field(default=None)
+    trigger:        str                 = Field(default="cron")
+    func:           Callable | str      = Field()
+    run_date:       Optional[datetime]  = Field(default=None)
+    next_run_time:  Optional[datetime]  = Field(default=None)
+    day:            Optional[int]       = Field(default=None)
+    hour:           Optional[int]       = Field(default=None)
+    minute:         Optional[int]       = Field(default=None)
+    day_of_week:    Optional[str]       = Field(default=None)
+    args:           list[Any]           = Field(default=[])
+    kwargs:         dict[str, Any]      = Field(default={})
+    job_type:       Optional[str]       = Field(default=None)
 
 

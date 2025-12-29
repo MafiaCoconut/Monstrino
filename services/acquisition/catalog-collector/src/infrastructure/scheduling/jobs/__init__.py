@@ -1,0 +1,4 @@
+from .parse_characters_job import ParseCharactersCronJob
+from .parse_pets_job import ParsePetsCronJob
+from .parse_releases_job import ParseReleasesCronJob
+from .parse_series_job import ParseSeriesCronJob

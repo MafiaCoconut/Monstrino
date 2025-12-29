@@ -1,4 +1,5 @@
 import logging
+import time
 from datetime import datetime
 from typing import Any
 
@@ -6,14 +7,15 @@ from icecream import ic
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_core.shared.enums import ProcessingStates
-from monstrino_models.dto import ParsedSeries
+from monstrino_models.dto import ParsedSeries, Source
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
 from app.container_components.repositories import Repositories
 from application.ports.logger_port import LoggerPort
 from application.ports.parse.parse_series_port import ParseSeriesPort
 from application.registries.ports_registry import PortsRegistry
-from domain.enums.website_key import WebsiteKey
+from domain.entities.parse_scope import ParseScope
+from domain.enums.website_key import SourceKey
 
 logger = logging.getLogger(__name__)
 
@@ -26,24 +28,71 @@ class ParseSeriesUseCase:
         self.uow_factory = uow_factory
         self._r = registry
 
-    async def execute(self, site: WebsiteKey, batch_size: int = 10, limit: int = 9999999):
-        port: ParseSeriesPort = self._r.get(site, ParseSeriesPort)
-        async for batch in port.parse(batch_size=batch_size, limit=limit):
-            for series_list in batch:
-                list_of_series = await self._save_list(series_list)
-                ic(list_of_series)
-                await self._process_parent_ids(list_of_series)
+    async def execute(self, source: SourceKey, scope: ParseScope, batch_size: int = 10, limit: int = 9999999):
+        """
+        FLOW:
+        1. Get port and source id
+        2. Get available series refs from port based on parse scope
+        3. For each series ref, check if already parsed in DB
+        4. If not parsed, add to links to parse
+        5. Parse links to parse in batches
+        """
+        # Step 1
+        port: ParseSeriesPort = self._r.get(source, ParseSeriesPort)
+        async with self.uow_factory.create() as uow:
+            source_id = await uow.repos.source.get_id_by(**{Source.NAME: source.value})
 
-    async def _save_list(self, series_list: list[ParsedSeries]) -> list[ParsedSeries]:
+        # Step 2
+        links_to_parse = []
+        async for refs_batch in port.iter_refs(scope=scope):
+            ext_ids = [r.external_id for r in refs_batch]
+            async with self.uow_factory.create() as uow:
+                existing_ids = await uow.repos.parsed_series.get_existed_external_ids_by(
+                    source_id=source_id,
+                    external_ids=ext_ids
+                )
+            new_refs = [r for r in refs_batch if r.external_id not in existing_ids]
+            if not new_refs:
+                logger.info(f"New releases not found in batch. Skipping batch")
+                continue
+
+            links_to_parse.extend(new_refs)
+
+        start_time = time.time()
+        logger.info(f"Found {len(links_to_parse)} new series in batch to parse.")
+        async for refs_batch in port.parse_refs(links_to_parse, batch_size, limit):
+            await self._process_batch(source=source, batch=refs_batch)
+        logger.info(f"Parsing completed in {time.time() - start_time:.2f} seconds.")
+
+    async def execute_parse_all(self, source: SourceKey, batch_size: int = 10, limit: int = 9999999):
+        port: ParseSeriesPort = self._r.get(source, ParseSeriesPort)
+        async for batch in port.parse(batch_size=batch_size, limit=limit):
+            await self._process_batch(source=source, batch=batch)
+
+    async def _process_batch(self, source: SourceKey, batch: list[list[ParsedSeries]]):
+        for series_list in batch:
+            list_of_series = await self._save_list(source, series_list)
+            await self._process_parent_ids(list_of_series)
+
+    async def _save_list(self, source: SourceKey, series_list: list[ParsedSeries]) -> list[ParsedSeries]:
         series_name = series_list[0].name
         start_time = datetime.now()
 
-        logger.info(f"Saving series: {series_name} from {series_list[0].link} and subseries")
+        async with self.uow_factory.create() as uow:
+            source_id = await uow.repos.source.get_id_by(**{Source.NAME: source.value})
+        if not source_id:
+            raise ValueError(f"Source ID not found for source: {source.value}")
+
+        logger.info(f"Saving series: {series_name} from {series_list[0].link} and subseries from sourceID={source_id}")
         try:
             async with self.uow_factory.create() as uow:
+                if await uow.repos.parsed_series.get_id_by(**{ParsedSeries.SOURCE_ID: source_id, ParsedSeries.EXTERNAL_ID: series_list[0].external_id}) is not None:
+                    logger.info(f"Skipping series: {series_list[0].name} due to series is already parsed")
+                for series in series_list:
+                    series.source_id = source_id
                 list_of_series = await uow.repos.parsed_series.save_many(series_list)
         except Exception as e:
-            logger.error(f"Failed to save series: {series_name} from {series_list[0].link}: {e}")
+            logger.error(f"Failed to save series: {series_name} from {series_list[0].link} from sourceID={source_id}: {e}")
 
         end_time = datetime.now()
         logger.info(f"Series saving process: {series_name} in {(end_time - start_time).total_seconds()} seconds")

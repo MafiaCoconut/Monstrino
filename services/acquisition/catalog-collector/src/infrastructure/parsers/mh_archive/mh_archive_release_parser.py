@@ -1,86 +1,110 @@
 import asyncio
-import dataclasses
 from datetime import datetime
 import os
-import re
-import time
-import unicodedata
 from typing import Optional
-import json
-import aiohttp
 import logging
 
-from icecream import ic
 from monstrino_models.dto import ParsedRelease
-from pydantic import BaseModel
 from bs4 import BeautifulSoup
 
 from application.ports.parse.parse_release_port import ParseReleasePort
+from domain.entities.parse_scope import ParseScope
+from domain.entities.refs.release_ref import ReleaseRef
 from infrastructure.parsers.helper import Helper
-
+from .mh_archive_parser import MHArchiveParser
 logger = logging.getLogger(__name__)
 
 
-class MHArchiveReleasesParser(ParseReleasePort):
+class MHArchiveReleasesParser(MHArchiveParser, ParseReleasePort):
     def __init__(self):
+        super().__init__(
+            sleep_between_requests = 5
+        )
         self.domain_url = os.getenv("MHARCHIVE_LINK")
-        self.sleep_between_requests = 5
-        self.source_name = "mh-archive"
-        self.debug_mode = False
 
-    async def parse(self, year_start: int = 2025, year_end: int = 2024, batch_size: int = 10, limit: int = 9999999):
+
+    async def iter_refs(self, scope: ParseScope, batch_size: int = 30):
+        if scope.year is None:
+            raise ValueError("scope.year is required for this HTML source")
+
+        year = scope.year
+        links = await self._parse_links(year)
+
+        for i in range(0, len(links), batch_size):
+            end = min(i + batch_size, len(links))
+
+            logger.debug(f"Iterate release refs batch: {i}-{end}")
+            batch = links[i:end]
+            yield [
+                ReleaseRef(
+                    external_id=self._get_external_id(link),
+                    url=link,
+                    year=year
+                )
+                for link in batch
+            ]
+
+    async def parse_year_range(
+            self,
+            year_start: int = datetime.now().year,
+            year_end: int = datetime.now().year-1,
+            batch_size: int = 10, limit: int = 9999999
+    ):
+        for year in range(year_start, year_end, -1):
+            async for batch in self.parse(year=year):
+                yield batch
+
+    async def parse_refs(
+            self,
+            refs: list[ReleaseRef],
+            batch_size: int = 10,
+            limit: int = 9999999,
+    ):
+        links = [r.url for r in refs]
+        total = min(len(links), limit)
+        async for batch in self._iterate_parse(link_list=links, total=total, batch_size=batch_size):
+            yield batch
+
+    async def parse_link(self, link: str) -> Optional[ParsedRelease]:
+        return await self._parse_info(link)
+
+    async def parse(
+            self,
+            year: int = datetime.now().year,
+            batch_size: int = 10, limit: int = 9999999
+    ):
         """
         FLOW
         1. Iterate years from year_start to year_end
         2. Open page with list of all releases for year
         3. Process link to every release on page
-        4. Iterate every release link and parse info
-        5. Return batch
-        6. Repeat for next year
+        4. Iterate every release link batch and parse info
         """
         logger.info(f"============== Starting releases parser ==============")
 
         # Step 1
-        for year in range(year_start, year_end, -1):
-            start_time = datetime.now()
+        start_time = datetime.now()
 
-            logger.info(f"Starting parsing year: {year}")
+        logger.info(f"Starting parsing year: {year}")
 
-            # Step 2
-            html = await Helper.get_page(self.domain_url + f'/category/release-dates/{year}/')
+        # Step 2
+        html = await Helper.get_page(self.domain_url + f'/category/release-dates/{year}/')
 
-            # Step 3
-            list_of_release_links = await self._parse_links(html)
-            logger.info(f"Found release count: {len(list_of_release_links)} for year: {year}")
+        # Step 3
+        list_of_release_links = await self._parse_links(html)
+        logger.info(f"Found release count: {len(list_of_release_links)} for year: {year}")
 
-            for i in range(0, len(list_of_release_links), batch_size):
-                if i >= limit:
-                    break
+        # Step 4
+        total = min(len(list_of_release_links), limit)
+        async for batch in self._iterate_parse(link_list=list_of_release_links, total=total, batch_size=batch_size):
+            yield batch
 
-                if i + batch_size > len(list_of_release_links):
-                    batch_last_index = len(list_of_release_links)
-                elif i + batch_size > limit:
-                    batch_last_index = limit
-                else:
-                    batch_last_index = i + batch_size
+        end_time = datetime.now()
+        logger.info(f"Finished parsing year: {year} in {end_time - start_time}")
 
-                logger.info(f"Processing batch: {i}-{batch_last_index}")
-                batch = list_of_release_links[i: batch_last_index]
+    async def _parse_links(self, year: int) -> list[str]:
+        html = await Helper.get_page(self.domain_url + f'/category/release-dates/{year}/')
 
-                tasks = [self._parse_release_info(p) for p in batch]
-                batch_results = await asyncio.gather(*tasks, return_exceptions=True)
-                yield batch_results
-
-                logger.info(f"Waiting sleep time: {self.sleep_between_requests} seconds")
-                await asyncio.sleep(self.sleep_between_requests)
-
-            end_time = datetime.now()
-            logger.info(f"Finished parsing year: {year} in {end_time - start_time}")
-
-    async def parse_link(self, link: str) -> Optional[ParsedRelease]:
-        return await self._parse_release_info(link)
-
-    async def _parse_links(self, html: str) -> list[str]:
         soup = BeautifulSoup(html, "html.parser")
         links = set()
 
@@ -96,9 +120,7 @@ class MHArchiveReleasesParser(ParseReleasePort):
             result.append(link)
         return result
 
-    # async def _parse_release_info(self, dto: ParsedRelease):
-    async def _parse_release_info(self, link: str) -> Optional[ParsedRelease]:
-        logger.info("------------------------------------")
+    async def _parse_info(self, link: str) -> Optional[ParsedRelease]:
         logger.info(f"Parsing release link: {link}")
         html = await Helper.get_page(link)
 
@@ -117,6 +139,7 @@ class MHArchiveReleasesParser(ParseReleasePort):
             from_the_box_text_raw=from_the_box,
             # original_html_content=html, # TODO УБРАТЬ КОММЕНТАРИЙ
             link=link,
+            external_id=self._get_external_id(link),
         )
         for key in stats.keys():
             match key:
@@ -155,7 +178,7 @@ class MHArchiveReleasesParser(ParseReleasePort):
             logger.error("Error while getting images: " + str(e))
 
         blocked_content_types = ["Minis", "Fash’ems", "Plush", "Keychain", "Pins", "Accessories", "Inner Monster", "Mega Bloks", "Monster Pen", "Ornaments", "Rock Candy", "Scary Cute Figures"]
-        if any(content_type in blocked_content_types for content_type in dto.content_type_raw):
+        if dto.content_type_raw and any(content_type in blocked_content_types for content_type in dto.content_type_raw):
             return None
         return dto
 
@@ -286,6 +309,17 @@ class MHArchiveReleasesParser(ParseReleasePort):
                 image_urls.append(src)
 
         return image_urls
+
+    def _get_external_id(self, link: str) -> str:
+        return link.replace(self.domain_url + '/','').replace('/', '')
+
+
+    # async def _sleep(self):
+    #     logger.info(f"Waiting sleep time: {self.sleep_between_requests} seconds")
+    #     await asyncio.sleep(self.sleep_between_requests)
+    #
+    # def _get_external_id(self, link: str) -> str:
+    #     return link.replace(self.domain_url + '/','').replace('/', '')
 
     # @staticmethod
     # async def _get_gallery_link(soup: BeautifulSoup) -> str | None:

@@ -1,5 +1,5 @@
 from enum import Enum
 
 
-class WebsiteKey(Enum):
+class SourceKey(Enum):
     MHArchive = "MHArchive"

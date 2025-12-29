@@ -49,7 +49,7 @@ class Helper:
                     url,
                     allow_redirects=False, ssl=False
             ) as resp:
-                logger.info(f"Status: {resp.status}")
+                logger.debug(f"Status: {resp.status}")
                 return await resp.text()
 
     @staticmethod
