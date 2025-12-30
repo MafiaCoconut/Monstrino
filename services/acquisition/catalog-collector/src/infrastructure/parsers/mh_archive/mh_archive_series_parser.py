@@ -123,7 +123,7 @@ class MHArchiveSeriesParser(MHArchiveParser, ParseSeriesPort):
             series_type=SeriesTypes.PRIMARY,
             link=link,
             external_id=self._get_external_id(link),
-            # original_html_content=html,
+            original_html_content=html,
         )
         list_of_dto = [series]
 
@@ -139,7 +139,7 @@ class MHArchiveSeriesParser(MHArchiveParser, ParseSeriesPort):
                         parent_name=series.name,
                         link=series.link,
                         external_id=NameFormatter.format_name(sub_name),
-                        # original_html_content=series.original_html_content,
+                        original_html_content=series.original_html_content,
                     )
                 )
         return list_of_dto

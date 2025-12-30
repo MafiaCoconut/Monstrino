@@ -2,6 +2,7 @@ import os
 
 import pytest
 from icecream import ic
+from monstrino_core.domain.value_objects import ReleaseTypePackType, ReleaseTypePackCountType
 from monstrino_core.shared.enums import ProcessingStates
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
@@ -51,6 +52,9 @@ def link_minis():
 
 def link_ornament():
     return domain_link+"/american-greetings-draculaura-ornament/"
+
+def link_from_the_box():
+    return domain_link+'/skullector-the-shining-grady-twins-re-release/'
 
 @pytest.mark.asyncio
 async def test_parse_release_single(
@@ -255,6 +259,40 @@ async def test_parse_release_budget(
 
     assert result.description_raw != ""
     assert result.from_the_box_text_raw is None
+
+    assert result.content_hash is None
+    assert result.processing_state == ProcessingStates.INIT
+
+@pytest.mark.asyncio
+async def test_parse_release_from_the_box(
+        uow_factory: UnitOfWorkFactory[Repositories],
+):
+    parser = MHArchiveReleasesParser()
+
+    result = await parser.parse_link(link=link_from_the_box())
+
+    assert result.name == "Skullector The Shining Grady Twins (Re-Release)"
+    assert result.mpn == "GNP21"
+    assert result.year_raw == "2025"
+    assert result.year == 2025
+
+    assert result.characters_raw == ["Grady Twins"]
+    assert result.gender_raw == ["Ghoul"]
+    assert result.series_raw == ["Skullector"]
+    assert result.content_type_raw is None
+    assert result.pack_type_raw == ["2-Pack"]
+    assert result.tier_type_raw is None
+    assert result.exclusive_vendor_raw == ["Mattel Creations"]
+    assert result.pet_names_raw is None
+    assert result.reissue_of_raw is None
+
+    assert result.primary_image != ""
+    assert result.images != []
+    assert result.images_link != ""
+
+    assert result.description_raw.strip("Originally sold out in 2020")
+    assert "Come play with us, ghoul" not in result.description_raw
+    assert result.from_the_box_text_raw.startswith("Come play with us, ghoul")
 
     assert result.content_hash is None
     assert result.processing_state == ProcessingStates.INIT

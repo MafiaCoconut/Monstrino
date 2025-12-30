@@ -24,7 +24,8 @@ public = APIRouter(prefix='/api/v1', tags=["Public"])
 def config(app: FastAPI):
     app.include_router(private)
 
-#
+
+
 # @router.post('/parse')
 # async def parse(
 #         response: Response, background_tasks: BackgroundTasks,
@@ -89,6 +90,13 @@ def config(app: FastAPI):
     # scheduler.
     # await parser_service.parse_release()
 
+@private.post('/sources/{source_id}/parse/characters')
+async def parse_characters(
+        source_id: int,
+        request: Request,
+        response: Response, background_tasks: BackgroundTasks
+):
+    ...
 
 @private.post('/jobs/{job_id}/resume')
 async def resume_job(
@@ -98,7 +106,6 @@ async def resume_job(
         scheduler: SchedulerPort = Depends(get_scheduler)
 ):
     job = scheduler.get_job(job_id)
-    ic(job)
     if not job:
         return await return_item_not_found_status_code()
     try:

@@ -106,7 +106,7 @@ class ParseSeriesUseCase:
                         parent_series = await uow.repos.parsed_series.get_one_by(**{ParsedSeries.NAME: series.parent_name})
                         if parent_series:
                             series.parent_id = parent_series.id
-                            logger.info(f"Set parent_id for series {series.name} to {series.parent_id}")
+                            logger.info(f"Set parent_id for series {series.name} to ParentID={series.parent_id}")
                             await self._set_parent_id(uow, series)
                     except Exception as e:
                         logger.error(f"Failed to set parent_id for series {series.name}: {e}")

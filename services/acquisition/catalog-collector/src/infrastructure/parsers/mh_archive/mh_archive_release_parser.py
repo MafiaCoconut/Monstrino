@@ -4,6 +4,7 @@ import os
 from typing import Optional
 import logging
 
+from icecream import ic
 from monstrino_models.dto import ParsedRelease
 from bs4 import BeautifulSoup
 
@@ -137,7 +138,7 @@ class MHArchiveReleasesParser(MHArchiveParser, ParseReleasePort):
             description_raw=desc_html,
             primary_image=primary_image,
             from_the_box_text_raw=from_the_box,
-            # original_html_content=html, # TODO УБРАТЬ КОММЕНТАРИЙ
+            original_html_content=html,
             link=link,
             external_id=self._get_external_id(link),
         )
@@ -195,10 +196,18 @@ class MHArchiveReleasesParser(MHArchiveParser, ParseReleasePort):
         # Берем все <p> до блока stats
         parts = []
         for p in column.find_all("p"):
-            # Останавливаемся, если начинается голубой блок
-            if p.find_previous_sibling("div", class_="stats"):
+            if p.find_parent("div", class_="from_the_box") or p.find_previous_sibling("div", class_="stats"):
                 break
-            parts.append(str(p))
+
+            part = (str(p)
+                    .replace('<p>', '')
+                    .replace('</p>', '\n')
+                    .replace('<em>', '*')
+                    .replace('</em>', '*')
+            )
+            if part[-1] == '\n':
+                part = part[:-1]
+            parts.append(part)
         return "\n".join(parts)
 
     @staticmethod
@@ -265,7 +274,21 @@ class MHArchiveReleasesParser(MHArchiveParser, ParseReleasePort):
         box_div = soup.find("div", class_="from_the_box")
         if not box_div:
             return None
-        return str(box_div)
+        from_the_box = []
+        for p in box_div.find_all("p"):
+            part = (str(p)
+                    .replace('<p>', '')
+                    .replace('</p>', '\n')
+                    .replace('<em>', '*')
+                    .replace('</em>', '*')
+            )
+            if part[-1] == '\n':
+                part = part[:-1]
+            # Останавливаемся, если начинается голубой блок
+            if p.find_previous_sibling("div", class_="stats"):
+                break
+            from_the_box.append(part)
+        return "\n".join(from_the_box)
 
     @staticmethod
     async def _get_prime_image(soup: BeautifulSoup) -> str | None:

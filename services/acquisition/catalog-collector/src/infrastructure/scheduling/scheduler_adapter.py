@@ -59,7 +59,7 @@ class SchedulerAdapter(SchedulerPort):
             # APScheduler Job has these attrs in v3; v4 keeps very similar shape.
             rows.append([
                 str(getattr(j, "id", "")),
-                self._fmt_dt(getattr(j, "next_run_time", None)),
+                # self._fmt_dt(getattr(j, "next_run_time", None)),
                 str(getattr(j, "trigger", "")),
                 self._short(getattr(j, "func_ref", None) or getattr(j, "func", None)),
                 self._short(getattr(j, "args", ())),
@@ -70,8 +70,8 @@ class SchedulerAdapter(SchedulerPort):
                 # str(getattr(j, "coalesce", "")),
             ])
 
-        headers = ["id", "next_run", "trigger", "func", "args", "kwargs", "misfire_grace", "max_inst", "coalesce"]
-
+        # headers = ["id", "next_run", "trigger", "func", "args", "kwargs", "misfire_grace", "max_inst", "coalesce"]
+        headers = ["id", "trigger", "func", "args", "kwargs"]
         if tabulate:
             logger.info('\n'+ tabulate(rows, headers=headers, tablefmt="rounded_grid"))
         else:
