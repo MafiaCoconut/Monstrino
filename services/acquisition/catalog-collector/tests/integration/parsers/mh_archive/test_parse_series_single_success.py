@@ -8,7 +8,7 @@ from monstrino_models.dto import ParsedSeries
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
 from bootstrap.container_components.repositories import Repositories
-from infrastructure.parsers import MHArchiveSeriesParser
+from infra.parsers import MHArchiveSeriesParser
 
 domain_link = os.getenv("MHARCHIVE_URL")
 

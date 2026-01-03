@@ -3,7 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.service import Service as ChromeService
 
-from infrastructure.logging.logs_config import log_decorator
+from infra.logging.logs_config import log_decorator
 
 @log_decorator(print_args=False, print_kwargs=False)
 async def get_selenium_driver() -> webdriver.Chrome:

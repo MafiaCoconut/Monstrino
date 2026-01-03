@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 from application.ports.parse.parse_release_port import ParseReleasePort
 from domain.entities.parse_scope import ParseScope
 from domain.entities.refs.release_ref import ReleaseRef
-from infrastructure.parsers.helper import Helper
+from infra.parsers.helper import Helper
 from .mh_archive_parser import MHArchiveParser
 logger = logging.getLogger(__name__)
 

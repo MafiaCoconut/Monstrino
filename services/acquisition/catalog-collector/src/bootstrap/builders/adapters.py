@@ -4,10 +4,10 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from monstrino_infra.adapters import SchedulerAdapter
 
 from bootstrap.container import Adapters
-from infrastructure.adapters.kafka_producer_adapter import KafkaProducerAdapter
-from infrastructure.logging.logger_adapter import LoggerAdapter
-from infrastructure.parsers import *
-from infrastructure.parsers.mh_archive.mh_archive_release_parser import MHArchiveReleasesParser
+from infra.adapters.kafka_producer_adapter import KafkaProducerAdapter
+from infra.logging.logger_adapter import LoggerAdapter
+from infra.parsers import *
+from infra.parsers.mh_archive.mh_archive_release_parser import MHArchiveReleasesParser
 
 
 def build_adapters(aps: AsyncIOScheduler) -> Adapters:

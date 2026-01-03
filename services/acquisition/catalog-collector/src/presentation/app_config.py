@@ -16,7 +16,7 @@ from contextlib import asynccontextmanager
 import asyncio
 from bootstrap.container import AppContainer
 from presentation import api_config, cors
-from infrastructure.logging import logs_config
+from infra.logging import logs_config
 from bootstrap.wiring import build_app
 
 dotenv.load_dotenv()

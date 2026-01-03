@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from infrastructure.parse_jobs import ParseCharactersJob, ParsePetsJob, ParseSeriesJob, ParseReleasesJob, \
+from infra.parse_jobs import ParseCharactersJob, ParsePetsJob, ParseSeriesJob, ParseReleasesJob, \
     ParseCharacterByExternalIdJob, ParseSeriesByExternalIdJob, ParsePetByExternalIdJob, ParseReleaseByExternalIdJob
 
 

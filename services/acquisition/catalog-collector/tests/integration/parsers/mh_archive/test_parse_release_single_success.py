@@ -7,7 +7,7 @@ from monstrino_core.shared.enums import ProcessingStates
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
 from bootstrap.container_components.repositories import Repositories
-from infrastructure.parsers import MHArchiveReleasesParser
+from infra.parsers import MHArchiveReleasesParser
 
 
 # link="https://mhcollector.com/skulltimate-secrets-hauntlywood-clawdeen-wolf/"

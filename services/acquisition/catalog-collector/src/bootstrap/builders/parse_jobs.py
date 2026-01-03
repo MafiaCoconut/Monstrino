@@ -1,8 +1,8 @@
 from bootstrap.container_components import ParseJobs
 from application.registries.ports_registry import PortsRegistry
-from infrastructure.parse_jobs import ParseCharactersJob, ParsePetsJob, ParseSeriesJob, ParseReleasesJob, \
+from infra.parse_jobs import ParseCharactersJob, ParsePetsJob, ParseSeriesJob, ParseReleasesJob, \
     ParsePetByExternalIdJob, ParseCharacterByExternalIdJob, ParseReleaseByExternalIdJob, ParseSeriesByExternalIdJob
-from infrastructure.parse_jobs.characters.parse_by_external_id_job import ParseCharacterByExternalIdJob
+from infra.parse_jobs.characters.parse_by_external_id_job import ParseCharacterByExternalIdJob
 
 
 def build_parse_jobs(uow_factory, registry: PortsRegistry) -> ParseJobs:

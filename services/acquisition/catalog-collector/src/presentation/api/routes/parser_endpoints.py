@@ -17,9 +17,9 @@ from application.dispatchers import ParsingDispatcher
 from application.ports.scheduler_port import SchedulerPort
 from application.use_cases.auth.verify_token_use_case import VerifyToken
 from domain.enums.source_key import SourceKey
-from infrastructure.mappers.parse_contract_to_command import ParseContractToCommandMapper
-from infrastructure.parse_jobs import ParseCharactersJob
-from infrastructure.parse_jobs.characters.parse_by_external_id_job import ParseCharacterByExternalIdJob
+from infra.mappers.parse_contract_to_command import ParseContractToCommandMapper
+from infra.parse_jobs import ParseCharactersJob
+from infra.parse_jobs.characters.parse_by_external_id_job import ParseCharacterByExternalIdJob
 from presentation.api.deps import get_parsing_request_validator
 from presentation.api.deps.dispatcher import get_main_dispatcher
 from presentation.api.deps.parse_jobs import get_parse_character_by_external_id_job

@@ -1,5 +1,5 @@
 from application.ports.scheduler_port import SchedulerPort
-from infrastructure.logging.logs_config import log_decorator
+from infra.logging.logs_config import log_decorator
 
 
 class SetAllSchedulerJobsUseCase:
