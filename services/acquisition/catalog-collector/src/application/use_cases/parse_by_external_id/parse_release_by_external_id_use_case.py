@@ -5,7 +5,7 @@ from typing import Any
 from icecream import ic
 from monstrino_models.dto import Source, ParsedRelease
 
-from app.container_components.repositories import Repositories
+from bootstrap.container_components.repositories import Repositories
 from application.ports.parse import ParseReleasePort
 from application.registries.ports_registry import PortsRegistry
 from domain.enums.source_key import SourceKey

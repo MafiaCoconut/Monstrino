@@ -7,17 +7,17 @@ logger.info('‖       MONSTRINO CATALOG - COLLECTOR       ‖')
 logger.info('‖                                           ‖')
 logger.info('=============================================')
 
+from monstrino_infra.configs import async_engine
 
 import os
 import dotenv
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 import asyncio
-from app.container import AppContainer
-from infrastructure.db.base import async_engine
+from bootstrap.container import AppContainer
 from presentation import api_config, cors
 from infrastructure.logging import logs_config
-from app.wiring import build_app
+from bootstrap.wiring import build_app
 
 dotenv.load_dotenv()
 

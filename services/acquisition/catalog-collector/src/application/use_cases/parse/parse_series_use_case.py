@@ -10,7 +10,7 @@ from monstrino_core.shared.enums import ProcessingStates
 from monstrino_models.dto import ParsedSeries, Source
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from app.container_components.repositories import Repositories
+from bootstrap.container_components.repositories import Repositories
 from application.ports.logger_port import LoggerPort
 from application.ports.parse.parse_series_port import ParseSeriesPort
 from application.registries.ports_registry import PortsRegistry

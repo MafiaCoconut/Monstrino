@@ -8,7 +8,7 @@ from monstrino_core.domain.value_objects import CharacterGender
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_models.dto import ParsedRelease, Source
 
-from app.container_components.repositories import Repositories
+from bootstrap.container_components.repositories import Repositories
 from application.ports.logger_port import LoggerPort
 from application.ports.parse.parse_release_port import ParseReleasePort
 from application.registries.ports_registry import PortsRegistry

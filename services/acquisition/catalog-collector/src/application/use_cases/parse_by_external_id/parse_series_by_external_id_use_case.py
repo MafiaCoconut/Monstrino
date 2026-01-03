@@ -6,7 +6,7 @@ from icecream import ic
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import Source, ParsedSeries
 
-from app.container_components.repositories import Repositories
+from bootstrap.container_components.repositories import Repositories
 from application.ports.logger_port import LoggerPort
 from application.ports.parse import ParseSeriesPort
 from application.registries.ports_registry import PortsRegistry

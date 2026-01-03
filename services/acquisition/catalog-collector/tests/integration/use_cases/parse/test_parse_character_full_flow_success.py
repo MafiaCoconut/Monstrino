@@ -2,7 +2,7 @@
 import pytest
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from app.container_components.repositories import Repositories
+from bootstrap.container_components.repositories import Repositories
 from application.registries.ports_registry import PortsRegistry
 from application.use_cases.parse.parse_characters_use_case import ParseCharactersUseCase
 from domain.entities.parse_scope import ParseScope

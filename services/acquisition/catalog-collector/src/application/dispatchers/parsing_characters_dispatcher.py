@@ -1,7 +1,7 @@
 from icecream import ic
 from monstrino_core.domain.value_objects import CharacterGender
 
-from app.container_components import ParseJobs
+from bootstrap.container_components import ParseJobs
 from application.interfaces import ParseCommandInterface
 from domain.entities.refs import ExternalRef
 from domain.enums.parse_selector_type_enum import ParseSelectorTypeEnum

@@ -1,15 +1,16 @@
 import os
+
+from monstrino_infra.adapters import SchedulerAdapter
 from pytz import timezone
 
 import pytest
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from app.container_components.adapters import Adapters
+from bootstrap.container_components.adapters import Adapters
 from infrastructure.adapters.kafka_producer_adapter import KafkaProducerAdapter
 from infrastructure.logging.logger_adapter import LoggerAdapter
 from infrastructure.parsers import *
 from infrastructure.parsers.mh_archive.mh_archive_release_parser import MHArchiveReleasesParser
-from infrastructure.scheduling.scheduler_adapter import SchedulerAdapter
 
 @pytest.fixture
 async def kafka_adapter():

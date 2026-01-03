@@ -5,7 +5,7 @@ from typing import Any
 from icecream import ic
 from monstrino_models.dto import ParsedCharacter, Source
 
-from app.container_components.repositories import Repositories
+from bootstrap.container_components.repositories import Repositories
 from application.ports.logger_port import LoggerPort
 from application.ports.parse.parse_character_port import ParseCharacterPort
 from application.registries.ports_registry import PortsRegistry

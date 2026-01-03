@@ -1,5 +1,5 @@
 from fastapi import Request, Depends
-from app.container import AppContainer, Services
+from bootstrap.container import AppContainer, Services
 from application.services.parser_service import ParserService
 
 

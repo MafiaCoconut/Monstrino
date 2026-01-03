@@ -1,7 +1,7 @@
 from fastapi import Depends
 
-from app.container import AppContainer
-from app.container_components import Validators
+from bootstrap.container import AppContainer
+from bootstrap.container_components import Validators
 from presentation.api.deps.container import get_container
 
 

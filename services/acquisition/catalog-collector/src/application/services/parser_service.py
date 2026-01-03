@@ -1,4 +1,4 @@
-from app.container_components.repositories import Repositories
+from bootstrap.container_components.repositories import Repositories
 from application.ports.kafka_producer_port import KafkaProducerPort
 from application.ports.logger_port import LoggerPort
 from application.registries.ports_registry import PortsRegistry

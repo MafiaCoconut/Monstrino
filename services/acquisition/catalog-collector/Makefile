@@ -32,22 +32,10 @@ LOCAL_DEPS := \
     $(PACKAGES_DIR)/monstrino-api \
     $(PACKAGES_DIR)/monstrino-infra \
 
-# =========== Environments ===========
-set-pytonpath:
-	export PYTHONPATH=src
-
-set-db-local:
-	export DB_MODE=local
-
-set-db-test: set-pytonpath
-	export DB_MODE=test
 # =========== Commands ===========
 run:
 	DB_MODE=test PYTHONPATH=src \
 	uv run uvicorn src.main:app --reload --reload-exclude "*.log" --port 8010 --log-config infrastructure/logging/logging_config.json
-
-#run-with-local-bd: set-db-local
-#	cd src && uv run uvicorn main:app --reload --reload-exclude "*.log" --port 8010 --log-config infrastructure/logging/logging_config.json
 
 run-with-local-bd:
 	DB_MODE=local PYTHONPATH=src \
