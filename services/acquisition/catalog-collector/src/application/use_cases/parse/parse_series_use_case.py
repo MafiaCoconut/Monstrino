@@ -15,7 +15,7 @@ from application.ports.logger_port import LoggerPort
 from application.ports.parse.parse_series_port import ParseSeriesPort
 from application.registries.ports_registry import PortsRegistry
 from domain.entities.parse_scope import ParseScope
-from domain.enums.website_key import SourceKey
+from domain.enums.source_key import SourceKey
 
 logger = logging.getLogger(__name__)
 
@@ -34,8 +34,8 @@ class ParseSeriesUseCase:
         1. Get port and source id
         2. Get available series refs from port based on parse scope
         3. For each series ref, check if already parsed in DB
-        4. If not parsed, add to links to parse
-        5. Parse links to parse in batches
+        4. If not parsed, add to urls to parse
+        5. Parse urls to parse in batches
         """
         # Step 1
         port: ParseSeriesPort = self._r.get(source, ParseSeriesPort)
@@ -43,7 +43,7 @@ class ParseSeriesUseCase:
             source_id = await uow.repos.source.get_id_by(**{Source.NAME: source.value})
 
         # Step 2
-        links_to_parse = []
+        urls_to_parse = []
         async for refs_batch in port.iter_refs(scope=scope):
             ext_ids = [r.external_id for r in refs_batch]
             async with self.uow_factory.create() as uow:
@@ -56,11 +56,11 @@ class ParseSeriesUseCase:
                 logger.info(f"New releases not found in batch. Skipping batch")
                 continue
 
-            links_to_parse.extend(new_refs)
+            urls_to_parse.extend(new_refs)
 
         start_time = time.time()
-        logger.info(f"Found {len(links_to_parse)} new series in batch to parse.")
-        async for refs_batch in port.parse_refs(links_to_parse, batch_size, limit):
+        logger.info(f"Found {len(urls_to_parse)} new series in batch to parse.")
+        async for refs_batch in port.parse_refs(urls_to_parse, batch_size, limit):
             await self._process_batch(source=source, batch=refs_batch)
         logger.info(f"Parsing completed in {time.time() - start_time:.2f} seconds.")
 
@@ -72,7 +72,8 @@ class ParseSeriesUseCase:
     async def _process_batch(self, source: SourceKey, batch: list[list[ParsedSeries]]):
         for series_list in batch:
             list_of_series = await self._save_list(source, series_list)
-            await self._process_parent_ids(list_of_series)
+            if list_of_series:
+                await self._process_parent_ids(list_of_series)
 
     async def _save_list(self, source: SourceKey, series_list: list[ParsedSeries]) -> list[ParsedSeries]:
         series_name = series_list[0].name
@@ -83,16 +84,21 @@ class ParseSeriesUseCase:
         if not source_id:
             raise ValueError(f"Source ID not found for source: {source.value}")
 
-        logger.info(f"Saving series: {series_name} from {series_list[0].link} and subseries from sourceID={source_id}")
+        logger.info(f"Saving series: {series_name} from {series_list[0].url} and subseries from sourceID={source_id}")
         try:
             async with self.uow_factory.create() as uow:
-                if await uow.repos.parsed_series.get_id_by(**{ParsedSeries.SOURCE_ID: source_id, ParsedSeries.EXTERNAL_ID: series_list[0].external_id}) is not None:
+                if await uow.repos.parsed_series.get_id_by(
+                        **{
+                            ParsedSeries.SOURCE_ID: source_id,
+                            ParsedSeries.EXTERNAL_ID: series_list[0].external_id
+                        }
+                ) is not None:
                     logger.info(f"Skipping series: {series_list[0].name} due to series is already parsed")
                 for series in series_list:
                     series.source_id = source_id
                 list_of_series = await uow.repos.parsed_series.save_many(series_list)
         except Exception as e:
-            logger.error(f"Failed to save series: {series_name} from {series_list[0].link} from sourceID={source_id}: {e}")
+            logger.error(f"Failed to save series: {series_name} from {series_list[0].url} from sourceID={source_id}: {e}")
 
         end_time = datetime.now()
         logger.info(f"Series saving process: {series_name} in {(end_time - start_time).total_seconds()} seconds")

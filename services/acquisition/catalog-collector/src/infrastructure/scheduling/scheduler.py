@@ -1,31 +1,27 @@
-from icecream import ic
-
+from app.container_components import ParseJobs
 from application.ports.scheduler_port import SchedulerPort
 from domain.entities.job import Job
 from domain.enums.parse_cron_job_ids import ParseCronJobIDs
-from domain.enums.website_key import SourceKey
-from infrastructure.jobs import ParsePetsJob, ParseReleasesJob, ParseSeriesJob
-from infrastructure.jobs.parse_characters_job import ParseCharactersJob
+from domain.enums.source_key import SourceKey
 
 
-def scheduler_config(scheduler: SchedulerPort, uow_factory, registry):
-    _parsers_config(scheduler, uow_factory, registry)
+def scheduler_config(scheduler: SchedulerPort, parse_jobs: ParseJobs):
+    _parsers_config(scheduler, parse_jobs)
 
     scheduler.start()
     scheduler.print_all_jobs()
 
 
-def _parsers_config(scheduler: SchedulerPort, uow_factory, registry):
-    _mh_archive_config(scheduler, uow_factory, registry)
+def _parsers_config(scheduler: SchedulerPort, parse_jobs: ParseJobs):
+    _mh_archive_config(scheduler, parse_jobs)
 
-def _mh_archive_config(scheduler: SchedulerPort, uow_factory, registry):
+def _mh_archive_config(scheduler: SchedulerPort, parse_jobs: ParseJobs):
     source = SourceKey.MHArchive
 
-    job = ParseCharactersJob(uow_factory=uow_factory, registry=registry)
     scheduler.add_job(
         Job(
             id=ParseCronJobIDs.MHARCHIVE_CHARACTER,
-            func=job.execute,
+            func=parse_jobs.characters.execute,
             trigger="cron",
             hour=2,
             minute=10,
@@ -37,11 +33,10 @@ def _mh_archive_config(scheduler: SchedulerPort, uow_factory, registry):
         )
     )
 
-    job = ParsePetsJob(uow_factory=uow_factory, registry=registry)
     scheduler.add_job(
         Job(
             id=ParseCronJobIDs.MHARCHIVE_PET,
-            func=job.execute,
+            func=parse_jobs.pets.execute,
             trigger="cron",
             hour=14,
             minute=17,
@@ -53,11 +48,10 @@ def _mh_archive_config(scheduler: SchedulerPort, uow_factory, registry):
         )
     )
 
-    job = ParseSeriesJob(uow_factory=uow_factory, registry=registry)
     scheduler.add_job(
         Job(
             id=ParseCronJobIDs.MHARCHIVE_SERIES,
-            func=job.execute,
+            func=parse_jobs.series.execute,
             trigger="cron",
             hour=2,
             minute=10,
@@ -69,11 +63,10 @@ def _mh_archive_config(scheduler: SchedulerPort, uow_factory, registry):
         )
     )
 
-    job = ParseReleasesJob(uow_factory=uow_factory, registry=registry)
     scheduler.add_job(
         Job(
             id=ParseCronJobIDs.MHARCHIVE_RELEASE,
-            func=job.execute,
+            func=parse_jobs.releases.execute,
             trigger="cron",
             hour=20,
             minute=49,

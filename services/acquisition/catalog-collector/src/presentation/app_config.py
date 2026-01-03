@@ -1,4 +1,13 @@
 import logging
+
+logger = logging.getLogger(__name__)
+logger.info('=============================================')
+logger.info('‖                                           ‖')
+logger.info('‖       MONSTRINO CATALOG - COLLECTOR       ‖')
+logger.info('‖                                           ‖')
+logger.info('=============================================')
+
+
 import os
 import dotenv
 from fastapi import FastAPI
@@ -12,22 +21,20 @@ from app.wiring import build_app
 
 dotenv.load_dotenv()
 
-logger = logging.getLogger(__name__)
+
 app = FastAPI()
 
 cors.config(app=app)
 
 @asynccontextmanager
 async def lifespan(fastapi_app: FastAPI):
-    logger.info('=============================================')
-    logger.info('‖                                           ‖')
-    logger.info('‖       MONSTRINO CATALOG - COLLECTOR       ‖')
-    logger.info('‖                                           ‖')
-    logger.info('=============================================')
 
-    async with async_engine.begin() as conn:
-        await conn.run_sync(lambda conn: None)
-
+    try:
+        async with async_engine.begin() as conn:
+            await conn.run_sync(lambda conn: None)
+    except Exception as e:
+        logger.error("Database connection error: %s", e)
+        raise e
     fastapi_app.state.container = build_app()
     api_config.config(app=fastapi_app)
     # ic(await scheduler_service.get_all_jobs())

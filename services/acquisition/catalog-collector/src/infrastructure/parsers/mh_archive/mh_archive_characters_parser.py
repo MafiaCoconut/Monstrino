@@ -10,6 +10,7 @@ import aiohttp
 import logging
 
 from icecream import ic
+from monstrino_core.domain.errors import RequestIsBlockedError, GetPageError
 from monstrino_core.domain.value_objects import CharacterGender
 from monstrino_models.dto import ParsedCharacter
 from pydantic import BaseModel
@@ -29,32 +30,39 @@ class MHArchiveCharacterParser(MHArchiveParser, ParseCharacterPort):
         super().__init__(
             sleep_between_requests = 5
         )
-        self.domain_url = os.getenv("MHARCHIVE_LINK")
+        self.domain_url = os.getenv("MHARCHIVE_URL")
         self.base_url = self.domain_url + '/category/characters'
         self.ghouls_url = self.base_url + '/ghouls/'
         self.mansters_url = self.base_url + '/mansters/'
 
     async def iter_refs(self, scope: ParseScope, batch_size: int = 30):
-        links_g = await self._parse_links(self.ghouls_url)
-        links_m = await self._parse_links(self.mansters_url)
+        urls_g = await self._parse_urls(self.ghouls_url)
+        urls_m = await self._parse_urls(self.mansters_url)
 
-        links = links_g + links_m
+        urls = urls_g + urls_m
 
-        for i in range(0, len(links), batch_size):
-            end = min(i + batch_size, len(links))
+        for i in range(0, len(urls), batch_size):
+            end = min(i + batch_size, len(urls))
 
             logger.debug(f"Iterate character refs batch: {i}-{end}")
-            batch = links[i:end]
+            batch = urls[i:end]
             yield [
                 CharacterRef(
-                    external_id=self._get_external_id(link),
-                    url=link,
+                    external_id=self._get_external_id(url),
+                    url=url,
                 )
-                for link in batch
+                for url in batch
             ]
 
-    async def parse_link(self, link: str) -> ParsedCharacter:
-        return await self._parse_info(link)
+    async def parse_by_external_id(self, external_id: str, gender: CharacterGender) -> ParsedCharacter:
+        if gender == CharacterGender.GHOUL:
+            url = self.ghouls_url + external_id + '/'
+        elif gender == CharacterGender.MANSTER:
+            url = self.mansters_url + external_id + '/'
+        else:
+            raise ValueError(f"Unknown gender: {gender}")
+
+        return await self._parse_info(url)
 
     async def parse_refs(
             self,
@@ -62,9 +70,9 @@ class MHArchiveCharacterParser(MHArchiveParser, ParseCharacterPort):
             batch_size: int = 10,
             limit: int = 9999999,
     ):
-        links = [r.url for r in refs]
-        total = min(len(links), limit)
-        async for batch in self._iterate_parse(link_list=links, total=total, batch_size=batch_size):
+        urls = [r.url for r in refs]
+        total = min(len(urls), limit)
+        async for batch in self._iterate_parse(url_list=urls, total=total, batch_size=batch_size):
             yield batch
 
     async def parse(self, batch_size: int, limit: int) -> AsyncGenerator[list[ParsedCharacter]]:
@@ -122,29 +130,29 @@ class MHArchiveCharacterParser(MHArchiveParser, ParseCharacterPort):
     async def _parse(self, url: str, gender: str, batch_size: int, limit: int) -> AsyncGenerator[list[ParsedCharacter]]:
         """
         FLOW:
-        1. Process link to every ghoul/manster on page
-        2. Iterate every ghoul/manster link and parse info
+        1. Process url to every ghoul/manster on page
+        2. Iterate every ghoul/manster url and parse info
         3. Return batch
         """
         logger.info(f"============== Starting {gender}s parser ==============")
 
         # Step 1
-        list_of_characters = await self._parse_links(url)
+        list_of_characters = await self._parse_urls(url)
         logger.info(f"Found dolls count: {len(list_of_characters)}")
 
         # Step 2
         total = min(len(list_of_characters), limit)
-        async for batch in self._iterate_parse(link_list=list_of_characters, total=total, batch_size=batch_size):
+        async for batch in self._iterate_parse(url_list=list_of_characters, total=total, batch_size=batch_size):
             yield batch
 
 
-    async def _parse_links(self, link: str) -> list[str]:
+    async def _parse_urls(self, url: str) -> list[str]:
         """
-        Open page with all characters and then return list of links to every available character
+        Open page with all characters and then return list of urls to every available character
         """
-        logger.info(f"Parsing characters links from link: {link}")
+        logger.info(f"Parsing characters urls from url: {url}")
 
-        html = await Helper.get_page(link)
+        html = await self._get_page(url)
         soup = BeautifulSoup(html, "html.parser")
 
         results = []
@@ -156,15 +164,18 @@ class MHArchiveCharacterParser(MHArchiveParser, ParseCharacterPort):
                 results.append(url)
         return results
 
-    async def _parse_info(self, link: str) -> ParsedCharacter:
-        logger.info(f"Parsing character from link: {link}")
+    async def _parse_info(self, url: str) -> ParsedCharacter:
+        logger.info(f"Parsing character from url: {url}")
 
-        html = await Helper.get_page(link)
+        html = await self._get_page(url)
+
         soup = BeautifulSoup(html, "html.parser")
 
         title_tag = soup.find("h1")
 
         name = title_tag.get_text(strip=True) if title_tag else None
+        if name == "Oops":
+            raise ValueError(f"Character not found at url: {url}")
 
         p = title_tag.find_next("p")
         description = p.get_text(strip=True) if p else None
@@ -172,59 +183,38 @@ class MHArchiveCharacterParser(MHArchiveParser, ParseCharacterPort):
         if description.startswith("Releases:") or description.startswith("As an Amazon"):
             description = None
 
-        if CharacterGender.GHOUL in link:
+        if CharacterGender.GHOUL in url:
             gender = CharacterGender.GHOUL
-        elif CharacterGender.MANSTER in link:
+        elif CharacterGender.MANSTER in url:
             gender = CharacterGender.MANSTER
         else:
-            raise ValueError(f"Unknown gender: {link}")
+            raise ValueError(f"Unknown gender: {url}")
 
         return ParsedCharacter(
             name=name,
             gender=gender,
             description=description,
-            link=link,
-            external_id=self._get_external_id(link),
+            url=url,
+            external_id=self._get_external_id(url),
             original_html_content=html
         )
 
+    def _get_external_id(self, url: str) -> str:
+        url = url.replace(self.ghouls_url, '')
+        url = url.replace(self.mansters_url, '')
+        url = url.replace('/', '')
+        return url
 
 
-    # async def _parse_characters_list(self, html: str, gender: str) -> list[ParsedCharacter]:
-    #     soup = BeautifulSoup(html, "html.parser")
-    #     results = []
-    #
-    #     for div in soup.select("div.cat_div_three"):
-    #         name_tag = div.find("h3").find("a")
-    #         img_tag = div.find("img")
-    #         count_tag = div.find("span", class_="key_note")
-    #
-    #         name = name_tag.get_text(strip=True) if name_tag else None
-    #         url = name_tag["href"] if name_tag and name_tag.has_attr("href") else None
-    #
-    #         image = img_tag["src"] if img_tag and img_tag.has_attr("src") else None
-    #
-    #         if name and url:
-    #             results.append(
-    #                 ParsedCharacter(
-    #                     name=name,
-    #                     gender=gender,
-    #                     link=url,
-    #                     primary_image=image,
-    #                     source=self.source_name,
-    #                     original_html_content="",
-    #                 )
-    #             )
-    #
-    #     return results
-
-    def _get_external_id(self, link: str) -> str:
-        link = link.replace(self.ghouls_url, '')
-        link = link.replace(self.mansters_url, '')
-        link = link.replace('/', '')
-        return link
-
-
+    async def _get_page(self, url: str) -> str:
+        try:
+            return await Helper.get_page(url)
+        except RequestIsBlockedError as e:
+            logger.error(e)
+            raise
+        except Exception as e:
+            logger.error(e)
+            raise
 
 
 

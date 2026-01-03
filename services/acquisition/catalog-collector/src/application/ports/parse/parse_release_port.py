@@ -14,9 +14,10 @@ class ParseReleasePort(Protocol):
         """
         ...
 
-    def parse(self, year: int, batch_size: int = 10, limit: int = 9999999) -> AsyncGenerator[list[ParsedRelease]]:
+    async def parse_by_external_id(self, external_id: str) -> ParsedRelease:
         """
-        Function parses releases for a given year and yields batches of parsed releases."""
+        Function parses a single release from a given external_id.
+        """
         ...
 
     def parse_year_range(
@@ -43,8 +44,9 @@ class ParseReleasePort(Protocol):
         """
         ...
 
-    async def parse_link(self, link: str) -> ParsedRelease:
+
+
+    def parse(self, year: int, batch_size: int = 10, limit: int = 9999999) -> AsyncGenerator[list[ParsedRelease]]:
         """
-        Function parses a single release from a given link.
-        """
+        Function parses releases for a given year and yields batches of parsed releases."""
         ...

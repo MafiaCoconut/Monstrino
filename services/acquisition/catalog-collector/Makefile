@@ -3,7 +3,7 @@
 # ==========================================
 DOTENV := .env
 SHELL := /bin/bash
-.PHONY: run dev prod pytest
+.PHONY: run dev prod pytest run-with-local-bd
 
 ifneq (,$(wildcard .env))
     include .env
@@ -32,10 +32,26 @@ LOCAL_DEPS := \
     $(PACKAGES_DIR)/monstrino-api \
     $(PACKAGES_DIR)/monstrino-infra \
 
+# =========== Environments ===========
+set-pytonpath:
+	export PYTHONPATH=src
 
+set-db-local:
+	export DB_MODE=local
+
+set-db-test: set-pytonpath
+	export DB_MODE=test
 # =========== Commands ===========
 run:
-	cd src && poetry run uvicorn main:app --reload --port 8010 --log-config infrastructure/logging/logging_config.json
+	DB_MODE=test PYTHONPATH=src \
+	uv run uvicorn src.main:app --reload --reload-exclude "*.log" --port 8010 --log-config infrastructure/logging/logging_config.json
+
+#run-with-local-bd: set-db-local
+#	cd src && uv run uvicorn main:app --reload --reload-exclude "*.log" --port 8010 --log-config infrastructure/logging/logging_config.json
+
+run-with-local-bd:
+	DB_MODE=local PYTHONPATH=src \
+	uv run uvicorn src.main:app --reload --reload-exclude "*.log" --port 8010 --log-config src/infrastructure/logging/logging_config.json
 
 pytest:
 	poetry run pytest -q --disable-warnings --tb=short

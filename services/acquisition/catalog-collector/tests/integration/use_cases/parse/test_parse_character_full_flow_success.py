@@ -6,7 +6,7 @@ from app.container_components.repositories import Repositories
 from application.registries.ports_registry import PortsRegistry
 from application.use_cases.parse.parse_characters_use_case import ParseCharactersUseCase
 from domain.entities.parse_scope import ParseScope
-from domain.enums.website_key import SourceKey
+from domain.enums.source_key import SourceKey
 
 
 @pytest.mark.asyncio

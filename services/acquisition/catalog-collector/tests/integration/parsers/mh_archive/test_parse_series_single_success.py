@@ -10,7 +10,7 @@ from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 from app.container_components.repositories import Repositories
 from infrastructure.parsers import MHArchiveSeriesParser
 
-domain_link = os.getenv("MHARCHIVE_LINK")
+domain_link = os.getenv("MHARCHIVE_URL")
 
 def link_subseries():
     return domain_link+"/category/series/buried-secrets/"

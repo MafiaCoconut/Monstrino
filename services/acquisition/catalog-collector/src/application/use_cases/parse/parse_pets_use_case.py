@@ -14,7 +14,7 @@ from application.registries.ports_registry import PortsRegistry
 from monstrino_repositories.repositories_interfaces import ParsedPetRepoInterface
 
 from domain.entities.parse_scope import ParseScope
-from domain.enums.website_key import SourceKey
+from domain.enums.source_key import SourceKey
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ class ParsePetsUseCase:
         async with self.uow_factory.create() as uow:
             source_id = await uow.repos.source.get_id_by(**{Source.NAME: source.value})
 
-        links_to_parse = []
+        urls_to_parse = []
         async for refs_batch in port.iter_refs(scope=scope):
             ext_ids = [r.external_id for r in refs_batch]
             async with self.uow_factory.create() as uow:
@@ -46,11 +46,11 @@ class ParsePetsUseCase:
                 logger.info(f"New pets not found in batch. Skipping batch")
                 continue
 
-            links_to_parse.extend(new_refs)
+            urls_to_parse.extend(new_refs)
 
         start_time = time.time()
-        logger.info(f"Found {len(links_to_parse)} new pets to parse.")
-        async for refs_batch in port.parse_refs(links_to_parse, batch_size, limit):
+        logger.info(f"Found {len(urls_to_parse)} new pets to parse.")
+        async for refs_batch in port.parse_refs(urls_to_parse, batch_size, limit):
             await self._save_batch(source=source, batch=refs_batch)
         logger.info(f"Parsing completed in {time.time() - start_time:.2f} seconds.")
 
@@ -65,7 +65,7 @@ class ParsePetsUseCase:
                 logger.info(f"Saving pet: {pet.name} from sourceID={source_id}")
                 pet.source_id=source_id
                 async with self.uow_factory.create() as uow:
-                    if await uow.repos.parsed_pet.get_id_by(**{ParsedPet.LINK: pet.link}) is not None:
+                    if await uow.repos.parsed_pet.get_id_by(**{ParsedPet.SOURCE_ID: source_id, ParsedPet.EXTERNAL_ID: pet.external_id}) is not None:
                         logger.info(f"Skipping pet: {pet.name} due to pet is already parsed")
                     await uow.repos.parsed_pet.save(pet)
             except Exception as e:

@@ -1,5 +1,6 @@
 from typing import Protocol, AsyncGenerator
 
+from monstrino_core.domain.value_objects import CharacterGender
 from monstrino_models.dto import ParsedCharacter
 
 from domain.entities.parse_scope import ParseScope
@@ -13,9 +14,10 @@ class ParseCharacterPort(Protocol):
         """
         ...
 
-    async def parse_link(self, link: str) -> ParsedCharacter:
-        """Function parses a single character from a given link."""
+    async def parse_by_external_id(self, external_id: str, gender: CharacterGender) -> ParsedCharacter:
+        """Function parses a single character from a given external_id."""
         ...
+
     def parse_refs(
             self,
             refs: list[CharacterRef],

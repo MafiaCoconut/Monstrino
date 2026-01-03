@@ -5,4 +5,4 @@ from typing import Optional
 
 @dataclass(frozen=True)
 class ParseScope:
-    year: int = datetime.now().year
+    year: int = datetime.now().year - 1

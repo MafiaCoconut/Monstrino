@@ -21,7 +21,7 @@ from infrastructure.parsers import MHArchiveReleasesParser
 # link = "https://mhcollector.com/original-ghouls-collection-6-pack/" # 6 characters and reissues
 # link = "https://mhcollector.com/freaky-fusion-catacombs/"
 # link = "https://mhcollector.com/freaky-fusion-save-frankie-jackson-jekyll/"
-domain_link = os.getenv("MHARCHIVE_LINK")
+domain_link = os.getenv("MHARCHIVE_URL")
 
 def link_default():
     return domain_link+"/generation-3-skelita-calaveras/"
@@ -71,7 +71,7 @@ async def test_parse_release_single_playset(
 ):
     parser = MHArchiveReleasesParser()
 
-    result = await parser.parse_link(link=link_playset())
+    result = await parser.parse_by_external_id(external_id=link_playset())
     ic(result)
     assert result.name == "Draculaura and Clawdeen Wolf Eeekend Getaway"
     assert result.mpn == "HXH93"
@@ -104,7 +104,7 @@ async def test_parse_release_single_default(
 ):
     parser = MHArchiveReleasesParser()
 
-    result = await parser.parse_link(link=link_default())
+    result = await parser.parse_by_external_id(external_id=link_default())
     ic(result)
     assert result.name == "Generation 3 Skelita Calaveras"
     assert result.mpn == "JHK34"
@@ -137,7 +137,7 @@ async def test_parse_release_multiple_pets(
 ):
     parser = MHArchiveReleasesParser()
 
-    result = await parser.parse_link(link=link_multiple_pets())
+    result = await parser.parse_by_external_id(external_id=link_multiple_pets())
     ic(result)
     assert result.name == "Draculaura Bite in the Park"
     assert result.mpn == "HNF90"
@@ -170,7 +170,7 @@ async def test_parse_release_multipack(
 ):
     parser = MHArchiveReleasesParser()
 
-    result = await parser.parse_link(link=link_multipack())
+    result = await parser.parse_by_external_id(external_id=link_multipack())
     ic(result)
     assert result.name == "Original Ghouls Collection 6-Pack"
     assert result.mpn is None
@@ -203,7 +203,7 @@ async def test_parse_release_exclusive(
 ):
     parser = MHArchiveReleasesParser()
 
-    result = await parser.parse_link(link=link_exclusive())
+    result = await parser.parse_by_external_id(external_id=link_exclusive())
     ic(result)
     assert result.name == "Deadfast Ghoulia Yelps (2024)"
     assert result.mpn == "HRP95"
@@ -236,7 +236,7 @@ async def test_parse_release_budget(
 ):
     parser = MHArchiveReleasesParser()
 
-    result = await parser.parse_link(link=link_budget())
+    result = await parser.parse_by_external_id(external_id=link_budget())
     ic(result)
     assert result.name == "Buried Secrets Scaremester Draculaura"
     assert result.mpn is None
@@ -269,7 +269,7 @@ async def test_parse_release_from_the_box(
 ):
     parser = MHArchiveReleasesParser()
 
-    result = await parser.parse_link(link=link_from_the_box())
+    result = await parser.parse_by_external_id(external_id=link_from_the_box())
 
     assert result.name == "Skullector The Shining Grady Twins (Re-Release)"
     assert result.mpn == "GNP21"
@@ -303,7 +303,7 @@ async def test_parse_release_minis(
 ):
     parser = MHArchiveReleasesParser()
 
-    result = await parser.parse_link(link=link_minis())
+    result = await parser.parse_by_external_id(external_id=link_minis())
     assert result is None
 
 @pytest.mark.asyncio
@@ -312,7 +312,7 @@ async def test_parse_release_ornament(
 ):
     parser = MHArchiveReleasesParser()
 
-    result = await parser.parse_link(link=link_ornament())
+    result = await parser.parse_by_external_id(external_id=link_ornament())
     assert result is None
 
 

@@ -2,7 +2,7 @@ import pytest
 
 from application.ports.parse import ParseCharacterPort, ParsePetPort, ParseSeriesPort, ParseReleasePort
 from application.registries.ports_registry import PortsRegistry
-from domain.enums.website_key import SourceKey
+from domain.enums.source_key import SourceKey
 
 
 @pytest.fixture

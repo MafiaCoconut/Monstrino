@@ -21,7 +21,8 @@ class MHArchiveReleasesParser(MHArchiveParser, ParseReleasePort):
         super().__init__(
             sleep_between_requests = 5
         )
-        self.domain_url = os.getenv("MHARCHIVE_LINK")
+        self.domain_url = os.getenv("MHARCHIVE_URL")
+        self.base_url = self.domain_url+'/'
 
 
     async def iter_refs(self, scope: ParseScope, batch_size: int = 30):
@@ -29,20 +30,20 @@ class MHArchiveReleasesParser(MHArchiveParser, ParseReleasePort):
             raise ValueError("scope.year is required for this HTML source")
 
         year = scope.year
-        links = await self._parse_links(year)
+        urls = await self._parse_urls(year)
 
-        for i in range(0, len(links), batch_size):
-            end = min(i + batch_size, len(links))
+        for i in range(0, len(urls), batch_size):
+            end = min(i + batch_size, len(urls))
 
             logger.debug(f"Iterate release refs batch: {i}-{end}")
-            batch = links[i:end]
+            batch = urls[i:end]
             yield [
                 ReleaseRef(
-                    external_id=self._get_external_id(link),
-                    url=link,
+                    external_id=self._get_external_id(url),
+                    url=url,
                     year=year
                 )
-                for link in batch
+                for url in batch
             ]
 
     async def parse_year_range(
@@ -61,13 +62,13 @@ class MHArchiveReleasesParser(MHArchiveParser, ParseReleasePort):
             batch_size: int = 10,
             limit: int = 9999999,
     ):
-        links = [r.url for r in refs]
-        total = min(len(links), limit)
-        async for batch in self._iterate_parse(link_list=links, total=total, batch_size=batch_size):
+        urls = [r.url for r in refs]
+        total = min(len(urls), limit)
+        async for batch in self._iterate_parse(url_list=urls, total=total, batch_size=batch_size):
             yield batch
 
-    async def parse_link(self, link: str) -> Optional[ParsedRelease]:
-        return await self._parse_info(link)
+    async def parse_by_external_id(self, external_id: str) -> Optional[ParsedRelease]:
+        return await self._parse_info(self.base_url+external_id+'/')
 
     async def parse(
             self,
@@ -78,8 +79,8 @@ class MHArchiveReleasesParser(MHArchiveParser, ParseReleasePort):
         FLOW
         1. Iterate years from year_start to year_end
         2. Open page with list of all releases for year
-        3. Process link to every release on page
-        4. Iterate every release link batch and parse info
+        3. Process url to every release on page
+        4. Iterate every release url batch and parse info
         """
         logger.info(f"============== Starting releases parser ==============")
 
@@ -92,38 +93,39 @@ class MHArchiveReleasesParser(MHArchiveParser, ParseReleasePort):
         html = await Helper.get_page(self.domain_url + f'/category/release-dates/{year}/')
 
         # Step 3
-        list_of_release_links = await self._parse_links(html)
-        logger.info(f"Found release count: {len(list_of_release_links)} for year: {year}")
+        list_of_release_urls = await self._parse_urls(html)
+        logger.info(f"Found release count: {len(list_of_release_urls)} for year: {year}")
 
         # Step 4
-        total = min(len(list_of_release_links), limit)
-        async for batch in self._iterate_parse(link_list=list_of_release_links, total=total, batch_size=batch_size):
+        total = min(len(list_of_release_urls), limit)
+        async for batch in self._iterate_parse(url_list=list_of_release_urls, total=total, batch_size=batch_size):
             yield batch
 
         end_time = datetime.now()
         logger.info(f"Finished parsing year: {year} in {end_time - start_time}")
 
-    async def _parse_links(self, year: int) -> list[str]:
+    async def _parse_urls(self, year: int) -> list[str]:
         html = await Helper.get_page(self.domain_url + f'/category/release-dates/{year}/')
 
         soup = BeautifulSoup(html, "html.parser")
-        links = set()
+        urls = set()
 
         for div in soup.find_all("div", class_="cat_div_three"):
             a = div.find("h3").find("a")
             if a and a.get("href"):
                 href = a["href"].strip()
                 if href.startswith(self.domain_url) and "/category/" not in href:
-                    links.add(href)
+                    urls.add(href)
 
         result = []
-        for link in links:
-            result.append(link)
+        for url in urls:
+            result.append(url)
         return result
 
-    async def _parse_info(self, link: str) -> Optional[ParsedRelease]:
-        logger.info(f"Parsing release link: {link}")
-        html = await Helper.get_page(link)
+    async def _parse_info(self, url: str) -> Optional[ParsedRelease]:
+        logger.info(f"Parsing release url: {url}")
+
+        html = await Helper.get_page(url)
 
         soup = BeautifulSoup(html, "html.parser")
 
@@ -139,8 +141,8 @@ class MHArchiveReleasesParser(MHArchiveParser, ParseReleasePort):
             primary_image=primary_image,
             from_the_box_text_raw=from_the_box,
             original_html_content=html,
-            link=link,
-            external_id=self._get_external_id(link),
+            url=url,
+            external_id=self._get_external_id(url),
         )
         for key in stats.keys():
             match key:
@@ -166,7 +168,7 @@ class MHArchiveReleasesParser(MHArchiveParser, ParseReleasePort):
                 case "Pet":
                     dto.pet_names_raw = stats[key]
                 case "Gallery":
-                    dto.images_link = self.domain_url + stats["Gallery"][0]
+                    dto.images_url = self.domain_url + stats["Gallery"][0]
                 case "Doll Type":
                     dto.tier_type_raw = stats[key][0]
                 case _:
@@ -242,8 +244,8 @@ class MHArchiveReleasesParser(MHArchiveParser, ParseReleasePort):
             if key == "Gallery":
                 value_elem = items[1]
                 a = value_elem.find("a")
-                link = a["href"] if a and a.get("href") else None
-                result["Gallery"] = [link]
+                url = a["href"] if a and a.get("href") else None
+                result["Gallery"] = [url]
 
             values = []
             for value_elem in items[1:]:
@@ -253,12 +255,6 @@ class MHArchiveReleasesParser(MHArchiveParser, ParseReleasePort):
                 text = text.replace('\u200e', '')
                 text = text[1:] if text[0] == ',' else text
                 text = text[1:] if text[0] == ' ' else text
-                # a = value_elem.find("a")
-                # link = a["href"] if a and a.get("href") else None
-                #
-                # # игнорируем техническую ссылку /category/exclusives/
-                # if link and link.strip().endswith("/category/exclusives/"):
-                #     link = None
 
                 values.append(text)
 
@@ -303,8 +299,8 @@ class MHArchiveReleasesParser(MHArchiveParser, ParseReleasePort):
         return None
 
     @staticmethod
-    async def _get_images(link: str):
-        html = await Helper.get_page(link)
+    async def _get_images(url: str):
+        html = await Helper.get_page(url)
         # await Helper.save_page_in_file(html)
 
         soup = BeautifulSoup(html, "html.parser")
@@ -333,19 +329,5 @@ class MHArchiveReleasesParser(MHArchiveParser, ParseReleasePort):
 
         return image_urls
 
-    def _get_external_id(self, link: str) -> str:
-        return link.replace(self.domain_url + '/','').replace('/', '')
-
-
-    # async def _sleep(self):
-    #     logger.info(f"Waiting sleep time: {self.sleep_between_requests} seconds")
-    #     await asyncio.sleep(self.sleep_between_requests)
-    #
-    # def _get_external_id(self, link: str) -> str:
-    #     return link.replace(self.domain_url + '/','').replace('/', '')
-
-    # @staticmethod
-    # async def _get_gallery_link(soup: BeautifulSoup) -> str | None:
-    #     stats = _get_stats_dict(soup)
-    #     gallery = stats.get("Gallery")
-    #     return gallery["link"] if gallery else None
+    def _get_external_id(self, url: str) -> str:
+        return url.replace(self.domain_url + '/', '').replace('/', '')

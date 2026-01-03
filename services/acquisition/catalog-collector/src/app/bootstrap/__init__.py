@@ -1,4 +1,6 @@
 from .adapters_builder import build_adapters
+from .dispatchers_builder import build_dispatchers
+from .parse_jobs_builder import build_parse_jobs
 from .services_builder import build_services
 from .scheduler_builder import build_apscheduler
 

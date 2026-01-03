@@ -13,8 +13,8 @@ class ParsePetPort(Protocol):
         """
         ...
 
-    async def parse_link(self, link: str) -> ParsedPet:
-        """Function parses a single pet from a given link."""
+    async def parse_by_external_id(self, external_id: str) -> ParsedPet:
+        """Function parses a single character from a given external_id."""
         ...
 
     def parse_refs(

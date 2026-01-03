@@ -13,7 +13,7 @@ from application.ports.logger_port import LoggerPort
 from application.ports.parse.parse_release_port import ParseReleasePort
 from application.registries.ports_registry import PortsRegistry
 from domain.entities.parse_scope import ParseScope
-from domain.enums.website_key import SourceKey
+from domain.enums.source_key import SourceKey
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +33,8 @@ class ParseReleasesUseCase:
         1. Get port, parse_scope and source id
         2. Get available release refs from port based on parse scope
         3. For each release ref, check if already parsed in DB
-        4. If not parsed, add to links to parse
-        5. Parse links to parse in batches
+        4. If not parsed, add to urls to parse
+        5. Parse urls to parse in batches
         """
 
         # Step 1: Get port and source id
@@ -43,7 +43,7 @@ class ParseReleasesUseCase:
             source_id = await uow.repos.source.get_id_by(**{Source.NAME: source.value})
 
         # Step 2
-        links_to_parse = []
+        urls_to_parse = []
         async for refs_batch in port.iter_refs(scope=scope):
             ext_ids = [r.external_id for r in refs_batch]
             async with self.uow_factory.create() as uow:
@@ -57,13 +57,13 @@ class ParseReleasesUseCase:
                 logger.info(f"New releases not found in batch. Skipping batch")
                 continue
 
-            links_to_parse.extend(new_refs)
+            urls_to_parse.extend(new_refs)
 
-        logger.info(f"Found {len(links_to_parse)} new releases to parse.")
+        logger.info(f"Found {len(urls_to_parse)} new releases to parse.")
 
-        # Step 3: Parse links in batches
+        # Step 3: Parse urls in batches
         start_time = time.time()
-        async for refs_batch in port.parse_refs(links_to_parse, batch_size=batch_size, limit=limit):
+        async for refs_batch in port.parse_refs(urls_to_parse, batch_size=batch_size, limit=limit):
             await self._save_batch(source, refs_batch)
         logger.info(f"Parsing completed in {time.time() - start_time:.2f} seconds.")
 

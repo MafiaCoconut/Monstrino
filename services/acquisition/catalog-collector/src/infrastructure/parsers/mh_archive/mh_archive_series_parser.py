@@ -30,23 +30,23 @@ class MHArchiveSeriesParser(MHArchiveParser, ParseSeriesPort):
         super().__init__(
             sleep_between_requests = 5
         )
-        self.domain_url = os.getenv("MHARCHIVE_LINK")
+        self.domain_url = os.getenv("MHARCHIVE_URL")
         self.base_url = self.domain_url+"/category/series/"
 
     async def iter_refs(self, scope: ParseScope, batch_size: int = 30):
-        links = await self._parse_links()
+        urls = await self._parse_urls()
 
-        for i in range(0, len(links), batch_size):
-            end = min(i + batch_size, len(links))
+        for i in range(0, len(urls), batch_size):
+            end = min(i + batch_size, len(urls))
 
             logger.debug(f"Iterate release refs batch: {i}-{end}")
-            batch = links[i:end]
+            batch = urls[i:end]
             yield [
                 SeriesRef(
-                    external_id=self._get_external_id(link),
-                    url=link,
+                    external_id=self._get_external_id(url),
+                    url=url,
                 )
-                for link in batch
+                for url in batch
             ]
 
     async def parse_refs(
@@ -55,16 +55,16 @@ class MHArchiveSeriesParser(MHArchiveParser, ParseSeriesPort):
             batch_size: int = 10,
             limit: int = 9999999,
     ):
-        links = [r.url for r in refs]
-        total = min(len(links), limit)
-        async for batch in self._iterate_parse(link_list=links, total=total, batch_size=batch_size):
+        urls = [r.url for r in refs]
+        total = min(len(urls), limit)
+        async for batch in self._iterate_parse(url_list=urls, total=total, batch_size=batch_size):
             yield batch
 
     async def parse(self, batch_size: int = 10, limit: int = 9999999):
         """
         FLOW:
-        1. Process link to every pet on page
-        2. Iterate every pet link and parse info
+        1. Process url to every pet on page
+        2. Iterate every pet url and parse info
         3. Return batch
 
         Returning [[ParsedSeries()], [ParsedSeries(PRIMARY), PARSEDSeries(SECONDARY)...], [...]]
@@ -72,22 +72,22 @@ class MHArchiveSeriesParser(MHArchiveParser, ParseSeriesPort):
         logger.info(f"============== Starting series parser ==============")
 
         # Step 1
-        list_of_series = await self._parse_links()
+        list_of_series = await self._parse_urls()
         logger.info(f"Found series count: {len(list_of_series)}")
 
         # Step 2-3
         total = min(len(list_of_series), limit)
-        async for batch in self._iterate_parse(link_list=list_of_series, total=total, batch_size=batch_size):
+        async for batch in self._iterate_parse(url_list=list_of_series, total=total, batch_size=batch_size):
             yield batch
 
-    async def parse_link(self, link: str) -> list[ParsedSeries]:
-        return await self._parse_info(link)
+    async def parse_by_external_id(self, external_id: str) -> list[ParsedSeries]:
+        return await self._parse_info(self.base_url+external_id+'/')
 
-    async def _parse_links(self) -> list[str]:
+    async def _parse_urls(self) -> list[str]:
         html = await Helper.get_page(self.base_url)
 
         soup = BeautifulSoup(html, "html.parser")
-        links = []
+        urls = []
         for div in soup.select("div.cat_div_three"):
             h3_tag = div.find("h3")
             if not h3_tag:
@@ -96,14 +96,14 @@ class MHArchiveSeriesParser(MHArchiveParser, ParseSeriesPort):
             name_tag = h3_tag.find("a")
 
             url = name_tag["href"] if name_tag and name_tag.has_attr("href") else None
-            links.append(url)
+            urls.append(url)
 
-        return links
+        return urls
 
-    async def _parse_info(self, link: str) -> list[ParsedSeries]:
-        logger.info(f"Parsing series info for series link: {link}")
+    async def _parse_info(self, url: str) -> list[ParsedSeries]:
+        logger.info(f"Parsing series info for series url: {url}")
 
-        html = await Helper.get_page(link)
+        html = await Helper.get_page(url)
 
         soup = BeautifulSoup(html, "html.parser")
         title_tag = soup.find("h1")
@@ -121,8 +121,8 @@ class MHArchiveSeriesParser(MHArchiveParser, ParseSeriesPort):
             name=name,
             description=description,
             series_type=SeriesTypes.PRIMARY,
-            link=link,
-            external_id=self._get_external_id(link),
+            url=url,
+            external_id=self._get_external_id(url),
             original_html_content=html,
         )
         list_of_dto = [series]
@@ -137,7 +137,7 @@ class MHArchiveSeriesParser(MHArchiveParser, ParseSeriesPort):
                         description=None,
                         series_type=SeriesTypes.SECONDARY,
                         parent_name=series.name,
-                        link=series.link,
+                        url=series.url,
                         external_id=NameFormatter.format_name(sub_name),
                         original_html_content=series.original_html_content,
                     )
@@ -156,8 +156,8 @@ class MHArchiveSeriesParser(MHArchiveParser, ParseSeriesPort):
 
         return subseries
 
-    def _get_external_id(self, link: str) -> str:
-        return link.replace(self.base_url,'').replace('/', '')
+    def _get_external_id(self, url: str) -> str:
+        return url.replace(self.base_url, '').replace('/', '')
 
 
 # =================== ARCHIVED ===================

@@ -13,13 +13,13 @@ class MHArchiveParser:
         logger.info(f"Waiting sleep time: {self.sleep_between_requests} seconds")
         await asyncio.sleep(self.sleep_between_requests)
 
-    async def _iterate_parse(self, link_list, total: int, batch_size: int, return_exceptions: bool = False):
-        total = min(total, len(link_list))
+    async def _iterate_parse(self, url_list, total: int, batch_size: int, return_exceptions: bool = False):
+        total = min(total, len(url_list))
         for i in range(0, total, batch_size):
             end = min(i + batch_size, total)
 
             logger.info(f"Parsing batch: {i}-{end}")
-            batch = link_list[i:end]
+            batch = url_list[i:end]
 
             tasks = [self._parse_info(p) for p in batch]
             batch_results = await asyncio.gather(*tasks, return_exceptions=True)

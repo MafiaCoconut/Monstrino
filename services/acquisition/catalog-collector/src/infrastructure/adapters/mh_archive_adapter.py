@@ -10,14 +10,13 @@ from icecream import ic
 from application.ports.logger_port import LoggerPort
 from application.ports.website_catalog_port import WebsiteCatalogPort
 from domain.entities.doll import Doll
-from infrastructure.config.selenium_config import get_selenium_driver
 from urllib.parse import urljoin
 
 
 class MHArchiveAdapter(WebsiteCatalogPort):
     def __init__(self, logger: LoggerPort):
         self.logger = logger
-        self.link = os.getenv("MHARCHIVE_LINK")
+        self.link = os.getenv("MHARCHIVE_URL")
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
             'Accept-Language': 'de-DE,de;q=0.9',

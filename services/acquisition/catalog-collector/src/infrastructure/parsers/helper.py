@@ -4,6 +4,8 @@ import logging
 import aiohttp
 import os
 
+from monstrino_core.domain.errors import RequestIsBlockedError, GetPageError
+
 logger = logging.getLogger(__name__)
 
 headers = {
@@ -12,7 +14,7 @@ headers = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
     "Accept-Language": "en-US,en;q=0.5",
     "Accept-Encoding": "gzip, deflate, br, zstd",
-    "Referer": os.getenv("MHARCHIVE_LINK"),
+    "Referer": os.getenv("MHARCHIVE_URL"),
     "Connection": "keep-alive",
     "Upgrade-Insecure-Requests": "1",
     "Sec-Fetch-Site": "same-origin",
@@ -41,7 +43,6 @@ class Helper:
 
     @staticmethod
     async def get_page(url: str):
-        logger.debug(f"Getting page: {url}")
         local_headers = headers.copy()
         local_headers["Referer"] = url
         async with aiohttp.ClientSession(headers=headers, cookies=cookies) as session:
@@ -49,8 +50,14 @@ class Helper:
                     url,
                     allow_redirects=False, ssl=False
             ) as resp:
-                logger.debug(f"Status: {resp.status}")
-                return await resp.text()
+                logger.debug(f"Request on url={url} completed with status code={resp.status}")
+                if resp.status == 200:
+                    return await resp.text()
+                elif resp.status == 403:
+                    raise RequestIsBlockedError(f"Request is blocked with status 403: {url}")
+                else:
+                    raise GetPageError(f"Get page error with status {resp.status}: {url}")
+
 
     @staticmethod
     async def save_page_in_file(html: str):

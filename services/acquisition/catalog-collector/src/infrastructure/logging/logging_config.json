@@ -56,6 +56,16 @@
       "handlers": ["system_file", "console"],
       "level": "INFO",
       "propagate": false
+    },
+    "watchfiles": {
+      "level": "WARNING",
+      "handlers": ["console"],
+      "propagate": false
+    },
+    "watchfiles.main": {
+      "level": "WARNING",
+      "handlers": ["console"],
+      "propagate": false
     }
   },
   "root": {

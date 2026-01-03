@@ -28,23 +28,23 @@ class MHArchivePetsParser(MHArchiveParser, ParsePetPort):
         super().__init__(
             sleep_between_requests = 5
         )
-        self.domain_url = os.getenv("MHARCHIVE_LINK")
+        self.domain_url = os.getenv("MHARCHIVE_URL")
         self.base_url = self.domain_url+"/category/characters/pets/"
 
     async def iter_refs(self, scope: ParseScope, batch_size: int = 30):
-        links = await self._parse_links()
+        urls = await self._parse_urls()
 
-        for i in range(0, len(links), batch_size):
-            end = min(i + batch_size, len(links))
+        for i in range(0, len(urls), batch_size):
+            end = min(i + batch_size, len(urls))
 
             logger.debug(f"Iterate release refs batch: {i}-{end}")
-            batch = links[i:end]
+            batch = urls[i:end]
             yield [
                 PetRef(
-                    external_id=self._get_external_id(link),
-                    url=link,
+                    external_id=self._get_external_id(url),
+                    url=url,
                 )
-                for link in batch
+                for url in batch
             ]
 
     async def parse_refs(
@@ -53,34 +53,34 @@ class MHArchivePetsParser(MHArchiveParser, ParsePetPort):
             batch_size: int = 10,
             limit: int = 9999999,
     ):
-        links = [r.url for r in refs]
-        total = min(len(links), limit)
-        async for batch in self._iterate_parse(link_list=links, total=total, batch_size=batch_size):
+        urls = [r.url for r in refs]
+        total = min(len(urls), limit)
+        async for batch in self._iterate_parse(url_list=urls, total=total, batch_size=batch_size):
             yield batch
 
     async def parse(self, batch_size: int = 10, limit: int = 9999999):
         """
         FLOW:
-        1. Process link to every pet on page
-        2. Iterate every pet link and parse info
+        1. Process url to every pet on page
+        2. Iterate every pet url and parse info
         3. Return batch
         """
         logger.info(f"============== Starting pets parser ==============")
 
 
         # Step 1
-        list_of_pets = await self._parse_links()
+        list_of_pets = await self._parse_urls()
         logger.info(f"Found pets count: {len(list_of_pets)}")
 
         # Step 2-3
         total = min(len(list_of_pets), limit)
-        async for batch in self._iterate_parse(link_list=list_of_pets, total=total, batch_size=batch_size):
+        async for batch in self._iterate_parse(url_list=list_of_pets, total=total, batch_size=batch_size):
             yield batch
 
-    async def parse_link(self, link: str) -> Optional[ParsedPet]:
-        return await self._parse_info(link)
+    async def parse_by_external_id(self, external_id: str) -> Optional[ParsedPet]:
+        return await self._parse_info(self.base_url+external_id+'/')
 
-    async def _parse_links(self) -> list[str]:
+    async def _parse_urls(self) -> list[str]:
         html = await Helper.get_page(self.base_url)
 
         soup = BeautifulSoup(html, "html.parser")
@@ -95,10 +95,10 @@ class MHArchivePetsParser(MHArchiveParser, ParsePetPort):
 
         return results
 
-    async def _parse_info(self, link: str):
-        logger.info(f"Parsing pet link: {link}")
+    async def _parse_info(self, url: str):
+        logger.info(f"Parsing pet url: {url}")
 
-        html = await Helper.get_page(link)
+        html = await Helper.get_page(url)
 
         soup = BeautifulSoup(html, "html.parser")
 
@@ -110,9 +110,9 @@ class MHArchivePetsParser(MHArchiveParser, ParsePetPort):
         # Get Owner Name
         h2_tag = soup.find("h2")
         owner_name = None
-        owner_name_link = h2_tag.find("a")
-        if owner_name_link:
-            owner_name_str = owner_name_link.get_text(strip=True)
+        owner_name_url = h2_tag.find("a")
+        if owner_name_url:
+            owner_name_str = owner_name_url.get_text(strip=True)
             owner_name = re.sub(r"\s*\([^)]*\)", "", owner_name_str).strip()
         else:
             text = h2_tag.get_text(" ", strip=True)
@@ -135,12 +135,12 @@ class MHArchivePetsParser(MHArchiveParser, ParsePetPort):
             name=name,
             description=description,
             owner_name=owner_name,
-            link=link,
+            url=url,
             original_html_content=html,
-            external_id=self._get_external_id(link),
+            external_id=self._get_external_id(url),
         )
 
         return parsed_pet
 
-    def _get_external_id(self, link: str) -> str:
-        return link.replace(self.base_url, '').replace('/', '')
+    def _get_external_id(self, url: str) -> str:
+        return url.replace(self.base_url, '').replace('/', '')

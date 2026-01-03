@@ -11,10 +11,8 @@ class ParseSeriesPort(Protocol):
         """Function iterates over series references (links) based on the given parse scope."""
         ...
 
-    def parse(self, batch_size: int, limit: int) -> AsyncGenerator[list[list[ParsedSeries]]]: ...
-
-    async def parse_link(self, link: str) -> list[ParsedSeries]:
-        """Function parses a single series from a given link."""
+    async def parse_by_external_id(self, external_id: str) -> list[ParsedSeries]:
+        """Function parses a single character from a given external_id."""
         ...
 
     def parse_refs(
@@ -28,3 +26,5 @@ class ParseSeriesPort(Protocol):
         and yield batches of parsed series.
         """
         ...
+
+    def parse(self, batch_size: int, limit: int) -> AsyncGenerator[list[list[ParsedSeries]]]: ...

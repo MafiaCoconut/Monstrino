@@ -1,7 +1,7 @@
 from application.ports.logger_port import LoggerPort
 from application.ports.website_catalog_port import WebsiteCatalogPort
 from application.registries.ports_registry import PortsRegistry
-from domain.enums.website_key import SourceKey
+from domain.enums.source_key import SourceKey
 
 
 class ParseWebsiteUseCase:

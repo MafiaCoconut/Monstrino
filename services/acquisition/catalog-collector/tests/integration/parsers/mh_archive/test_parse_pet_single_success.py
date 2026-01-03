@@ -8,7 +8,7 @@ from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 from app.container_components.repositories import Repositories
 from infrastructure.parsers import MHArchivePetsParser
 
-domain_link = os.getenv("MHARCHIVE_LINK")
+domain_link = os.getenv("MHARCHIVE_URL")
 
 def link_azura():
     return domain_link+"/category/characters/pets/azura/"
