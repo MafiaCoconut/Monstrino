@@ -43,7 +43,7 @@ class ParsePetsUseCase:
                 )
             new_refs = [r for r in refs_batch if r.external_id not in existing_ids]
             if not new_refs:
-                logger.info(f"New pets not found in batch. Skipping batch")
+                logger.debug(f"New pets not found in batch. Skipping batch")
                 continue
 
             urls_to_parse.extend(new_refs)

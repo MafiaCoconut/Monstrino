@@ -40,7 +40,7 @@ class ParseCharactersUseCase:
                 )
             new_refs = [r for r in refs_batch if r.external_id not in existing_ids]
             if not new_refs:
-                logger.info(f"New characters not found in batch. Skipping batch")
+                logger.debug(f"New characters not found in batch. Skipping batch")
                 continue
 
             links_to_parse.extend(new_refs)
