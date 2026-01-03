@@ -4,7 +4,7 @@ from monstrino_models.dto import *
 from monstrino_models.orm import *
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.container_components import Repositories
+from bootstrap.container_components import Repositories
 
 mapper_factory = MapperFactory()
 repo_factory = SqlAlchemyRepoFactory(mapper_factory)

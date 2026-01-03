@@ -1,4 +1,4 @@
-from app.container_components import Adapters, Services, Repositories, ProcessServices, CharacterProcessServices, \
+from bootstrap.container_components import Adapters, Services, Repositories, ProcessServices, CharacterProcessServices, \
     ReleaseProcessServices, PetProcessServices, SeriesProcessServices, CommonProcessServices
 from application.services.character import GenderResolverService
 from application.services.common import ImageReferenceService

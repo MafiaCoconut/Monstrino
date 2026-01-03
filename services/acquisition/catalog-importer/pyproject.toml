@@ -1,12 +1,11 @@
 [project]
 name = "catalog-importer-service"
 version = "0.1.0"
-description = "Add your description here"
+description = ""
 readme = "README.md"
 requires-python = ">=3.13.2"
-authors = [
-    {name = "MafiaCoconut",email = "alex.kach.2000@gmail.com"}
-]
+authors = [{name = "MafiaCoconut",email = "alex.kach.2000@gmail.com"}]
+
 dependencies = [
     "alembic>=1.17.2",
     "apscheduler>=3.11.1",
@@ -14,7 +13,7 @@ dependencies = [
     "bcrypt>=4.3.0",
     "coloredlogs>=15.0.1",
     "colorlog>=6.10.1",
-    "fastapi>=0.115.14",
+    "fastapi>=0.127.0",
     "icecream>=2.1.8",
     "lxml>=5.4.0",
     "psycopg>=3.2.12",

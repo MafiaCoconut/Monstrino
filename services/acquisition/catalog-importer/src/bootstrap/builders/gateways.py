@@ -1,6 +1,6 @@
 from monstrino_infra.gateways import LLMGateway
 
-from app.container_components import Gateways
+from bootstrap.container_components import Gateways
 
 
 def build_gateways():
