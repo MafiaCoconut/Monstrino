@@ -1,6 +1,6 @@
 [project]
 name = "catalog-collector"
-version = "0.1.0"
+version = "0.1.1"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13.2"
@@ -20,6 +20,13 @@ dependencies = [
     "html5lib>=1.1",
     "icecream>=2.1.8",
     "lxml>=5.4.0",
+    "monstrino-api",
+    "monstrino-contracts",
+    "monstrino-core",
+    "monstrino-infra",
+    "monstrino-models",
+    "monstrino-repositories",
+    "monstrino-testing",
     "playwright>=1.57.0",
     "psycopg>=3.3.2",
     "psycopg-binary>=3.3.2",
@@ -50,3 +57,12 @@ package-mode = false
 pythonpath = [
     "src"
 ]
+
+[tool.uv.sources]
+monstrino-core = { git = "ssh://git@github.com/MafiaCoconut/monstrino-core.git", rev = "v0.1.3" }
+monstrino-models = { git = "ssh://git@github.com/MafiaCoconut/monstrino-models.git", rev = "v0.1.5" }
+monstrino-repositories = { git = "ssh://git@github.com/MafiaCoconut/monstrino-repositories.git", rev = "v0.1.4" }
+monstrino-api = { git = "ssh://git@github.com/MafiaCoconut/monstrino-api.git", rev = "v0.1.1" }
+monstrino-testing = { git = "ssh://git@github.com/MafiaCoconut/monstrino-testing.git", rev = "v0.1.2" }
+monstrino-infra = { git = "ssh://git@github.com/MafiaCoconut/monstrino-infra.git", rev = "v0.1.1" }
+monstrino-contracts = { git = "ssh://git@github.com/MafiaCoconut/monstrino-contracts.git", rev = "v0.1.0" }
