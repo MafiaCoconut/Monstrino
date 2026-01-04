@@ -39,7 +39,15 @@ dependencies = [
 [tool.poetry]
 package-mode = false
 
+[tool.mypy]
+plugins = ["sqlalchemy.ext.mypy.plugin"]
+
 [tool.pytest.ini_options]
 pythonpath = [
     "src"
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.19.1",
 ]
