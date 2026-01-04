@@ -4,7 +4,7 @@ from monstrino_core.domain.services import NameFormatter
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ParsedPet, CharacterPetOwnership, Pet
 
-from bootstrap.container_components import Repositories
+from application.ports import Repositories
 
 
 class OwnerResolverService:

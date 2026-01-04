@@ -2,7 +2,7 @@ from monstrino_infra.configs import async_session_factory
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
 from bootstrap.builders.repo import build_repositories
-from bootstrap.container_components.repositories import Repositories
+from application.ports.repositories import Repositories
 
 
 def build_uow_factory() -> UnitOfWorkFactory[Repositories]:

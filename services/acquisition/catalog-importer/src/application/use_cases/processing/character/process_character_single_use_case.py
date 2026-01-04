@@ -9,7 +9,7 @@ from monstrino_models.dto import Character, ParsedCharacter
 from monstrino_models.enums import EntityName
 from monstrino_testing.fixtures import uow_factory
 
-from bootstrap.container_components import Repositories
+from application.ports import Repositories
 from application.services.character import GenderResolverService
 from application.services.common import ImageReferenceService
 from application.services.common.processing_states_svc import ProcessingStatesService

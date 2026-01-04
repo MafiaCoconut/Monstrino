@@ -3,7 +3,7 @@ from monstrino_core.domain.errors import DuplicateEntityError
 from monstrino_core.domain.value_objects import CharacterRoleType
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from bootstrap.container_components import Repositories
+from application.ports import Repositories
 from application.services.releases import CharacterResolverService
 
 def character_1() -> str:

@@ -2,11 +2,13 @@ from typing import Any
 
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 
-from bootstrap.container_components import ProcessJobs, Repositories, Services
+from bootstrap.container_components import Services
+from application.ports import Repositories
 from application.use_cases.processing.character import ProcessCharacterBatchUseCase, ProcessCharacterSingleUseCase
 from application.use_cases.processing.pet import ProcessPetBatchUseCase, ProcessPetSingleUseCase
 from application.use_cases.processing.releases import ProcessReleasesBatchUseCase, ProcessReleaseSingleUseCase
 from application.use_cases.processing.series import ProcessSeriesBatchUseCase, ProcessSeriesSingleUseCase
+from domain.entities import ProcessJobs
 
 
 def build_process_jobs(

@@ -1,6 +1,6 @@
 from monstrino_core.scheduler import SchedulerPort, Job
 
-from bootstrap.container_components import ProcessJobs
+from domain.entities import ProcessJobs
 from domain.enums import ProcessCronJobIDs
 
 

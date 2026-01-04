@@ -3,8 +3,7 @@ import pytest
 from monstrino_core.shared.enums import ProcessingStates
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from bootstrap.container_components import Repositories
-
+from application.ports import Repositories
 from application.services.common import ImageReferenceService
 from application.use_cases.processing.releases.process_release_single_use_case import ProcessReleaseSingleUseCase
 from application.use_cases.processing.releases.process_release_batch_use_case import (
@@ -18,7 +17,7 @@ from application.services.releases.exclusive_resolver_svc import ExclusiveResolv
 from application.services.releases.reissue_relation_resolver_svc import ReissueRelationResolverService
 from application.services.releases.pet_resolver_svc import PetResolverService
 from application.services.releases.image_processing_svc import ImageProcessingService
-from application.services.common.processing_states_svc import ReleaseProcessingStatesService
+from application.services.common.processing_states_svc import ProcessingStatesService
 
 
 @pytest.mark.asyncio
@@ -38,7 +37,7 @@ async def test_process_releases_batch_success(
 ):
     single_uc = ProcessReleaseSingleUseCase(
         uow_factory=uow_factory,
-        processing_states_svc=ReleaseProcessingStatesService(),
+        processing_states_svc=ProcessingStatesService(),
         image_reference_svc=ImageReferenceService(),
 
         character_resolver_svc=CharacterResolverService(),

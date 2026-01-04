@@ -9,7 +9,7 @@ from monstrino_core.domain.errors import (
 from monstrino_core.domain.value_objects import ReleaseTypePackCountType, ReleaseTypeContentType, ReleaseTypeTierType
 from monstrino_core.domain.services import NameFormatter, ReleaseTypePackTypeResolver
 
-from bootstrap.container_components import Repositories
+from application.ports import Repositories
 from application.services.releases import ContentTypeResolverService
 from application.services.releases.type_resolver_svc import TypeResolverService, PackTypeResolverService, \
     TierTypeResolverService

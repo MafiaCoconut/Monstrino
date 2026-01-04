@@ -8,8 +8,8 @@ from monstrino_models.dto import ParsedPet, Character, Pet
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 from monstrino_testing.fixtures import parsed_pet
 
-from bootstrap.container_components import Repositories
-from application.services.common import PetProcessingStatesService, ImageReferenceService
+from application.ports import Repositories
+from application.services.common import ProcessingStatesService, ImageReferenceService
 from application.services.pets import OwnerResolverService
 from application.use_cases.processing.pet.process_pet_single_use_case import ProcessPetSingleUseCase
 
@@ -35,7 +35,7 @@ async def test_process_pet_single_full_flow_success(
     # Step 2: Init use case
     uc = ProcessPetSingleUseCase(
         uow_factory=uow_factory,
-        processing_states_svc=PetProcessingStatesService(),
+        processing_states_svc=ProcessingStatesService(),
         image_reference_svc=ImageReferenceService(),
         owner_resolver_svc=OwnerResolverService()
     )

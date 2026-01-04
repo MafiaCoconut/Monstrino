@@ -3,7 +3,7 @@ from monstrino_core.domain.services import NameFormatter
 from monstrino_core.shared.enums import ProcessingStates
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from bootstrap.container_components import Repositories
+from application.ports import Repositories
 from application.services.series.parent_resolver_svc import ParentResolverService
 from application.use_cases.processing.series import ProcessSeriesSingleUseCase
 from application.use_cases.processing.series.process_series_batch_use_case import ProcessSeriesBatchUseCase

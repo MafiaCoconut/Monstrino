@@ -4,7 +4,7 @@ from typing import Any
 
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 
-from bootstrap.container_components import Repositories
+from application.ports import Repositories
 from application.use_cases.processing.releases.process_release_single_use_case import ProcessReleaseSingleUseCase
 
 logger = logging.getLogger(__name__)

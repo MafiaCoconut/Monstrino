@@ -17,7 +17,7 @@ class Repositories:
     # Importer
     image_import_queue: ImageImportQueueRepoInterface
 
-    # Parser
+    # Parse
     parsed_character: ParsedCharacterRepoInterface
     parsed_series:    ParsedSeriesRepoInterface
     parsed_pet:       ParsedPetRepoInterface

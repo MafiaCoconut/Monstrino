@@ -5,7 +5,7 @@ from monstrino_core.domain.errors import SeriesDataInvalidError
 from monstrino_models.dto import ReleaseSeriesLink
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from bootstrap.container_components import Repositories
+from application.ports import Repositories
 from application.services.releases import SeriesResolverService
 
 

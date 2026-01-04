@@ -3,7 +3,7 @@ from typing import Any
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ImageImportQueue
 
-from bootstrap.container_components import Repositories
+from application.ports import Repositories
 
 
 class ImageReferenceService:

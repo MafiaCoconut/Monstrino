@@ -13,7 +13,7 @@ from monstrino_models.dto import Release, ParsedRelease, Character, CharacterRol
     ReleaseCharacter, ReleaseSeriesLink, ReleaseTypeLink, ReleaseExclusiveLink, ReleasePet, ReleaseImage, \
     ReleaseRelationLink, Pet
 
-from bootstrap.container_components import Repositories
+from application.ports import Repositories
 from application.services.common import ImageReferenceService, ProcessingStatesService
 from application.services.releases import CharacterResolverService, SeriesResolverService, ExclusiveResolverService, \
     PetResolverService, ReissueRelationResolverService, ImageProcessingService, ContentTypeResolverService, \

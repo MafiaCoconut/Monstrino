@@ -2,7 +2,7 @@ from typing import TypeVar
 import logging
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 
-from bootstrap.container_components import Repositories
+from application.ports import Repositories
 from application.use_cases.processing.series import ProcessSeriesSingleUseCase
 
 logger = logging.getLogger(__name__)

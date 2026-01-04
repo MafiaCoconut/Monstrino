@@ -4,7 +4,7 @@ from monstrino_core.domain.errors import ParentSeriesNotFoundError
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ParsedSeries, Series
 
-from bootstrap.container_components import Repositories
+from application.ports import Repositories
 
 
 

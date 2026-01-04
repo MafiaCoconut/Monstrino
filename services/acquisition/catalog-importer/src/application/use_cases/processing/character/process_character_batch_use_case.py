@@ -5,7 +5,7 @@ from icecream import ic
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from bootstrap.container_components import Repositories
+from application.ports import Repositories
 from application.use_cases.processing.character.process_character_single_use_case import ProcessCharacterSingleUseCase
 
 logger = logging.getLogger(__name__)

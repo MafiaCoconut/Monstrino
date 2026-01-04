@@ -8,7 +8,7 @@ from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfW
 from monstrino_models.dto import Pet, ParsedPet
 from monstrino_models.enums import EntityName
 
-from bootstrap.container_components import Repositories
+from application.ports import Repositories
 from application.services.common import ImageReferenceService
 from application.services.common.processing_states_svc import ProcessingStatesService
 from application.services.pets import OwnerResolverService

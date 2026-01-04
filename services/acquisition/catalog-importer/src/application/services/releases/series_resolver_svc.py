@@ -8,7 +8,7 @@ from monstrino_core.domain.value_objects import SeriesTypes, SeriesRelationTypes
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ParsedRelease, ReleaseSeriesLink
 
-from bootstrap.container_components import Repositories
+from application.ports import Repositories
 
 logger = logging.getLogger(__name__)
 

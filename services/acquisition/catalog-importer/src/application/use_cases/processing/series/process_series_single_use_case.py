@@ -12,7 +12,7 @@ from monstrino_models.dto import ParsedSeries
 from monstrino_core.domain.errors import EntityNotFoundError
 from monstrino_models.enums import EntityName
 
-from bootstrap.container_components import Repositories
+from application.ports import Repositories
 from application.services.common import ImageReferenceService
 from application.services.common.processing_states_svc import ProcessingStatesService
 from application.services.series.parent_resolver_svc import ParentResolverService
