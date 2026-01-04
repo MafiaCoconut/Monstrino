@@ -8,7 +8,6 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from bootstrap.container_components.adapters import Adapters
 from infra.adapters.kafka_producer_adapter import KafkaProducerAdapter
-from infra.logging.logger_adapter import LoggerAdapter
 from infra.parsers import *
 from infra.parsers.mh_archive.mh_archive_release_parser import MHArchiveReleasesParser
 

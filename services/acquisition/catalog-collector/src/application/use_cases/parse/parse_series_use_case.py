@@ -3,15 +3,12 @@ import time
 from datetime import datetime
 from typing import Any
 
-from icecream import ic
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_core.shared.enums import ProcessingStates
 from monstrino_models.dto import ParsedSeries, Source
-from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from bootstrap.container_components.repositories import Repositories
-from application.ports.logger_port import LoggerPort
+from application.ports.repositories import Repositories
 from application.ports.parse.parse_series_port import ParseSeriesPort
 from application.registries.ports_registry import PortsRegistry
 from domain.entities.parse_scope import ParseScope

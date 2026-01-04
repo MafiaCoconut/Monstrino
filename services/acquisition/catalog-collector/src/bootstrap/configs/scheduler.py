@@ -1,5 +1,6 @@
-from bootstrap.container_components import ParseJobs
-from application.ports.scheduler_port import SchedulerPort
+from monstrino_core.scheduler import SchedulerPort
+
+from domain.entities import ParseJobs
 from domain.entities.job import Job
 from domain.enums.parse_cron_job_ids import ParseCronJobIDs
 from domain.enums.source_key import SourceKey

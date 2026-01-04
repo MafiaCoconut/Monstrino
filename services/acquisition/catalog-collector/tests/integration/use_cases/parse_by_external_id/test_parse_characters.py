@@ -4,11 +4,9 @@ from monstrino_core.domain.value_objects import CharacterGender
 from monstrino_core.shared.enums import ProcessingStates
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from bootstrap.container_components.repositories import Repositories
+from application.ports.repositories import Repositories
 from application.registries.ports_registry import PortsRegistry
-from application.use_cases.parse.parse_characters_use_case import ParseCharactersUseCase
 from application.use_cases.parse_by_external_id import ParseCharacterByExternalIdUseCase
-from domain.entities.parse_scope import ParseScope
 from domain.enums.source_key import SourceKey
 
 

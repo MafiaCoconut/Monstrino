@@ -2,16 +2,13 @@ import logging
 import time
 from typing import Any
 
-from icecream import ic
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_models.dto import ParsedPet, Source
 from monstrino_testing.fixtures import uow_factory
 
-from bootstrap.container_components.repositories import Repositories
-from application.ports.logger_port import LoggerPort
+from application.ports.repositories import Repositories
 from application.ports.parse.parse_pet_port import ParsePetPort
 from application.registries.ports_registry import PortsRegistry
-from monstrino_repositories.repositories_interfaces import ParsedPetRepoInterface
 
 from domain.entities.parse_scope import ParseScope
 from domain.enums.source_key import SourceKey

@@ -1,16 +1,12 @@
 import logging
-import time
 from typing import Any
 
-from icecream import ic
 from monstrino_core.domain.value_objects import CharacterGender
 from monstrino_models.dto import ParsedCharacter, Source
 
-from bootstrap.container_components.repositories import Repositories
-from application.ports.logger_port import LoggerPort
+from application.ports.repositories import Repositories
 from application.ports.parse.parse_character_port import ParseCharacterPort
 from application.registries.ports_registry import PortsRegistry
-from domain.entities.parse_scope import ParseScope
 from domain.enums.source_key import SourceKey
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 
@@ -33,7 +29,7 @@ class ParseCharacterByExternalIdUseCase:
                 raise ValueError(f"Source ID not found for source: {source.value}")
 
             if await uow.repos.parsed_character.get_id_by(**{ParsedCharacter.SOURCE_ID: source_id, ParsedCharacter.EXTERNAL_ID: external_id}) is not None:
-                logger.info(f"Character with external_id={external_id} from sourceID={source.value} already exists. Skipping parse.")
+                logger.info(f"Character with external_id={external_id} from source={source.value} already exists. Skipping parse.")
                 return
 
         port: ParseCharacterPort = self._r.get(source, ParseCharacterPort)
@@ -41,7 +37,7 @@ class ParseCharacterByExternalIdUseCase:
         try:
             parsed_character = await port.parse_by_external_id(external_id, gender)
         except Exception as e:
-            logger.error(f"Failed to parse character: {external_id} from sourceID={source.value}: {e}")
+            logger.error(f"Failed to parse character: {external_id} from source={source.value}: {e}")
             return
 
         if parsed_character is None:

@@ -1,16 +1,12 @@
 import logging
-import time
 from typing import Any
 
-from icecream import ic
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import Source, ParsedSeries
 
-from bootstrap.container_components.repositories import Repositories
-from application.ports.logger_port import LoggerPort
+from application.ports.repositories import Repositories
 from application.ports.parse import ParseSeriesPort
 from application.registries.ports_registry import PortsRegistry
-from domain.entities.parse_scope import ParseScope
 from domain.enums.source_key import SourceKey
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 
@@ -40,7 +36,7 @@ class ParseSeriesByExternalIdUseCase:
         try:
             parsed_series_list = await port.parse_by_external_id(external_id)
         except Exception as e:
-            logger.error(f"Failed to parse series: {external_id} from sourceID={source.value}: {e}")
+            logger.error(f"Failed to parse series: {external_id} from source={source.value}: {e}")
             return
 
         if parsed_series_list is None:

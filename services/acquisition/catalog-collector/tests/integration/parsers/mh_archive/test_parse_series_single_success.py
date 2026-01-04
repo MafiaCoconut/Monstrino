@@ -1,13 +1,10 @@
-import pytest
-from icecream import ic
 import os
 
-from monstrino_core.domain.value_objects import CharacterGender, SeriesTypes
+from monstrino_core.domain.value_objects import SeriesTypes
 from monstrino_core.shared.enums import ProcessingStates
-from monstrino_models.dto import ParsedSeries
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from bootstrap.container_components.repositories import Repositories
+from application.ports.repositories import Repositories
 from infra.parsers import MHArchiveSeriesParser
 
 domain_link = os.getenv("MHARCHIVE_URL")

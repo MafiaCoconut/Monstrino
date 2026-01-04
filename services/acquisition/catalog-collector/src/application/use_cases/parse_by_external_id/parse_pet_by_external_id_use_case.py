@@ -1,15 +1,11 @@
 import logging
-import time
 from typing import Any
 
-from icecream import ic
 from monstrino_models.dto import Source, ParsedPet
 
-from bootstrap.container_components.repositories import Repositories
-from application.ports.logger_port import LoggerPort
+from application.ports.repositories import Repositories
 from application.ports.parse import ParsePetPort
 from application.registries.ports_registry import PortsRegistry
-from domain.entities.parse_scope import ParseScope
 from domain.enums.source_key import SourceKey
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 
@@ -32,7 +28,7 @@ class ParsePetByExternalIdUseCase:
                 raise ValueError(f"Source ID not found for source: {source.value}")
 
             if await uow.repos.parsed_pet.get_id_by(**{ParsedPet.SOURCE_ID: source_id, ParsedPet.EXTERNAL_ID: external_id}) is not None:
-                logger.info(f"Pet with external_id={external_id} from sourceID={source.value} already exists. Skipping parse.")
+                logger.info(f"Pet with external_id={external_id} from source={source.value} already exists. Skipping parse.")
                 return
 
         port: ParsePetPort = self._r.get(source, ParsePetPort)
@@ -40,7 +36,7 @@ class ParsePetByExternalIdUseCase:
         try:
             parsed_pet = await port.parse_by_external_id(external_id)
         except Exception as e:
-            logger.error(f"Failed to parse pet: {external_id} from sourceID={source.value}: {e}")
+            logger.error(f"Failed to parse pet: {external_id} from source={source.value}: {e}")
             return
 
         parsed_pet.source_id = source_id

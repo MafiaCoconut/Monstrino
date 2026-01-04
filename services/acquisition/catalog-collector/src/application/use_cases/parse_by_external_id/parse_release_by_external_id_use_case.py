@@ -1,11 +1,9 @@
 import logging
-import time
 from typing import Any
 
-from icecream import ic
 from monstrino_models.dto import Source, ParsedRelease
 
-from bootstrap.container_components.repositories import Repositories
+from application.ports.repositories import Repositories
 from application.ports.parse import ParseReleasePort
 from application.registries.ports_registry import PortsRegistry
 from domain.enums.source_key import SourceKey
@@ -37,7 +35,7 @@ class ParseReleaseByExternalIdUseCase:
         try:
             parsed_release = await port.parse_by_external_id(external_id)
         except Exception as e:
-            logger.exception(f"Failed to parse release: {external_id} from sourceID={source.value}: {e}")
+            logger.exception(f"Failed to parse release: {external_id} from source={source.value}: {e}")
             return
 
         parsed_release.source_id = source_id

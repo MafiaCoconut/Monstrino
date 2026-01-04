@@ -1,4 +1,4 @@
-from bootstrap.container_components import ParseJobs
+from domain.entities import ParseJobs
 from application.registries.ports_registry import PortsRegistry
 from infra.parse_jobs import ParseCharactersJob, ParsePetsJob, ParseSeriesJob, ParseReleasesJob, \
     ParsePetByExternalIdJob, ParseCharacterByExternalIdJob, ParseReleaseByExternalIdJob, ParseSeriesByExternalIdJob

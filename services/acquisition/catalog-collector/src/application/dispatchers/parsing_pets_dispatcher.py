@@ -1,6 +1,6 @@
 from monstrino_api.v1.shared.errors import UnsupportedSelectorTypeError
 
-from bootstrap.container_components import ParseJobs
+from domain.entities import ParseJobs
 from application.interfaces import ParseCommandInterface
 from domain.enums.parse_selector_type_enum import ParseSelectorTypeEnum
 

@@ -1,12 +1,6 @@
 import logging
-from dataclasses import dataclass
-from typing import Any
 
-from icecream import ic
-from monstrino_api.v1.shared.errors import UnsupportedSelectorTypeError, UnsupportedContractKindError, \
-    UnsupportedContractValueError
-
-from bootstrap.container_components import ParseJobs
+from domain.entities.parse_jobs import ParseJobs
 from domain.enums import ParseKindEnum
 from ..commands import ParseCommand
 from ..interfaces import DomainDispatcherInterface

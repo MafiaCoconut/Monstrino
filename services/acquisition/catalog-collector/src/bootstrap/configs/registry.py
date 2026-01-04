@@ -5,7 +5,6 @@ from application.ports.parse import ParseCharacterPort, ParsePetPort, ParseSerie
 from application.ports.website_catalog_port import WebsiteCatalogPort
 from application.registries.ports_registry import PortsRegistry
 from domain.enums.source_key import SourceKey
-from infra.adapters.mh_archive_adapter import MHArchiveAdapter
 
 logger = logging.getLogger(__name__)
 

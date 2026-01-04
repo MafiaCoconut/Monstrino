@@ -1,6 +1,6 @@
 from fastapi import Request, Depends
 from bootstrap.container import AppContainer
-from bootstrap.container_components import Dispatchers
+from bootstrap.container_components.dispatchers import Dispatchers
 from application.dispatchers import ParsingDispatcher
 from presentation.api.deps.container import get_container
 

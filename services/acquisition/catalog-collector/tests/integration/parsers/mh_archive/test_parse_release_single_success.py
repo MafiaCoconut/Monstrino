@@ -2,11 +2,10 @@ import os
 
 import pytest
 from icecream import ic
-from monstrino_core.domain.value_objects import ReleaseTypePackType, ReleaseTypePackCountType
 from monstrino_core.shared.enums import ProcessingStates
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from bootstrap.container_components.repositories import Repositories
+from application.ports.repositories import Repositories
 from infra.parsers import MHArchiveReleasesParser
 
 

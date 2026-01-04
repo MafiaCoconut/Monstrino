@@ -1,4 +1,4 @@
-from bootstrap.container_components import Dispatchers, ParseJobs
+from domain.entities import ParseJobs
 from application.dispatchers import (
     ParsingDispatcher,
     ParsingCharactersDispatcher,
@@ -6,6 +6,7 @@ from application.dispatchers import (
     ParsingSeriesDispatcher,
     ParsingReleasesDispatcher
 )
+from bootstrap.container_components.dispatchers import Dispatchers
 from domain.enums import ParseKindEnum
 
 

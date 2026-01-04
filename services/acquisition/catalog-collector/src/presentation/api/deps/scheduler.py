@@ -1,6 +1,7 @@
 from fastapi import Request, Depends
+from monstrino_core.scheduler import SchedulerPort
+
 from bootstrap.container import AppContainer
-from application.ports.scheduler_port import SchedulerPort
 from presentation.api.deps.container import get_container
 
 
