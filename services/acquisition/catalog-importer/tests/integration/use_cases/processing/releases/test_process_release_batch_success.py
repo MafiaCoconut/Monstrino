@@ -3,11 +3,11 @@ import pytest
 from monstrino_core.shared.enums import ProcessingStates
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from app.container_components import Repositories
+from bootstrap.container_components import Repositories
 
 from application.services.common import ImageReferenceService
 from application.use_cases.processing.releases.process_release_single_use_case import ProcessReleaseSingleUseCase
-from application.use_cases.processing.releases.process_releases_batch_use_case import (
+from application.use_cases.processing.releases.process_release_batch_use_case import (
     ProcessReleasesBatchUseCase,
 )
 from application.services.releases.character_resolver_svc import CharacterResolverService

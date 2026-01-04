@@ -6,7 +6,7 @@ from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ParsedRelease, ReleaseRelationLink, ReleaseImage
 from monstrino_models.enums import EntityName
 
-from app.container_components import Repositories
+from bootstrap.container_components import Repositories
 
 from monstrino_models.dto import ParsedRelease, Release
 

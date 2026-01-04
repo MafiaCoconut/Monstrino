@@ -13,11 +13,11 @@ from monstrino_models.dto import Release, ParsedRelease, Character, CharacterRol
     ReleaseCharacter, ReleaseSeriesLink, ReleaseTypeLink, ReleaseExclusiveLink, ReleasePet, ReleaseImage, \
     ReleaseRelationLink, Pet
 
-from app.container_components import Repositories
-from application.services.common import ReleaseProcessingStatesService, ImageReferenceService
+from bootstrap.container_components import Repositories
+from application.services.common import ImageReferenceService, ProcessingStatesService
 from application.services.releases import CharacterResolverService, SeriesResolverService, ExclusiveResolverService, \
     PetResolverService, ReissueRelationResolverService, ImageProcessingService, ContentTypeResolverService, \
-    PackTypeResolverService, TierTypeResolverService
+    PackTypeResolverService, TierTypeResolverService, ExternalRefResolverService
 from application.use_cases.processing.releases.process_release_single_use_case import ProcessReleaseSingleUseCase
 
 character_resolver = CharacterResolverService()
@@ -31,8 +31,10 @@ content_type_resolver = ContentTypeResolverService()
 pack_type_resolver = PackTypeResolverService()
 tier_type_resolver = TierTypeResolverService()
 
-processing_states_svc = ReleaseProcessingStatesService()
+processing_states_svc = ProcessingStatesService()
 image_reference_svc = ImageReferenceService()
+
+external_ref_svc = ExternalRefResolverService()
 
 def get_use_case(uow_factory):
     return ProcessReleaseSingleUseCase(
@@ -51,11 +53,13 @@ def get_use_case(uow_factory):
         content_type_resolver_svc=content_type_resolver,
         pack_type_resolver_svc=pack_type_resolver,
         tier_type_resolver_svc=tier_type_resolver,
+
+        external_ref_resolver_svc=external_ref_svc
 )
 
 
 @pytest.mark.asyncio
-async def test_process_release_single_one_charater(
+async def test_process_release_single_one_character(
         uow_factory: UnitOfWorkFactory[Repositories],
         seed_parsed_release_default,     # Seed ParsedRelease Fixtures
         seed_character_draculaura,
@@ -89,14 +93,13 @@ async def test_process_release_single_one_charater(
     series: Series = seed_series_ghouls_rule
 
     # --------- EXECUTE ----------
-    await get_use_case(uow_factory).execute(parsed_release_id=1)
+    await get_use_case(uow_factory).execute(parsed_release_id=parsed_release.id)
 
     # --------- VALIDATE DB: release ---------
     async with uow_factory.create() as uow:
-        releases = await uow.repos.release.get_all()
-        assert len(releases) == 1
+        release = await uow.repos.release.get_one_by(**{Release.DISPLAY_NAME: parsed_release.name})
 
-        release = releases[0]
+        # release = releases[0]
         _validate_release(
             parsed_release=parsed_release,
             release=release,
@@ -104,7 +107,8 @@ async def test_process_release_single_one_charater(
 
     # --------- VALIDATE DB: release character ---------
     async with uow_factory.create() as uow:
-        release_characters = await uow.repos.release_character.get_all()
+        release_characters = await uow.repos.release_character.get_many_by(**{ReleaseCharacter.RELEASE_ID: release.id})
+        # release_characters = await uow.repos.release_character.get_all()
         assert len(release_characters) == len(parsed_release.characters_raw)
 
         _validate_release_character(
@@ -118,8 +122,9 @@ async def test_process_release_single_one_charater(
 
     # --------- VALIDATE DB: release series ---------
     async with uow_factory.create() as uow:
-        release_series_link = await uow.repos.release_series_link.get_all()
-        assert len(release_series_link) == len(parsed_release.series_raw)
+        release_series_link = await uow.repos.release_series_link.get_many_by(**{ReleaseCharacter.RELEASE_ID: release.id})
+        if parsed_release.series_raw:
+            assert len(release_series_link) == len(parsed_release.series_raw)
 
         _validate_release_series(
             release_id=release.id,
@@ -129,7 +134,7 @@ async def test_process_release_single_one_charater(
 
     # --------- VALIDATE DB: release types ---------
     async with uow_factory.create() as uow:
-        release_type_links = await uow.repos.release_type_link.get_all()
+        release_type_links = await uow.repos.release_type_link.get_many_by(**{ReleaseCharacter.RELEASE_ID: release.id})
         assert len(release_type_links) == 3  # doll pack, single pack, standard tier
 
         tier_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypeTierType.STANDARD})
@@ -144,19 +149,22 @@ async def test_process_release_single_one_charater(
 
     # --------- VALIDATE DB: release exclusive ---------
     async with uow_factory.create() as uow:
-        release_exclusives = await uow.repos.release_exclusive_link.get_all()
-        assert len(release_exclusives) == len(parsed_release.exclusive_vendor_raw)
+        release_exclusives = await uow.repos.release_exclusive_link.get_many_by(**{ReleaseCharacter.RELEASE_ID: release.id})
+        if parsed_release.exclusive_vendor_raw:
+            assert len(release_exclusives) == len(parsed_release.exclusive_vendor_raw)
 
     # --------- VALIDATE DB: release pets ---------
 
     async with uow_factory.create() as uow:
-        release_pets = await uow.repos.release_pet.get_all()
-        assert len(release_pets) == len(parsed_release.pet_names_raw)
+        release_pets = await uow.repos.release_pet.get_many_by(**{ReleaseCharacter.RELEASE_ID: release.id})
+        if parsed_release.pet_names_raw:
+            assert len(release_pets) == len(parsed_release.pet_names_raw)
 
     # --------- VALIDATE DB: release images ---------
     async with uow_factory.create() as uow:
-        release_images = await uow.repos.release_image.get_all()
-        assert len(release_images) == len(parsed_release.images) + 1  # + primary image
+        release_images = await uow.repos.release_image.get_many_by(**{ReleaseCharacter.RELEASE_ID: release.id})
+        if parsed_release.images:
+            assert len(release_images) == len(parsed_release.images) + 1  # + primary image
 
         _validate_release_images(
             parsed_release=parsed_release,

@@ -5,7 +5,7 @@ from application.services.common import ImageReferenceService, ProcessingStatesS
 from application.services.pets import OwnerResolverService
 from application.services.releases import SeriesResolverService, PetResolverService, ExclusiveResolverService, \
     CharacterResolverService, ImageProcessingService, ReissueRelationResolverService, ContentTypeResolverService, \
-    PackTypeResolverService, TierTypeResolverService
+    PackTypeResolverService, TierTypeResolverService, ExternalRefResolverService
 from application.services.series import ParentResolverService
 
 
@@ -35,6 +35,7 @@ class ReleaseProcessServices:
     content_type_resolver:          ContentTypeResolverService
     pack_type_resolver:             PackTypeResolverService
     tier_type_resolver:             TierTypeResolverService
+    external_ref_resolver:          ExternalRefResolverService
 
 
 @dataclass(frozen=True)

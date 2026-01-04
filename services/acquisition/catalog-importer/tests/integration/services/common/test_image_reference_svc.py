@@ -9,7 +9,7 @@ from monstrino_models.enums import EntityName
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
 from application.services.common import ImageReferenceService
-from app.container_components import Repositories
+from bootstrap.container_components import Repositories
 
 
 # ---------------------------------------------------------

@@ -5,7 +5,7 @@ from monstrino_core.domain.services import NameFormatter
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import  ReleasePet
 
-from app.container_components import Repositories
+from bootstrap.container_components import Repositories
 
 logger = logging.getLogger(__name__)
 
@@ -22,9 +22,7 @@ class PetResolverService:
             pet_count = 0
 
             for pet_name in pets_list:
-
-                formatted_pet_name = NameFormatter.format_name(pet_name)
-                pet_id = await uow.repos.pet.get_id_by(name=formatted_pet_name)
+                pet_id = await uow.repos.pet.get_id_by(name=NameFormatter.format_name(pet_name))
 
                 if pet_id:
                     pet_count += 1
@@ -32,13 +30,9 @@ class PetResolverService:
                         release_id=release_id,
                         pet_id=pet_id,
                         position=pet_count,
-                        name=formatted_pet_name,
-                        display_name=pet_name,
                         is_uniq_to_release=True if len(pets_list) == 1 else False,
                     )
                     await uow.repos.release_pet.save(release_pet)
 
                 else:
-                    logger.error(
-                        f"Pet found in parsed data, but not found in pet db: {pet_name}"
-                    )
+                    logger.error(f"Pet found in parsed data, but not found in pet db: {pet_name}")

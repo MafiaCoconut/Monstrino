@@ -2,7 +2,7 @@ from typing import TypeVar
 import logging
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 
-from app.container_components import Repositories
+from bootstrap.container_components import Repositories
 from application.use_cases.processing.series import ProcessSeriesSingleUseCase
 
 logger = logging.getLogger(__name__)
@@ -15,7 +15,7 @@ class ProcessSeriesBatchUseCase:
         self,
         uow_factory: UnitOfWorkFactoryInterface[TSession, Repositories],
         single_uc: ProcessSeriesSingleUseCase,
-        batch_size: int = 200,
+        batch_size: int = 150,
     ):
         self.uow_factory = uow_factory
         self.single_uc = single_uc

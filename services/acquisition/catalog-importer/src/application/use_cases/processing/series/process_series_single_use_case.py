@@ -12,8 +12,9 @@ from monstrino_models.dto import ParsedSeries
 from monstrino_core.domain.errors import EntityNotFoundError
 from monstrino_models.enums import EntityName
 
-from app.container_components import Repositories
-from application.services.common import SeriesProcessingStatesService, ImageReferenceService
+from bootstrap.container_components import Repositories
+from application.services.common import ImageReferenceService
+from application.services.common.processing_states_svc import ProcessingStatesService
 from application.services.series.parent_resolver_svc import ParentResolverService
 
 logger = logging.getLogger(__name__)
@@ -24,7 +25,7 @@ class ProcessSeriesSingleUseCase:
             self,
             uow_factory: UnitOfWorkFactoryInterface[Any, Repositories],
             parent_resolver_svc: ParentResolverService,
-            processing_states_svc: SeriesProcessingStatesService,
+            processing_states_svc: ProcessingStatesService,
             image_reference_svc: ImageReferenceService,
     ):
         self.uow_factory = uow_factory
@@ -50,6 +51,9 @@ class ProcessSeriesSingleUseCase:
                     if not parsed_series:
                         raise EntityNotFoundError
 
+                    await self.processing_states_svc.set_processing(uow.repos.parsed_series, parsed_series_id)
+                    logger.info(f"Processing ParsedSeries ID {parsed_series_id}: {parsed_series.name}")
+
                     series = Series(
                         name=NameFormatter.format_name(parsed_series.name),
                         display_name=parsed_series.name,
@@ -61,6 +65,15 @@ class ProcessSeriesSingleUseCase:
                     if series.series_type == SeriesTypes.SECONDARY:
                         await self.parent_resolver_svc.resolve(uow, parsed_series, series)
 
+                    existing_series_id = await uow.repos.series.get_id_by(
+                        **{Series.NAME: series.name, Series.SERIES_TYPE: series.series_type}
+                    )
+                    if existing_series_id:
+                        logger.info(f"Series with name {series.name} already exists with ID {existing_series_id}. Skipping saving.")
+                        await self.processing_states_svc.set_processed(uow.repos.parsed_series, parsed_series_id)
+                        # TODO In future here should be checked if new record have values that not in existing one and update accordingly
+                        return
+
                     series = await uow.repos.series.save(series)
 
                     await self.image_reference_svc.set_image_to_process(
@@ -71,9 +84,9 @@ class ProcessSeriesSingleUseCase:
                         series.id
                     )
 
+                    await self.processing_states_svc.set_processed(uow.repos.parsed_series, parsed_series_id)
+                    logger.info(f"Successfully processed ParsedSeries ID {parsed_series_id}: {series.name}")
 
-                    await self.processing_states_svc.set_processed(uow, parsed_series_id)
-                    await uow.repos.parsed_series.set_processing_state(parsed_series.id, ProcessingStates.PROCESSED)
             except EntityNotFoundError as e:
                 logger.error(f"Error processing series ID {parsed_series_id}: {e}")
                 await self._handle_error(parsed_series_id)
@@ -86,4 +99,4 @@ class ProcessSeriesSingleUseCase:
 
     async def _handle_error(self, parsed_series_id: int):
         async with self.uow_factory.create() as uow:
-            await self.processing_states_svc.set_with_errors(uow, parsed_series_id)
+            await self.processing_states_svc.set_with_errors(uow.repos.parsed_series, parsed_series_id)

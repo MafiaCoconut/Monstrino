@@ -4,7 +4,7 @@ from monstrino_core.domain.errors import ExclusiveDataInvalidError
 from monstrino_models.dto import ReleaseExclusiveLink
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from app.container_components import Repositories
+from bootstrap.container_components import Repositories
 from application.services.releases import CharacterResolverService, ExclusiveResolverService
 
 

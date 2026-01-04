@@ -29,16 +29,9 @@
     "system_file": {
       "class": "logging.FileHandler",
       "formatter": "default",
-      "filename": "logs/system_data.log",
+      "filename": "src/logs/system_data.log",
       "mode": "a",
       "level": "INFO"
-    },
-    "error_file": {
-      "class": "logging.FileHandler",
-      "formatter": "default",
-      "filename": "logs/error_data.log",
-      "mode": "a",
-      "level": "ERROR"
     }
   },
   "loggers": {

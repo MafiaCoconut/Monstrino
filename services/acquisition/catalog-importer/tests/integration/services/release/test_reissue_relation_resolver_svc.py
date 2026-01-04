@@ -11,7 +11,7 @@ from monstrino_core.domain.errors import (
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
 from application.services.releases import ReissueRelationResolverService
-from app.container_components import Repositories
+from bootstrap.container_components import Repositories
 
 
 # Helpers

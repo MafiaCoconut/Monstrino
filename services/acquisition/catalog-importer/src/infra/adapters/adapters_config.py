@@ -1,10 +1,9 @@
 import os
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from monstrino_infra.adapters import SchedulerAdapter
 
-from app.container import Adapters
-from infra.logging.logger_adapter import LoggerAdapter
-from infra.scheduling.scheduler_adapter import SchedulerAdapter
+from bootstrap.container import Adapters
 
 
 def build_adapters(aps: AsyncIOScheduler) -> Adapters:

@@ -4,7 +4,7 @@ from monstrino_core.shared.enums import ProcessingStates
 from monstrino_models.enums import EntityName
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from app.container_components import Repositories
+from bootstrap.container_components import Repositories
 from application.services.common import SeriesProcessingStatesService, ImageReferenceService
 from application.services.series.parent_resolver_svc import ParentResolverService
 from application.use_cases.processing.series import ProcessSeriesSingleUseCase

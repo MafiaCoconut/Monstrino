@@ -2,7 +2,7 @@ import pytest
 from monstrino_models.dto import ParsedSeries, Series
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from app.container_components import Repositories
+from bootstrap.container_components import Repositories
 from application.services.series.parent_resolver_svc import ParentResolverService
 
 

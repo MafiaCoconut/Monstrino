@@ -4,7 +4,7 @@ from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 from monstrino_testing.fixtures import Repositories
 
 from application.services.character import GenderResolverService
-from application.services.common import CharacterProcessingStatesService, ImageReferenceService
+from application.services.common import ProcessingStatesService, ImageReferenceService
 from application.use_cases.processing.character.process_character_single_use_case import ProcessCharacterSingleUseCase
 from application.use_cases.processing.character.process_character_batch_use_case import ProcessCharacterBatchUseCase
 
@@ -20,7 +20,7 @@ async def test_process_character_batch_success(
     single_uc = ProcessCharacterSingleUseCase(
         uow_factory,
         gender_resolver_svc=GenderResolverService(),
-        processing_states_svc=CharacterProcessingStatesService(),
+        processing_states_svc=ProcessingStatesService(),
         image_reference_svc=ImageReferenceService(),
     )
     batch_uc = ProcessCharacterBatchUseCase(

@@ -1,7 +1,7 @@
-
 import logging
+from typing import Any
 
-from monstrino_repositories.unit_of_work import UnitOfWorkFactory
+from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_testing.fixtures import Repositories
 
 from application.use_cases.processing.pet.process_pet_single_use_case import ProcessPetSingleUseCase
@@ -14,7 +14,7 @@ class ProcessPetBatchUseCase:
 
     def __init__(
             self,
-            uow_factory: UnitOfWorkFactory[Repositories],
+            uow_factory: UnitOfWorkFactoryInterface[Any , Repositories],
             single_uc: ProcessPetSingleUseCase,
             batch_size: int = 150
     ) -> None:

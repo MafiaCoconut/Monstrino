@@ -39,8 +39,7 @@ class CharacterResolverService:
             character_count = 0
 
             for character_name in characters:
-                formatted_name = NameFormatter.format_name(character_name)
-                character_id = await uow.repos.character.get_id_by(name=formatted_name)
+                character_id = await uow.repos.character.get_id_by(name=NameFormatter.format_name(character_name))
 
                 if character_id:
                     character_count += 1
@@ -54,8 +53,6 @@ class CharacterResolverService:
                         character_id=character_id,
                         role_id=role_id,
                         position=character_count,
-                        name=formatted_name,
-                        display_name=character_name,
                         is_uniq_to_release=True if len(characters) == 1 else False,
                     )
                     ic(release_character)

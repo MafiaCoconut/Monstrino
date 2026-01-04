@@ -1,23 +1,21 @@
-from monstrino_core.scheduler import SchedulerPort
+from monstrino_core.scheduler import SchedulerPort, Job
 
 from bootstrap.container_components import ProcessJobs
-from domain.entities.job import Job
 from domain.enums import ProcessCronJobIDs
 
 
-def scheduler_config(scheduler: SchedulerPort, parse_jobs: ParseJobs):
-    _parsers_config(scheduler, parse_jobs)
+def scheduler_config(scheduler: SchedulerPort, process_jobs: ProcessJobs):
+    _parsers_config(scheduler, process_jobs)
 
     scheduler.start()
     scheduler.print_all_jobs()
 
 
-def _parsers_config(scheduler: SchedulerPort, parse_jobs: ParseJobs):
-
+def _parsers_config(scheduler: SchedulerPort, process_jobs: ProcessJobs):
     scheduler.add_job(
         Job(
             id=ProcessCronJobIDs.PROCESS_CHARACTER,
-            func=parse_jobs.characters.execute,
+            func=process_jobs.characters.execute,
             trigger="cron",
             hour=2,
             minute=10,
@@ -28,7 +26,7 @@ def _parsers_config(scheduler: SchedulerPort, parse_jobs: ParseJobs):
     scheduler.add_job(
         Job(
             id=ProcessCronJobIDs.PROCESS_PET,
-            func=parse_jobs.pets.execute,
+            func=process_jobs.pets.execute,
             trigger="cron",
             hour=2,
             minute=20,
@@ -39,7 +37,7 @@ def _parsers_config(scheduler: SchedulerPort, parse_jobs: ParseJobs):
     scheduler.add_job(
         Job(
             id=ProcessCronJobIDs.PROCESS_SERIES,
-            func=parse_jobs.series.execute,
+            func=process_jobs.series.execute,
             trigger="cron",
             hour=2,
             minute=30,
@@ -50,16 +48,11 @@ def _parsers_config(scheduler: SchedulerPort, parse_jobs: ParseJobs):
     scheduler.add_job(
         Job(
             id=ProcessCronJobIDs.PROCESS_RELEASE,
-            func=parse_jobs.releases.execute,
+            func=process_jobs.releases.execute,
             trigger="cron",
             hour=2,
             minute=40,
             kwargs={}
         )
     )
-
-
-
-def _mh_archive_config(scheduler: SchedulerPort, parse_jobs: ParseJobs):
-    source = SourceKey.MHArchive
 

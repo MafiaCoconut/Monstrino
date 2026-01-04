@@ -8,7 +8,7 @@ from monstrino_core.domain.value_objects.release import ReleaseRelationType
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ParsedRelease, ReleaseRelationLink
 
-from app.container_components import Repositories
+from bootstrap.container_components import Repositories
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +27,9 @@ class ReissueRelationResolverService:
             reissue_list: list[str]
 
     ) -> None:
+        if not reissue_list:
+            return
+
         relation_type_id = await uow.repos.relation_type.get_id_by(name=ReleaseRelationType.REISSUE)
         if not relation_type_id:
             raise ReleaseRelationTypeNotFoundError(

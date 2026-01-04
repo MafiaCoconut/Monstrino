@@ -5,3 +5,4 @@ from .pet_resolver_svc import PetResolverService
 from .reissue_relation_resolver_svc import ReissueRelationResolverService
 from .series_resolver_svc  import SeriesResolverService
 from .type_resolver_svc import ContentTypeResolverService, PackTypeResolverService, TierTypeResolverService
+from .external_ref_resolver import ExternalRefResolverService

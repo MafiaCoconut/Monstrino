@@ -8,7 +8,7 @@ from monstrino_core.domain.value_objects import SeriesTypes, SeriesRelationTypes
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ParsedRelease, ReleaseSeriesLink
 
-from app.container_components import Repositories
+from bootstrap.container_components import Repositories
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +19,9 @@ class SeriesResolverService:
             release_id: int,
             series_list: list[str]
     ) -> None:
+        if series_list is None:
+            logger.info(f'No series data to resolve for release_id: {release_id}')
+            return
         for parsed_series_name in series_list:
             series = await uow.repos.series.get_one_by(name=NameFormatter.format_name(parsed_series_name))
             if series:

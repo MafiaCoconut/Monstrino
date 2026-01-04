@@ -1,11 +1,12 @@
-from bootstrap.container_components import Adapters, Services, Repositories, ProcessServices, CharacterProcessServices, \
+from bootstrap.container_components import ProcessServices, CharacterProcessServices, \
     ReleaseProcessServices, PetProcessServices, SeriesProcessServices, CommonProcessServices
+from bootstrap.container_components.services import Services
 from application.services.character import GenderResolverService
 from application.services.common import ImageReferenceService
 from application.services.common.processing_states_svc import ProcessingStatesService
 from application.services.pets import OwnerResolverService
 from application.services.releases import SeriesResolverService, PetResolverService, ExclusiveResolverService, \
-    CharacterResolverService, ImageProcessingService, ReissueRelationResolverService
+    CharacterResolverService, ImageProcessingService, ReissueRelationResolverService, ExternalRefResolverService
 from application.services.releases.type_resolver_svc import TierTypeResolverService, \
     PackTypeResolverService, ContentTypeResolverService
 from application.services.series import ParentResolverService
@@ -36,7 +37,8 @@ def build_services() -> Services:
                 series_resolver=SeriesResolverService(),
                 content_type_resolver=ContentTypeResolverService(),
                 pack_type_resolver=PackTypeResolverService(),
-                tier_type_resolver=TierTypeResolverService()
+                tier_type_resolver=TierTypeResolverService(),
+                external_ref_resolver=ExternalRefResolverService(),
             )
         )
     )

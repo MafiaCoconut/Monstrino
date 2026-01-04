@@ -9,10 +9,11 @@ from monstrino_models.dto import ParsedRelease, Release
 from monstrino_models.enums import EntityName
 from monstrino_testing.fixtures import Repositories
 
-from application.services.common import ReleaseProcessingStatesService, ImageReferenceService
+from application.services.common import ImageReferenceService
+from application.services.common.processing_states_svc import ProcessingStatesService
 from application.services.releases import CharacterResolverService, ExclusiveResolverService, SeriesResolverService, \
     ContentTypeResolverService, PackTypeResolverService, TierTypeResolverService, PetResolverService, \
-    ReissueRelationResolverService, ImageProcessingService
+    ReissueRelationResolverService, ImageProcessingService, ExternalRefResolverService
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +21,7 @@ class ProcessReleaseSingleUseCase:
     def __init__(
             self,
             uow_factory: UnitOfWorkFactoryInterface[Any, Repositories],
-            processing_states_svc: ReleaseProcessingStatesService,
+            processing_states_svc: ProcessingStatesService,
             image_reference_svc: ImageReferenceService,
 
             character_resolver_svc: CharacterResolverService,
@@ -34,6 +35,8 @@ class ProcessReleaseSingleUseCase:
             content_type_resolver_svc: ContentTypeResolverService,
             pack_type_resolver_svc: PackTypeResolverService,
             tier_type_resolver_svc: TierTypeResolverService,
+
+            external_ref_resolver_svc: ExternalRefResolverService,
 
 
 
@@ -53,6 +56,8 @@ class ProcessReleaseSingleUseCase:
         self.pack_type_resolver_svc = pack_type_resolver_svc
         self.tier_type_resolver_svc = tier_type_resolver_svc
 
+        self.external_ref_resolver_svc = external_ref_resolver_svc
+
 
     """
     1.  Fetch a single release by ID
@@ -67,7 +72,8 @@ class ProcessReleaseSingleUseCase:
     10. Resolve pet
     11. Resolve reissue of
     12. Resolve images
-    13. Set release as processed
+    13. Resolve external references
+    14. Set release as processed
     """
 
     async def execute(self, parsed_release_id: int) -> None:
@@ -75,9 +81,14 @@ class ProcessReleaseSingleUseCase:
             async with self.uow_factory.create() as uow:
                 # Step 1: Fetch a single release by ID
                 parsed_release: ParsedRelease = await uow.repos.parsed_release.get_one_by_id(obj_id=parsed_release_id)
-                await self.processing_states_svc.set_processing(uow, parsed_release_id)
+                if not parsed_release:
+                    raise EntityNotFoundError(f"Entity parsed_release with ID {parsed_release_id} not found")
 
-                ic(parsed_release)
+                await self.processing_states_svc.set_processing(uow.repos.parsed_release, parsed_release_id)
+
+                logger.info(f"Processing ParsedRelease ID {parsed_release_id}: {parsed_release.name}")
+
+                # ic(parsed_release)
                 # Step 2-3: Create release entity and format name
                 release = Release(
                     name=NameFormatter.format_name(parsed_release.name),
@@ -89,8 +100,18 @@ class ProcessReleaseSingleUseCase:
                 )
 
                 # Step 4: Save release
+                existing_release_id = await uow.repos.release.get_id_by(
+                    **{Release.NAME: release.name, Release.YEAR: release.year, Release.MPN: release.mpn}
+                )
+                if existing_release_id:
+                    logger.info(f"Release with name {release.display_name} already exists with ID {existing_release_id}. Skipping saving.")
+                    await self.processing_states_svc.set_processed(uow.repos.parsed_release, parsed_release_id)
+                    # TODO In future here should be checked if new record have values that not in existing one and update accordingly
+                    return
+
                 release = await uow.repos.release.save(release)
-                ic(release)
+                ic(release.id)
+                # ic(release)
                 ic('==================================================')
                 ic("Resolve characters")
                 # Step 5: Resolve characters
@@ -114,8 +135,8 @@ class ProcessReleaseSingleUseCase:
                     uow=uow,
                     release_id=release.id,
                     type_list=parsed_release.content_type_raw,
-                    character_count=len(parsed_release.characters_raw),
-                    pet_count=len(parsed_release.pet_names_raw)
+                    character_count=len(parsed_release.characters_raw) if parsed_release.characters_raw is not None else 0,
+                    pet_count=len(parsed_release.pet_names_raw) if parsed_release.pet_names_raw is not None else 0
                 )
                 ic('==================================================')
                 ic("Resolve pack type")
@@ -123,7 +144,7 @@ class ProcessReleaseSingleUseCase:
                     uow=uow,
                     release_id=release.id,
                     pack_type_list=parsed_release.pack_type_raw,
-                    release_character_count=len(parsed_release.characters_raw),
+                    release_character_count=len(parsed_release.characters_raw) if parsed_release.characters_raw is not None else 0,
                 )
                 ic('==================================================')
                 ic("Resolve tier type")
@@ -173,9 +194,19 @@ class ProcessReleaseSingleUseCase:
                     other_images_list=parsed_release.images,
                     image_reference_svc=self.image_reference_svc
                 )
+                ic('==================================================')
+                ic("Resolve external references")
+                # Step 13: Resolve external references
+                await self.external_ref_resolver_svc.resolve(
+                    uow=uow,
+                    release_id=release.id,
+                    source_id=parsed_release.source_id,
+                    external_id=parsed_release.external_id
+                )
 
-                # Step 13: Set release as processed
-                await self.processing_states_svc.set_processed(uow, parsed_release_id)
+                # Step 14: Set release as processed
+                await self.processing_states_svc.set_processed(uow.repos.parsed_release, parsed_release_id)
+                logger.info(f"Successfully processed ParsedRelease ID {parsed_release_id}: {release.name}")
 
 
         except EntityNotFoundError as e:
@@ -190,4 +221,5 @@ class ProcessReleaseSingleUseCase:
 
     async def _handle_error(self, parsed_release_id: int):
         async with self.uow_factory.create() as uow:
-            await self.processing_states_svc.set_with_errors(uow, parsed_release_id)
+            ...
+            # await self.processing_states_svc.set_with_errors(uow.repos.parsed_release, parsed_release_id)

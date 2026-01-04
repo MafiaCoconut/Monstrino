@@ -5,7 +5,7 @@ from monstrino_core.domain.services import NameFormatter
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 from monstrino_models.dto import Release, ParsedRelease
 
-from app.container_components import Repositories
+from bootstrap.container_components import Repositories
 from application.use_cases.processing.releases.process_release_single_use_case import ProcessReleaseSingleUseCase
 
 

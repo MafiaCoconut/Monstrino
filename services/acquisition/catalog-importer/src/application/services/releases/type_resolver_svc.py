@@ -11,7 +11,7 @@ from monstrino_core.domain.value_objects import ReleaseTypeContentType, ReleaseT
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ReleaseTypeLink, ReleaseType
 
-from app.container_components import Repositories
+from bootstrap.container_components import Repositories
 
 logger = logging.getLogger(__name__)
 
@@ -64,16 +64,24 @@ class ContentTypeResolverService(TypeResolverService):
             pet_count: int,
     ):
         if not type_list:
-            return
+            type_list = []
 
-        normalized_type_list = {NameFormatter.format_name(t) for t in type_list}
-        n_type_list = list(normalized_type_list)
+        n_type_list = []
+
+        if len(type_list) > 0:
+            normalized_type_list = {NameFormatter.format_name(t) for t in type_list}
+            n_type_list = list(normalized_type_list)
+
         if pet_count > 0 and ReleaseTypeContentType.PET_FIGURE not in type_list:
             n_type_list.append(ReleaseTypeContentType.PET_FIGURE)
 
         if character_count > 0 and ReleaseTypeContentType.DOLL_FIGURE not in type_list:
             n_type_list.append(ReleaseTypeContentType.DOLL_FIGURE)
 
+        if "playsets" in n_type_list:
+            n_type_list.pop(n_type_list.index("playsets"))
+            n_type_list.append(ReleaseTypeContentType.PLAYSET)
+        ic(n_type_list)
         for type_name in n_type_list:
             await self._set_type(uow, release_id, type_name)
 
@@ -94,21 +102,20 @@ class PackTypeResolverService(TypeResolverService):
         4. If pack_type is playset do not set single pack
         """
 
-
         # TODO Добавить дополнительную проверку описания релиза на наличие упоминнаний о дополнительных типах релиза
 
         is_multipack_count_found = False
-
-        resolved_types = ReleaseTypePackTypeResolver.resolve_list(pack_type_list)
-        if len(resolved_types) < len(pack_type_list):
-            raise ReleasePackTypeDataInvalidError(
-                f"Some of provided pack types could not be resolved: {pack_type_list}"
-            )
-        if resolved_types:
-            for pack_f in resolved_types:
-                await self._set_type(uow, release_id, pack_f)
-                if pack_f in ReleaseTypePackCountType:
-                    is_multipack_count_found = True
+        if pack_type_list:
+            resolved_types = ReleaseTypePackTypeResolver.resolve_list(pack_type_list)
+            if len(resolved_types) < len(pack_type_list):
+                raise ReleasePackTypeDataInvalidError(
+                    f"Some of provided pack types could not be resolved: {pack_type_list}"
+                )
+            if resolved_types:
+                for pack_f in resolved_types:
+                    await self._set_type(uow, release_id, pack_f)
+                    if pack_f in ReleaseTypePackCountType:
+                        is_multipack_count_found = True
 
         if not await uow.repos.release_type_link.exists_by_release_type_name(ReleaseTypeContentType.PLAYSET):
             if not is_multipack_count_found:

@@ -1,0 +1,2 @@
+from .process_character_single_use_case import ProcessCharacterSingleUseCase
+from .process_character_batch_use_case import ProcessCharacterBatchUseCase

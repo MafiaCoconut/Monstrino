@@ -56,9 +56,10 @@ def build_process_jobs(
 
                 image_processing_svc=services.process.release.image_processing,
 
-                content_type_resolver_svc=services.process.release.type_resolver,
-                pack_type_resolver_svc=services.process.release.type_resolver,
-                tier_type_resolver_svc=services.process.release.type_resolver,
+                content_type_resolver_svc=services.process.release.content_type_resolver,
+                pack_type_resolver_svc=services.process.release.pack_type_resolver,
+                tier_type_resolver_svc=services.process.release.tier_type_resolver,
+                external_ref_resolver_svc=services.process.release.external_ref_resolver,
             )
         ),
     )

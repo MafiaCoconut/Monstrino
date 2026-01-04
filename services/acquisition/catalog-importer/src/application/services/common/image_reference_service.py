@@ -3,7 +3,7 @@ from typing import Any
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ImageImportQueue
 
-from app.container_components import Repositories
+from bootstrap.container_components import Repositories
 
 
 class ImageReferenceService:
@@ -19,7 +19,7 @@ class ImageReferenceService:
         if ref_id and image_link:
             await uow.repos.image_import_queue.save(
                 ImageImportQueue(
-                    original_link=image_link,
+                    original_url=image_link,
                     origin_reference_id=ref_id,
                     origin_record_id=record_id,
                 )
