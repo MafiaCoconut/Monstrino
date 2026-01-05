@@ -1,0 +1,35 @@
+[project]
+name = "release-catalog-service"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13.2"
+dependencies = [
+
+    "alembic>=1.17.2",
+    "apscheduler>=3.11.1",
+    "asyncpg>=0.30.0",
+    "bcrypt>=4.3.0",
+    "coloredlogs>=15.0.1",
+    "colorlog>=6.10.1",
+    "fastapi>=0.127.0",
+    "icecream>=2.1.8",
+    "lxml>=5.4.0",
+    "psycopg>=3.2.12",
+    "psycopg-binary>=3.2.12",
+    "psycopg2>=2.9.11",
+    "pydantic>=2.12.4",
+    "pydantic-settings>=2.12.0",
+    "pyjwt>=2.10.1",
+    "pytest>=9.0.1",
+    "pytest-asyncio>=1.3.0",
+    "pytest-mock>=3.15.1",
+    "python-dotenv>=1.2.1",
+    "pytz>=2025.2",
+    "requests>=2.32.5",
+    "requests-oauthlib>=2.0.0",
+    "sqlalchemy>=2.0.44",
+    "starlette>=0.46.2",
+    "uvicorn>=0.34.3",
+    "watchfiles>=1.1.1",
+]
