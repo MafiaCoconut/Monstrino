@@ -48,18 +48,19 @@ LOCAL_DEPS := \
     $(PACKAGES_DIR)/monstrino-testing \
     $(PACKAGES_DIR)/monstrino-api \
     $(PACKAGES_DIR)/monstrino-infra \
+    $(PACKAGES_DIR)/monstrino-contracts \
 
 
 
 # =========== Commands ===========
 run:
-	DB_MODE=test \
+	DB_MODE=local \
  	PYTHONPATH=src \
-	uv run --no-sync uvicorn src.main:app --reload --reload-exclude "*.log" --port 8009 --log-config src/infra/logging/logging_config.json
+	uv run --no-sync uvicorn src.main:app --reload --reload-exclude "*.log" --port 8008 --log-config src/infra/logging/logging_config.json
 
-run-with-local-bd:
-	DB_MODE=local PYTHONPATH=src \
-	uv run --no-sync uvicorn src.main:app --reload --reload-exclude "*.log" --port 8009 --log-config src/infra/logging/logging_config.json
+run-with-test-bd:
+	DB_MODE=test PYTHONPATH=src \
+	uv run --no-sync uvicorn src.main:app --reload --reload-exclude "*.log" --port 8008 --log-config src/infra/logging/logging_config.json
 
 pytest:
 	poetry run pytest -q --disable-warnings --tb=short
