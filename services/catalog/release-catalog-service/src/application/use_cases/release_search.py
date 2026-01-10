@@ -4,9 +4,9 @@ import logging
 from icecream import ic
 
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
-from monstrino_models.dto import Release
+from monstrino_models.dto import Release, ReleaseSeriesLink
 
-from application.queries.release_search import ReleaseSearchQuery
+from application.queries.release_search import ReleaseSearchDTO
 from src.application.ports import Repositories
 
 
@@ -19,11 +19,23 @@ class ReleaseSearchUseCase:
 
     async def execute(
             self,
-            query: ReleaseSearchQuery
+            dto: ReleaseSearchDTO
     ):
-        ic(query)
+        """
+        Inside logic:
+        Release filters logic
+        if
+
+        :param dto:
+        :return:
+        """
+        ic(dto)
         async with self.uow_factory.create() as uow:
-            release_list = await uow.repos.release.get_many_by(
-                ranges=[(Release.YEAR, None, 2015)],
-            )
-            ic(release_list)
+            filters = dto.query.filters
+            query = dto.query
+            results = await uow.repos.release_search.search(query)
+            # ic(results)
+
+            for result in results:
+                ic(result)
+

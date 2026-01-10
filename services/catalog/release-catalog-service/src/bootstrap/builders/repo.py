@@ -2,6 +2,7 @@ from monstrino_repositories.base.factory import MapperFactory, SqlAlchemyRepoFac
 from monstrino_repositories.repositories_impl import *
 from monstrino_models.dto import *
 from monstrino_models.orm import *
+from monstrino_repositories.repositories_impl.release.utils.release_search import ReleaseSearchRepo
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from application.ports import Repositories
@@ -40,65 +41,6 @@ def build_repositories(session: AsyncSession) -> Repositories:
             dto_model=Pet,
         ),
 
-        # ------------------------------------------------------------------
-        # Image
-        # ------------------------------------------------------------------
-        image_reference_origin=repo_factory.create_domain_repo(
-            repo_impl_cls=ImageReferenceOriginRepo,
-            session=session,
-            orm_model=ImageReferenceOriginORM,
-            dto_model=ImageReferenceOrigin,
-        ),
-
-        # ------------------------------------------------------------------
-        # Importer
-        # ------------------------------------------------------------------
-        image_import_queue=repo_factory.create_domain_repo(
-            repo_impl_cls=ImageImportQueueRepo,
-            session=session,
-            orm_model=ImageImportQueueORM,
-            dto_model=ImageImportQueue,
-        ),
-
-        # ------------------------------------------------------------------
-        # Parser
-        # ------------------------------------------------------------------
-        parsed_character=repo_factory.create_domain_repo(
-            repo_impl_cls=ParsedCharacterRepo,
-            session=session,
-            orm_model=ParsedCharacterORM,
-            dto_model=ParsedCharacter,
-        ),
-        parsed_series=repo_factory.create_domain_repo(
-            repo_impl_cls=ParsedSeriesRepo,
-            session=session,
-            orm_model=ParsedSeriesORM,
-            dto_model=ParsedSeries,
-        ),
-        parsed_pet=repo_factory.create_domain_repo(
-            repo_impl_cls=ParsedPetRepo,
-            session=session,
-            orm_model=ParsedPetORM,
-            dto_model=ParsedPet,
-        ),
-        parsed_release=repo_factory.create_domain_repo(
-            repo_impl_cls=ParsedReleaseRepo,
-            session=session,
-            orm_model=ParsedReleaseORM,
-            dto_model=ParsedRelease,
-        ),
-        source=repo_factory.create_domain_repo(
-            repo_impl_cls=SourceRepo,
-            session=session,
-            orm_model=SourceORM,
-            dto_model=Source,
-        ),
-        source_type=repo_factory.create_domain_repo(
-            repo_impl_cls=SourceTypeRepo,
-            session=session,
-            orm_model=SourceTypeORM,
-            dto_model=SourceType,
-        ),
 
         # ------------------------------------------------------------------
         # Release
@@ -214,18 +156,12 @@ def build_repositories(session: AsyncSession) -> Repositories:
         ),
 
         # ------------------------------------------------------------------
-        # Users / Auth
+        # Release Utils
         # ------------------------------------------------------------------
-        users=repo_factory.create_domain_repo(
-            repo_impl_cls=AuthUserRepo,
+        release_search=repo_factory.create_domain_repo(
+            repo_impl_cls=ReleaseSearchRepo,
             session=session,
-            orm_model=AuthUserORM,
-            dto_model=AuthUser,
-        ),
-        refresh_token=repo_factory.create_domain_repo(
-            repo_impl_cls=RefreshTokenRepo,
-            session=session,
-            orm_model=RefreshTokenORM,
-            dto_model=RefreshToken,
-        ),
+            orm_model=Release,
+            dto_model=Release,
+        )
     )

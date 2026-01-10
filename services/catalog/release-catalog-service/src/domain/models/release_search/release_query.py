@@ -1,13 +1,15 @@
 from typing import Optional
 
 from dataclasses import dataclass
+
+from monstrino_core.application.pagination import PageSpec
+
 from .release_filters import ReleaseFilters
-from .. import PageSpec, IncludeSpec, FieldSelection
-from ...enums import SortSpecEnum
+from .. import IncludeSpec, FieldSelection
 
 
 @dataclass(frozen=True)
-class ReleaseQuery:
+class ReleaseSearchQuery:
     filters:    ReleaseFilters
     # sort:     list[dict[SortFieldEnum, SortSpecEnum]]
     page:       PageSpec    = PageSpec()

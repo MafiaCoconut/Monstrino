@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from domain.models import RequestContext, OutputSpec
-from domain.models.release_search import ReleaseQuery
+from monstrino_core.application.output import OutputSpec
+
+from domain.models import RequestContext
+from domain.models.release_search import ReleaseSearchQuery
 
 
 @dataclass(frozen=True)
-class ReleaseSearchQuery:
-    query:      ReleaseQuery
+class ReleaseSearchDTO:
+    query:      ReleaseSearchQuery
     output:     OutputSpec               = OutputSpec()
     context:    Optional[RequestContext] = RequestContext()

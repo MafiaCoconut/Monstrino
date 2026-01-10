@@ -8,7 +8,7 @@ from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfW
 from monstrino_models.dto import Release, ReleaseImage, ReleaseCharacter, Character, ReleasePet, ReleaseTypeLink
 
 from src.application.ports import Repositories
-from src.application.queries.get_release_by_id import GetReleaseByIdQuery
+from src.application.queries.get_release_by_id import GetReleaseByIdDTO
 from src.domain.entities import *
 
 logger = logging.getLogger(__name__)
@@ -21,7 +21,7 @@ class GetReleaseByIdUseCase:
     ):
         self.uow_factory = uow_factory
 
-    async def execute(self, query: GetReleaseByIdQuery):
+    async def execute(self, query: GetReleaseByIdDTO):
         """
 
 

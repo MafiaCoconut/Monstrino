@@ -14,5 +14,5 @@ class ReleaseFilters:
     exclusive_ids:      Optional[list[int]] = None
     has_images:         Optional[bool]      = None
     is_reissue:         Optional[bool]      = None
-    country_codes:      Optional[list[str]] = None
-    date_from:          Optional[str]       = None
+    # country_codes:      Optional[list[str]] = None
+    # date_from:          Optional[str]       = None

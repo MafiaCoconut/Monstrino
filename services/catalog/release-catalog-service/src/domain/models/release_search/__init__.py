@@ -1,1 +1,1 @@
-from .release_query import ReleaseQuery
+from .release_query import ReleaseSearchQuery

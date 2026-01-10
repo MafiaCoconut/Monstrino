@@ -7,7 +7,7 @@ from domain.models.specs.include_spec import IncludeSpec
 
 
 @dataclass(frozen=True)
-class GetReleaseByIdQuery:
+class GetReleaseByIdDTO:
     release_id:         int
 
     include: Optional[IncludeSpec]    = IncludeSpec()

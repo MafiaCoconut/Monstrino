@@ -11,20 +11,6 @@ class Repositories:
     character_pet_ownership:  CharacterPetOwnershipRepoInterface
     pet:                 PetRepoInterface
 
-    # Image
-    image_reference_origin: ImageReferenceOriginRepoInterface
-
-    # Importer
-    image_import_queue: ImageImportQueueRepoInterface
-
-    # Parse
-    parsed_character: ParsedCharacterRepoInterface
-    parsed_series:    ParsedSeriesRepoInterface
-    parsed_pet:       ParsedPetRepoInterface
-    parsed_release:   ParsedReleaseRepoInterface
-    source:           SourceRepoInterface
-    source_type:      SourceTypeRepoInterface
-
     # Release
     character_role:             CharacterRoleRepoInterface
     exclusive_vendor:           ExclusiveVendorRepoInterface
@@ -49,9 +35,7 @@ class Repositories:
     release_exclusive_link:         ReleaseExclusiveLinkRepoInterface
     release_type_link:              ReleaseTypeLinkRepoInterface
 
+    # Release utils
+    release_search: ReleaseSearchRepoInterface
 
-
-    # Users
-    users: AuthUserRepoInterface
-    refresh_token: RefreshTokenRepoInterface
 

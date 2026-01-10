@@ -46,7 +46,7 @@ async def releases_search(
         return rf.ok(request, data=result)
     except Exception as e:
 
-        logger.error(e)
+        logger.exception(e)
         raise InternalError(message="Internal server error")
 
 
