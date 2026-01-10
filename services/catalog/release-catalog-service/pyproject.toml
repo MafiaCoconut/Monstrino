@@ -5,7 +5,6 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13.2"
 dependencies = [
-
     "alembic>=1.17.2",
     "apscheduler>=3.11.1",
     "asyncpg>=0.30.0",
@@ -15,6 +14,11 @@ dependencies = [
     "fastapi>=0.127.0",
     "icecream>=2.1.8",
     "lxml>=5.4.0",
+    "monstrino-api",
+    "monstrino-contracts",
+    "monstrino-core",
+    "monstrino-models",
+    "monstrino-repositories",
     "psycopg>=3.2.12",
     "psycopg-binary>=3.2.12",
     "psycopg2>=2.9.11",
@@ -33,3 +37,10 @@ dependencies = [
     "uvicorn>=0.34.3",
     "watchfiles>=1.1.1",
 ]
+
+[tool.uv.sources]
+monstrino-core          = { git = "ssh://git@github.com/MafiaCoconut/monstrino-core.git",           rev = "v0.1.4" }
+monstrino-models        = { git = "ssh://git@github.com/MafiaCoconut/monstrino-models.git",         rev = "v0.1.6" }
+monstrino-repositories  = { git = "ssh://git@github.com/MafiaCoconut/monstrino-repositories.git",   rev = "v0.1.5" }
+monstrino-api           = { git = "ssh://git@github.com/MafiaCoconut/monstrino-api.git",            rev = "v0.1.1" }
+monstrino-contracts     = { git = "ssh://git@github.com/MafiaCoconut/monstrino-contracts.git",      rev = "v0.1.1" }
