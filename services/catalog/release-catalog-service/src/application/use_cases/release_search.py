@@ -2,6 +2,7 @@ from typing import Any, Optional
 import logging
 
 from icecream import ic
+from monstrino_core.application.pagination import Page
 
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_models.dto import Release, ReleaseSeriesLink
@@ -29,13 +30,8 @@ class ReleaseSearchUseCase:
         :param dto:
         :return:
         """
-        ic(dto)
         async with self.uow_factory.create() as uow:
-            filters = dto.query.filters
             query = dto.query
-            results = await uow.repos.release_search.search(query)
-            # ic(results)
-
-            for result in results:
-                ic(result)
+            results: Page = await uow.repos.release_search.search(query)
+            return results
 
