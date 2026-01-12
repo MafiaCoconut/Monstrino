@@ -1,5 +1,5 @@
 [project]
-name = "release-catalog-service"
+name = "media-rehosting-service"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -38,9 +38,9 @@ dependencies = [
     "monstrino-core",
     "monstrino-models",
     "monstrino-repositories",
-    "monstrino-testing",
+#    "monstrino-testing",
     "monstrino-api",
-    "monstrino-infra",
+#    "monstrino-infra",
     "monstrino-contracts",
 
 ]
@@ -48,13 +48,11 @@ dependencies = [
 
 
 [tool.uv.sources]
-monstrino-core =            { path = "../../../packages/monstrino-core",            editable = true }
-monstrino-models =          { path = "../../../packages/monstrino-models",          editable = true }
-monstrino-repositories =    { path = "../../../packages/monstrino-repositories",    editable = true }
-monstrino-testing =         { path = "../../../packages/monstrino-testing",         editable = true }
-monstrino-api =             { path = "../../../packages/monstrino-api",             editable = true }
-monstrino-infra =           { path = "../../../packages/monstrino-infra",           editable = true }
-monstrino-contracts =       { path = "../../../packages/monstrino-contracts",       editable = true }
+monstrino-core          = { git = "ssh://git@github.com/MafiaCoconut/monstrino-core.git",           rev = "v0.1.4" }
+monstrino-models        = { git = "ssh://git@github.com/MafiaCoconut/monstrino-models.git",         rev = "v0.1.6" }
+monstrino-repositories  = { git = "ssh://git@github.com/MafiaCoconut/monstrino-repositories.git",   rev = "v0.1.5" }
+monstrino-api           = { git = "ssh://git@github.com/MafiaCoconut/monstrino-api.git",            rev = "v0.1.1" }
+monstrino-contracts     = { git = "ssh://git@github.com/MafiaCoconut/monstrino-contracts.git",      rev = "v0.1.1" }
 
 [tool.poetry]
 package-mode = false
