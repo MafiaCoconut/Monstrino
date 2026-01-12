@@ -1,8 +1,9 @@
+import pytest
 from monstrino_models.dto import MediaAssetVariant
 
 from integration.common import BaseCrudRepoTest
 
-
+@pytest.mark.usefixtures("seed_media_asset_variant_list")
 class TestMediaAssetVariantRepo(BaseCrudRepoTest):
     entity_cls = MediaAssetVariant
     repo_attr = "media_asset_variant"

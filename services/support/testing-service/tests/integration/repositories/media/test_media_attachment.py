@@ -1,8 +1,9 @@
+import pytest
 from monstrino_models.dto import MediaAttachment
 
 from integration.common import BaseCrudRepoTest
 
-
+@pytest.mark.usefixtures("seed_media_attachment_list")
 class TestMediaAttachmentRepo(BaseCrudRepoTest):
     entity_cls = MediaAttachment
     repo_attr = "media_attachment"

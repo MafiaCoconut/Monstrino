@@ -1,6 +1,9 @@
-from integration.repositories.common.test_crud_behavior import BaseCrudRepoTest
+import pytest
+from monstrino_models.dto import MediaIngestionJob
 
+from integration.common import BaseCrudRepoTest
 
+@pytest.mark.usefixtures("seed_media_ingestion_job_list")
 class TestMediaIngestionJobRepo(BaseCrudRepoTest):
     entity_cls = MediaIngestionJob
     repo_attr = "media_ingestion_job"

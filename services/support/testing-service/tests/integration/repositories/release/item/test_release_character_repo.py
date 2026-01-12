@@ -26,7 +26,7 @@ class TestReleaseCharacterRepo(BaseCrudRepoTest):
         "hair_variant": "brown-curls",
     }
 
-    unique_field = ReleaseCharacter.NAME
-    unique_field_value = "clawdeen-wolf"
-    update_field = ReleaseCharacter.DISPLAY_NAME
-    updated_value = "Clawdeen Wolf Updated"
+    unique_field = ReleaseCharacter.ID
+    unique_field_value = 1
+    update_field = ReleaseCharacter.BODY_VARIANT
+    updated_value = "Normal"
