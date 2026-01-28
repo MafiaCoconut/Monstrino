@@ -22,6 +22,7 @@ class ProcessSeriesBatchUseCase:
         self.batch_size = batch_size
 
     async def execute(self):
+        logger.info("Starting batch processing of series")
         # --- 1. Получаем список ID ---
         async with self.uow_factory.create() as uow:
             ids = await uow.repos.parsed_series.get_unprocessed_record_ids(self.batch_size)

@@ -8,6 +8,7 @@ from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfW
 from monstrino_models.dto import Release, ReleaseSeriesLink
 
 from application.queries.release_search import ReleaseSearchDTO
+from domain.models.release_search import ReleaseListItem
 from src.application.ports import Repositories
 
 
@@ -21,7 +22,7 @@ class ReleaseSearchUseCase:
     async def execute(
             self,
             dto: ReleaseSearchDTO
-    ):
+    ) -> Page[ReleaseListItem]:
         """
         Inside logic:
         Release filters logic

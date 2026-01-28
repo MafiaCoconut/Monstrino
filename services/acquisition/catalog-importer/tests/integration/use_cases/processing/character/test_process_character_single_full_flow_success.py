@@ -8,7 +8,7 @@ from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 from monstrino_testing.fixtures import Repositories
 
 from application.services.character import GenderResolverService
-from application.services.common import CharacterProcessingStatesService, ImageReferenceService
+from application.services.common import ProcessingStatesService, ImageReferenceService
 from application.use_cases.processing.character.process_character_single_use_case import ProcessCharacterSingleUseCase
 
 
@@ -24,7 +24,7 @@ async def test_process_character_single_full_flow_success(
 
     uc = ProcessCharacterSingleUseCase(
         uow_factory=uow_factory,
-        processing_states_svc=CharacterProcessingStatesService(),
+        processing_states_svc=ProcessingStatesService(),
         image_reference_svc=ImageReferenceService(),
         gender_resolver_svc=GenderResolverService(),
     )

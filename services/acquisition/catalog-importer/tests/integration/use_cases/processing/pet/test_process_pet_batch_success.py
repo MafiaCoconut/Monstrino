@@ -18,7 +18,7 @@ async def test_process_pet_batch_success(
         uow_factory: UnitOfWorkFactory[Repositories],
         seed_character_list,
         seed_parsed_pet_list,
-        seed_image_reference_all,
+        seed_image_reference_origin_list,
 ):
     """
     1. Seed pre data

@@ -13,5 +13,5 @@ class ReleaseSearchQuery:
     filters:    ReleaseFilters
     # sort:     list[dict[SortFieldEnum, SortSpecEnum]]
     page:       PageSpec    = PageSpec()
-    include:    IncludeSpec = IncludeSpec()
+    include:    Optional[IncludeSpec] = None
     # fields: FieldSelection

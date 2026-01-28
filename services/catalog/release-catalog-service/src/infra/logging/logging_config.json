@@ -25,28 +25,21 @@
       "formatter": "color",
       "level": "DEBUG",
       "stream": "ext://sys.stdout"
-    },
-    "system_file": {
-      "class": "logging.FileHandler",
-      "formatter": "default",
-      "filename": "src/logs/system_data.log",
-      "mode": "a",
-      "level": "INFO"
     }
   },
   "loggers": {
     "uvicorn": {
-      "handlers": ["system_file", "console"],
+      "handlers": ["console"],
       "level": "INFO",
       "propagate": false
     },
     "uvicorn.error": {
-      "handlers": ["system_file", "console"],
+      "handlers": ["console"],
       "level": "ERROR",
       "propagate": false
     },
     "uvicorn.access": {
-      "handlers": ["system_file", "console"],
+      "handlers": ["console"],
       "level": "INFO",
       "propagate": false
     },
@@ -82,7 +75,7 @@
 
     },
   "root": {
-    "handlers": ["console", "system_file"],
+    "handlers": ["console"],
     "level": "DEBUG"
   }
 }

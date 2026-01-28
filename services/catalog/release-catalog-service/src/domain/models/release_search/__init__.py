@@ -1,1 +1,2 @@
 from .release_query import ReleaseSearchQuery
+from .release_list_item import ReleaseListItem

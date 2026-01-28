@@ -25,6 +25,7 @@ class ProcessCharacterBatchUseCase:
         self.batch_size = batch_size
 
     async def execute(self) -> None:
+        logger.info("Starting batch processing of characters")
         async with self.uow_factory.create() as uow:
             ids: list[int] = await uow.repos.parsed_character.get_unprocessed_record_ids(self.batch_size)
 
