@@ -16,7 +16,7 @@ class TestParsedCharacterRepo(BaseCrudRepoTest):
         "gender": "female",
         "description": "Werewolf fashionista from Monster High.",
         "primary_image": "https://example.com/images/clawdeen.jpg",
-        "link": "https://monsterhigh.fandom.com/wiki/Clawdeen_Wolf",
+        "url": "https://monsterhigh.fandom.com/wiki/Clawdeen_Wolf",
         "processing_state": ProcessingStates.INIT,
         "source": "monsterhigh_fandom",
         "original_html_content": "<html><body>Clawdeen details...</body></html>",

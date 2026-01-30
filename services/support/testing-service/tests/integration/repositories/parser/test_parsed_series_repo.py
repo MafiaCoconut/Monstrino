@@ -17,7 +17,7 @@ class TestParsedSeriesRepo(BaseCrudRepoTest):
         "description": "Movie-themed Monster High series featuring glamorous dolls.",
         "series_type": "dolls",
         "primary_image": "https://example.com/images/fca_series.jpg",
-        "link": "https://monsterhigh.fandom.com/wiki/Frights,_Camera,_Action!",
+        "url": "https://monsterhigh.fandom.com/wiki/Frights,_Camera,_Action!",
         "processing_state": ProcessingStates.INIT,
         "source": "monsterhigh_fandom",
         "original_html_content": "<html><body>FCA parsed content...</body></html>",

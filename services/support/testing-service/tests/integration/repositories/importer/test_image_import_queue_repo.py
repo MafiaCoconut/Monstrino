@@ -17,7 +17,7 @@ class TestImageImportQueueRepo(BaseCrudRepoTest):
         "origin_record_id": 1003,
         "processing_state": "pending",
     }
-    unique_field = ImageImportQueue.ORIGINAL_LINK
+    unique_field = ImageImportQueue.ORIGINAL_URL
     unique_field_value = "https://example.com/images/clawdeen_raw.jpg"
     update_field = "processing_state"
     updated_value = "completed"

@@ -12,7 +12,7 @@ from application.use_cases.processing.character.process_character_batch_use_case
 @pytest.mark.asyncio
 async def test_process_character_batch_success(
         uow_factory: UnitOfWorkFactory[Repositories],
-        seed_image_reference_all,
+        seed_image_reference_origin_list,
         seed_parsed_character_list,
         parsed_character_list,
 

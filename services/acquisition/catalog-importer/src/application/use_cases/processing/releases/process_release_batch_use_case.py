@@ -24,6 +24,7 @@ class ProcessReleasesBatchUseCase:
         self.batch_size = batch_size
 
     async def execute(self) -> None:
+        logger.info("Starting batch processing of releases")
         async with self.uow_factory.create() as uow:
             ids: list[int] = await uow.repos.parsed_release.get_unprocessed_record_ids(self.batch_size)
         if not ids:

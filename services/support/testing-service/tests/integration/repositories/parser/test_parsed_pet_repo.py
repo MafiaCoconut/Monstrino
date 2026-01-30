@@ -16,7 +16,7 @@ class TestParsedPetRepo(BaseCrudRepoTest):
         "description": "Lagoona Blue’s pet piranha living in her handbag aquarium.",
         "owner_name": "Lagoona Blue",
         "primary_image": "https://example.com/images/neptuna.jpg",
-        "link": "https://monsterhigh.fandom.com/wiki/Neptuna",
+        "url": "https://monsterhigh.fandom.com/wiki/Neptuna",
         "processing_state": ProcessingStates.INIT,
         "source": "monsterhigh_fandom",
         "original_html_content": "<html><body>Neptuna details...</body></html>",

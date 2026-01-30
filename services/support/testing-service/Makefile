@@ -28,7 +28,10 @@ PACKAGES_DIR := ../../../packages
 LOCAL_DEPS := \
     $(PACKAGES_DIR)/monstrino-core \
     $(PACKAGES_DIR)/monstrino-models \
+    $(PACKAGES_DIR)/monstrino-contracts \
     $(PACKAGES_DIR)/monstrino-repositories \
+    $(PACKAGES_DIR)/monstrino-api \
+    $(PACKAGES_DIR)/monstrino-infra \
     $(PACKAGES_DIR)/monstrino-testing
 
 

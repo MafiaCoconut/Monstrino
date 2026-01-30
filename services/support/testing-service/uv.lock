@@ -31,14 +31,26 @@ wheels = [
 
 [[package]]
 name = "anyio"
-version = "4.12.0"
+version = "4.12.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "idna" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/16/ce/8a777047513153587e5434fd752e89334ac33e379aa3497db860eeb60377/anyio-4.12.0.tar.gz", hash = "sha256:73c693b567b0c55130c104d0b43a9baf3aa6a31fc6110116509f27bf75e21ec0", size = 228266, upload-time = "2025-11-28T23:37:38.911Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/96/f0/5eb65b2bb0d09ac6776f2eb54adee6abe8228ea05b20a5ad0e4945de8aac/anyio-4.12.1.tar.gz", hash = "sha256:41cfcc3a4c85d3f05c932da7c26d0201ac36f72abd4435ba90d0464a3ffed703", size = 228685, upload-time = "2026-01-06T11:45:21.246Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7f/9c/36c5c37947ebfb8c7f22e0eb6e4d188ee2d53aa3880f3f2744fb894f0cb1/anyio-4.12.0-py3-none-any.whl", hash = "sha256:dad2376a628f98eeca4881fc56cd06affd18f659b17a747d3ff0307ced94b1bb", size = 113362, upload-time = "2025-11-28T23:36:57.897Z" },
+    { url = "https://files.pythonhosted.org/packages/38/0e/27be9fdef66e72d64c0cdc3cc2823101b80585f8119b5c112c2e8f5f7dab/anyio-4.12.1-py3-none-any.whl", hash = "sha256:d405828884fc140aa80a3c667b8beed277f1dfedec42ba031bd6ac3db606ab6c", size = 113592, upload-time = "2026-01-06T11:45:19.497Z" },
+]
+
+[[package]]
+name = "apscheduler"
+version = "3.11.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "tzlocal" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/07/12/3e4389e5920b4c1763390c6d371162f3784f86f85cd6d6c1bfe68eef14e2/apscheduler-3.11.2.tar.gz", hash = "sha256:2a9966b052ec805f020c8c4c3ae6e6a06e24b1bf19f2e11d91d8cca0473eef41", size = 108683, upload-time = "2025-12-22T00:39:34.884Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9f/64/2e54428beba8d9992aa478bb8f6de9e4ecaa5f8f513bcfd567ed7fb0262d/apscheduler-3.11.2-py3-none-any.whl", hash = "sha256:ce005177f741409db4e4dd40a7431b76feb856b9dd69d57e0da49d6715bfd26d", size = 64439, upload-time = "2025-12-22T00:39:33.303Z" },
 ]
 
 [[package]]
@@ -223,6 +235,17 @@ wheels = [
 ]
 
 [[package]]
+name = "dotenv"
+version = "0.9.9"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "python-dotenv" },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b2/b7/545d2c10c1fc15e48653c91efde329a790f2eecfbbf2bd16003b5db2bab0/dotenv-0.9.9-py2.py3-none-any.whl", hash = "sha256:29cf74a087b31dafdb5a446b6d7e11cbce8ed2741540e2339c69fbef92c94ce9", size = 1892, upload-time = "2025-02-19T22:15:01.647Z" },
+]
+
+[[package]]
 name = "executing"
 version = "2.2.1"
 source = { registry = "https://pypi.org/simple" }
@@ -233,7 +256,7 @@ wheels = [
 
 [[package]]
 name = "fastapi"
-version = "0.124.0"
+version = "0.128.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "annotated-doc" },
@@ -241,9 +264,9 @@ dependencies = [
     { name = "starlette" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/48/9c/11969bd3e3bc4aa3a711f83dd3720239d3565a934929c74fc32f6c9f3638/fastapi-0.124.0.tar.gz", hash = "sha256:260cd178ad75e6d259991f2fd9b0fee924b224850079df576a3ba604ce58f4e6", size = 357623, upload-time = "2025-12-06T13:11:35.692Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/52/08/8c8508db6c7b9aae8f7175046af41baad690771c9bcde676419965e338c7/fastapi-0.128.0.tar.gz", hash = "sha256:1cc179e1cef10a6be60ffe429f79b829dce99d8de32d7acb7e6c8dfdf7f2645a", size = 365682, upload-time = "2025-12-27T15:21:13.714Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4d/29/9e1e82e16e9a1763d3b55bfbe9b2fa39d7175a1fd97685c482fa402e111d/fastapi-0.124.0-py3-none-any.whl", hash = "sha256:91596bdc6dde303c318f06e8d2bc75eafb341fc793a0c9c92c0bc1db1ac52480", size = 112505, upload-time = "2025-12-06T13:11:34.392Z" },
+    { url = "https://files.pythonhosted.org/packages/5c/05/5cbb59154b093548acd0f4c7c474a118eda06da25aa75c616b72d8fcd92a/fastapi-0.128.0-py3-none-any.whl", hash = "sha256:aebd93f9716ee3b4f4fcfe13ffb7cf308d99c9f3ab5622d8877441072561582d", size = 103094, upload-time = "2025-12-27T15:21:12.154Z" },
 ]
 
 [[package]]
@@ -496,8 +519,27 @@ requires-dist = [
 ]
 
 [[package]]
+name = "monstrino-contracts"
+version = "0.1.1"
+source = { editable = "../../../packages/monstrino-contracts" }
+dependencies = [
+    { name = "build" },
+    { name = "monstrino-core" },
+    { name = "pydantic" },
+    { name = "twine" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "build", specifier = ">=1.3.0,<2.0.0" },
+    { name = "monstrino-core", editable = "../../../packages/monstrino-core" },
+    { name = "pydantic", specifier = ">=2.12.5" },
+    { name = "twine", specifier = ">=6.2.0,<7.0.0" },
+]
+
+[[package]]
 name = "monstrino-core"
-version = "0.1.2"
+version = "0.1.4"
 source = { editable = "../../../packages/monstrino-core" }
 dependencies = [
     { name = "build" },
@@ -514,50 +556,72 @@ requires-dist = [
 
 [[package]]
 name = "monstrino-infra"
-version = "0.1.0"
+version = "0.1.4"
 source = { editable = "../../../packages/monstrino-infra" }
 dependencies = [
     { name = "aiobreaker" },
+    { name = "apscheduler" },
     { name = "build" },
+    { name = "dotenv" },
     { name = "fastapi" },
     { name = "httpx", extra = ["http2"] },
     { name = "icecream" },
+    { name = "monstrino-api" },
+    { name = "monstrino-core" },
+    { name = "monstrino-models" },
+    { name = "monstrino-repositories" },
+    { name = "monstrino-testing" },
     { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "tabulate" },
     { name = "twine" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "aiobreaker", specifier = ">=1.2.0" },
+    { name = "apscheduler", specifier = ">=3.11.2" },
     { name = "build", specifier = ">=1.3.0,<2.0.0" },
+    { name = "dotenv", specifier = ">=0.9.9" },
     { name = "fastapi", specifier = ">=0.123.0" },
     { name = "httpx", extras = ["http2"], specifier = ">=0.28.1" },
     { name = "icecream", specifier = ">=2.1.8" },
+    { name = "monstrino-api", editable = "../../../packages/monstrino-api" },
+    { name = "monstrino-core", editable = "../../../packages/monstrino-core" },
+    { name = "monstrino-models", editable = "../../../packages/monstrino-models" },
+    { name = "monstrino-repositories", editable = "../../../packages/monstrino-repositories" },
+    { name = "monstrino-testing" },
     { name = "pydantic", specifier = ">=2.12.5" },
+    { name = "pydantic-settings", specifier = ">=2.12.0" },
+    { name = "tabulate", specifier = ">=0.9.0" },
     { name = "twine", specifier = ">=6.2.0,<7.0.0" },
 ]
 
 [[package]]
 name = "monstrino-models"
-version = "0.1.3"
+version = "0.1.6"
 source = { editable = "../../../packages/monstrino-models" }
 dependencies = [
+    { name = "monstrino-core" },
     { name = "pydantic" },
     { name = "sqlalchemy" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "monstrino-core", editable = "../../../packages/monstrino-core" },
     { name = "pydantic", specifier = ">=2.0,<3.0" },
     { name = "sqlalchemy", specifier = ">=2.0,<3.0" },
 ]
 
 [[package]]
 name = "monstrino-repositories"
-version = "0.1.2"
+version = "0.1.5"
 source = { editable = "../../../packages/monstrino-repositories" }
 dependencies = [
     { name = "asyncpg" },
+    { name = "icecream" },
+    { name = "monstrino-contracts" },
     { name = "monstrino-core" },
     { name = "monstrino-models" },
     { name = "pydantic" },
@@ -567,6 +631,8 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "asyncpg", specifier = ">=0.30.0" },
+    { name = "icecream", specifier = ">=2.1.8" },
+    { name = "monstrino-contracts", editable = "../../../packages/monstrino-contracts" },
     { name = "monstrino-core", editable = "../../../packages/monstrino-core" },
     { name = "monstrino-models", editable = "../../../packages/monstrino-models" },
     { name = "pydantic", specifier = ">=2.12.4" },
@@ -575,12 +641,12 @@ requires-dist = [
 
 [[package]]
 name = "monstrino-testing"
-version = "0.1.1"
+version = "0.1.3"
 source = { editable = "../../../packages/monstrino-testing" }
 dependencies = [
     { name = "build" },
+    { name = "monstrino-contracts" },
     { name = "monstrino-core" },
-    { name = "monstrino-infra" },
     { name = "monstrino-models" },
     { name = "monstrino-repositories" },
     { name = "pytest" },
@@ -590,8 +656,8 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "build", specifier = ">=1.3.0" },
+    { name = "monstrino-contracts", editable = "../../../packages/monstrino-contracts" },
     { name = "monstrino-core", editable = "../../../packages/monstrino-core" },
-    { name = "monstrino-infra", editable = "../../../packages/monstrino-infra" },
     { name = "monstrino-models", editable = "../../../packages/monstrino-models" },
     { name = "monstrino-repositories", editable = "../../../packages/monstrino-repositories" },
     { name = "pytest", specifier = ">=9.0.1" },
@@ -736,6 +802,20 @@ wheels = [
 ]
 
 [[package]]
+name = "pydantic-settings"
+version = "2.12.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pydantic" },
+    { name = "python-dotenv" },
+    { name = "typing-inspection" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/43/4b/ac7e0aae12027748076d72a8764ff1c9d82ca75a7a52622e67ed3f765c54/pydantic_settings-2.12.0.tar.gz", hash = "sha256:005538ef951e3c2a68e1c08b292b5f2e71490def8589d4221b95dab00dafcfd0", size = 194184, upload-time = "2025-11-10T14:25:47.013Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c1/60/5d4751ba3f4a40a6891f24eec885f51afd78d208498268c734e256fb13c4/pydantic_settings-2.12.0-py3-none-any.whl", hash = "sha256:fddb9fd99a5b18da837b29710391e945b1e30c135477f484084ee513adb93809", size = 51880, upload-time = "2025-11-10T14:25:45.546Z" },
+]
+
+[[package]]
 name = "pygments"
 version = "2.19.2"
 source = { registry = "https://pypi.org/simple" }
@@ -779,6 +859,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/90/2c/8af215c0f776415f3590cac4f9086ccefd6fd463befeae41cd4d3f193e5a/pytest_asyncio-1.3.0.tar.gz", hash = "sha256:d7f52f36d231b80ee124cd216ffb19369aa168fc10095013c6b014a34d3ee9e5", size = 50087, upload-time = "2025-11-10T16:07:47.256Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e5/35/f8b19922b6a25bc0880171a2f1a003eaeb93657475193ab516fd87cac9da/pytest_asyncio-1.3.0-py3-none-any.whl", hash = "sha256:611e26147c7f77640e6d0a92a38ed17c3e9848063698d5c93d5aa7aa11cebff5", size = 15075, upload-time = "2025-11-10T16:07:45.537Z" },
+]
+
+[[package]]
+name = "python-dotenv"
+version = "1.2.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f0/26/19cadc79a718c5edbec86fd4919a6b6d3f681039a2f6d66d14be94e75fb9/python_dotenv-1.2.1.tar.gz", hash = "sha256:42667e897e16ab0d66954af0e60a9caa94f0fd4ecf3aaf6d2d260eec1aa36ad6", size = 44221, upload-time = "2025-10-26T15:12:10.434Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/14/1b/a298b06749107c305e1fe0f814c6c74aea7b2f1e10989cb30f544a1b3253/python_dotenv-1.2.1-py3-none-any.whl", hash = "sha256:b81ee9561e9ca4004139c6cbba3a238c32b03e4894671e181b671e8cb8425d61", size = 21230, upload-time = "2025-10-26T15:12:09.109Z" },
 ]
 
 [[package]]
@@ -900,12 +989,22 @@ wheels = [
 ]
 
 [[package]]
+name = "tabulate"
+version = "0.9.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/ec/fe/802052aecb21e3797b8f7902564ab6ea0d60ff8ca23952079064155d1ae1/tabulate-0.9.0.tar.gz", hash = "sha256:0095b12bf5966de529c0feb1fa08671671b3368eec77d7ef7ab114be2c068b3c", size = 81090, upload-time = "2022-10-06T17:21:48.54Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/40/44/4a5f08c96eb108af5cb50b41f76142f0afa346dfa99d5296fe7202a11854/tabulate-0.9.0-py3-none-any.whl", hash = "sha256:024ca478df22e9340661486f85298cff5f6dcdba14f3813e8830015b9ed1948f", size = 35252, upload-time = "2022-10-06T17:21:44.262Z" },
+]
+
+[[package]]
 name = "testing-service"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "asyncpg" },
     { name = "monstrino-api" },
+    { name = "monstrino-contracts" },
     { name = "monstrino-core" },
     { name = "monstrino-infra" },
     { name = "monstrino-models" },
@@ -920,6 +1019,7 @@ dependencies = [
 requires-dist = [
     { name = "asyncpg", specifier = ">=0.30.0" },
     { name = "monstrino-api", editable = "../../../packages/monstrino-api" },
+    { name = "monstrino-contracts", editable = "../../../packages/monstrino-contracts" },
     { name = "monstrino-core", editable = "../../../packages/monstrino-core" },
     { name = "monstrino-infra", editable = "../../../packages/monstrino-infra" },
     { name = "monstrino-models", editable = "../../../packages/monstrino-models" },
@@ -969,6 +1069,27 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/55/e3/70399cb7dd41c10ac53367ae42139cf4b1ca5f36bb3dc6c9d33acdb43655/typing_inspection-0.4.2.tar.gz", hash = "sha256:ba561c48a67c5958007083d386c3295464928b01faa735ab8547c5692e87f464", size = 75949, upload-time = "2025-10-01T02:14:41.687Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/dc/9b/47798a6c91d8bdb567fe2698fe81e0c6b7cb7ef4d13da4114b41d239f65d/typing_inspection-0.4.2-py3-none-any.whl", hash = "sha256:4ed1cacbdc298c220f1bd249ed5287caa16f34d44ef4e9c3d0cbad5b521545e7", size = 14611, upload-time = "2025-10-01T02:14:40.154Z" },
+]
+
+[[package]]
+name = "tzdata"
+version = "2025.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/5e/a7/c202b344c5ca7daf398f3b8a477eeb205cf3b6f32e7ec3a6bac0629ca975/tzdata-2025.3.tar.gz", hash = "sha256:de39c2ca5dc7b0344f2eba86f49d614019d29f060fc4ebc8a417896a620b56a7", size = 196772, upload-time = "2025-12-13T17:45:35.667Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c7/b0/003792df09decd6849a5e39c28b513c06e84436a54440380862b5aeff25d/tzdata-2025.3-py2.py3-none-any.whl", hash = "sha256:06a47e5700f3081aab02b2e513160914ff0694bce9947d6b76ebd6bf57cfc5d1", size = 348521, upload-time = "2025-12-13T17:45:33.889Z" },
+]
+
+[[package]]
+name = "tzlocal"
+version = "5.3.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "tzdata", marker = "sys_platform == 'win32'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8b/2e/c14812d3d4d9cd1773c6be938f89e5735a1f11a9f184ac3639b93cef35d5/tzlocal-5.3.1.tar.gz", hash = "sha256:cceffc7edecefea1f595541dbd6e990cb1ea3d19bf01b2809f362a03dd7921fd", size = 30761, upload-time = "2025-03-05T21:17:41.549Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c2/14/e2a54fabd4f08cd7af1c07030603c3356b74da07f7cc056e600436edfa17/tzlocal-5.3.1-py3-none-any.whl", hash = "sha256:eb1a66c3ef5847adf7a834f1be0800581b683b5608e74f86ecbcef8ab91bb85d", size = 18026, upload-time = "2025-03-05T21:17:39.857Z" },
 ]
 
 [[package]]

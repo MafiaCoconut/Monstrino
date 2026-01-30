@@ -1,10 +1,9 @@
 import logging
 
-from bootstrap.builders import build_apscheduler, build_services, build_uow_factory, build_gateways
+from bootstrap.builders import build_apscheduler, build_services, build_uow_factory, build_gateways, build_adapters
 from bootstrap.builders.process_jobs import build_process_jobs
 from bootstrap.configs import scheduler_config
 from bootstrap.container import AppContainer
-from infra.adapters.adapters_config import build_adapters
 
 logger = logging.getLogger(__name__)
 

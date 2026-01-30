@@ -19,7 +19,7 @@ async def test_process_pet_single_full_flow_success(
         uow_factory: UnitOfWorkFactory[Repositories],
         seed_character_frankie_stein,
         seed_parsed_pet,
-        seed_image_reference_all,
+        seed_image_reference_origin_list,
 ):
     """
     1. Seed pre data

@@ -24,7 +24,7 @@ class TestReleasePetRepo(BaseCrudRepoTest):
         "colorway": "black-gold",
     }
 
-    unique_field = ReleasePet.NAME
-    unique_field_value = "perseus"
-    update_field = ReleasePet.DISPLAY_NAME
-    updated_value = "Perseus Updated"
+    unique_field = ReleasePet.ID
+    unique_field_value = 1
+    update_field = ReleasePet.POSITION
+    updated_value = 2

@@ -150,7 +150,7 @@ async def test_image_processing_service_empty_other_images(
 async def test_image_processing_service_with_image_reference_end_to_end(
         uow_factory: UnitOfWorkFactory[Repositories],
         seed_release_list,
-        seed_image_reference_origin_list,   # 👈 важно! сид таблицы origin
+        seed_image_reference_origin_list
 ):
     """
     End-to-end test:
@@ -159,7 +159,7 @@ async def test_image_processing_service_with_image_reference_end_to_end(
     """
 
     service = ImageProcessingService()
-    image_reference_svc = ImageReferenceService()   # <--- НЕ mock, реальный сервис
+    image_reference_svc = ImageReferenceService()
 
     async with uow_factory.create() as uow:
         await service.process_images(

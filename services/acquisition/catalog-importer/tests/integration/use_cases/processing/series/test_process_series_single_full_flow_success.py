@@ -13,7 +13,7 @@ from application.use_cases.processing.series import ProcessSeriesSingleUseCase
 @pytest.mark.asyncio
 async def test_process_series_single_full_flow_success(
         uow_factory: UnitOfWorkFactory[Repositories],
-        seed_image_reference_all,
+        seed_image_reference_origin_list,
         seed_parsed_series_parent_and_child,
         seed_series_parent,
         processing_states_svc_mock,

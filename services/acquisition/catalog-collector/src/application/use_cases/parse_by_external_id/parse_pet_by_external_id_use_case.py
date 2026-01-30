@@ -22,14 +22,15 @@ class ParsePetByExternalIdUseCase:
         self._r = registry
 
     async def execute(self, source: SourceKey, external_id: str):
+        logger.info(f"Starting to parse pet with external_id={external_id} from source={source.value}")
         async with self.uow_factory.create() as uow:
             source_id = await uow.repos.source.get_id_by(**{Source.NAME: source.value})
             if not source_id:
                 raise ValueError(f"Source ID not found for source: {source.value}")
 
-            if await uow.repos.parsed_pet.get_id_by(**{ParsedPet.SOURCE_ID: source_id, ParsedPet.EXTERNAL_ID: external_id}) is not None:
-                logger.info(f"Pet with external_id={external_id} from source={source.value} already exists. Skipping parse.")
-                return
+            # if await uow.repos.parsed_pet.get_id_by(**{ParsedPet.SOURCE_ID: source_id, ParsedPet.EXTERNAL_ID: external_id}) is not None:
+            #     logger.info(f"Pet with external_id={external_id} from source={source.value} already exists. Skipping parse.")
+            #     return
 
         port: ParsePetPort = self._r.get(source, ParsePetPort)
 
