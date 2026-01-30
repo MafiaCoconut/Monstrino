@@ -1,0 +1,11 @@
+{
+  "label": "Packages Reality",
+  "position": 2,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Packages Reality",
+    "description": "Operational constraints and real-world package behavior."
+  }
+}

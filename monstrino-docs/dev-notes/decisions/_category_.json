@@ -1,0 +1,11 @@
+{
+  "label": "Decisions (ADR)",
+  "position": 1,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Decisions (ADR)",
+    "description": "Architectural decisions and formal records."
+  }
+}

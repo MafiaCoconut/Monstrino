@@ -1,0 +1,11 @@
+{
+  "label": "Architecture",
+  "position": 1,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Architecture",
+    "description": "High-level architectural overviews and diagrams."
+  }
+}

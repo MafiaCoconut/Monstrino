@@ -1,3 +1,5 @@
+import type { ReleaseDTO } from "@/entities/release/model/types";
+
 export const mockUserData = {
   currentUser: {
     id: 1,
@@ -344,5 +346,137 @@ export const mockActivities = [
     type: "doll_added",
     category: "Collection",
     timestamp: "2024-04-01T09:10:00Z"
+  }
+];
+
+export const releasesMock: ReleaseDTO[] = [
+  {
+    "id": "skullector-frankie-stein-x-barbie-doll",
+    "name": "Skullector Frankie Stein x Barbie Doll",
+    "mpn": "JHK28",
+    "year": 2025,
+    "description": "Celebrate the 80th Anniversary of Mattel with the Skullector Frankie Stein x Barbie Doll, which pays homage to the original 1959 Barbie “Original Teenage Fashion Model” doll.",
+    "text_from_box": "Frankie Stein has long, wavy, silver and black striped hair styled in a high ponytail with rolled bangs...",
+    "content_type": "doll-figure",
+    "pack_type": "1-pack",
+    "tier_type": "tier-collector",
+    "exclusive_of": [],
+    "release_characters": [
+      { "id": "frankie-stein", "name": "Frankie Stein" }
+    ],
+    "release_pets": [],
+    "images": [
+      { "id": 1, "url": "https://mhcollector.com/wp-content/uploads/2025/10/Skullector-Frankie-Stein-x-Barbie-Doll-5.webp", "is_primary": true },
+      { "id": 2, "url": "https://mhcollector.com/wp-content/uploads/2025/10/Skullector-Frankie-Stein-x-Barbie-Doll-8.webp", "is_primary": false }
+    ],
+    "primary_image": {
+      "id": 1,
+      "url": "https://mhcollector.com/wp-content/uploads/2025/10/Skullector-Frankie-Stein-x-Barbie-Doll-5.webp",
+      "is_primary": true
+    },
+    "reissue_of": null,
+    "rerelease_of": null,
+    "release_series": null
+  },
+
+  {
+    "id": "skullector-sweet-screams-twyla",
+    "name": "Skullector Sweet Screams Twyla",
+    "mpn": "HYW02",
+    "year": 2025,
+    "description": "Sweet Screams Twyla is the newest addition to the Skullector and Sweet Screams series...",
+    "content_type": "doll-figure",
+    "pack_type": "1-pack",
+    "tier_type": "tier-collector",
+    "exclusive_of": [
+      { "id": "mattel-creations", "name": "Mattel Creations" },
+      { "id": "san-diego-comic-con", "name": "San Diego Comic-Con" }
+    ],
+    "release_characters": [
+      { "id": "twyla", "name": "Twyla" }
+    ],
+    "release_pets": [
+      { "id": "dustin", "name": "Dustin" }
+    ],
+    "images": [
+      { "id": 10, "url": "https://mhcollector.com/wp-content/uploads/2025/06/Skullector-Sweet-Screams-Twyla-5.jpg", "is_primary": true }
+    ],
+    "primary_image": {
+      "id": 10,
+      "url": "https://mhcollector.com/wp-content/uploads/2025/06/Skullector-Sweet-Screams-Twyla-5.jpg",
+      "is_primary": true
+    },
+    "reissue_of": null,
+    "rerelease_of": null,
+    "release_series": null
+  },
+
+  {
+    "id": "skulltimate-secrets-hauntlywood-clawdeen-wolf",
+    "name": "Skulltimate Secrets Hauntlywood Clawdeen Wolf",
+    "year": 2025,
+    "content_type": "doll-figure",
+    "pack_type": "1-pack",
+    "tier_type": "tier-standard",
+    "exclusive_of": [],
+    "release_characters": [
+      { "id": "clawdeen-wolf", "name": "Clawdeen Wolf" }
+    ],
+    "release_pets": [],
+    "images": [
+      { "id": 32, "url": "https://mhcollector.com/wp-content/uploads/2025/02/Skulltimate-Secrets-Hauntlywood-Mysteries-Clawdeen-Wolf-3.jpg", "is_primary": true }
+    ],
+    "primary_image": {
+      "id": 32,
+      "url": "https://mhcollector.com/wp-content/uploads/2025/02/Skulltimate-Secrets-Hauntlywood-Mysteries-Clawdeen-Wolf-3.jpg",
+      "is_primary": true
+    }
+  },
+
+  {
+    "id": "self-scare-secrets-venus-mcflytrap",
+    "name": "Self-Scare Secrets Venus McFlytrap",
+    "mpn": "JHK45",
+    "year": 2025,
+    "content_type": "doll-figure",
+    "pack_type": "1-pack",
+    "tier_type": "tier-standard",
+    "exclusive_of": [],
+    "release_characters": [
+      { "id": "venus-mcflytrap", "name": "Venus McFlytrap" }
+    ],
+    "release_pets": [
+      { "id": "chewlian", "name": "Chewlian" }
+    ],
+    "images": [
+      { "id": 40, "url": "https://mhcollector.com/wp-content/uploads/2025/10/Self-Scare-Secrets-Venus-Mcflytrap-2.jpg", "is_primary": true }
+    ],
+    "primary_image": {
+      "id": 40,
+      "url": "https://mhcollector.com/wp-content/uploads/2025/10/Self-Scare-Secrets-Venus-Mcflytrap-2.jpg",
+      "is_primary": true
+    }
+  },
+
+  {
+    "id": "scary-sweet-birthday-draculaura",
+    "name": "Scary Sweet Birthday Draculaura",
+    "year": 2025,
+    "content_type": "doll-figure",
+    "pack_type": "1-pack",
+    "tier_type": "tier-standard",
+    "exclusive_of": [],
+    "release_characters": [
+      { "id": "draculaura", "name": "Draculaura" }
+    ],
+    "release_pets": [],
+    "images": [
+      { "id": 50, "url": "https://mhcollector.com/wp-content/uploads/2025/01/1736367411_youloveit_com_monster_high_scary_sweet_birthday_draculaura_doll2.jpg", "is_primary": true }
+    ],
+    "primary_image": {
+      "id": 50,
+      "url": "https://mhcollector.com/wp-content/uploads/2025/01/1736367411_youloveit_com_monster_high_scary_sweet_birthday_draculaura_doll2.jpg",
+      "is_primary": true
+    }
   }
 ];

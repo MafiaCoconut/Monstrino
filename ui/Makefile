@@ -19,12 +19,14 @@ SERVER_PLATFORM := --platform linux/amd64
 NAMESPACE := ""
 NAMESPACE_TEST := "monstrino-test"
 NAMESPACE_PROD := "monstrino-prod"
-
-# ------------------ Context selection ------------------
+# ------------------ Local Configuration -----------------
+make config-local:
+	npm install
+# ------------------ Context selection -------------------
 use-tc-m70q-context:
 	kubectl config use-context tc_m70q
 
-# --------------------- Build section --------------------
+# --------------------- Build section ---------------------
 
 build:
 	docker build $(SERVER_PLATFORM) -t $(MONSTRINO_UI_IMAGE_NAME):latest -t $(MONSTRINO_UI_IMAGE_NAME):$(GIT_SHA1) .

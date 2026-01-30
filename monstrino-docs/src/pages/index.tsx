@@ -33,6 +33,9 @@ export default function Home(): JSX.Element {
             <Link className={styles.secondaryButton} to="/docs/api">
               API Reference
             </Link>
+            <Link className={styles.secondaryButton} to="/dev-notes/intro">
+              Dev Notes
+            </Link>
           </div>
         </section>
 

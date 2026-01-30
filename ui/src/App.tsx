@@ -1,13 +1,11 @@
-import { useState, useRef, useEffect, useContext } from 'react'
+import { useRef, useEffect, useContext } from 'react'
 import './App.css'
-import { Routes, Route, Navigate, BrowserRouter } from 'react-router-dom';
-import { } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 // import Homepage from './features/homepage/Homepage';
 // import RegisterForm from './features/auth-register/ui/RegisterForm';
 // import LoginForm from './features/auth-login/ui/LoginForm';
 import { Context } from './main';
 import MonstrinoProfilePage from './pages/user/profile/UserProfile';
-import { CssBaseline } from '@mui/material';
 import UserCollectionsPage from './pages/user/collections/UserCollectionsPage';
 import GroupsPage from './pages/user/groups/UserGroupsPage';
 import FriendsPage from './pages/user/friends/UserFriendsPage';
@@ -19,8 +17,10 @@ import { ContactPage } from './pages/static/contact';
 import { PrivacyPage } from './pages/static/privacy';
 import { SupportPage } from './pages/static/support';
 import { TermsPage } from './pages/static/terms';
-import { PublicLayout, UserLayout } from './layouts';
+import { PublicLayout, UserLayout, ReleaseHubLayout } from './layouts';
 import { Homepage } from '@/pages/home';
+import { HomePage, ReleaseCatalogPage, ReleaseDetailPage } from '@/pages/release-hub';
+import { ReleaseIndexPage } from '@/pages/release-index';
 import { UserDollsPage } from './pages/user/dolls';
 
 function App() {
@@ -55,7 +55,14 @@ function App() {
         <Route path="groups"                    element={<GroupsPage />} />
         <Route path="wishlist"                  element={<WishlistPage />} />
       </Route>
-
+      
+      {/* Releases */}
+      {/* <Route path='/releases' element={<ReleaseHubLayout />} /> */}
+      <Route path='/releases' element={<ReleaseCatalogPage />} />
+      {/* <Route path='/releases/:id' element={<ReleaseDetailPage />} /> */}
+      <Route path='/release_p/' element={<ReleaseIndexPage />} />
+      <Route path='/releases/home' element={<HomePage />} />
+      
       {/* Static pages */}
       <Route path="/"           element={<PublicLayout />}>
         <Route index            element={<Homepage />} />
