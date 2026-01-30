@@ -6,7 +6,7 @@ import Layout from '@theme/Layout';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
 import Heading from '@theme/Heading';
 import React from 'react';
-
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import styles from './index.module.css';
 
 
@@ -27,13 +27,13 @@ export default function Home(): JSX.Element {
           </p>
 
           <div className={styles.buttons}>
-            <Link className={styles.primaryButton} to="/docs/intro">
+            <Link className={styles.primaryButton} to={useBaseUrl("docs/intro")}>
               Get Started
             </Link>
-            <Link className={styles.secondaryButton} to="/docs/api">
+            <Link className={styles.secondaryButton} to={useBaseUrl("docs/api")}>
               API Reference
             </Link>
-            <Link className={styles.secondaryButton} to="/dev-notes/intro">
+            <Link className={styles.secondaryButton} to={useBaseUrl("dev-notes/intro")}>
               Dev Notes
             </Link>
           </div>
@@ -43,21 +43,21 @@ export default function Home(): JSX.Element {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Quick Links</h2>
           <div className={styles.quickLinks}>
-            <Link className={styles.quickLinkItem} to="/docs/models/overview">
+            <Link className={styles.quickLinkItem} to={useBaseUrl("docs/models/overview")}>
               📦 Releases & Models
             </Link>
-            <Link className={styles.quickLinkItem} to="/docs/architecture">
+            <Link className={styles.quickLinkItem} to={useBaseUrl("docs/architecture")}>
               🏗 Architecture
             </Link>
-            <Link className={styles.quickLinkItem} to="/docs/services/overview">
+            {/* <Link className={styles.quickLinkItem} to={useBaseUrl("docs/services/overview")}>
               ⚙ Services
-            </Link>
-            <Link className={styles.quickLinkItem} to="/docs/parser">
+            </Link> */}
+            {/* <Link className={styles.quickLinkItem} to={useBaseUrl("docs/parser")}>
               🛠 Parsing System
-            </Link>
-            <Link className={styles.quickLinkItem} to="/docs/importer">
+            </Link> */}
+            {/* <Link className={styles.quickLinkItem} to={useBaseUrl("docs/importer")}>
               🔁 Import Pipelines
-            </Link>
+            </Link> */}
           </div>
         </section>
 
@@ -99,7 +99,7 @@ export default function Home(): JSX.Element {
 
           <div className={styles.archDiagram}>
             <img
-              src="/img/architecture/monstrino-architecture.svg"
+              src={useBaseUrl("img/architecture/monstrino-architecture.svg")}
               alt="Monstrino Architecture Diagram"
               className={styles.archImage}
             />

@@ -5,6 +5,7 @@ description: >
 ---
 
 import DocCard from '@site/src/components/DocCard/DocCard';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 
 # 👋 Welcome to **Monstrino Documentation**
 
@@ -65,7 +66,11 @@ _(This structure follows the Feature-Sliced Design rules.)_
 
 # 🧩 Architecture Overview
 
-<img src="/img/architecture/monstrino-architecture.svg" alt="Monstrino Architecture" style={{borderRadius: '12px', marginTop: '1rem'}} />
+<img
+  src={useBaseUrl('img/architecture/monstrino-architecture.svg')}
+  alt="Monstrino Architecture"
+  style={{borderRadius: '12px', marginTop: '1rem'}}
+/>
 
 The architecture is built around:
 

@@ -2,8 +2,15 @@ import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
-// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
+const SITE_ENV = process.env.SITE_ENV ?? 'prod';
+
+const SITE_URL =
+  SITE_ENV === 'test'
+    ? 'https://testing.monstrino.com'
+    : 'https://monstrino.com';
+
+// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 const config: Config = {
   title: 'Monstrino Docs',
   tagline: '',
@@ -15,10 +22,11 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://monstrino.com',
+  url: SITE_URL,
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: '/docusaurus/',
+  trailingSlash: true,
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -100,8 +108,8 @@ const config: Config = {
         src: 'img/monstrino_icon.svg',
       },
       items: [
-        {to: '/docs/intro', label: 'Docs', position: 'left'},
-        {to: '/dev-notes/intro', label: 'Dev Notes', position: 'left'},
+        {to: 'docs/intro', label: 'Docs', position: 'left'},
+        {to: 'dev-notes/intro', label: 'Dev Notes', position: 'left'},
         // {to: '/blog', label: 'Blog', position: 'left'},
         {
           href: 'https://github.com/MafiaCoconut/Monstrino',
@@ -118,7 +126,7 @@ const config: Config = {
         //   items: [
         //     {
         //       label: 'Tutorial',
-        //       to: '/docs/intro',
+        //       to: 'docs/intro',
         //     },
         //   ],
         // },

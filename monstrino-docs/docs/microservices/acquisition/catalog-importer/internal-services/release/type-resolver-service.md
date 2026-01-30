@@ -173,7 +173,7 @@ async def resolve(
 4. Create entity `ReleaseTypeLink` and save
 
 ### Mermaid diagram
-```mermaid
+```text
 flowchart TD
     A[Start] --> B[Step]
 ```

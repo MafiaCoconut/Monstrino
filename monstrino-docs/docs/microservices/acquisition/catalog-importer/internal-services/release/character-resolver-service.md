@@ -63,7 +63,7 @@ async def resolve(
 - `characters` may be an empty list
 - Each element must contain a valid string field
 - Not string element -> CharacterDataInvalidError
-- Names are normalized via [NameFormatter](/docs/architecture/domain/services/name-formatter.md)
+- Names are normalized via [NameFormatter](../../../../../architecture/domain/services/name-formatter.md)
 
 ## Execution Flow
 
@@ -106,7 +106,7 @@ Retrieves IDs for `CharacterRole.MAIN` and `CharacterRole.SECONDARY`
 
 ### Mermaid diagram
 
-```mermaid
+```text
 flowchart TD
     A[Raw characters list] --> B[Extract text]
     B --> C[Normalize name]

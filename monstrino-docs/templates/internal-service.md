@@ -55,7 +55,7 @@ Describe the purpose of the resolver.
 2. step
 
 ### Mermaid diagram
-```mermaid
+```text
 flowchart TD
     A[Start] --> B[Step]
 ```

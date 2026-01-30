@@ -1,35 +1,34 @@
-# ===== 1) Build stage =====
-FROM node:20-alpine AS build
+# -------- build stage --------
+FROM node:20-bookworm-slim AS build
 
 WORKDIR /app
 
-# If you use npm
-COPY package.json package-lock.json ./
-RUN npm ci
+ARG SITE_ENV=prod
+ENV SITE_ENV=${SITE_ENV}
 
-# If you use yarn, replace the two lines above with:
-# COPY package.json yarn.lock ./
-# RUN yarn install --frozen-lockfile
+COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* ./
+
+RUN if [ -f package-lock.json ]; then npm ci; \
+    elif [ -f yarn.lock ]; then corepack enable && yarn install --frozen-lockfile; \
+    elif [ -f pnpm-lock.yaml ]; then corepack enable && pnpm install --frozen-lockfile; \
+    else npm install; fi
 
 COPY . .
 
-# Build static site
-RUN npm run build
-# or: RUN yarn build
+# 
+RUN if [ -f package-lock.json ]; then npm run build; \
+    elif [ -f yarn.lock ]; then yarn build; \
+    elif [ -f pnpm-lock.yaml ]; then pnpm build; \
+    else npm run build; fi
 
-# ===== 2) Runtime stage =====
-FROM nginx:1.27-alpine AS runtime
 
-# Remove default nginx content
-RUN rm -rf /usr/share/nginx/html/*
+# -------- runtime stage --------
+FROM nginxinc/nginx-unprivileged:1.27-alpine AS runtime
 
-# Copy the built static site
-COPY --from=build /app/build /usr/share/nginx/html
+WORKDIR /usr/share/nginx/html
 
-# Optional: custom nginx config (recommended)
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+
+COPY --from=build /app/build ./docusaurus/
 
 EXPOSE 80
-
-# Healthcheck endpoint is just static; Nginx will serve it
-CMD ["nginx", "-g", "daemon off;"]
