@@ -19,7 +19,9 @@ class TestMarketProductPriceObservationRepo(BaseCrudRepoTest):
         "raw_payload": {"price": "19.99", "shipping": "4.99"},
     }
 
-    unique_field = MarketProductPriceObservation.OBSERVED_AT
-    unique_field_value = "2025-03-01T12:00:00Z"
+    unique_field = MarketProductPriceObservation.CURRENCY_CODE
+    unique_field_value = "USD"
     update_field = MarketProductPriceObservation.PRICE_AMOUNT_MINOR
     updated_value = 1799
+
+    is_duplicable = True
