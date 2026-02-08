@@ -2,15 +2,67 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
+    <title>Monstrino — Monster High Collector Hub & Social Network</title>
+    <meta
+      name="description"
+      content="A premium collector hub and social network for Monster High fans. Track releases, characters, and collections."
+    />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://monstrino.app/" />
+
+    <!-- Viewport & Color -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <!-- <meta name="theme-color" content="#121212" /> -->
+
+    <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="/monstrino_icon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
-    <meta name="color-scheme" content="light">
-    <title>Monstrino</title>
+    <!-- <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" /> -->
+    <!-- <link rel="apple-touch-icon" href="/apple-touch-icon.png" /> -->
+
+    <!-- Manifest (PWA-ready) -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- Open Graph -->
+    <!-- <meta property="og:type" content="website" />
+    <meta property="og:title" content="Monstrino — Monster High Collector Hub" />
+    <meta
+      property="og:description"
+      content="A premium collector hub and social network for Monster High fans."
+    />
+    <meta property="og:image" content="https://monstrino.app/og-cover.png" />
+    <meta property="og:url" content="https://monstrino.app" />
+    <meta property="og:site_name" content="Monstrino" /> -->
+
+    <!-- Twitter Card -->
+    <!-- <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Monstrino — Monster High Collector Hub" />
+    <meta
+      name="twitter:description"
+      content="Track releases, collections, and characters in a premium Monster High database."
+    />
+    <meta name="twitter:image" content="https://monstrino.app/og-cover.png" /> -->
+
+    <!-- Verification -->
+    <meta name="awin-verification" content="Awin" />
   </head>
+
   <body>
-    <!-- <meta name="color-scheme" content="light"> -->
+    <noscript>
+      <style>
+        body {
+          font-family: system-ui, sans-serif;
+          padding: 2rem;
+        }
+      </style>
+      Monstrino requires JavaScript to run.
+    </noscript>
+
     <div id="root"></div>
-    <!-- <script src="http://localhost:8097"></script> -->
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

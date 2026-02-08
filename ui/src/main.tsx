@@ -5,9 +5,10 @@ import ReactDOM from 'react-dom/client';
 import { createApi } from './shared/api/http.ts';
 import './i18n.ts';
 import { Routes, Route, Navigate, BrowserRouter } from 'react-router-dom';
-import { AppThemeProvider } from '@/app/providers/ThemeProvider';
+import { AppThemeProvider, QueryProvider } from '@/app/providers';
 import { ScrollToTop } from './shared/ui/components/ScrollToTop.tsx';
 import { UserStore } from '@entities/user/model/index.ts';
+import { ErrorBoundary } from '@shared/ui/error-boundary';
 
 
 const container = document.getElementById('root')!;
@@ -33,13 +34,17 @@ document.title = 'Monstrino';
 // @ts-ignore
 window.__monstrino_root__.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Context.Provider value={{ userStore}}>
-        <AppThemeProvider>
-          <ScrollToTop />
-          <App />
-        </AppThemeProvider>
-      </Context.Provider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <QueryProvider>
+        <BrowserRouter>
+          <Context.Provider value={{ userStore}}>
+            <AppThemeProvider>
+              <ScrollToTop />
+              <App />
+            </AppThemeProvider>
+          </Context.Provider>
+        </BrowserRouter>
+      </QueryProvider>
+    </ErrorBoundary>
   </React.StrictMode>
 );

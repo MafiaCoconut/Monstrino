@@ -73,7 +73,7 @@ const characterModels: CharacterSummary[] = characterIndexMocks.map((char, index
 }));
 
 const stats = {
-  totalReleases: releaseModels.length,
+  totalReleases: "1000+",
   totalCharacters: 127,
   totalSeries: seriesModels.length,
   totalPets: petModels.length,

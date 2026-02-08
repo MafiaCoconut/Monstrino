@@ -1,0 +1,69 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:base", ":dependencyDashboard", ":semanticCommits", ":preserveSemverRanges"],
+  "timezone": "UTC",
+  "schedule": ["before 3am on Monday"],
+  "labels": ["dependencies"],
+  "assignees": [],
+  "reviewers": [],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true,
+      "automergeType": "pr",
+      "automergeStrategy": "squash"
+    },
+    {
+      "groupName": "React ecosystem",
+      "matchPackagePatterns": ["^react", "^@types/react"],
+      "matchPackageNames": ["react-dom", "react-router-dom"]
+    },
+    {
+      "groupName": "Material-UI",
+      "matchPackagePatterns": ["^@mui/", "^@emotion/"]
+    },
+    {
+      "groupName": "TanStack Query",
+      "matchPackagePatterns": ["^@tanstack/react-query"]
+    },
+    {
+      "groupName": "Vite ecosystem",
+      "matchPackagePatterns": ["^vite", "^@vitejs/"]
+    },
+    {
+      "groupName": "Storybook",
+      "matchPackagePatterns": ["^@storybook/", "^storybook$"]
+    },
+    {
+      "groupName": "ESLint and Prettier",
+      "matchPackagePatterns": ["^eslint", "^prettier", "^@eslint/"]
+    },
+    {
+      "groupName": "TypeScript",
+      "matchPackageNames": ["typescript", "@types/node"]
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["patch"],
+      "automerge": true
+    },
+    {
+      "matchPackagePatterns": ["^@types/"],
+      "automerge": true
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "assignees": []
+  },
+  "prConcurrentLimit": 10,
+  "prCreation": "immediate",
+  "rangeStrategy": "bump",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 3am on the first day of the month"]
+  },
+  "ignoreDeps": [],
+  "ignorePresets": []
+}

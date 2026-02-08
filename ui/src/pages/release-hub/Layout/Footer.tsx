@@ -24,15 +24,15 @@ const footerLinks = {
     { label: 'Series', path: '/catalog/s' },
     { label: 'Pets', path: '/catalog/p' },
   ],
-  community: [
-    { label: 'Discord', path: '#' },
-    { label: 'Twitter', path: '#' },
-    { label: 'Instagram', path: '#' },
-  ],
+  // community: [
+  //   { label: 'Discord', path: '#' },
+  //   { label: 'Twitter', path: '#' },
+  //   { label: 'Instagram', path: '#' },
+  // ],
   resources: [
-    { label: 'API', path: '#' },
-    { label: 'Documentation', path: '#' },
-    { label: 'Contribute', path: '#' },
+    { label: 'API', path: '/docusaurus/' },
+    { label: 'Documentation', path: '/docusaurus/' },
+    { label: 'Contribute', path: '/docusaurus/' },
   ],
 };
 
@@ -108,7 +108,7 @@ export const Footer = () => {
             </Box>
           </Grid>
 
-          <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+          {/* <Grid size={{ xs: 6, sm: 4, md: 2 }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 2, color: 'text.primary' }}>
               Community
             </Typography>
@@ -128,7 +128,7 @@ export const Footer = () => {
                 </MuiLink>
               ))}
             </Box>
-          </Grid>
+          </Grid> */}
 
           <Grid size={{ xs: 6, sm: 4, md: 2 }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 2, color: 'text.primary' }}>

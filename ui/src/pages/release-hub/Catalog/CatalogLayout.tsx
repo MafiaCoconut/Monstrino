@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
+import { Footer } from '../Layout/Footer';
 
 // ============================================
 // SOURCE OF TRUTH - THEME
@@ -285,6 +286,7 @@ const CatalogLayout: React.FC = () => {
           onSearchChange={handleSearchChange}
         />
         <Outlet />
+        <Footer />
       </Box>
     </ThemeProvider>
   );
