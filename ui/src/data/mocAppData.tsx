@@ -480,3 +480,4 @@ export const releasesMock: ReleaseDTO[] = [
     }
   }
 ];
+

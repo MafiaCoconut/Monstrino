@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../tailwind.config.cjs";
 
 body {
     margin: 0;
@@ -78,9 +77,10 @@ code {
 
 @layer base {
   * {
-    @apply border-border;
-    }
+    border-color: hsl(var(--border));
+  }
   body {
-    @apply bg-background text-foreground;
-    }
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
 }

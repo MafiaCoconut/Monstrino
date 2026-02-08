@@ -1,4 +1,4 @@
-export { ReleaseHubPage } from './ReleaseHubMainPage'
-export { ReleaseDetailPage } from './ReleaseDetailPage'
-export { ReleaseCatalogPage } from './ReleaseCatalogPage'
-export { HomePage } from './HomePage'
+export { ReleaseHubPage } from './not-used/ReleaseHubMainPage'
+export { ReleaseDetailPage } from './not-used/ReleaseDetailPage'
+export { ReleaseCatalogPage } from './not-used/ReleaseCatalogPage'
+export { HomePage } from './not-used/HomePage'

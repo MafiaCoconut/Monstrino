@@ -17,11 +17,22 @@ import { ContactPage } from './pages/static/contact';
 import { PrivacyPage } from './pages/static/privacy';
 import { SupportPage } from './pages/static/support';
 import { TermsPage } from './pages/static/terms';
-import { PublicLayout, UserLayout, ReleaseHubLayout } from './layouts';
-import { Homepage } from '@/pages/home';
-import { HomePage, ReleaseCatalogPage, ReleaseDetailPage } from '@/pages/release-hub';
+// import { PublicLayout, UserLayout, ReleaseHubLayout } from './layouts';
+// import { Homepage } from '@/pages/home';
+import { ReleaseCatalogPage, ReleaseDetailPage } from '@/pages/release-hub';
 import { ReleaseIndexPage } from '@/pages/release-index';
 import { UserDollsPage } from './pages/user/dolls';
+import HomePage from './pages/release-hub/Homepage';
+import ReleasePage from './pages/release-hub/Index/ReleaseIndex';
+import CharacterPageV2 from './pages/release-hub/Index/CharacterIndex';
+import ReleaseCatalog from './pages/release-hub/Catalog/ReleaseCatalog';
+import CharacterCatalog from './pages/release-hub/Catalog/CharacterCatalog';
+import PetsCatalog from './pages/release-hub/Catalog/PetCatalog';
+import SeriesCatalog from './pages/release-hub/Catalog/SeriesCatalog';
+import CatalogLayout from './pages/release-hub/Catalog/CatalogLayout';
+import PetIndex from './pages/release-hub/Index/PetIndex';
+import MonsterHighSeriesPage from './pages/release-hub/Index/SeriesIndex';
+import HubLayout from './pages/release-hub/Layout/HubLayout';
 
 function App() {
   const { userStore } = useContext(Context);
@@ -45,7 +56,7 @@ function App() {
       <Route path="collections" element={<UserCollectionsPage />} />
 
       {/* Users pages */}
-      <Route path="/users/:username"            element={<UserLayout />}>
+      {/* <Route path="/users/:username"            element={<UserLayout />}>
         <Route index                            element={<MonstrinoProfilePage />} />
         <Route path="posts"                     element={<MonstrinoProfilePage />} />
         <Route path="collections"               element={<UserCollectionsPage />} />
@@ -54,17 +65,41 @@ function App() {
         <Route path="friends"                   element={<FriendsPage />} />
         <Route path="groups"                    element={<GroupsPage />} />
         <Route path="wishlist"                  element={<WishlistPage />} />
-      </Route>
+      </Route> */}
       
       {/* Releases */}
       {/* <Route path='/releases' element={<ReleaseHubLayout />} /> */}
       <Route path='/releases' element={<ReleaseCatalogPage />} />
       {/* <Route path='/releases/:id' element={<ReleaseDetailPage />} /> */}
-      <Route path='/release_p/' element={<ReleaseIndexPage />} />
-      <Route path='/releases/home' element={<HomePage />} />
+      {/* <Route path='/releases/1' element={<ReleasePage />} /> */}
+      <Route path='/releases/home3' element={<HomePage />} />
+      <Route path='/releases/catalog' element={<ReleaseCatalog />} />
+
+      <Route element={<CatalogLayout />}>
+        <Route path='/catalog/r' element={<ReleaseCatalog />} />
+        <Route path='/catalog/r/:internal_id' element={<ReleasePage />} />
+        <Route path='/catalog/c' element={<CharacterCatalog />} />
+        <Route path='/catalog/c/:internal_id' element={<CharacterPageV2 />} />
+        <Route path='/catalog/p' element={<PetsCatalog />} />
+        <Route path='/catalog/p/:internal_id' element={<PetIndex />} />
+        <Route path='/catalog/s' element={<SeriesCatalog />} />
+        <Route path='/catalog/s/:internal_id' element={<MonsterHighSeriesPage />} />
+      </Route>
+
+      <Route path='/p/:id' element={<PetIndex />} />
+      <Route path='/s/:id' element={<MonsterHighSeriesPage />} />
+
+      {/* <Route path='pets/1' element={<PetIndex />} />
+      <Route path='/characters/c/2' element={<CharacterPageV2 />} />
+      <Route path='/series/s/1' element={<MonsterHighSeriesPage />} /> */}
       
       {/* Static pages */}
-      <Route path="/"           element={<PublicLayout />}>
+      <Route path="/" element={<HubLayout />}>
+        <Route index element={<HomePage />} />
+      </Route>
+
+      {/* Static pages */}
+      {/* <Route path="/"           element={<PublicLayout />}>
         <Route index            element={<Homepage />} />
         <Route path="/about"    element={<AboutPage   />} />
         <Route path="/contact"  element={<ContactPage />} />
@@ -73,7 +108,7 @@ function App() {
         <Route path="/terms"    element={<TermsPage   />} />
         
         <Route path="/settings" element={<SettingsPage />} />
-      </Route>
+      </Route> */}
 
       {/* Groups */}
       {/* <Route path="/users/-1/groups" element={<MonstrinoProfilePage />} />
