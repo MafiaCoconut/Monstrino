@@ -9,6 +9,7 @@ import PetsIcon from "@mui/icons-material/Pets";
 import ImageIcon from "@mui/icons-material/Image";
 import GroupsIcon from "@mui/icons-material/Groups";
 import { useNavigate } from "react-router-dom";
+import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
 
 const colors = {
   background: "#0d0d0f",
@@ -22,35 +23,35 @@ const colors = {
 };
 
 const WordmarkDoubleRule = ({ onClick }: { onClick?: () => void }) => (
-  <div style={{
+  <Box sx={{
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     gap: "6px",
     cursor: onClick ? "pointer" : "default",
   }}>
-    <span style={{
+    <Box component="span" sx={{
       width: "100%",
       height: "1px",
       backgroundColor: colors.border,
     }} />
-    <span style={{
+    <Typography component="span" sx={{
       fontFamily: "'Inter', system-ui, sans-serif",
       fontSize: "14px",
       fontWeight: 500,
       letterSpacing: "0.3em",
-      textTransform: "uppercase" as const,
+      textTransform: "uppercase",
       color: colors.textPrimary,
       padding: "0 8px",
     }}>
       MONSTRINO
-    </span>
-    <span style={{
+    </Typography>
+    <Box component="span" sx={{
       width: "100%",
       height: "1px",
       backgroundColor: colors.border,
     }} />
-  </div>
+  </Box>
 );
 
 const CollectorHubHeader = () => {
@@ -92,15 +93,17 @@ const CollectorHubHeader = () => {
       height: "40px",
       padding: "0 16px",
       backgroundColor: colors.accentPrimary,
-      border: "none",
       borderRadius: "8px",
-      color: "#ffffff",
       fontSize: "14px",
       fontWeight: 600,
       fontFamily: "'Inter', system-ui, sans-serif",
-      cursor: "pointer",
       transition: "background-color 0.2s ease",
       flexShrink: 0,
+      textTransform: "none",
+      boxShadow: "none",
+      "&:hover": {
+        boxShadow: "none",
+      },
     } as React.CSSProperties,
     navSection: {
       display: "flex",
@@ -114,10 +117,7 @@ const CollectorHubHeader = () => {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: "transparent",
-      border: "none",
       borderRadius: "8px",
-      cursor: "pointer",
       transition: "background-color 0.2s ease",
     } as React.CSSProperties,
     rightSection: {
@@ -140,7 +140,6 @@ const CollectorHubHeader = () => {
       color: colors.textPrimary,
       fontSize: "14px",
       fontFamily: "'Inter', system-ui, sans-serif",
-      outline: "none",
     } as React.CSSProperties,
     searchIcon: {
       position: "absolute" as const,
@@ -167,27 +166,26 @@ const CollectorHubHeader = () => {
   };
 
   return (
-    <header style={styles.header}>
-      <div style={styles.container}>
+    <Box component="header" sx={styles.header}>
+      <Box sx={styles.container}>
         <WordmarkDoubleRule onClick={() => navigate("/")} />
-        
-        <button
-          type="button"
-          style={styles.hubButton}
+
+        <Button
+          variant="contained"
+          sx={styles.hubButton}
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.accentSecondary}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.accentPrimary}
           onClick={() => navigate("/catalog/r")}
         >
           <GroupsIcon sx={{ fontSize: 16, color: "currentColor" }} />
           Collectors Hub
-        </button>
+        </Button>
 
-        <nav style={styles.navSection}>
+        <Box component="nav" sx={styles.navSection}>
           {navIcons.map(({ icon: Icon, label, path, disabled }) => (
-            <button
-              type="button"
-              key={label} 
-              style={styles.navIconButton} 
+            <IconButton
+              key={label}
+              sx={styles.navIconButton}
               title={label}
               aria-label={label}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.surface}
@@ -196,25 +194,36 @@ const CollectorHubHeader = () => {
               disabled={disabled || !path}
             >
               <Icon sx={{ fontSize: 20, color: colors.textSecondary }} />
-            </button>
+            </IconButton>
           ))}
-        </nav>
+        </Box>
 
-        <div style={styles.rightSection}>
-          <div style={styles.searchWrapper}>
-            <span style={styles.searchIcon}><SearchIcon sx={{ fontSize: 18, color: colors.textSecondary }} /></span>
-            <input type="text" placeholder="Search archive..." style={styles.searchInput} />
-          </div>
-          
-          <div style={styles.userSection}>
-            <button type="button" style={{ ...styles.navIconButton, width: "36px", height: "36px" }}>
+        <Box sx={styles.rightSection}>
+          <Box sx={styles.searchWrapper}>
+            <Box component="span" sx={styles.searchIcon}>
+              <SearchIcon sx={{ fontSize: 18, color: colors.textSecondary }} />
+            </Box>
+            <TextField
+              placeholder="Search archive..."
+              variant="standard"
+              InputProps={{
+                disableUnderline: true,
+                sx: styles.searchInput,
+              }}
+            />
+          </Box>
+
+          <Box sx={styles.userSection}>
+            <IconButton sx={{ ...styles.navIconButton, width: "36px", height: "36px" }}>
               <NotificationsNoneIcon sx={{ fontSize: 18, color: colors.textSecondary }} />
-            </button>
-            <div style={styles.avatar}><PersonOutlineIcon sx={{ fontSize: 18, color: colors.textSecondary }} /></div>
-          </div>
-        </div>
-      </div>
-    </header>
+            </IconButton>
+            <Box sx={styles.avatar}>
+              <PersonOutlineIcon sx={{ fontSize: 18, color: colors.textSecondary }} />
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

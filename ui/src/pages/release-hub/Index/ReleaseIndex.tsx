@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link as RouterLink } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -72,67 +72,6 @@ const ReleasePage = () => {
     return releaseIndexMock[0] ?? ({} as Release);
   }, [resolvedId]);
   // Header Component
-  const Header = () => (
-  <Box
-    sx={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      px: 4,
-      py: 2,
-      backgroundColor: colors.bg,
-      borderBottom: `1px solid ${colors.cardBorder}`,
-      position: 'sticky',
-      top: 0,
-      zIndex: 100,
-    }}
-  >
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-      <Box
-        sx={{
-          width: 32,
-          height: 32,
-          borderRadius: 1,
-          backgroundColor: colors.pink,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontWeight: 'bold',
-          color: colors.textPrimary,
-          fontSize: 18,
-        }}
-      >
-        M
-      </Box>
-      <Typography sx={{ fontSize: 20, fontWeight: 600, color: colors.textPrimary }}>
-        Monstrino
-      </Typography>
-    </Box>
-
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-      {['Releases', 'Community', 'Marketplace'].map((item) => (
-        <Box
-          key={item}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 0.5,
-            cursor: 'pointer',
-            color: colors.textSecondary,
-            '&:hover': { color: colors.textPrimary },
-          }}
-        >
-          <Typography sx={{ fontSize: 14 }}>{item}</Typography>
-          <KeyboardArrowDown sx={{ fontSize: 18 }} />
-        </Box>
-      ))}
-    </Box>
-
-    <IconButton sx={{ color: colors.textSecondary }}>
-      <Search />
-    </IconButton>
-  </Box>
-  );
 
 // Breadcrumb Component
   const Breadcrumb = () => (
@@ -872,24 +811,48 @@ const ReleasePage = () => {
 // Accessories Section Component
   const AccessoriesSection = () => {
   const accessories = releaseData.accessories ?? [];
+  const [expanded, setExpanded] = useState(true);
 
   return (
     <Box sx={{ mb: 4 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography sx={{ fontSize: 20, fontWeight: 600, color: colors.textPrimary }}>
-          Accessories
-        </Typography>
-        <Typography sx={{ fontSize: 14, color: colors.textMuted }}>8 items</Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: expanded ? 3 : 0,
+          cursor: 'pointer',
+          pb: 2,
+          borderBottom: `1px solid ${colors.cardBorder}`,
+          '&:hover': {
+            backgroundColor: `${colors.cardBorder}40`,
+          },
+        }}
+        onClick={() => setExpanded(!expanded)}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography sx={{ fontSize: 20, fontWeight: 600, color: colors.textPrimary }}>
+            Accessories
+          </Typography>
+          <Typography sx={{ fontSize: 14, color: colors.textMuted }}>
+            {accessories.length} items
+          </Typography>
+        </Box>
+        <IconButton size="small" sx={{ color: colors.textMuted }}>
+          {expanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+        </IconButton>
       </Box>
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2 }}>
-        {accessories.map((item) => (
-          <AccessoryCard
-            key={item.name}
-            {...item}
-            placeholderIcon={<LocalOffer sx={{ fontSize: 40 }} />}
-          />
-        ))}
-      </Box>
+      <Collapse in={expanded}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2, mt: 3 }}>
+          {accessories.map((item) => (
+            <AccessoryCard
+              key={item.name}
+              {...item}
+              placeholderIcon={<LocalOffer sx={{ fontSize: 40 }} />}
+            />
+          ))}
+        </Box>
+      </Collapse>
     </Box>
   );
   };
@@ -897,24 +860,48 @@ const ReleasePage = () => {
 // Clothing Section Component
   const ClothingSection = () => {
   const clothing = releaseData.clothing ?? [];
+  const [expanded, setExpanded] = useState(true);
 
   return (
     <Box sx={{ mb: 4 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography sx={{ fontSize: 20, fontWeight: 600, color: colors.textPrimary }}>
-          Clothing
-        </Typography>
-        <Typography sx={{ fontSize: 14, color: colors.textMuted }}>4 items</Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: expanded ? 3 : 0,
+          cursor: 'pointer',
+          pb: 2,
+          borderBottom: `1px solid ${colors.cardBorder}`,
+          '&:hover': {
+            backgroundColor: `${colors.cardBorder}40`,
+          },
+        }}
+        onClick={() => setExpanded(!expanded)}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography sx={{ fontSize: 20, fontWeight: 600, color: colors.textPrimary }}>
+            Clothing
+          </Typography>
+          <Typography sx={{ fontSize: 14, color: colors.textMuted }}>
+            {clothing.length} items
+          </Typography>
+        </Box>
+        <IconButton size="small" sx={{ color: colors.textMuted }}>
+          {expanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+        </IconButton>
       </Box>
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2 }}>
-        {clothing.map((item) => (
-          <AccessoryCard
-            key={item.name}
-            {...item}
-            placeholderIcon={<Checkroom sx={{ fontSize: 40 }} />}
-          />
-        ))}
-      </Box>
+      <Collapse in={expanded}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2, mt: 3 }}>
+          {clothing.map((item) => (
+            <AccessoryCard
+              key={item.name}
+              {...item}
+              placeholderIcon={<Checkroom sx={{ fontSize: 40 }} />}
+            />
+          ))}
+        </Box>
+      </Collapse>
     </Box>
   );
   };
@@ -922,67 +909,98 @@ const ReleasePage = () => {
 // Pets Section Component
   const PetsSection = () => {
   const pets = releaseData.petsDetail ?? [];
+  const [expanded, setExpanded] = useState(true);
 
   return (
     <Box sx={{ mb: 4 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography sx={{ fontSize: 20, fontWeight: 600, color: colors.textPrimary }}>
-          Pets
-        </Typography>
-        <Typography sx={{ fontSize: 14, color: colors.textMuted }}>
-          {pets.length} item{pets.length !== 1 ? 's' : ''}
-        </Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: expanded ? 3 : 0,
+          cursor: 'pointer',
+          pb: 2,
+          borderBottom: `1px solid ${colors.cardBorder}`,
+          '&:hover': {
+            backgroundColor: `${colors.cardBorder}40`,
+          },
+        }}
+        onClick={() => setExpanded(!expanded)}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography sx={{ fontSize: 20, fontWeight: 600, color: colors.textPrimary }}>
+            Pets
+          </Typography>
+          <Typography sx={{ fontSize: 14, color: colors.textMuted }}>
+            {pets.length} item{pets.length !== 1 ? 's' : ''}
+          </Typography>
+        </Box>
+        <IconButton size="small" sx={{ color: colors.textMuted }}>
+          {expanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+        </IconButton>
       </Box>
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2 }}>
-        {pets.map((pet) => (
-          <Box
-            key={pet.name}
-            sx={{
-              backgroundColor: colors.card,
-              borderRadius: 2,
-              border: `1px solid ${colors.cardBorder}`,
-              overflow: 'hidden',
-            }}
-          >
+      <Collapse in={expanded}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2, mt: 3 }}>
+          {pets.map((pet) => (
             <Box
+              key={pet.name}
+              component={RouterLink}
+              to={`/catalog/p/${pet.id}`}
               sx={{
-                aspectRatio: '1',
-                backgroundColor: colors.bgLight,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                backgroundColor: colors.card,
+                borderRadius: 2,
+                border: `1px solid ${colors.cardBorder}`,
+                overflow: 'hidden',
+                textDecoration: 'none',
+                cursor: 'pointer',
+                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: '0 8px 24px rgba(236, 72, 153, 0.15)',
+                },
               }}
             >
               <Box
-                component="img"
-                src={pet.image}
-                alt={pet.name}
-                sx={{ width: '60%', height: '60%', objectFit: 'contain' }}
-              />
-            </Box>
-            <Box sx={{ p: 2 }}>
-              <Typography sx={{ fontSize: 11, color: colors.textMuted, mb: 0.5 }}>
-                {pet.category ?? 'Pet'}
-              </Typography>
-              <Typography sx={{ fontSize: 14, fontWeight: 500, color: colors.textPrimary, mb: 1 }}>
-                {pet.name}
-              </Typography>
-              {pet.rarity && (
-                <Chip
-                  label={pet.rarity}
-                  size="small"
-                  sx={{
-                    backgroundColor: `${colors.orange}20`,
-                    color: colors.orange,
-                    fontSize: 11,
-                    height: 22,
-                  }}
+                sx={{
+                  aspectRatio: '1',
+                  backgroundColor: colors.bgLight,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Box
+                  component="img"
+                  src={pet.image}
+                  alt={pet.name}
+                  sx={{ width: '60%', height: '60%', objectFit: 'contain' }}
                 />
-              )}
+              </Box>
+              <Box sx={{ p: 2 }}>
+                <Typography sx={{ fontSize: 11, color: colors.textMuted, mb: 0.5 }}>
+                  {pet.category ?? 'Pet'}
+                </Typography>
+                <Typography sx={{ fontSize: 14, fontWeight: 500, color: colors.textPrimary, mb: 1 }}>
+                  {pet.name}
+                </Typography>
+                {pet.rarity && (
+                  <Chip
+                    label={pet.rarity}
+                    size="small"
+                    sx={{
+                      backgroundColor: `${colors.orange}20`,
+                      color: colors.orange,
+                      fontSize: 11,
+                      height: 22,
+                    }}
+                  />
+                )}
+              </Box>
             </Box>
-          </Box>
-        ))}
-      </Box>
+          ))}
+        </Box>
+      </Collapse>
     </Box>
   );
   };
@@ -1070,8 +1088,8 @@ const ReleasePage = () => {
                   '&:hover': { color: colors.textPrimary },
                 }}
               >
-                <span>{region.flag}</span>
-                <span>{region.code}</span>
+                <Typography component="span">{region.flag}</Typography>
+                <Typography component="span">{region.code}</Typography>
               </Box>
             ))}
           </Box>
@@ -1611,7 +1629,6 @@ const ReleasePage = () => {
         fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
       }}
     >
-      <Header />
 
       {/* Main Content Area - 70% width, centered */}
       <Box

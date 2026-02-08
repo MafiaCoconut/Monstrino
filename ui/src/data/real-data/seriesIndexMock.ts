@@ -186,20 +186,27 @@ const buildSeries = (series: (typeof seriesMock)[number]): Series => {
     };
   });
 
-  const uniqueCharacters = new Map<string, { name: string }>();
+  const uniqueCharacters = new Map<number, (typeof characterMock)[number]>();
   releases.forEach((release) => {
     const releaseCharacters = releaseCharactersByReleaseId.get(release.id) ?? [];
     releaseCharacters.forEach((link) => {
       const character = characterById.get(link.character_id);
       if (!character) return;
-      uniqueCharacters.set(character.display_name ?? character.name, { name: character.display_name ?? character.name });
+      uniqueCharacters.set(character.id, character);
     });
   });
 
   const palette = getColorPalette(series.id);
   const characters = Array.from(uniqueCharacters.values()).map((character, index) => ({
-    name: character.name,
-    color: palette[index % palette.length].hex,
+    id: character.id,
+    name: character.display_name ?? character.name,
+    species: character.species ?? 'Monster',
+    releaseCount: releases.filter((release) => {
+      const releaseCharacters = releaseCharactersByReleaseId.get(release.id) ?? [];
+      return releaseCharacters.some((link) => link.character_id === character.id);
+    }).length,
+    imageUrl: character.primary_image ?? undefined,
+    accentColor: palette[index % palette.length].hex,
   }));
 
   const exclusives = releases.flatMap((release) => {

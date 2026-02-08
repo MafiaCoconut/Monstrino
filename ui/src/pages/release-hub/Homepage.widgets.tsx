@@ -1,20 +1,16 @@
 import {
-  Avatar,
   Box,
   Button,
   Card,
-  CardContent,
-  CardMedia,
   Chip,
   Container,
   Grid,
-  LinearProgress,
   Link as MuiLink,
   Stack,
   Typography,
   alpha,
 } from "@mui/material";
-import { Link, Link as RouterLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
@@ -24,12 +20,12 @@ import PeopleIcon from "@mui/icons-material/People";
 import PetsIcon from "@mui/icons-material/Pets";
 
 import heroBanner from "@/assets/hero-banner.jpg";
-import { releaseMockData } from "@/data/release.mock";
+import { releaseIndexMock } from "@/data/real-data/releaseIndexMock";
+import { seriesIndexMock } from "@/data/real-data/seriesIndexMock";
+import { characterIndexMocks, characterIndexMockById } from "@/data/real-data/CharacterIndexMock";
 import { characterMock } from "@/data/real-data/characterMock";
-import { releaseImageMock } from "@/data/real-data/releaseImageMock";
-import { releaseMock } from "@/data/real-data/releaseMock";
+import { petIndexMock } from "@/data/real-data/petIndexMock";
 import type {
-  Character,
   CharacterId,
   CharacterSummary,
   Pet,
@@ -43,248 +39,75 @@ import type {
   SeriesSummary,
 } from "./entities";
 import { ReleaseCardHome } from "./components/release-cards";
+import { CharacterCard } from "./components/character-card";
+import { SeriesCard } from "./components/series-card";
+import { PetCard } from "./components/pet-card";
 
 // ============================================
-// DATA TRANSFORMATION (mock -> enterprise models)
+// DATA FROM real-data INDEX MOCKS
 // ============================================
 
-const PLACEHOLDER_IMAGE = "/placeholder.svg";
 const ACCENT_COLORS = ["#00D4FF", "#FF1493", "#9B59B6", "#14B8A6", "#F59E0B", "#6366F1"] as const;
 
-const toReleaseId = (value: string | number): ReleaseId => `${value}` as ReleaseId;
-const toCharacterId = (value: string | number): CharacterId => `${value}` as CharacterId;
-const toSeriesId = (value: string | number): SeriesId => `${value}` as SeriesId;
-const toPetId = (value: string | number): PetId => `${value}` as PetId;
-
-const { releases, series, links, meta, mockCharactersAndPets } = releaseMockData;
-
-const releaseIdBySlug = new Map<string, number>(
-  releaseMock.map((release) => [release.name.trim().toLowerCase(), release.id])
-);
-const releaseIdByName = new Map<string, number>(
-  releaseMock.map((release) => [
-    (release.display_name ?? release.name ?? "").trim().toLowerCase(),
-    release.id,
-  ])
-);
-const releaseImageById = new Map<number, string>();
-releaseImageMock.forEach((image) => {
-  if (!image.image_url) return;
-  if (image.is_primary || !releaseImageById.has(image.release_id)) {
-    releaseImageById.set(image.release_id, image.image_url);
-  }
-});
-const characterSlugByName = new Map<string, string>(
-  characterMock.map((character) => [
-    (character.display_name ?? character.name).trim().toLowerCase(),
-    character.name,
-  ])
-);
-const characterSlugBySlug = new Map<string, string>(
-  characterMock.map((character) => [character.name.trim().toLowerCase(), character.name])
-);
-
-const characterNameById = new Map<number, string>(
-  mockCharactersAndPets.characters.map((character) => [character.id, character.name])
-);
-
-const characterReleaseCounts = links.releaseCharacterLinks.reduce<Record<number, number>>((acc, link) => {
-  acc[link.characterId] = (acc[link.characterId] ?? 0) + 1;
-  return acc;
-}, {});
-
-const getReleaseImageUrl = (release: (typeof releases)[number]) => {
-  const direct =
-    release.imageUrl ?? release.imageUrls?.find((image) => image.isPrimary)?.url ?? release.imageUrls?.[0]?.url;
-  if (direct) return direct;
-  const slug = (release.slug ?? "").trim().toLowerCase();
-  const resolvedId =
-    releaseIdBySlug.get(slug) ?? releaseIdByName.get((release.name ?? "").trim().toLowerCase());
-  if (!resolvedId) return undefined;
-  return releaseImageById.get(resolvedId);
-};
-
-const resolveReleaseImage = (release: (typeof releases)[number]) => {
-  return getReleaseImageUrl(release) ?? PLACEHOLDER_IMAGE;
-};
-
+// Helper function for name normalization
 const normalizeName = (value: string) => value.trim().toLowerCase();
 
-const characterImageByName = new Map<string, string>();
-releases.forEach((release) => {
-  const imageUrl = getReleaseImageUrl(release);
-  if (!imageUrl) return;
+// Create slug -> numeric ID mapping from characterMock
+const characterSlugToNumericId = new Map<string, number>(
+  characterMock.map((char) => [char.name, char.id])
+);
 
-  release.characters?.forEach((character) => {
-    const name =
-      character.character?.name ??
-      (character.characterId ? characterNameById.get(character.characterId) : undefined);
-    if (!name) return;
-    const key = normalizeName(name);
-    if (!characterImageByName.has(key)) {
-      characterImageByName.set(key, imageUrl);
-    }
-  });
-});
+// Use pre-built index mocks directly from real-data
+const releaseModels: Release[] = releaseIndexMock;
+const seriesModels: Series[] = seriesIndexMock;
+const petModels: Pet[] = petIndexMock;
 
-const releaseTitleImages = releases
-  .map((release) => ({
-    title: release.name?.toLowerCase() ?? "",
-    imageUrl: getReleaseImageUrl(release),
-  }))
-  .filter((entry): entry is { title: string; imageUrl: string } => Boolean(entry.imageUrl));
-
-const getCharacterImageUrl = (name: string) => {
-  const key = normalizeName(name);
-  const direct = characterImageByName.get(key);
-  if (direct) return direct;
-
-  const titleMatch = releaseTitleImages.find((entry) => entry.title.includes(key));
-  return titleMatch?.imageUrl;
-};
-
-const seriesYearStats = new Map<number, { min: number; max: number; count: number }>();
-const seriesCharacterIds = new Map<number, Set<number>>();
-releases.forEach((release) => {
-  if (!release.releaseYear) return;
-  release.series?.forEach((seriesRef) => {
-    const current = seriesYearStats.get(seriesRef.id) ?? {
-      min: release.releaseYear,
-      max: release.releaseYear,
-      count: 0,
-    };
-    current.min = Math.min(current.min, release.releaseYear);
-    current.max = Math.max(current.max, release.releaseYear);
-    current.count += 1;
-    seriesYearStats.set(seriesRef.id, current);
-
-    const characterSet = seriesCharacterIds.get(seriesRef.id) ?? new Set<number>();
-    release.characters?.forEach((character) => characterSet.add(character.characterId));
-    seriesCharacterIds.set(seriesRef.id, characterSet);
-  });
-});
-
-const releaseModels: Release[] = releases.map((release) => {
-  const primaryCharacter = release.characters?.[0];
-  const characterName =
-    primaryCharacter?.character?.name ??
-    (primaryCharacter?.characterId ? characterNameById.get(primaryCharacter.characterId) : undefined) ??
-    "Unknown";
-  const seriesName = release.series?.[0]?.name ?? "Unknown";
-  const slug = (release.slug ?? "").trim().toLowerCase();
-  const resolvedReleaseId =
-    releaseIdBySlug.get(slug) ??
-    releaseIdByName.get((release.name ?? "").trim().toLowerCase()) ??
-    release.id;
-
-  return {
-    id: toReleaseId(resolvedReleaseId),
-    name: release.name,
-    characterName,
-    seriesName,
-    year: release.releaseYear ?? undefined,
-    imageUrl: getReleaseImageUrl(release),
-    isExclusive: (release.exclusives?.length ?? 0) > 0,
-    createdAt: release.createdAt,
-    updatedAt: release.updatedAt,
-    characters: release.characters?.map((character) => ({
-      id: `${character.characterId}`,
-      name:
-        character.character?.name ??
-        (character.characterId ? characterNameById.get(character.characterId) : undefined) ??
-        "Unknown",
-    })),
-    series: release.series?.map((entry) => ({
-      id: `${entry.id}`,
-      name: entry.name,
-    })),
-  };
-});
-
-const characterModels: Character[] = mockCharactersAndPets.characters.map((character, index) => {
-  const genderLabel = character.gender
-    ? `${character.gender.charAt(0).toUpperCase()}${character.gender.slice(1)}`
-    : "Unknown";
-  const normalizedName = normalizeName(character.name);
-  const normalizedSlug = normalizeName(character.slug ?? "");
-  const resolvedSlug =
-    characterSlugBySlug.get(normalizedSlug) ??
-    characterSlugByName.get(normalizedName) ??
-    character.slug ??
-    character.id;
-
-  return {
-    id: toCharacterId(resolvedSlug),
-    name: character.name,
-    species: genderLabel,
-    releaseCount: characterReleaseCounts[character.id] ?? 0,
-    imageUrl: getCharacterImageUrl(character.name),
-    accentColor: ACCENT_COLORS[index % ACCENT_COLORS.length],
-  };
-});
-
-const seriesModels: Series[] = series.map((entry) => {
-  const stats = seriesYearStats.get(entry.id);
-  const yearLabel = stats
-    ? stats.min === stats.max
-      ? `${stats.min}`
-      : `${stats.min}–${stats.max}`
-    : undefined;
-  const bannerUrl = typeof entry.bannerUrl === "string" && entry.bannerUrl.startsWith("/")
-    ? entry.bannerUrl
-    : undefined;
-
-  return {
-    id: toSeriesId(entry.slug ?? entry.id),
-    name: entry.name,
-    description: entry.description ?? undefined,
-    yearLabel,
-    releaseCount: stats?.count,
-    characterCount: seriesCharacterIds.get(entry.id)?.size,
-    imageUrl: entry.imageUrl ?? bannerUrl ?? PLACEHOLDER_IMAGE,
-  };
-});
-
-const petOwnerByPetId = new Map<number, string>();
-mockCharactersAndPets.ownership.forEach((link) => {
-  const ownerName = characterNameById.get(link.characterId);
-  if (ownerName) {
-    petOwnerByPetId.set(link.petId, ownerName);
-  }
-});
-
-const petModels: Pet[] = mockCharactersAndPets.pets.map((pet) => ({
-  id: toPetId(pet.slug ?? pet.id),
-  name: pet.name,
-  species: "Unknown",
-  ownerName: petOwnerByPetId.get(pet.id) ?? "Unknown",
-  imageUrl: pet.imageUrl ?? PLACEHOLDER_IMAGE,
+// Map CharacterIndexData to CharacterSummary format for display
+const characterModels: CharacterSummary[] = characterIndexMocks.map((char, index) => ({
+  id: char.id ?? (char.name as CharacterId),
+  name: char.name,
+  species: char.species,
+  releaseCount: char.releaseCount,
+  imageUrl: char.heroImage,
+  accentColor: ACCENT_COLORS[index % ACCENT_COLORS.length],
 }));
 
 const stats = {
-  totalReleases: meta.counts.releases ?? releaseModels.length,
-  totalCharacters: mockCharactersAndPets.meta.counts.characters ?? characterModels.length,
-  totalSeries: meta.counts.series ?? seriesModels.length,
-  totalPets: mockCharactersAndPets.meta.counts.pets ?? petModels.length,
+  totalReleases: releaseModels.length,
+  totalCharacters: 127,
+  totalSeries: seriesModels.length,
+  totalPets: petModels.length,
 };
 
 const featuredReleases: ReleaseSummary[] = [...releaseModels]
   .sort((a, b) => (b.year ?? 0) - (a.year ?? 0))
   .slice(0, 6);
 
-const popularCharacterOrder = [
-  "Draculaura",
-  "Frankie Stein",
-  "Venus McFlytrap",
-  "Abbey Bominable",
-  "Skelita Calaveras",
-  "Operetta",
+// Popular characters - the iconic "Main 6" from Monster High G1 lineup
+const popularCharacterSlugs = [
+  "draculaura",
+  "frankie-stein",
+  "clawdeen-wolf",
+  "cleo-de-nile",
+  "lagoona-blue",
+  "ghoulia-yelps",
 ];
 
-const popularCharacters: CharacterSummary[] = popularCharacterOrder
-  .map((name) =>
-    characterModels.find((character) => normalizeName(character.name) === normalizeName(name))
-  )
+const popularCharacters: CharacterSummary[] = popularCharacterSlugs
+  .map((slug) => {
+    const charData = characterIndexMockById(slug);
+    const numericId = characterSlugToNumericId.get(slug);
+    if (!numericId) return null;
+
+    return {
+      id: String(numericId) as CharacterId, // Use numeric ID for URL routing
+      name: charData.name,
+      species: charData.species,
+      releaseCount: charData.releaseCount,
+      imageUrl: charData.heroImage,
+      accentColor: ACCENT_COLORS[popularCharacterSlugs.indexOf(slug) % ACCENT_COLORS.length],
+    };
+  })
   .filter((character): character is CharacterSummary => Boolean(character?.imageUrl));
 
 const seriesCollection: SeriesSummary[] = [...seriesModels]
@@ -501,285 +324,6 @@ const SectionHeader = ({ kicker, title, action }: { kicker: string; title: strin
   );
 };
 
-type CharacterCardProps = CharacterSummary;
-
-type SeriesCardProps = SeriesSummary;
-
-type PetCardProps = PetSummary;
-
-const CharacterCard = ({ id, name, species, releaseCount, imageUrl, accentColor = "#FF1493" }: CharacterCardProps) => {
-  return (
-    <Card
-      component={RouterLink}
-      to={`/catalog/c/${id}`}
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-        textDecoration: "none",
-        position: "relative",
-        overflow: "hidden",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 4,
-          background: `linear-gradient(90deg, ${accentColor} 0%, transparent 100%)`,
-          zIndex: 1,
-        },
-      }}
-    >
-      <CardMedia
-        component="div"
-        sx={{
-          height: 320,
-          backgroundColor: "background.default",
-          backgroundImage: `url(${imageUrl ?? PLACEHOLDER_IMAGE})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center top",
-          position: "relative",
-          "&::after": {
-            content: '""',
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: "50%",
-            background: "linear-gradient(to top, rgba(20, 20, 32, 1) 0%, transparent 100%)",
-          },
-        }}
-      />
-
-      <CardContent sx={{ pt: 0, mt: -4, position: "relative", zIndex: 2 }}>
-        <Typography
-          variant="h5"
-          sx={{
-            fontWeight: 800,
-            color: "text.primary",
-            mb: 0.5,
-            textShadow: "0 2px 8px rgba(0,0,0,0.5)",
-          }}
-        >
-          {name}
-        </Typography>
-        <Typography
-          variant="body2"
-          sx={{
-            color: "text.secondary",
-            mb: 2,
-            fontStyle: "italic",
-          }}
-        >
-          {species}
-        </Typography>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Chip
-            label={`${releaseCount ?? 0} releases`}
-            size="small"
-            sx={{
-              backgroundColor: accentColor,
-              color: "#000",
-              fontWeight: 600,
-              fontSize: "0.7rem",
-            }}
-          />
-        </Box>
-      </CardContent>
-    </Card>
-  );
-};
-
-const SeriesCard = ({ id, name, yearLabel, releaseCount, characterCount, imageUrl, description }: SeriesCardProps) => {
-  return (
-    <Card
-      component={RouterLink}
-      to={`/catalog/s/${id}`}
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-        textDecoration: "none",
-        position: "relative",
-      }}
-    >
-      {/* <CardMedia
-        component="div"
-        sx={{
-          height: 200,
-          backgroundColor: "background.default",
-          backgroundImage: `url(${imageUrl ?? PLACEHOLDER_IMAGE})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          position: "relative",
-          "&::after": {
-            content: '""',
-            position: "absolute",
-            inset: 0,
-            background: "linear-gradient(135deg, rgba(255, 20, 147, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%)",
-          },
-        }}
-      /> */}
-
-      <CardContent sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", mb: 1 }}>
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 700,
-              color: "text.primary",
-              lineHeight: 1.3,
-            }}
-          >
-            {name}
-          </Typography>
-          <Chip
-            label={yearLabel ?? "—"}
-            size="small"
-            sx={{
-              backgroundColor: "primary.main",
-              color: "primary.contrastText",
-              fontWeight: 600,
-              fontSize: "0.7rem",
-              ml: 1,
-              flexShrink: 0,
-            }}
-          />
-        </Box>
-
-        {description && (
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{
-              mb: 2,
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-            }}
-          >
-            {description}
-          </Typography>
-        )}
-
-        <Box sx={{ mt: "auto" }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-            <Typography variant="caption" color="text.secondary">
-              {characterCount ?? 0} characters
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {releaseCount ?? 0} releases
-            </Typography>
-          </Box>
-          <LinearProgress
-            variant="determinate"
-            value={Math.min(100, ((releaseCount ?? 0) / 20) * 100)}
-            sx={{
-              height: 4,
-              borderRadius: 2,
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
-              "& .MuiLinearProgress-bar": {
-                borderRadius: 2,
-                background: "linear-gradient(90deg, #FF1493 0%, #00D4FF 100%)",
-              },
-            }}
-          />
-        </Box>
-      </CardContent>
-    </Card>
-  );
-};
-
-const PetCard = ({ id, name, species, ownerName, ownerImageUrl, imageUrl }: PetCardProps) => {
-  return (
-    <Card
-      component={RouterLink}
-      to={`/catalog/p/${id}`}
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-        textDecoration: "none",
-        position: "relative",
-      }}
-    >
-      <Box
-        sx={{
-          position: "absolute",
-          top: 8,
-          right: 8,
-          zIndex: 10,
-          width: 32,
-          height: 32,
-          borderRadius: "50%",
-          backgroundColor: "rgba(0, 212, 255, 0.2)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backdropFilter: "blur(4px)",
-        }}
-      >
-        <PetsIcon sx={{ fontSize: 16, color: "secondary.main" }} />
-      </Box>
-
-      <CardMedia
-        component="div"
-        sx={{
-          height: 220,
-          backgroundColor: "background.default",
-          backgroundImage: `url(${imageUrl ?? PLACEHOLDER_IMAGE})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          position: "relative",
-          "&::after": {
-            content: '""',
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: "40%",
-            background: "linear-gradient(to top, rgba(20, 20, 32, 0.9) 0%, transparent 100%)",
-          },
-        }}
-      />
-
-      <CardContent>
-        <Typography
-          variant="h6"
-          sx={{
-            fontWeight: 700,
-            color: "text.primary",
-            mb: 0.5,
-          }}
-        >
-          {name}
-        </Typography>
-        <Chip
-          label={species}
-          size="small"
-          sx={{
-            backgroundColor: "rgba(0, 212, 255, 0.15)",
-            color: "secondary.main",
-            fontWeight: 500,
-            fontSize: "0.7rem",
-            mb: 2,
-          }}
-        />
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Avatar
-            src={ownerImageUrl}
-            sx={{ width: 24, height: 24, border: "1px solid", borderColor: "primary.main" }}
-          />
-          <Typography variant="body2" color="text.secondary">
-            Owner: <Box component="span" sx={{ color: "primary.main", fontWeight: 500 }}>{ownerName ?? "Unknown"}</Box>
-          </Typography>
-        </Box>
-      </CardContent>
-    </Card>
-  );
-};
 
 export const FeaturedReleasesSection = () => {
   return (

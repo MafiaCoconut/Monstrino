@@ -264,6 +264,7 @@ const buildRelease = (release: ReleaseRecord): Release => {
     .map((petLink) => petById.get(petLink.pet_id))
     .filter((pet): pet is PetRecord => Boolean(pet))
     .map((pet) => ({
+      id: pet.id,
       name: pet.display_name,
       category: 'Pet',
       rarity: rarityPalette[release.id % rarityPalette.length],

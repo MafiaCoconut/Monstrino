@@ -20,7 +20,7 @@ const baseCharacterIndexMock: CharacterIndexData = {
   releaseCount: 47,
   signatureColors: ["Pink", "Black", "White"],
   motifs: ["Hearts", "Bats", "Polka Dots"],
-  heroImage: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=500&fit=crop",
+  heroImage: "/demo/releases/2025/scary-sweet-birthday-draculaura/main-image.png",
   officialDescription:
     "Draculaura is the adopted daughter of Count Dracula and one of the most beloved ghouls at Monster High. Despite being a vampire, she's a strict vegan who faints at the sight of blood. Her bright personality and love for the color pink make her stand out in any crowd.",
   biography:
@@ -330,7 +330,7 @@ export const characterIndexMocks: CharacterIndexData[] = [
     releaseCount: 45,
     signatureColors: ["Blue", "Black", "White"],
     motifs: ["Lightning Bolts", "Stitches", "Plaid"],
-    heroImage: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=500&fit=crop",
+    heroImage: "/demo/releases/2025/scullector-frankie-barbie/main-image.png",
     officialDescription:
       "Frankie Stein is the daughter of Frankenstein's monster, a curious and kind-hearted ghoul who embraces her unique look with electric confidence.",
     biography:

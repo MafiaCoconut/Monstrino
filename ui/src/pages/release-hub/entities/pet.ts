@@ -9,6 +9,7 @@ export type PetExclusivity = "exclusive" | "shared" | "limited";
 
 export interface PetOwnerRef extends EntityRef<CharacterId | string> {
   role?: "primary" | "shared";
+  imageUrl?: UrlString;
 }
 
 export interface PetReleaseRef extends EntityRef<ReleaseId | string> {

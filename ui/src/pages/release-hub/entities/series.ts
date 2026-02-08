@@ -1,4 +1,5 @@
 import type { BrandedId, EntityAudit, Generation, HexColor, UrlString } from "./shared";
+import type { CharacterSummary } from "./character";
 
 export type SeriesId = BrandedId<"SeriesId">;
 
@@ -31,10 +32,7 @@ export interface SeriesDoll {
   imageUrl?: UrlString;
 }
 
-export interface SeriesCharacter {
-  name: string;
-  color?: HexColor;
-}
+export type SeriesCharacter = CharacterSummary;
 
 export interface SeriesExclusive {
   doll: string;

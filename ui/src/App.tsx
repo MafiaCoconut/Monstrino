@@ -19,7 +19,6 @@ import { SupportPage } from './pages/static/support';
 import { TermsPage } from './pages/static/terms';
 // import { PublicLayout, UserLayout, ReleaseHubLayout } from './layouts';
 // import { Homepage } from '@/pages/home';
-import { ReleaseCatalogPage, ReleaseDetailPage } from '@/pages/release-hub';
 import { ReleaseIndexPage } from '@/pages/release-index';
 import { UserDollsPage } from './pages/user/dolls';
 import HomePage from './pages/release-hub/Homepage';
@@ -69,11 +68,10 @@ function App() {
       
       {/* Releases */}
       {/* <Route path='/releases' element={<ReleaseHubLayout />} /> */}
-      <Route path='/releases' element={<ReleaseCatalogPage />} />
       {/* <Route path='/releases/:id' element={<ReleaseDetailPage />} /> */}
       {/* <Route path='/releases/1' element={<ReleasePage />} /> */}
-      <Route path='/releases/home3' element={<HomePage />} />
-      <Route path='/releases/catalog' element={<ReleaseCatalog />} />
+      {/* <Route path='/releases/home3' element={<HomePage />} />
+      <Route path='/releases/catalog' element={<ReleaseCatalog />} /> */}
 
       <Route element={<CatalogLayout />}>
         <Route path='/catalog/r' element={<ReleaseCatalog />} />

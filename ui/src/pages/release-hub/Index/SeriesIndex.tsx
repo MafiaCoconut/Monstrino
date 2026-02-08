@@ -26,6 +26,7 @@ import { useParams } from "react-router-dom";
 import type { Series } from "../entities/series";
 import { seriesIndexMock, seriesIndexByNumericId } from "@/data/real-data/seriesIndexMock";
 import { ReleaseCardSeriesIndex } from "../components/release-cards";
+import { CharacterCard } from "../components/character-card";
 
 // ============================================================
 // DESIGN TOKENS — Monstrino Dark Archive Theme (Inlined)
@@ -381,49 +382,6 @@ const TableCell = forwardRef<HTMLTableCellElement, React.TdHTMLAttributes<HTMLTa
   )
 );
 
-// Avatar Components
-const Avatar = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ style, children, ...props }, ref) => (
-    <Box
-      ref={ref}
-      sx={{
-        position: "relative",
-        display: "flex",
-        width: "2.5rem",
-        height: "2.5rem",
-        flexShrink: 0,
-        overflow: "hidden",
-        borderRadius: "9999px",
-        ...style,
-      }}
-      {...props}
-    >
-      {children}
-    </Box>
-  )
-);
-
-const AvatarFallback = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ style, children, ...props }, ref) => (
-    <Box
-      ref={ref}
-      sx={{
-        display: "flex",
-        height: "100%",
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: "9999px",
-        backgroundColor: tokens.colors.muted,
-        ...style,
-      }}
-      {...props}
-    >
-      {children}
-    </Box>
-  )
-);
-
 // ScrollArea Components
 const ScrollArea = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ style, children, ...props }, ref) => (
@@ -613,18 +571,6 @@ const DollPlaceholder = () => (
     <path d="M38 60 L25 90 L30 92 L40 70" fill={tokens.colors.muted} />
     <path d="M82 60 L95 90 L90 92 L80 70" fill={tokens.colors.muted} />
   </svg>
-);
-
-// Character avatar placeholder
-const CharacterAvatar = ({ name, color }: { name: string; color: string }) => (
-  <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
-    <Avatar style={{ height: "4rem", width: "4rem", border: `2px solid ${color}` }}>
-      <AvatarFallback style={{ backgroundColor: tokens.colors.secondary, color: tokens.colors.foreground, fontSize: tokens.fontSizes.lg, fontWeight: tokens.fontWeights.semibold }}>
-        {name.split(' ').map(n => n[0]).join('')}
-      </AvatarFallback>
-    </Avatar>
-    <Typography component="span" sx={{ fontSize: tokens.fontSizes.sm, color: tokens.colors.mutedForeground, textAlign: "center" }}>{name}</Typography>
-  </Box>
 );
 
 // Color swatch component
@@ -925,17 +871,15 @@ const MonsterHighSeriesPage: React.FC = () => {
                 ({characters.length} characters)
               </Typography>
             </Typography>
-            <ScrollArea style={{ width: "100%", whiteSpace: "nowrap" }}>
-              <Box sx={{ display: "flex", gap: tokens.spacing[8], paddingBottom: "1rem" }}>
-                {characters.map((char) => (
-                  <CharacterAvatar key={char.name} name={char.name} color={char.color} />
-                ))}
-              </Box>
-            </ScrollArea>
+            <Box sx={{ display: "grid", gridTemplateColumns: `repeat(${dollGridCols}, 1fr)`, gap: "1rem" }}>
+              {characters.map((char) => (
+                <CharacterCard key={char.id} {...char} />
+              ))}
+            </Box>
           </Box>
 
           {/* Exclusives & Regional */}
-          <Box component="section">
+          {/* <Box component="section">
             <Typography variant="h2" sx={{ fontSize: tokens.fontSizes["2xl"], fontWeight: tokens.fontWeights.semibold, marginBottom: tokens.spacing[6], display: "flex", alignItems: "center", gap: "0.5rem" }}>
               <MapPinIcon style={{ width: "1.25rem", height: "1.25rem", color: tokens.colors.primary }} />
               Exclusives & Regional Releases
@@ -966,10 +910,10 @@ const MonsterHighSeriesPage: React.FC = () => {
                 </TableBody>
               </Table>
             </Card>
-          </Box>
+          </Box> */}
 
           {/* Distribution & Market */}
-          <Box component="section">
+          {/* <Box component="section">
             <Typography variant="h2" sx={{ fontSize: tokens.fontSizes["2xl"], fontWeight: tokens.fontWeights.semibold, marginBottom: tokens.spacing[6], display: "flex", alignItems: "center", gap: "0.5rem" }}>
               <GlobeIcon style={{ width: "1.25rem", height: "1.25rem", color: tokens.colors.primary }} />
               Distribution & Market
@@ -1012,10 +956,10 @@ const MonsterHighSeriesPage: React.FC = () => {
                 </CardContent>
               </Card>
             </Box>
-          </Box>
+          </Box> */}
 
           {/* Related Series */}
-          <Box component="section">
+          {/* <Box component="section">
             <Typography variant="h2" sx={{ fontSize: tokens.fontSizes["2xl"], fontWeight: tokens.fontWeights.semibold, marginBottom: tokens.spacing[6], display: "flex", alignItems: "center", gap: "0.5rem" }}>
               <ChevronRightIcon style={{ width: "1.25rem", height: "1.25rem", color: tokens.colors.primary }} />
               Related Series
@@ -1050,10 +994,10 @@ const MonsterHighSeriesPage: React.FC = () => {
                 ))}
               </Box>
             </ScrollArea>
-          </Box>
+          </Box> */}
 
           {/* Related Media */}
-          <Box component="section">
+          {/* <Box component="section">
             <Typography variant="h2" sx={{ fontSize: tokens.fontSizes["2xl"], fontWeight: tokens.fontWeights.semibold, marginBottom: tokens.spacing[6], display: "flex", alignItems: "center", gap: "0.5rem" }}>
               <FilmIcon style={{ width: "1.25rem", height: "1.25rem", color: tokens.colors.primary }} />
               Related Media
@@ -1106,10 +1050,10 @@ const MonsterHighSeriesPage: React.FC = () => {
                 </Card>
               ))}
             </Box>
-          </Box>
+          </Box> */}
 
           {/* Image Gallery */}
-          <Box component="section">
+          {/* <Box component="section">
             <Typography variant="h2" sx={{ fontSize: tokens.fontSizes["2xl"], fontWeight: tokens.fontWeights.semibold, marginBottom: tokens.spacing[6], display: "flex", alignItems: "center", gap: "0.5rem" }}>
               <ImageIcon style={{ width: "1.25rem", height: "1.25rem", color: tokens.colors.primary }} />
               Gallery
@@ -1142,7 +1086,7 @@ const MonsterHighSeriesPage: React.FC = () => {
                 </Box>
               ))}
             </Box>
-          </Box>
+          </Box> */}
 
           {/* Price & Rarity Overview */}
           <Box component="section">
@@ -1194,7 +1138,7 @@ const MonsterHighSeriesPage: React.FC = () => {
           </Box>
 
           {/* Facts & Behind-the-Scenes */}
-          <Box component="section">
+          {/* <Box component="section">
             <Typography variant="h2" sx={{ fontSize: tokens.fontSizes["2xl"], fontWeight: tokens.fontWeights.semibold, marginBottom: tokens.spacing[6], display: "flex", alignItems: "center", gap: "0.5rem" }}>
               <InfoIcon style={{ width: "1.25rem", height: "1.25rem", color: tokens.colors.primary }} />
               Facts & Behind-the-Scenes
@@ -1220,7 +1164,7 @@ const MonsterHighSeriesPage: React.FC = () => {
                 </AccordionItem>
               ))}
             </Accordion>
-          </Box>
+          </Box> */}
 
           {/* Community Reception & Legacy */}
           <Box component="section" sx={{ paddingBottom: tokens.spacing[8] }}>

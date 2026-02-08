@@ -113,6 +113,7 @@ export interface ReleaseAccessory {
 }
 
 export interface ReleasePet {
+  id: string | number;
   name: string;
   category?: string;
   rarity?: string;

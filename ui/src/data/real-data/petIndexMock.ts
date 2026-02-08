@@ -124,6 +124,7 @@ const buildPet = (pet: PetRecord): Pet => {
         id: `${ownerId}`,
         name: owner.display_name ?? owner.name,
         role: index === 0 ? 'primary' : 'shared',
+        imageUrl: owner.primary_image ?? undefined,
       } as const;
     })
     .filter((owner): owner is NonNullable<typeof owner> => Boolean(owner));
@@ -169,7 +170,7 @@ const buildPet = (pet: PetRecord): Pet => {
   ];
 
   return {
-    id: toPetId(pet.name ?? pet.id),
+    id: toPetId(pet.id),
     name: pet.display_name ?? pet.name,
     species,
     imageUrl,

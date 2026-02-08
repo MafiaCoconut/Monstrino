@@ -380,7 +380,7 @@ const AccordionContent = forwardRef<
     }}
     {...props}
   >
-    <div style={{ paddingBottom: "1rem", paddingTop: 0 }}>{children}</div>
+    <Box sx={{ paddingBottom: "1rem", paddingTop: 0 }}>{children}</Box>
   </AccordionPrimitive.Content>
 ));
 AccordionContent.displayName = "AccordionContent";
