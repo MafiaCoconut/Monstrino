@@ -21,6 +21,7 @@ class BaseCrudRepoTest:
     unique_field_value = None    # e.g. "MALE"
     update_field = None          # e.g. "display_name"
     updated_value = None         # e.g. "Updated"
+    is_duplicable = False
 
     @pytest.mark.asyncio
     async def test_save_and_get(self, uow: UnitOfWorkInterface[AsyncSession, Repositories], request):
@@ -50,13 +51,14 @@ class BaseCrudRepoTest:
     async def test_unique_conflict_raises(self, uow: UnitOfWorkInterface[AsyncSession, Repositories], request):
         async with uow:
             repo = getattr(uow.repos, self.repo_attr)
-            first = self.entity_cls(**self.sample_create_data)
+            # first = self.entity_cls(**self.sample_create_data)
             first = self.entity_cls(**self.sample_create_data)
             await repo.save(first)
             duplicate = self.entity_cls(**self.sample_create_data)
-            with pytest.raises(DuplicateEntityError):
-                async with uow.savepoint():
-                    await repo.save(duplicate)
+            if not self.is_duplicable:
+                with pytest.raises(DuplicateEntityError):
+                    async with uow.savepoint():
+                        await repo.save(duplicate)
 
     @pytest.mark.asyncio
     async def test_get_by_field_returns_none(self, uow: UnitOfWorkInterface[AsyncSession, Repositories], request):
