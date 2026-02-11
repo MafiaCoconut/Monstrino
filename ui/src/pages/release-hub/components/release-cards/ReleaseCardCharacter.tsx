@@ -23,11 +23,11 @@ const hslAlpha = (value: string, alpha: number) => {
   return value;
 };
 
-interface ReleaseCardCharacterIndexProps {
+interface ReleaseCardCharacterProps {
   release: CharacterIndexRelease;
 }
 
-const ReleaseCardCharacterIndex: React.FC<ReleaseCardCharacterIndexProps> = ({ release }) => {
+const ReleaseCardCharacter: React.FC<ReleaseCardCharacterProps> = ({ release }) => {
   return (
     <Box
       component={RouterLink}
@@ -159,4 +159,4 @@ const ReleaseCardCharacterIndex: React.FC<ReleaseCardCharacterIndexProps> = ({ r
   );
 };
 
-export default ReleaseCardCharacterIndex;
+export default ReleaseCardCharacter;

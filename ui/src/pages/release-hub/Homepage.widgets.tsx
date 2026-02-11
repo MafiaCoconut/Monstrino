@@ -38,7 +38,7 @@ import type {
   SeriesId,
   SeriesSummary,
 } from "./entities";
-import { ReleaseCardHome } from "./components/release-cards";
+import { ReleaseCardSpotlight } from "./components/release-cards";
 import { CharacterCard } from "./components/character-card";
 import { SeriesCard } from "./components/series-card";
 import { PetCard } from "./components/pet-card";
@@ -202,7 +202,7 @@ export const HeroSection = () => {
           <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
             <Button
               component={Link}
-              to="/releases"
+              to="/catalog/r"
               variant="contained"
               size="large"
               endIcon={<ArrowForwardIcon />}
@@ -212,7 +212,7 @@ export const HeroSection = () => {
             </Button>
             <Button
               component={Link}
-              to="/characters"
+              to="/catalog/c"
               variant="outlined"
               size="large"
               sx={{
@@ -286,7 +286,17 @@ export const StatsSection = () => {
   );
 };
 
-const SectionHeader = ({ kicker, title, action }: { kicker: string; title: string; action?: string }) => {
+const SectionHeader = ({
+  kicker,
+  title,
+  action,
+  actionLink,
+}: {
+  kicker: string;
+  title: string;
+  action?: string;
+  actionLink?: string;
+}) => {
   return (
     <Stack direction="row" alignItems="flex-end" justifyContent="space-between" sx={{ mb: 2 }}>
       <Box>
@@ -305,21 +315,24 @@ const SectionHeader = ({ kicker, title, action }: { kicker: string; title: strin
         </Typography>
       </Box>
 
-      <MuiLink
-        href="#"
-        underline="none"
-        sx={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 1,
-          color: alpha("#fff", 0.7),
-          fontWeight: 700,
-          "&:hover": { color: "#fff" },
-        }}
-      >
-        {action ?? "View All"}
-        <ArrowForwardIcon fontSize="small" />
-      </MuiLink>
+      {actionLink ? (
+        <MuiLink
+          component={Link}
+          to={actionLink}
+          underline="none"
+          sx={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 1,
+            color: alpha("#fff", 0.7),
+            fontWeight: 700,
+            "&:hover": { color: "#fff" },
+          }}
+        >
+          {action ?? "View All"}
+          <ArrowForwardIcon fontSize="small" />
+        </MuiLink>
+      ) : null}
     </Stack>
   );
 };
@@ -328,7 +341,7 @@ const SectionHeader = ({ kicker, title, action }: { kicker: string; title: strin
 export const FeaturedReleasesSection = () => {
   return (
     <Box sx={{ mt: 5 }}>
-      <SectionHeader kicker="Latest Drops" title="Featured Releases" />
+      <SectionHeader kicker="Latest Drops" title="Featured Releases" actionLink="/catalog/r" />
       <Box
         sx={{
           display: "flex",
@@ -344,7 +357,7 @@ export const FeaturedReleasesSection = () => {
       >
         {featuredReleases.map((item) => (
           <Box key={item.id} sx={{ minWidth: 260, maxWidth: 260 }}>
-            <ReleaseCardHome {...item} />
+            <ReleaseCardSpotlight {...item} />
           </Box>
         ))}
       </Box>
@@ -355,7 +368,7 @@ export const FeaturedReleasesSection = () => {
 export const PopularCharactersSection = () => {
   return (
     <Box sx={{ mt: 7 }}>
-      <SectionHeader kicker="Monster High Icons" title="Popular Characters" />
+      <SectionHeader kicker="Monster High Icons" title="Popular Characters" actionLink="/catalog/c" />
       <Box
         sx={{
           display: "flex",
@@ -382,7 +395,7 @@ export const PopularCharactersSection = () => {
 export const ExploreSeriesSection = () => {
   return (
     <Box sx={{ mt: 7 }}>
-      <SectionHeader kicker="Collections" title="Explore Series" />
+      <SectionHeader kicker="Collections" title="Explore Series" actionLink="/catalog/s" />
       <Grid container spacing={2.2}>
         {seriesCollection.map((entry) => (
           <Grid key={entry.id} size={{ xs: 12, md: 4 }}>
@@ -397,7 +410,7 @@ export const ExploreSeriesSection = () => {
 export const MonsterPetsSection = () => {
   return (
     <Box sx={{ mt: 7 }}>
-      <SectionHeader kicker="Creepy Companions" title="Monster Pets" />
+      <SectionHeader kicker="Creepy Companions" title="Monster Pets" actionLink="/catalog/p" />
       <Box
         sx={{
           display: "flex",

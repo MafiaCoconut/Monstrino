@@ -181,6 +181,7 @@ const buildSeries = (series: (typeof seriesMock)[number]): Series => {
       character: characterName,
       variant: release.display_name ?? release.name ?? 'Release',
       rarity: inferRarity(release.display_name ?? release.name ?? ''),
+      year: release.year ?? yearEnd ?? yearStart,
       msrp: toPrice(msrpValue),
       imageUrl: primaryImage?.image_url ?? undefined,
     };

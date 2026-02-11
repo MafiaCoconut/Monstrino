@@ -3,7 +3,6 @@ import {
   Card,
   CardContent,
   Chip,
-  LinearProgress,
   Typography,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
@@ -83,19 +82,6 @@ export const SeriesCard = ({
               {releaseCount ?? 0} releases
             </Typography>
           </Box>
-          <LinearProgress
-            variant="determinate"
-            value={Math.min(100, ((releaseCount ?? 0) / 20) * 100)}
-            sx={{
-              height: 4,
-              borderRadius: 2,
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
-              "& .MuiLinearProgress-bar": {
-                borderRadius: 2,
-                background: "linear-gradient(90deg, #FF1493 0%, #00D4FF 100%)",
-              },
-            }}
-          />
         </Box>
       </CardContent>
     </Card>

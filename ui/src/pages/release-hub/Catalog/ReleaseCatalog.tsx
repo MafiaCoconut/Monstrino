@@ -16,9 +16,14 @@ import {
   IconButton,
   Button,
   Grid,
+  Drawer,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import CloseIcon from '@mui/icons-material/Close';
 import { characterMock } from '@/data/real-data/characterMock';
 import { exclusiveVendorMock } from '@/data/real-data/exclusiveVendorMock';
 import { releaseCharacterMock } from '@/data/real-data/releaseCharacterMock';
@@ -27,6 +32,7 @@ import { releaseImageMock } from '@/data/real-data/releaseImageMock';
 import { releaseMock } from '@/data/real-data/releaseMock';
 import { releaseSeriesLinkMock } from '@/data/real-data/releaseSeriesLinkMock';
 import { seriesMock } from '@/data/real-data/seriesMock';
+import { useElementHeight } from './useElementHeight';
 import {
   GENERATIONS,
   RELEASE_RARITIES,
@@ -38,32 +44,87 @@ import {
   type ReleaseTag,
   type ReleaseType,
 } from '../entities';
-import ReleaseCard from '../components/release-cards/ReleaseCard';
+import ReleaseCardCatalog from '../components/release-cards/ReleaseCardCatalog';
 
 // ============================================
 // DATA TRANSFORMATION (mock -> release models)
 // ============================================
 
 const PLACEHOLDER_IMAGE = '/placeholder.svg';
-const releases = releaseMock;
-
 const toReleaseId = (value: string | number): ReleaseId => `${value}` as ReleaseId;
 
-type SeriesRecord = (typeof seriesMock)[number];
-type ExclusiveVendorRecord = (typeof exclusiveVendorMock)[number];
-type ReleaseImageRecord = (typeof releaseImageMock)[number];
-type ReleaseCharacterRecord = (typeof releaseCharacterMock)[number];
-type ReleaseSeriesLinkRecord = (typeof releaseSeriesLinkMock)[number];
-type ReleaseExclusiveLinkRecord = (typeof releaseExclusiveLinkMock)[number];
+type ReleaseMockRecord = {
+  id: number;
+  name?: string | null;
+  display_name?: string | null;
+  year?: number | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+};
 
-const seriesById = new Map(seriesMock.map((series) => [series.id, series]));
-const vendorById = new Map(exclusiveVendorMock.map((vendor) => [vendor.id, vendor]));
+type SeriesRecord = {
+  id: number;
+  name: string;
+  display_name?: string | null;
+};
 
-const characterNameById = new Map<number, string>(
-  characterMock.map((character) => [character.id, character.display_name ?? character.name])
+type ExclusiveVendorRecord = {
+  id: number;
+  name?: string | null;
+  display_name?: string | null;
+};
+
+type ReleaseImageRecord = {
+  release_id: number;
+  image_url: string;
+  is_primary?: boolean | null;
+  position?: number | null;
+};
+
+type ReleaseCharacterRecord = {
+  release_id: number;
+  character_id: number;
+  position?: number | null;
+};
+
+type ReleaseSeriesLinkRecord = {
+  release_id: number;
+  series_id: number;
+  relation_type?: string | null;
+};
+
+type ReleaseExclusiveLinkRecord = {
+  release_id: number;
+  vendor_id: number;
+};
+
+type CharacterMockRecord = {
+  id: number;
+  name: string;
+  display_name?: string | null;
+};
+
+const releases: ReadonlyArray<ReleaseMockRecord> = releaseMock;
+const seriesMockData: ReadonlyArray<SeriesRecord> = seriesMock;
+const exclusiveVendorData: ReadonlyArray<ExclusiveVendorRecord> = exclusiveVendorMock;
+const releaseImagesData: ReadonlyArray<ReleaseImageRecord> = releaseImageMock;
+const releaseCharactersData: ReadonlyArray<ReleaseCharacterRecord> = releaseCharacterMock;
+const releaseSeriesLinksData: ReadonlyArray<ReleaseSeriesLinkRecord> = releaseSeriesLinkMock;
+const releaseExclusiveLinksData: ReadonlyArray<ReleaseExclusiveLinkRecord> = releaseExclusiveLinkMock;
+const characterMockData: ReadonlyArray<CharacterMockRecord> = characterMock;
+
+const seriesById = new Map<number, SeriesRecord>(
+  seriesMockData.map((series) => [series.id, series])
+);
+const vendorById = new Map<number, ExclusiveVendorRecord>(
+  exclusiveVendorData.map((vendor) => [vendor.id, vendor])
 );
 
-const releaseImagesByReleaseId = releaseImageMock.reduce<Map<number, ReleaseImageRecord[]>>(
+const characterNameById = new Map<number, string>(
+  characterMockData.map((character) => [character.id, character.display_name ?? character.name])
+);
+
+const releaseImagesByReleaseId = releaseImagesData.reduce<Map<number, ReleaseImageRecord[]>>(
   (acc, image) => {
     const list = acc.get(image.release_id) ?? [];
     list.push(image);
@@ -73,7 +134,7 @@ const releaseImagesByReleaseId = releaseImageMock.reduce<Map<number, ReleaseImag
   new Map()
 );
 
-const releaseCharactersByReleaseId = releaseCharacterMock.reduce<Map<number, ReleaseCharacterRecord[]>>(
+const releaseCharactersByReleaseId = releaseCharactersData.reduce<Map<number, ReleaseCharacterRecord[]>>(
   (acc, link) => {
     const list = acc.get(link.release_id) ?? [];
     list.push(link);
@@ -83,7 +144,7 @@ const releaseCharactersByReleaseId = releaseCharacterMock.reduce<Map<number, Rel
   new Map()
 );
 
-const releaseSeriesByReleaseId = releaseSeriesLinkMock.reduce<Map<number, ReleaseSeriesLinkRecord[]>>(
+const releaseSeriesByReleaseId = releaseSeriesLinksData.reduce<Map<number, ReleaseSeriesLinkRecord[]>>(
   (acc, link) => {
     const list = acc.get(link.release_id) ?? [];
     list.push(link);
@@ -93,7 +154,7 @@ const releaseSeriesByReleaseId = releaseSeriesLinkMock.reduce<Map<number, Releas
   new Map()
 );
 
-const releaseExclusivesByReleaseId = releaseExclusiveLinkMock.reduce<
+const releaseExclusivesByReleaseId = releaseExclusiveLinksData.reduce<
   Map<number, ReleaseExclusiveLinkRecord[]>
 >((acc, link) => {
   const list = acc.get(link.release_id) ?? [];
@@ -151,10 +212,7 @@ const inferGeneration = (year?: number): Generation => {
   return 'G1';
 };
 
-const inferReleaseTypes = (
-  release: (typeof releases)[number],
-  seriesNames: string[]
-): ReleaseType[] => {
+const inferReleaseTypes = (release: ReleaseMockRecord, seriesNames: string[]): ReleaseType[] => {
   const text = normalizeName(
     [release.display_name, release.name, ...seriesNames].filter(Boolean).join(' ')
   );
@@ -205,9 +263,9 @@ const inferRarity = (
   return 'Common';
 };
 
-const toReleaseDate = (release: (typeof releases)[number]) => {
+const toReleaseDate = (release: ReleaseMockRecord): string => {
   if (release.year) return `${release.year}-01-01`;
-  if (release.created_at) return release.created_at.split(' ')[0];
+  if (release.created_at) return release.created_at.split(' ')[0] ?? '2000-01-01';
   return '2000-01-01';
 };
 
@@ -221,23 +279,26 @@ const releaseModels: Release[] = releases.map((release) => {
   const exclusiveVendors = getReleaseExclusives(release.id);
   const tags = buildTags(exclusiveVendors);
   const characterLinks = getReleaseCharacterLinks(release.id);
+  const releaseYear = release.year ?? undefined;
+  const createdAt = release.created_at ?? undefined;
+  const updatedAt = release.updated_at ?? undefined;
 
   return {
     id: toReleaseId(release.id),
     name: release.display_name ?? release.name ?? 'Untitled Release',
     characterName,
     seriesName,
-    year: release.year ?? undefined,
     imageUrl: getReleaseImageUrl(release.id),
     isExclusive: exclusiveVendors.length > 0,
-    generation: inferGeneration(release.year),
+    generation: inferGeneration(release.year ?? undefined),
     releaseDate: toReleaseDate(release),
     releaseTypes,
     packSize: Math.max(1, characterLinks.length || 1),
     rarity: inferRarity(exclusiveVendors, releaseTypes),
     tags,
-    createdAt: release.created_at ?? undefined,
-    updatedAt: release.updated_at ?? undefined,
+    ...(releaseYear ? { year: releaseYear } : {}),
+    ...(createdAt ? { createdAt } : {}),
+    ...(updatedAt ? { updatedAt } : {}),
     characters: characterLinks.map((link) => ({
       id: `${link.character_id}`,
       name: characterNameById.get(link.character_id) ?? 'Unknown',
@@ -288,27 +349,40 @@ const FilterSection: React.FC<FilterSectionProps> = ({ title, children, defaultO
           justifyContent: 'space-between',
           cursor: 'pointer',
           py: 1,
-          '&:hover': { opacity: 0.8 },
+          px: { xs: 0, md: 0 },
+          borderRadius: 1,
+          transition: 'all 0.2s ease',
+          '&:hover': { 
+            backgroundColor: { xs: 'rgba(255,255,255,0.03)', md: 'transparent' },
+          },
         }}
       >
         <Typography
           variant="subtitle2"
           sx={{
-            color: 'text.secondary',
+            color: 'text.primary',
             fontWeight: 600,
             textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            fontSize: '0.7rem',
+            letterSpacing: '0.08em',
+            fontSize: { xs: '0.75rem', md: '0.65rem', lg: '0.7rem' },
           }}
         >
           {title}
         </Typography>
-        <IconButton size="small" sx={{ color: 'text.secondary', p: 0 }}>
+        <IconButton 
+          size="small" 
+          sx={{ 
+            color: 'text.secondary', 
+            p: 0.5,
+            transition: 'transform 0.2s ease',
+            transform: open ? 'rotate(0deg)' : 'rotate(0deg)',
+          }}
+        >
           {open ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
         </IconButton>
       </Box>
       <Collapse in={open}>
-        <Box sx={{ pt: 1 }}>{children}</Box>
+        <Box sx={{ pt: 1.5, pb: 0.5 }}>{children}</Box>
       </Collapse>
     </Box>
   );
@@ -318,29 +392,22 @@ const FilterSection: React.FC<FilterSectionProps> = ({ title, children, defaultO
 // WIDGET COMPONENTS
 // ============================================
 
-interface CatalogHeaderProps {
-  totalReleases: number;
-}
-
-const CatalogHeader: React.FC<CatalogHeaderProps> = ({ totalReleases }) => (
-  <Box
-    sx={{
-      borderBottom: '1px solid rgba(255,255,255,0.06)',
-      px: { xs: 2, md: 4 },
-      py: 3,
-    }}
-  >
-    <Box sx={{ maxWidth: 1600, mx: 'auto' }}>
-      <Typography
-        variant="h4"
-        sx={{ fontWeight: 700, letterSpacing: '-0.02em', mb: 0.5 }}
-      >
-        Release Catalog
-      </Typography>
-      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-        {totalReleases} releases in the archive
-      </Typography>
-    </Box>
+const CatalogHeader: React.FC = () => (
+  <Box sx={{ mb: { xs: 2, sm: 2.5, md: 3 } }}>
+    <Typography
+      variant="h4"
+      sx={{ 
+        fontWeight: 700, 
+        letterSpacing: '-0.02em', 
+        mb: 0.5,
+        fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2.125rem' }
+      }}
+    >
+      Releases Catalog
+    </Typography>
+    {/* <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: { xs: '0.8125rem', sm: '0.875rem' } }}>
+      {totalReleases} releases in the archive
+    </Typography> */}
   </Box>
 );
 
@@ -361,9 +428,21 @@ interface FiltersSidebarProps {
   setSelectedTags: React.Dispatch<React.SetStateAction<string[]>>;
   toggleArrayFilter: (
     value: string,
-    selected: string[],
     setSelected: React.Dispatch<React.SetStateAction<string[]>>
   ) => void;
+  showMoreSeries: boolean;
+  showMoreCharacters: boolean;
+  showMoreReleaseTypes: boolean;
+  showMoreRarities: boolean;
+  showMoreTags: boolean;
+  setShowMoreSeries: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowMoreCharacters: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowMoreReleaseTypes: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowMoreRarities: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowMoreTags: React.Dispatch<React.SetStateAction<boolean>>;
+  catalogHeight?: number | null;
+  isMobile?: boolean;
+  onClose?: () => void;
 }
 
 const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
@@ -382,30 +461,597 @@ const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
   setSelectedRarities,
   setSelectedTags,
   toggleArrayFilter,
+  showMoreSeries,
+  showMoreCharacters,
+  showMoreReleaseTypes,
+  showMoreRarities,
+  showMoreTags,
+  setShowMoreSeries,
+  setShowMoreCharacters,
+  setShowMoreReleaseTypes,
+  setShowMoreRarities,
+  setShowMoreTags,
+  catalogHeight,
+  isMobile = false,
+  onClose,
 }) => (
   <Box
     sx={{
-      width: 260,
+      width: isMobile ? '100%' : { md: 240, lg: 260 },
       flexShrink: 0,
-      borderRight: '1px solid rgba(255,255,255,0.06)',
-      p: 3,
-      display: { xs: 'none', lg: 'block' },
-      maxHeight: 'calc(100vh - 180px)',
+      borderRight: isMobile ? 'none' : '1px solid rgba(255,255,255,0.06)',
+      p: isMobile ? 0 : { md: 2, lg: 3 },
+      display: isMobile ? 'block' : { xs: 'none', md: 'block' },
+      height: isMobile ? '100%' : catalogHeight ? `${catalogHeight}px` : 'auto',
+      maxHeight: isMobile ? '100vh' : catalogHeight ? `${catalogHeight}px` : 'none',
       overflowY: 'auto',
+      overflowX: 'hidden',
+      backgroundColor: isMobile ? 'background.paper' : 'transparent',
+      '&::-webkit-scrollbar': {
+        width: '8px',
+      },
+      '&::-webkit-scrollbar-track': {
+        backgroundColor: 'rgba(255,255,255,0.02)',
+      },
+      '&::-webkit-scrollbar-thumb': {
+        backgroundColor: 'rgba(255,255,255,0.15)',
+        borderRadius: '4px',
+        '&:hover': {
+          backgroundColor: 'rgba(255,255,255,0.25)',
+        },
+      },
     }}
   >
+    {/* Mobile Header */}
+    {isMobile && (
+      <Box
+        sx={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+          backgroundColor: 'background.paper',
+          backdropFilter: 'blur(10px)',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          px: 3,
+          py: 2.5,
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <FilterListIcon sx={{ color: 'primary.main', fontSize: '1.25rem' }} />
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 700,
+                fontSize: '1.125rem',
+                letterSpacing: '-0.01em',
+              }}
+            >
+              Filters
+            </Typography>
+            {activeFilterCount > 0 && (
+              <Chip
+                label={activeFilterCount}
+                size="small"
+                sx={{
+                  height: 22,
+                  backgroundColor: 'primary.main',
+                  color: 'white',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  px: 0.5,
+                }}
+              />
+            )}
+          </Box>
+          <IconButton 
+            onClick={onClose} 
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(255,255,255,0.05)',
+              '&:hover': {
+                backgroundColor: 'rgba(255,255,255,0.1)',
+              },
+            }}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </Box>
+        {activeFilterCount > 0 && (
+          <Button
+            onClick={clearAllFilters}
+            size="small"
+            sx={{
+              mt: 1.5,
+              fontSize: '0.8125rem',
+              color: 'text.secondary',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: 0,
+              minWidth: 'auto',
+              '&:hover': { 
+                color: 'primary.main',
+                backgroundColor: 'transparent',
+              },
+            }}
+          >
+            Clear all filters
+          </Button>
+        )}
+      </Box>
+    )}
+
     {/* Clear Filters */}
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        mb: 3,
-      }}
-    >
-      <Typography
-        variant="subtitle2"
-        sx={{ fontWeight: 600, color: 'text.primary' }}
+    {!isMobile && (
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          mb: { md: 2, lg: 3 },
+        }}
+      >
+        <Typography
+          variant="subtitle2"
+          sx={{ fontWeight: 600, color: 'text.primary', fontSize: { md: '0.8125rem', lg: '0.875rem' } }}
+        >
+          Filters
+          {activeFilterCount > 0 && (
+            <Chip
+              label={activeFilterCount}
+              size="small"
+              sx={{
+                ml: 1,
+                height: { md: 18, lg: 20 },
+                backgroundColor: 'primary.main',
+                color: 'white',
+                fontSize: { md: '0.65rem', lg: '0.7rem' },
+              }}
+            />
+          )}
+        </Typography>
+        {activeFilterCount > 0 && (
+          <Button
+            onClick={clearAllFilters}
+            size="small"
+            sx={{
+              fontSize: { md: '0.65rem', lg: '0.7rem' },
+              color: 'text.secondary',
+              textTransform: 'none',
+              p: { md: '2px 6px', lg: '4px 8px' },
+              minWidth: 'auto',
+              '&:hover': { color: 'primary.main' },
+            }}
+          >
+            Clear All
+          </Button>
+        )}
+      </Box>
+    )}
+
+    {/* Filters Content */}
+    <Box sx={{ px: isMobile ? 3 : 0, py: isMobile ? 2 : 0 }}>
+      {/* Generation */}
+      <FilterSection title="Generation">
+        <FormGroup>
+          {GENERATIONS.map((gen) => (
+            <FormControlLabel
+              key={gen}
+              control={
+                <Checkbox
+                  checked={selectedGenerations.includes(gen)}
+                  onChange={() => toggleArrayFilter(gen, setSelectedGenerations)}
+                  size="small"
+                  sx={{
+                    '&.Mui-checked': {
+                      color: 'primary.main',
+                    },
+                  }}
+                />
+              }
+              label={
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    fontSize: { xs: '0.9375rem', md: '0.8rem', lg: '0.85rem' },
+                    fontWeight: 500,
+                    color: selectedGenerations.includes(gen) ? 'text.primary' : 'text.secondary',
+                    transition: 'color 0.2s',
+                  }}
+                >
+                  {gen}
+                </Typography>
+              }
+              sx={{ 
+                mb: 0.25,
+                ml: -0.5,
+                py: 0.5,
+                borderRadius: 1,
+                '&:hover': {
+                  backgroundColor: 'rgba(255,255,255,0.03)',
+                },
+              }}
+            />
+          ))}
+        </FormGroup>
+      </FilterSection>
+
+      {/* Series */}
+      <FilterSection title="Series">
+        <FormGroup>
+          {(showMoreSeries ? SERIES_LIST : SERIES_LIST.slice(0, 8)).map((series) => (
+            <FormControlLabel
+              key={series}
+              control={
+                <Checkbox
+                  checked={selectedSeries.includes(series)}
+                  onChange={() => toggleArrayFilter(series, setSelectedSeries)}
+                  size="small"
+                  sx={{
+                    '&.Mui-checked': {
+                      color: 'primary.main',
+                    },
+                  }}
+                />
+              }
+              label={
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontSize: { xs: '0.9375rem', md: '0.8rem', lg: '0.85rem' },
+                    fontWeight: 500,
+                    color: selectedSeries.includes(series) ? 'text.primary' : 'text.secondary',
+                    transition: 'color 0.2s',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    maxWidth: { xs: '100%', md: 140, lg: 160 },
+                  }}
+                >
+                  {series}
+                </Typography>
+              }
+              sx={{ 
+                mb: 0.25,
+                ml: -0.5,
+                py: 0.5,
+                borderRadius: 1,
+                '&:hover': {
+                  backgroundColor: 'rgba(255,255,255,0.03)',
+                },
+              }}
+            />
+          ))}
+        </FormGroup>
+        {SERIES_LIST.length > 8 && (
+          <Button
+            onClick={() => setShowMoreSeries(!showMoreSeries)}
+            size="small"
+            sx={{
+              mt: 1,
+              fontSize: { xs: '0.8125rem', md: '0.75rem', lg: '0.8rem' },
+              color: 'primary.main',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: 0,
+              minWidth: 'auto',
+              '&:hover': { 
+                backgroundColor: 'transparent',
+                textDecoration: 'underline',
+              },
+            }}
+          >
+            {showMoreSeries ? 'Show less' : `Show more (${SERIES_LIST.length - 8})`}
+          </Button>
+        )}
+      </FilterSection>
+
+      {/* Characters */}
+      <FilterSection title="Character" defaultOpen={false}>
+        <FormGroup>
+          {(showMoreCharacters ? CHARACTERS : CHARACTERS.slice(0, 8)).map((char) => (
+            <FormControlLabel
+              key={char}
+              control={
+                <Checkbox
+                  checked={selectedCharacters.includes(char)}
+                  onChange={() => toggleArrayFilter(char, setSelectedCharacters)}
+                  size="small"
+                  sx={{
+                    '&.Mui-checked': {
+                      color: 'primary.main',
+                    },
+                  }}
+                />
+              }
+              label={
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    fontSize: { xs: '0.9375rem', md: '0.8rem', lg: '0.85rem' },
+                    fontWeight: 500,
+                    color: selectedCharacters.includes(char) ? 'text.primary' : 'text.secondary',
+                    transition: 'color 0.2s',
+                  }}
+                >
+                  {char}
+                </Typography>
+              }
+              sx={{ 
+                mb: 0.25,
+                ml: -0.5,
+                py: 0.5,
+                borderRadius: 1,
+                '&:hover': {
+                  backgroundColor: 'rgba(255,255,255,0.03)',
+                },
+              }}
+            />
+          ))}
+        </FormGroup>
+        {CHARACTERS.length > 8 && (
+          <Button
+            onClick={() => setShowMoreCharacters(!showMoreCharacters)}
+            size="small"
+            sx={{
+              mt: 1,
+              fontSize: { xs: '0.8125rem', md: '0.75rem', lg: '0.8rem' },
+              color: 'primary.main',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: 0,
+              minWidth: 'auto',
+              '&:hover': { 
+                backgroundColor: 'transparent',
+                textDecoration: 'underline',
+              },
+            }}
+          >
+            {showMoreCharacters ? 'Show less' : `Show more (${CHARACTERS.length - 8})`}
+          </Button>
+        )}
+      </FilterSection>
+
+      {/* Release Type */}
+      <FilterSection title="Release Type" defaultOpen={false}>
+        <FormGroup>
+          {(showMoreReleaseTypes ? RELEASE_TYPE_LIST : RELEASE_TYPE_LIST.slice(0, 8)).map((type) => (
+            <FormControlLabel
+              key={type}
+              control={
+                <Checkbox
+                  checked={selectedReleaseTypes.includes(type)}
+                  onChange={() => toggleArrayFilter(type, setSelectedReleaseTypes)}
+                  size="small"
+                  sx={{
+                    '&.Mui-checked': {
+                      color: 'primary.main',
+                    },
+                  }}
+                />
+              }
+              label={
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    fontSize: { xs: '0.9375rem', md: '0.8rem', lg: '0.85rem' },
+                    fontWeight: 500,
+                    color: selectedReleaseTypes.includes(type) ? 'text.primary' : 'text.secondary',
+                    transition: 'color 0.2s',
+                  }}
+                >
+                  {type}
+                </Typography>
+              }
+              sx={{ 
+                mb: 0.25,
+                ml: -0.5,
+                py: 0.5,
+                borderRadius: 1,
+                '&:hover': {
+                  backgroundColor: 'rgba(255,255,255,0.03)',
+                },
+              }}
+            />
+          ))}
+        </FormGroup>
+        {RELEASE_TYPE_LIST.length > 8 && (
+          <Button
+            onClick={() => setShowMoreReleaseTypes(!showMoreReleaseTypes)}
+            size="small"
+            sx={{
+              mt: 1,
+              fontSize: { xs: '0.8125rem', md: '0.75rem', lg: '0.8rem' },
+              color: 'primary.main',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: 0,
+              minWidth: 'auto',
+              '&:hover': { 
+                backgroundColor: 'transparent',
+                textDecoration: 'underline',
+              },
+            }}
+          >
+            {showMoreReleaseTypes ? 'Show less' : `Show more (${RELEASE_TYPE_LIST.length - 8})`}
+          </Button>
+        )}
+      </FilterSection>
+
+      {/* Rarity */}
+      <FilterSection title="Rarity" defaultOpen={false}>
+        <FormGroup>
+          {(showMoreRarities ? RELEASE_RARITIES : RELEASE_RARITIES.slice(0, 8)).map((rarity) => (
+            <FormControlLabel
+              key={rarity}
+              control={
+                <Checkbox
+                  checked={selectedRarities.includes(rarity)}
+                  onChange={() => toggleArrayFilter(rarity, setSelectedRarities)}
+                  size="small"
+                  sx={{
+                    '&.Mui-checked': {
+                      color: 'primary.main',
+                    },
+                  }}
+                />
+              }
+              label={
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    fontSize: { xs: '0.9375rem', md: '0.8rem', lg: '0.85rem' },
+                    fontWeight: 500,
+                    color: selectedRarities.includes(rarity) ? 'text.primary' : 'text.secondary',
+                    transition: 'color 0.2s',
+                  }}
+                >
+                  {rarity}
+                </Typography>
+              }
+              sx={{ 
+                mb: 0.25,
+                ml: -0.5,
+                py: 0.5,
+                borderRadius: 1,
+                '&:hover': {
+                  backgroundColor: 'rgba(255,255,255,0.03)',
+                },
+              }}
+            />
+          ))}
+        </FormGroup>
+        {RELEASE_RARITIES.length > 8 && (
+          <Button
+            onClick={() => setShowMoreRarities(!showMoreRarities)}
+            size="small"
+            sx={{
+              mt: 1,
+              fontSize: { xs: '0.8125rem', md: '0.75rem', lg: '0.8rem' },
+              color: 'primary.main',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: 0,
+              minWidth: 'auto',
+              '&:hover': { 
+                backgroundColor: 'transparent',
+                textDecoration: 'underline',
+              },
+            }}
+          >
+            {showMoreRarities ? 'Show less' : `Show more (${RELEASE_RARITIES.length - 8})`}
+          </Button>
+        )}
+      </FilterSection>
+
+      {/* Tags */}
+      <FilterSection title="Tags" defaultOpen={false}>
+        <FormGroup>
+          {(showMoreTags ? TAGS : TAGS.slice(0, 8)).map((tag) => (
+            <FormControlLabel
+              key={tag}
+              control={
+                <Checkbox
+                  checked={selectedTags.includes(tag)}
+                  onChange={() => toggleArrayFilter(tag, setSelectedTags)}
+                  size="small"
+                  sx={{
+                    '&.Mui-checked': {
+                      color: 'primary.main',
+                    },
+                  }}
+                />
+              }
+              label={
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    fontSize: { xs: '0.9375rem', md: '0.8rem', lg: '0.85rem' },
+                    fontWeight: 500,
+                    color: selectedTags.includes(tag) ? 'text.primary' : 'text.secondary',
+                    transition: 'color 0.2s',
+                  }}
+                >
+                  {tag}
+                </Typography>
+              }
+              sx={{ 
+                mb: 0.25,
+                ml: -0.5,
+                py: 0.5,
+                borderRadius: 1,
+                '&:hover': {
+                  backgroundColor: 'rgba(255,255,255,0.03)',
+                },
+              }}
+            />
+          ))}
+        </FormGroup>
+        {TAGS.length > 8 && (
+          <Button
+            onClick={() => setShowMoreTags(!showMoreTags)}
+            size="small"
+            sx={{
+              mt: 1,
+              fontSize: { xs: '0.8125rem', md: '0.75rem', lg: '0.8rem' },
+              color: 'primary.main',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: 0,
+              minWidth: 'auto',
+              '&:hover': { 
+                backgroundColor: 'transparent',
+                textDecoration: 'underline',
+              },
+            }}
+          >
+            {showMoreTags ? 'Show less' : `Show more (${TAGS.length - 8})`}
+          </Button>
+        )}
+      </FilterSection>
+
+      {/* Bottom Spacing for Mobile */}
+      {isMobile && <Box sx={{ height: 24 }} />}
+    </Box>
+  </Box>
+);
+
+interface ResultsToolbarProps {
+  resultCount: number;
+  sortBy: string;
+  onSortChange: (value: string) => void;
+  onFiltersClick?: () => void;
+  activeFilterCount?: number;
+}
+
+const ResultsToolbar: React.FC<ResultsToolbarProps> = ({
+  resultCount,
+  sortBy,
+  onSortChange,
+  onFiltersClick,
+  activeFilterCount = 0,
+}) => (
+  <Box
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      mb: { xs: 1.5, sm: 1 },
+      flexDirection: { xs: 'column', sm: 'row' },
+      gap: { xs: 1.5, sm: 0 },
+    }}
+  >
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: { xs: '100%', sm: 'auto' } }}>
+      {/* Mobile Filters Button */}
+      <Button
+        variant="outlined"
+        startIcon={<FilterListIcon />}
+        onClick={onFiltersClick}
+        sx={{
+          display: { xs: 'flex', md: 'none' },
+          textTransform: 'none',
+          flex: { xs: 1, sm: 'none' },
+        }}
       >
         Filters
         {activeFilterCount > 0 && (
@@ -414,217 +1060,39 @@ const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
             size="small"
             sx={{
               ml: 1,
-              height: 20,
+              height: 18,
               backgroundColor: 'primary.main',
               color: 'white',
-              fontSize: '0.7rem',
+              fontSize: '0.65rem',
             }}
           />
         )}
+      </Button>
+
+      <Typography 
+        variant="body2" 
+        sx={{ 
+          color: 'text.secondary', 
+          fontSize: { xs: '0.8125rem', sm: '0.875rem' },
+          display: { xs: 'none', sm: 'block' }
+        }}
+      >
+        {resultCount} result{resultCount !== 1 ? 's' : ''}
       </Typography>
-      {activeFilterCount > 0 && (
-        <Button
-          onClick={clearAllFilters}
-          size="small"
-          sx={{
-            fontSize: '0.7rem',
-            color: 'text.secondary',
-            textTransform: 'none',
-            '&:hover': { color: 'primary.main' },
-          }}
-        >
-          Clear All
-        </Button>
-      )}
     </Box>
 
-    {/* Generation */}
-    <FilterSection title="Generation">
-      <FormGroup>
-        {GENERATIONS.map((gen) => (
-          <FormControlLabel
-            key={gen}
-            control={
-              <Checkbox
-                checked={selectedGenerations.includes(gen)}
-                onChange={() => toggleArrayFilter(gen, selectedGenerations, setSelectedGenerations)}
-                size="small"
-              />
-            }
-            label={
-              <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
-                {gen}
-              </Typography>
-            }
-            sx={{ mb: -0.5 }}
-          />
-        ))}
-      </FormGroup>
-    </FilterSection>
-
-    {/* Series */}
-    <FilterSection title="Series">
-      <FormGroup>
-        {SERIES_LIST.slice(0, 8).map((series) => (
-          <FormControlLabel
-            key={series}
-            control={
-              <Checkbox
-                checked={selectedSeries.includes(series)}
-                onChange={() => toggleArrayFilter(series, selectedSeries, setSelectedSeries)}
-                size="small"
-              />
-            }
-            label={
-              <Typography
-                variant="body2"
-                sx={{
-                  fontSize: '0.85rem',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  maxWidth: 160,
-                }}
-              >
-                {series}
-              </Typography>
-            }
-            sx={{ mb: -0.5 }}
-          />
-        ))}
-      </FormGroup>
-    </FilterSection>
-
-    {/* Characters */}
-    <FilterSection title="Character" defaultOpen={false}>
-      <FormGroup>
-        {CHARACTERS.slice(0, 8).map((char) => (
-          <FormControlLabel
-            key={char}
-            control={
-              <Checkbox
-                checked={selectedCharacters.includes(char)}
-                onChange={() => toggleArrayFilter(char, selectedCharacters, setSelectedCharacters)}
-                size="small"
-              />
-            }
-            label={
-              <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
-                {char}
-              </Typography>
-            }
-            sx={{ mb: -0.5 }}
-          />
-        ))}
-      </FormGroup>
-    </FilterSection>
-
-    {/* Release Type */}
-    <FilterSection title="Release Type" defaultOpen={false}>
-      <FormGroup>
-        {RELEASE_TYPE_LIST.map((type) => (
-          <FormControlLabel
-            key={type}
-            control={
-              <Checkbox
-                checked={selectedReleaseTypes.includes(type)}
-                onChange={() =>
-                  toggleArrayFilter(type, selectedReleaseTypes, setSelectedReleaseTypes)
-                }
-                size="small"
-              />
-            }
-            label={
-              <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
-                {type}
-              </Typography>
-            }
-            sx={{ mb: -0.5 }}
-          />
-        ))}
-      </FormGroup>
-    </FilterSection>
-
-    {/* Rarity */}
-    <FilterSection title="Rarity" defaultOpen={false}>
-      <FormGroup>
-        {RELEASE_RARITIES.map((rarity) => (
-          <FormControlLabel
-            key={rarity}
-            control={
-              <Checkbox
-                checked={selectedRarities.includes(rarity)}
-                onChange={() => toggleArrayFilter(rarity, selectedRarities, setSelectedRarities)}
-                size="small"
-              />
-            }
-            label={
-              <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
-                {rarity}
-              </Typography>
-            }
-            sx={{ mb: -0.5 }}
-          />
-        ))}
-      </FormGroup>
-    </FilterSection>
-
-    {/* Tags */}
-    <FilterSection title="Tags" defaultOpen={false}>
-      <FormGroup>
-        {TAGS.map((tag) => (
-          <FormControlLabel
-            key={tag}
-            control={
-              <Checkbox
-                checked={selectedTags.includes(tag)}
-                onChange={() => toggleArrayFilter(tag, selectedTags, setSelectedTags)}
-                size="small"
-              />
-            }
-            label={
-              <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
-                {tag}
-              </Typography>
-            }
-            sx={{ mb: -0.5 }}
-          />
-        ))}
-      </FormGroup>
-    </FilterSection>
-  </Box>
-);
-
-interface ResultsToolbarProps {
-  resultCount: number;
-  sortBy: string;
-  onSortChange: (value: string) => void;
-}
-
-const ResultsToolbar: React.FC<ResultsToolbarProps> = ({
-  resultCount,
-  sortBy,
-  onSortChange,
-}) => (
-  <Box
-    sx={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      mb: 3,
-    }}
-  >
-    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-      {resultCount} result{resultCount !== 1 ? 's' : ''}
-    </Typography>
-
-    <FormControl size="small" sx={{ minWidth: 140 }}>
-      <InputLabel sx={{ fontSize: '0.85rem' }}>Sort By</InputLabel>
+    <FormControl size="small" sx={{ minWidth: { xs: '100%', sm: 140 }, flex: { xs: 1, sm: 'none' } }}>
+      <InputLabel sx={{ fontSize: { xs: '0.8125rem', sm: '0.85rem' } }}>Sort By</InputLabel>
       <Select
         value={sortBy}
         label="Sort By"
         onChange={(e) => onSortChange(e.target.value)}
-        sx={{ '& .MuiSelect-select': { py: 1 } }}
+        sx={{ 
+          '& .MuiSelect-select': { 
+            py: { xs: 0.75, sm: 1 },
+            fontSize: { xs: '0.8125rem', sm: '0.875rem' }
+          } 
+        }}
       >
         <MenuItem value="releaseDate">Release Date</MenuItem>
         <MenuItem value="name">Name (A-Z)</MenuItem>
@@ -639,21 +1107,21 @@ interface ReleaseGridProps {
 }
 
 const ReleaseGrid: React.FC<ReleaseGridProps> = ({ releases }) => (
-  <Grid container spacing={2.5}>
+  <Grid container spacing={{ xs: 1.5, sm: 2, md: 2.5 }}>
     {releases.map((release) => (
-      <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={release.release_id}>
-        <ReleaseCard release={release} />
+      <Grid size={{ xs: 6, sm: 4, md: 4, lg: 3 }} key={release.id}>
+        <ReleaseCardCatalog release={release} />
       </Grid>
     ))}
   </Grid>
 );
 
 const EmptyResults: React.FC = () => (
-  <Box sx={{ textAlign: 'center', py: 8 }}>
-    <Typography variant="h6" sx={{ color: 'text.secondary', mb: 1 }}>
+  <Box sx={{ textAlign: 'center', py: { xs: 6, sm: 8 } }}>
+    <Typography variant="h6" sx={{ color: 'text.secondary', mb: 1, fontSize: { xs: '1rem', sm: '1.25rem' } }}>
       No releases found
     </Typography>
-    <Typography variant="body2" sx={{ color: '#6B7280' }}>
+    <Typography variant="body2" sx={{ color: '#6B7280', fontSize: { xs: '0.8125rem', sm: '0.875rem' } }}>
       Try adjusting your filters or search query
     </Typography>
   </Box>
@@ -669,24 +1137,34 @@ const CatalogPagination: React.FC<CatalogPaginationProps> = ({
   totalPages,
   currentPage,
   onPageChange,
-}) => (
-  <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-    <Pagination
-      count={totalPages}
-      page={currentPage}
-      onChange={(_, page) => onPageChange(page)}
-      sx={{
-        '& .MuiPaginationItem-root': {
-          color: 'text.secondary',
-          '&.Mui-selected': {
-            backgroundColor: 'primary.main',
-            color: 'white',
+}) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  return (
+    <Box sx={{ display: 'flex', justifyContent: 'center', mt: { xs: 3, sm: 4 } }}>
+      <Pagination
+        count={totalPages}
+        page={currentPage}
+        onChange={(_, page) => onPageChange(page)}
+        size="medium"
+        siblingCount={isMobile ? 0 : 1}
+        sx={{
+          '& .MuiPaginationItem-root': {
+            color: 'text.secondary',
+            fontSize: { xs: '0.8125rem', sm: '0.875rem' },
+            minWidth: { xs: 28, sm: 32 },
+            height: { xs: 28, sm: 32 },
+            '&.Mui-selected': {
+              backgroundColor: 'primary.main',
+              color: 'white',
+            },
           },
-        },
-      }}
-    />
-  </Box>
-);
+        }}
+      />
+    </Box>
+  );
+};
 
 // ============================================
 // MAIN CATALOG COMPONENT
@@ -695,24 +1173,47 @@ const CatalogPagination: React.FC<CatalogPaginationProps> = ({
 const ReleaseCatalog: React.FC = () => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('q') || '';
+  const { ref: catalogRef, height: catalogHeight } = useElementHeight<HTMLDivElement>();
 
   // Filter state
-  const [selectedGenerations, setSelectedGenerations] = useState<string[]>([...GENERATIONS]);
+  const [selectedGenerations, setSelectedGenerations] = useState<string[]>([]);
   const [selectedSeries, setSelectedSeries] = useState<string[]>([]);
   const [selectedCharacters, setSelectedCharacters] = useState<string[]>([]);
   const [selectedReleaseTypes, setSelectedReleaseTypes] = useState<string[]>([]);
   const [selectedRarities, setSelectedRarities] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
+  // Show more state for each filter
+  const [showMoreSeries, setShowMoreSeries] = useState(false);
+  const [showMoreCharacters, setShowMoreCharacters] = useState(false);
+  const [showMoreReleaseTypes, setShowMoreReleaseTypes] = useState(false);
+  const [showMoreRarities, setShowMoreRarities] = useState(false);
+  const [showMoreTags, setShowMoreTags] = useState(false);
+
+  // Mobile drawer state
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
   // Sort & pagination
   const [sortBy, setSortBy] = useState('releaseDate');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
+  // Reset page to 1 when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [
+    searchQuery,
+    selectedGenerations,
+    selectedSeries,
+    selectedCharacters,
+    selectedReleaseTypes,
+    selectedRarities,
+    selectedTags,
+  ]);
+
   // Toggle helpers
   const toggleArrayFilter = (
     value: string,
-    selected: string[],
     setSelected: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
     setSelected((prev) =>
@@ -722,7 +1223,7 @@ const ReleaseCatalog: React.FC = () => {
 
   // Clear all filters
   const clearAllFilters = () => {
-    setSelectedGenerations([...GENERATIONS]);
+    setSelectedGenerations([]);
     setSelectedSeries([]);
     setSelectedCharacters([]);
     setSelectedReleaseTypes([]);
@@ -734,7 +1235,7 @@ const ReleaseCatalog: React.FC = () => {
   // Count active filters
   const activeFilterCount = useMemo(() => {
     let count = 0;
-    if (selectedGenerations.length !== GENERATIONS.length) count++;
+    if (selectedGenerations.length > 0) count++;
     if (selectedSeries.length > 0) count++;
     if (selectedCharacters.length > 0) count++;
     if (selectedReleaseTypes.length > 0) count++;
@@ -765,8 +1266,11 @@ const ReleaseCatalog: React.FC = () => {
         if (!matchesSearch) return false;
       }
 
-      // Generation
-      if (selectedGenerations.length > 0 && !selectedGenerations.includes(release.generation)) {
+      // Generation - if none selected, show all
+      if (
+        selectedGenerations.length > 0 &&
+        (!release.generation || !selectedGenerations.includes(release.generation))
+      ) {
         return false;
       }
 
@@ -846,12 +1350,31 @@ const ReleaseCatalog: React.FC = () => {
   );
 
   return (
-    <Box>
-      <CatalogHeader totalReleases={releaseModels.length} />
-
-      {/* Main Content */}
-      <Box sx={{ display: 'flex', maxWidth: 1600, mx: 'auto' }}>
-        {/* Left Sidebar - Filters */}
+    <Box
+      sx={{
+        minHeight: '100vh',
+        backgroundColor: '#0B0D11',
+        backgroundImage:
+          'radial-gradient(900px 600px at 15% 0%, rgba(64, 160, 255, 0.16), transparent 60%), radial-gradient(900px 700px at 90% 10%, rgba(255, 120, 200, 0.12), transparent 65%), linear-gradient(180deg, #0B0D11 0%, #121622 100%)',
+      }}
+    >
+      {/* Mobile Filters Drawer */}
+      <Drawer
+        anchor="left"
+        open={mobileFiltersOpen}
+        onClose={() => setMobileFiltersOpen(false)}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': {
+            width: { xs: '90%', sm: 380 },
+            maxWidth: '100%',
+            backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))',
+          },
+          '& .MuiBackdrop-root': {
+            backdropFilter: 'blur(4px)',
+          },
+        }}
+      >
         <FiltersSidebar
           activeFilterCount={activeFilterCount}
           clearAllFilters={clearAllFilters}
@@ -868,15 +1391,65 @@ const ReleaseCatalog: React.FC = () => {
           setSelectedRarities={setSelectedRarities}
           setSelectedTags={setSelectedTags}
           toggleArrayFilter={toggleArrayFilter}
+          showMoreSeries={showMoreSeries}
+          showMoreCharacters={showMoreCharacters}
+          showMoreReleaseTypes={showMoreReleaseTypes}
+          showMoreRarities={showMoreRarities}
+          showMoreTags={showMoreTags}
+          setShowMoreSeries={setShowMoreSeries}
+          setShowMoreCharacters={setShowMoreCharacters}
+          setShowMoreReleaseTypes={setShowMoreReleaseTypes}
+          setShowMoreRarities={setShowMoreRarities}
+          setShowMoreTags={setShowMoreTags}
+          catalogHeight={catalogHeight}
+          isMobile={true}
+          onClose={() => setMobileFiltersOpen(false)}
+        />
+      </Drawer>
+
+      {/* Main Content */}
+      <Box sx={{ display: 'flex', maxWidth: 1600, mx: 'auto', px: { xs: 1.5, sm: 2, md: 4 }, pt: { xs: 1, sm: 1.5, md: 2 } }}>
+        {/* Left Sidebar - Desktop Filters */}
+        <FiltersSidebar
+          activeFilterCount={activeFilterCount}
+          clearAllFilters={clearAllFilters}
+          selectedGenerations={selectedGenerations}
+          selectedSeries={selectedSeries}
+          selectedCharacters={selectedCharacters}
+          selectedReleaseTypes={selectedReleaseTypes}
+          selectedRarities={selectedRarities}
+          selectedTags={selectedTags}
+          setSelectedGenerations={setSelectedGenerations}
+          setSelectedSeries={setSelectedSeries}
+          setSelectedCharacters={setSelectedCharacters}
+          setSelectedReleaseTypes={setSelectedReleaseTypes}
+          setSelectedRarities={setSelectedRarities}
+          setSelectedTags={setSelectedTags}
+          toggleArrayFilter={toggleArrayFilter}
+          showMoreSeries={showMoreSeries}
+          showMoreCharacters={showMoreCharacters}
+          showMoreReleaseTypes={showMoreReleaseTypes}
+          showMoreRarities={showMoreRarities}
+          showMoreTags={showMoreTags}
+          setShowMoreSeries={setShowMoreSeries}
+          setShowMoreCharacters={setShowMoreCharacters}
+          setShowMoreReleaseTypes={setShowMoreReleaseTypes}
+          setShowMoreRarities={setShowMoreRarities}
+          setShowMoreTags={setShowMoreTags}
+          catalogHeight={catalogHeight}
         />
 
         {/* Main Grid Area */}
-        <Box sx={{ flex: 1, p: 3 }}>
+        <Box ref={catalogRef} sx={{ flex: 1, p: { xs: 1, sm: 1.5, md: 2 } }}>
+          <CatalogHeader />
+
           {/* Results Count & Sort */}
           <ResultsToolbar
             resultCount={filteredReleases.length}
             sortBy={sortBy}
             onSortChange={setSortBy}
+            onFiltersClick={() => setMobileFiltersOpen(true)}
+            activeFilterCount={activeFilterCount}
           />
 
           {/* Release Grid */}

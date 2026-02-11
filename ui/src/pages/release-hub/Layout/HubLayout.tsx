@@ -24,7 +24,16 @@ const HubLayout = ({ children, header, footer }: HubLayoutProps) => {
       }}
     >
       {header ?? <Header />}
-      <Box component="main" sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      <Box 
+        component="main" 
+        sx={{ 
+          flex: 1, 
+          display: "flex", 
+          flexDirection: "column",
+          width: "100%",
+          overflowX: "hidden",
+        }}
+      >
         {content}
       </Box>
       {footer ?? <Footer />}

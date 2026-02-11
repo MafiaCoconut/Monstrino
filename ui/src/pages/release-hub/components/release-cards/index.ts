@@ -1,4 +1,4 @@
-export { default as ReleaseCard } from './ReleaseCard';
-export { default as ReleaseCardHome } from './ReleaseCardHome';
-export { default as ReleaseCardCharacterIndex } from './ReleaseCardCharacterIndex';
-export { default as ReleaseCardSeriesIndex } from './ReleaseCardSeriesIndex';
+export { default as ReleaseCardCatalog } from './ReleaseCardCatalog';
+export { default as ReleaseCardSpotlight } from './ReleaseCardSpotlight';
+export { default as ReleaseCardCharacter } from './ReleaseCardCharacter';
+export { default as ReleaseCardMinimal } from './ReleaseCardMinimal';

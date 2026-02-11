@@ -3,11 +3,11 @@ import { Link as RouterLink } from 'react-router-dom';
 import { Box, Typography, Chip } from '@mui/material';
 import { type Release } from '../../entities';
 
-interface ReleaseCardProps {
+interface ReleaseCardCatalogProps {
   release: Release;
 }
 
-const ReleaseCard: React.FC<ReleaseCardProps> = ({ release }) => {
+const ReleaseCardCatalog: React.FC<ReleaseCardCatalogProps> = ({ release }) => {
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return 'Unknown';
     const date = new Date(dateStr);
@@ -26,12 +26,12 @@ const ReleaseCard: React.FC<ReleaseCardProps> = ({ release }) => {
       aria-label={`${release.characterName} release`}
       sx={{
         backgroundColor: 'background.paper',
-        borderRadius: 2,
+        borderRadius: { xs: 1.5, sm: 2 },
         overflow: 'hidden',
         transition: 'transform 0.2s ease, box-shadow 0.2s ease',
         textDecoration: 'none',
         color: 'inherit',
-        height: 630,
+        height: { xs: 360, sm: 480, md: 580, lg: 630 },
         display: 'block',
         cursor: 'pointer',
         '&:hover': {
@@ -45,7 +45,7 @@ const ReleaseCard: React.FC<ReleaseCardProps> = ({ release }) => {
         sx={{
           position: 'relative',
           width: '100%',
-          paddingTop: '150%', // Creates ~1:1.5 aspect ratio (smaller image)
+          paddingTop: { xs: '140%', sm: '145%', md: '150%' }, // Creates adaptive aspect ratio
           backgroundColor: '#FFFFFF',
           overflow: 'hidden',
         }}
@@ -67,16 +67,21 @@ const ReleaseCard: React.FC<ReleaseCardProps> = ({ release }) => {
       </Box>
 
       {/* Card Content */}
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ p: { xs: 1, sm: 1.5, md: 2 } }}>
         {/* Character Name */}
         <Typography
           variant="h6"
           sx={{
             color: 'text.primary',
             fontWeight: 700,
-            fontSize: '1rem',
+            fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.9375rem', lg: '1rem' },
             lineHeight: 1.3,
-            mb: 0.5,
+            mb: { xs: 0.25, sm: 0.5 },
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
           }}
         >
           {release.characterName}
@@ -87,8 +92,11 @@ const ReleaseCard: React.FC<ReleaseCardProps> = ({ release }) => {
           variant="body2"
           sx={{
             color: 'text.secondary',
-            fontSize: '0.85rem',
-            mb: 1.5,
+            fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8125rem', lg: '0.85rem' },
+            mb: { xs: 0.75, sm: 1, md: 1.5 },
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
           }}
         >
           {release.seriesName}
@@ -100,7 +108,8 @@ const ReleaseCard: React.FC<ReleaseCardProps> = ({ release }) => {
           sx={{
             color: 'text.secondary',
             display: 'block',
-            mb: 0.5,
+            mb: { xs: 0.25, sm: 0.5 },
+            fontSize: { xs: '0.65rem', sm: '0.7rem', md: '0.75rem' },
           }}
         >
           {release.generation} • {packLabel}
@@ -112,16 +121,16 @@ const ReleaseCard: React.FC<ReleaseCardProps> = ({ release }) => {
           sx={{
             color: '#6B7280',
             display: 'block',
-            mb: 1.5,
-            fontSize: '0.75rem',
+            mb: { xs: 0.75, sm: 1, md: 1.5 },
+            fontSize: { xs: '0.625rem', sm: '0.6875rem', md: '0.75rem' },
           }}
         >
           {formatDate(release.releaseDate)}
         </Typography>
 
         {/* Type Tags */}
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-          {releaseTypes.slice(0, 3).map((type) => (
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: { xs: 0.4, sm: 0.5 } }}>
+          {releaseTypes.slice(0, 2).map((type) => (
             <Chip
               key={type}
               label={type}
@@ -129,9 +138,12 @@ const ReleaseCard: React.FC<ReleaseCardProps> = ({ release }) => {
               sx={{
                 backgroundColor: 'rgba(139, 92, 246, 0.15)',
                 color: '#A78BFA',
-                fontSize: '0.65rem',
-                height: '22px',
+                fontSize: { xs: '0.55rem', sm: '0.6rem', md: '0.65rem' },
+                height: { xs: '18px', sm: '20px', md: '22px' },
                 fontWeight: 500,
+                '& .MuiChip-label': {
+                  px: { xs: 0.5, sm: 0.75, md: 1 },
+                },
               }}
             />
           ))}
@@ -142,9 +154,12 @@ const ReleaseCard: React.FC<ReleaseCardProps> = ({ release }) => {
               sx={{
                 backgroundColor: 'rgba(217, 70, 239, 0.15)',
                 color: '#E879F9',
-                fontSize: '0.65rem',
-                height: '22px',
+                fontSize: { xs: '0.55rem', sm: '0.6rem', md: '0.65rem' },
+                height: { xs: '18px', sm: '20px', md: '22px' },
                 fontWeight: 500,
+                '& .MuiChip-label': {
+                  px: { xs: 0.5, sm: 0.75, md: 1 },
+                },
               }}
             />
           )}
@@ -154,4 +169,4 @@ const ReleaseCard: React.FC<ReleaseCardProps> = ({ release }) => {
   );
 };
 
-export default ReleaseCard;
+export default ReleaseCardCatalog;

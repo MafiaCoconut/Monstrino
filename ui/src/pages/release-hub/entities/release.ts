@@ -100,6 +100,20 @@ export interface ReleaseInfoSection {
   items: ReleaseInfoItem[];
 }
 
+export interface ReleaseInfoColumn {
+  items: ReleaseInfoItem[];
+}
+
+export interface ReleaseGeneralInfo {
+  title: string;
+  columns: ReleaseInfoColumn[];
+}
+
+export interface ReleaseProductDetails {
+  title: string;
+  sections: ReleaseInfoSection[];
+}
+
 export interface ReleasePhysicalContent {
   name: string;
   count: number;
@@ -209,6 +223,8 @@ export interface Release extends ReleaseSummary, EntityAudit {
   media?: ReleaseMediaCategory[];
   gallery?: ReleaseGalleryImage[];
   infoSections?: ReleaseInfoSection[];
+  generalInfo?: ReleaseGeneralInfo;
+  productDetails?: ReleaseProductDetails;
   physicalContents?: ReleasePhysicalContent[];
   accessories?: ReleaseAccessory[];
   clothing?: ReleaseAccessory[];

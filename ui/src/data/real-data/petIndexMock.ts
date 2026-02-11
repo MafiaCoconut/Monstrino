@@ -101,7 +101,7 @@ const buildExclusivityNote = (exclusivity: PetExclusivity, owners: string[], rel
 
 const buildOfficialImages = (imageUrl: string | null | undefined): string[] => {
   const safeUrl = imageUrl ?? PLACEHOLDER_IMAGE;
-  return [safeUrl, safeUrl, safeUrl, safeUrl];
+  return [safeUrl];
 };
 
 const buildFanArt = (pet: PetRecord) => {
@@ -166,7 +166,6 @@ const buildPet = (pet: PetRecord): Pet => {
     { label: 'Species', value: species },
     { label: 'Owner', value: ownerNames[0] ?? 'Unknown' },
     { label: 'Release Count', value: `${releaseCount || 1}` },
-    { label: 'Collector Note', value: truncate(description.replace(/\s+/g, ' '), 72) },
   ];
 
   return {

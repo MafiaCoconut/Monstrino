@@ -24,6 +24,16 @@ const footerLinks = {
     { label: 'Series', path: '/catalog/s' },
     { label: 'Pets', path: '/catalog/p' },
   ],
+  info: [
+    { label: 'About', path: '/info/about' },
+    { label: 'Support', path: '/info/support' },
+    { label: 'Contact', path: '/info/contact' },
+  ],
+  legal: [
+    { label: 'Privacy', path: '/legal/privacy' },
+    { label: 'Terms', path: '/legal/terms' },
+    { label: 'Impressum', path: '/legal/impressum' },
+  ],
   // community: [
   //   { label: 'Discord', path: '#' },
   //   { label: 'Twitter', path: '#' },
@@ -42,23 +52,24 @@ export const Footer = () => {
       component="footer"
       sx={{
         mt: 'auto',
-        pt: 8,
-        pb: 4,
+        pt: { xs: 4, sm: 6, md: 8 },
+        pb: { xs: 3, sm: 4 },
         borderTop: '1px solid',
         borderColor: 'divider',
         background: 'linear-gradient(180deg, transparent 0%, rgba(20, 20, 32, 0.5) 100%)',
       }}
     >
-      <Container maxWidth="xl">
-        <Grid container spacing={6}>
+      <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3 } }}>
+        <Grid container spacing={{ xs: 3, sm: 4, md: 6 }} sx={{ display: { xs: 'none', md: 'flex' } }}>
           {/* Brand */}
-          <Grid size={{ xs: 12, md: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-              <AutoAwesomeIcon sx={{ color: 'primary.main', fontSize: 24 }} />
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: { xs: 1.5, sm: 2 } }}>
+              <AutoAwesomeIcon sx={{ color: 'primary.main', fontSize: { xs: 20, sm: 24 } }} />
               <Typography
                 variant="h6"
                 sx={{
                   fontWeight: 800,
+                  fontSize: { xs: '1.125rem', sm: '1.25rem' },
                   background: 'linear-gradient(135deg, #FF1493 0%, #00D4FF 100%)',
                   backgroundClip: 'text',
                   WebkitBackgroundClip: 'text',
@@ -68,7 +79,7 @@ export const Footer = () => {
                 Monstrino
               </Typography>
             </Box>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3, maxWidth: 300 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: { xs: 2, sm: 3 }, maxWidth: { xs: '100%', md: 300 }, fontSize: { xs: '0.8125rem', sm: '0.875rem' } }}>
               The ultimate catalog platform for Monster High collectors. Track releases, discover characters, and connect with the community.
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
@@ -86,10 +97,10 @@ export const Footer = () => {
 
           {/* Links */}
           <Grid size={{ xs: 6, sm: 4, md: 2 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 2, color: 'text.primary' }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: { xs: 1.5, sm: 2 }, color: 'text.primary', fontSize: { xs: '0.8125rem', sm: '0.875rem' } }}>
               Catalog
             </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1, sm: 1.5 } }}>
               {footerLinks.catalog.map((link) => (
                 <MuiLink
                   key={link.path}
@@ -98,7 +109,53 @@ export const Footer = () => {
                   sx={{
                     color: 'text.secondary',
                     textDecoration: 'none',
-                    fontSize: '0.875rem',
+                    fontSize: { xs: '0.8125rem', sm: '0.875rem' },
+                    '&:hover': { color: 'primary.main' },
+                  }}
+                >
+                  {link.label}
+                </MuiLink>
+              ))}
+            </Box>
+          </Grid>
+
+          <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: { xs: 1.5, sm: 2 }, color: 'text.primary', fontSize: { xs: '0.8125rem', sm: '0.875rem' } }}>
+              Info
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1, sm: 1.5 } }}>
+              {footerLinks.info.map((link) => (
+                <MuiLink
+                  key={link.path}
+                  component={Link}
+                  to={link.path}
+                  sx={{
+                    color: 'text.secondary',
+                    textDecoration: 'none',
+                    fontSize: { xs: '0.8125rem', sm: '0.875rem' },
+                    '&:hover': { color: 'primary.main' },
+                  }}
+                >
+                  {link.label}
+                </MuiLink>
+              ))}
+            </Box>
+          </Grid>
+
+          <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: { xs: 1.5, sm: 2 }, color: 'text.primary', fontSize: { xs: '0.8125rem', sm: '0.875rem' } }}>
+              Legal
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1, sm: 1.5 } }}>
+              {footerLinks.legal.map((link) => (
+                <MuiLink
+                  key={link.path}
+                  component={Link}
+                  to={link.path}
+                  sx={{
+                    color: 'text.secondary',
+                    textDecoration: 'none',
+                    fontSize: { xs: '0.8125rem', sm: '0.875rem' },
                     '&:hover': { color: 'primary.main' },
                   }}
                 >
@@ -131,10 +188,10 @@ export const Footer = () => {
           </Grid> */}
 
           <Grid size={{ xs: 6, sm: 4, md: 2 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 2, color: 'text.primary' }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: { xs: 1.5, sm: 2 }, color: 'text.primary', fontSize: { xs: '0.8125rem', sm: '0.875rem' } }}>
               Resources
             </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1, sm: 1.5 } }}>
               {footerLinks.resources.map((link) => (
                 <MuiLink
                   key={link.label}
@@ -142,7 +199,7 @@ export const Footer = () => {
                   sx={{
                     color: 'text.secondary',
                     textDecoration: 'none',
-                    fontSize: '0.875rem',
+                    fontSize: { xs: '0.8125rem', sm: '0.875rem' },
                     '&:hover': { color: 'primary.main' },
                   }}
                 >
@@ -153,17 +210,98 @@ export const Footer = () => {
           </Grid>
         </Grid>
 
-        <Divider sx={{ my: 4 }} />
+        <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', fontSize: '0.8125rem' }}>
+                Catalog
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+                {footerLinks.catalog.map((link) => (
+                  <MuiLink
+                    key={link.path}
+                    component={Link}
+                    to={link.path}
+                    sx={{
+                      color: 'text.secondary',
+                      textDecoration: 'none',
+                      fontSize: '0.8125rem',
+                      '&:hover': { color: 'primary.main' },
+                    }}
+                  >
+                    {link.label}
+                  </MuiLink>
+                ))}
+              </Box>
+            </Box>
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
-          <Typography variant="body2" color="text.secondary">
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', fontSize: '0.8125rem' }}>
+                Info
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+                {footerLinks.info.map((link) => (
+                  <MuiLink
+                    key={link.path}
+                    component={Link}
+                    to={link.path}
+                    sx={{
+                      color: 'text.secondary',
+                      textDecoration: 'none',
+                      fontSize: '0.8125rem',
+                      '&:hover': { color: 'primary.main' },
+                    }}
+                  >
+                    {link.label}
+                  </MuiLink>
+                ))}
+              </Box>
+            </Box>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', fontSize: '0.8125rem' }}>
+                Legal
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+                {footerLinks.legal.map((link) => (
+                  <MuiLink
+                    key={link.path}
+                    component={Link}
+                    to={link.path}
+                    sx={{
+                      color: 'text.secondary',
+                      textDecoration: 'none',
+                      fontSize: '0.8125rem',
+                      '&:hover': { color: 'primary.main' },
+                    }}
+                  >
+                    {link.label}
+                  </MuiLink>
+                ))}
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+
+        <Divider sx={{ my: { xs: 3, sm: 4 } }} />
+
+        <Box sx={{ display: 'flex', justifyContent: { xs: 'center', sm: 'space-between' }, alignItems: 'center', flexWrap: 'wrap', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
             © {new Date().getFullYear()} Monstrino. All rights reserved.
           </Typography>
-          <Box sx={{ display: 'flex', gap: 3 }}>
-            <MuiLink href="#" sx={{ color: 'text.secondary', textDecoration: 'none', fontSize: '0.75rem', '&:hover': { color: 'text.primary' } }}>
+          <Box sx={{ display: 'flex', gap: { xs: 2, sm: 3 } }}>
+            <MuiLink
+              component={Link}
+              to="/legal/privacy"
+              sx={{ color: 'text.secondary', textDecoration: 'none', fontSize: { xs: '0.6875rem', sm: '0.75rem' }, '&:hover': { color: 'text.primary' } }}
+            >
               Privacy Policy
             </MuiLink>
-            <MuiLink href="#" sx={{ color: 'text.secondary', textDecoration: 'none', fontSize: '0.75rem', '&:hover': { color: 'text.primary' } }}>
+            <MuiLink
+              component={Link}
+              to="/legal/terms"
+              sx={{ color: 'text.secondary', textDecoration: 'none', fontSize: { xs: '0.6875rem', sm: '0.75rem' }, '&:hover': { color: 'text.primary' } }}
+            >
               Terms of Service
             </MuiLink>
           </Box>

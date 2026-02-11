@@ -65,7 +65,7 @@ export const AppFooter = () => {
           >
             <Typography 
               variant="caption" 
-              onClick={() => navigate('/support')}
+              onClick={() => navigate('/info/support')}
               sx={{ 
                 color: 'text.secondary',
                 cursor: 'pointer',
@@ -76,7 +76,7 @@ export const AppFooter = () => {
             </Typography>
             <Typography 
               variant="caption" 
-              onClick={() => navigate('/privacy')}
+              onClick={() => navigate('/legal/privacy')}
               sx={{ 
                 color: 'text.secondary',
                 cursor: 'pointer',
@@ -87,7 +87,7 @@ export const AppFooter = () => {
             </Typography>
             <Typography 
               variant="caption" 
-              onClick={() => navigate('/terms')}
+              onClick={() => navigate('/legal/terms')}
               sx={{ 
                 color: 'text.secondary',
                 cursor: 'pointer',
@@ -98,7 +98,7 @@ export const AppFooter = () => {
             </Typography>
             <Typography 
               variant="caption" 
-              onClick={() => navigate('/about')}
+              onClick={() => navigate('/info/about')}
               sx={{ 
                 color: 'text.secondary',
                 cursor: 'pointer',
@@ -109,7 +109,7 @@ export const AppFooter = () => {
             </Typography>
             <Typography 
               variant="caption" 
-              onClick={() => navigate('/contact')}
+              onClick={() => navigate('/info/contact')}
               sx={{ 
                 color: 'text.secondary',
                 cursor: 'pointer',

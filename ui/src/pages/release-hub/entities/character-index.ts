@@ -34,6 +34,7 @@ export interface CharacterIndexPetRelationship {
   name: string;
   species: string;
   link: UrlString;
+  image?: UrlString;
 }
 
 export interface CharacterIndexRelationships {

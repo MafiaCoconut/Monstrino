@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Card,
   CardContent,
@@ -7,32 +6,45 @@ import {
   Chip,
   Typography,
 } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
 import PetsIcon from "@mui/icons-material/Pets";
-import type { PetSummary } from "../../entities";
+import { Link as RouterLink } from "react-router-dom";
 
 const PLACEHOLDER_IMAGE = "/placeholder.svg";
 
-type PetCardProps = PetSummary;
+interface PetCardSimpleProps {
+  name: string;
+  species: string;
+  imageUrl?: string | undefined;
+  link?: string;
+  to?: string;
+  rarity?: string;
+}
 
-export const PetCard = ({
-  id,
+export const PetCardSimple = ({
   name,
   species,
-  ownerName,
-  ownerImageUrl,
-  imageUrl
-}: PetCardProps) => {
+  imageUrl,
+  link = "#",
+  to,
+  rarity,
+}: PetCardSimpleProps) => {
+  const isRouterLink = Boolean(to);
+
   return (
     <Card
-      component={RouterLink}
-      to={`/catalog/p/${id}`}
+      component={isRouterLink ? RouterLink : "a"}
+      {...(isRouterLink ? { to } : { href: link })}
       sx={{
         display: "flex",
         flexDirection: "column",
         height: "100%",
         textDecoration: "none",
         position: "relative",
+        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+        "&:hover": {
+          transform: { xs: "none", md: "translateY(-4px)" },
+          boxShadow: { xs: "none", md: "0 8px 24px rgba(236, 72, 153, 0.15)" },
+        }
       }}
     >
       <Box
@@ -57,11 +69,12 @@ export const PetCard = ({
       <CardMedia
         component="div"
         sx={{
-          height: 220,
-          backgroundColor: "background.default",
+          height: 180,
+          backgroundColor: "#FFFFFF",
           backgroundImage: `url(${imageUrl ?? PLACEHOLDER_IMAGE})`,
-          backgroundSize: "cover",
+          backgroundSize: "contain",
           backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
           position: "relative",
           "&::after": {
             content: '""',
@@ -86,25 +99,29 @@ export const PetCard = ({
         >
           {name}
         </Typography>
-        <Chip
-          label={species}
-          size="small"
-          sx={{
-            backgroundColor: "rgba(0, 212, 255, 0.15)",
-            color: "text.primary",
-            fontWeight: 500,
-            fontSize: "0.7rem",
-            mb: 2,
-          }}
-        />
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Avatar
-            src={ownerImageUrl}
-            sx={{ width: 24, height: 24, border: "1px solid", borderColor: "primary.main" }}
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+          <Chip
+            label={species}
+            size="small"
+            sx={{
+              backgroundColor: "rgba(0, 212, 255, 0.15)",
+              color: "text.primary",
+              fontWeight: 500,
+              fontSize: "0.7rem",
+            }}
           />
-          <Typography variant="body2" color="text.secondary">
-            Owner: <Box component="span" sx={{ color: "primary.main", fontWeight: 500 }}>{ownerName ?? "Unknown"}</Box>
-          </Typography>
+          {rarity && (
+            <Chip
+              label={rarity}
+              size="small"
+              sx={{
+                backgroundColor: "rgba(249, 115, 22, 0.2)",
+                color: "#f97316",
+                fontWeight: 500,
+                fontSize: "0.7rem",
+              }}
+            />
+          )}
         </Box>
       </CardContent>
     </Card>

@@ -15,9 +15,9 @@ import type { ReleaseSummary } from '../../entities';
 
 const PLACEHOLDER_IMAGE = '/placeholder.svg';
 
-type ReleaseCardHomeProps = ReleaseSummary;
+type ReleaseCardSpotlightProps = ReleaseSummary;
 
-const ReleaseCardHome = ({
+const ReleaseCardSpotlight = ({
   id,
   name,
   characterName,
@@ -26,7 +26,7 @@ const ReleaseCardHome = ({
   imageUrl,
   price,
   isExclusive,
-}: ReleaseCardHomeProps) => {
+}: ReleaseCardSpotlightProps) => {
   return (
     <Card
       component={RouterLink}
@@ -159,4 +159,4 @@ const ReleaseCardHome = ({
   );
 };
 
-export default ReleaseCardHome;
+export default ReleaseCardSpotlight;

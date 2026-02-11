@@ -1,27 +1,17 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { CSSProperties, ReactNode, useMemo } from "react";
-import {
-  Box,
-  Typography,
-  Link,
-  Container,
-  Grid,
-  Chip,
-  Card,
-  CardMedia,
-  Avatar,
-  Stack,
-} from "@mui/material";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { useParams } from "react-router-dom";
+import { useMemo, useState, useEffect } from "react";
+import { Box, Typography, Container, Grid } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import PersonIcon from "@mui/icons-material/Person";
 import ImageIconMui from "@mui/icons-material/Image";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import type { Pet } from "../entities/pet";
 import { petIndexMock, petIndexByNumericId } from "@/data/real-data/petIndexMock";
 import { releaseIndexMock } from "@/data/real-data/releaseIndexMock";
-import { ReleaseCardHome } from "../components/release-cards";
+import { ReleaseCardMinimal } from "../components/release-cards";
 import { PetOwnerCard } from "../components/PetOwnerCard";
+import { ReleaseBreadcrumb } from "../components/breadcrumb";
+import { StyledLink } from "../components/StyledLink";
+import { Badge, SurfaceCard, SectionTitle } from "../components/ui";
 
 // ==================== DESIGN TOKENS ====================
 const tokens = {
@@ -42,83 +32,26 @@ const tokens = {
   container: {
     center: true,
     padding: "2rem",
+    paddingMobile: "1rem",
     maxWidth: "1400px",
   },
 };
 
+const borderColor = "rgba(255,255,255,0.08)";
+
+const sectionTitleSx = { fontSize: { xs: "1.2rem", md: "1.35rem" } };
+
 // ==================== RELEASE MAP ====================
-const releaseById = new Map(releaseIndexMock.map((release) => [release.id, release]));
+const releaseById = new Map<string, (typeof releaseIndexMock)[number]>(
+  releaseIndexMock.map((release) => [release.id, release])
+);
 
 // ==================== TYPES ====================
-type PetOwner = NonNullable<Pet["owners"]>[number];
 type PetRelease = NonNullable<Pet["releases"]>[number];
 type PetFact = NonNullable<Pet["facts"]>[number];
-type PetFanArt = NonNullable<Pet["fanArt"]>[number];
-
-// ==================== STYLED LINK STUB ====================
-const StyledLink = ({
-  to,
-  children,
-  style,
-  onMouseEnter,
-  onMouseLeave,
-}: {
-  to: string;
-  children: ReactNode;
-  style?: CSSProperties;
-  onMouseEnter?: () => void;
-  onMouseLeave?: () => void;
-}) => {
-  const navigate = useNavigate();
-
-  return (
-    <Link
-      href={to}
-      onClick={(e) => {
-        e.preventDefault();
-        navigate(to);
-      }}
-      sx={{
-        textDecoration: "none",
-        color: "inherit",
-        ...style,
-      }}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-    >
-      {children}
-    </Link>
-  );
-};
-
-// ==================== ICONS (Inline SVGs) ====================
-const MonstrinoLogo = () => (
-  <svg viewBox="0 0 32 32" style={{ height: "2rem", width: "2rem" }} fill="none">
-    <path
-      d="M16 2C8.268 2 2 8.268 2 16s6.268 14 14 14 14-6.268 14-14S23.732 2 16 2z"
-      fill={tokens.colors.primary}
-    />
-    <path
-      d="M11 13a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM21 13a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"
-      fill={tokens.colors.background}
-    />
-    <path
-      d="M16 24c3.5 0 6-2 6-4H10c0 2 2.5 4 6 4z"
-      fill={tokens.colors.background}
-    />
-  </svg>
-);
-
-const ChevronRight = ({ size = "1rem" }: { size?: string }) => (
-  <ChevronRightIcon style={{ height: size, width: size }} />
-);
 
 const ArrowRight = ({ size = "1rem" }: { size?: string }) => (
   <ArrowForwardIcon style={{ height: size, width: size }} />
-);
-
-const UserIcon = ({ size = "1.25rem" }: { size?: string }) => (
-  <PersonIcon style={{ height: size, width: size }} />
 );
 
 const ImageIcon = ({ size = "2rem" }: { size?: string }) => (
@@ -131,125 +64,70 @@ const HeartIcon = ({ size = "1rem" }: { size?: string }) => (
 
 // ==================== COMPONENTS ====================
 
-
-// Breadcrumb Navigation
-const Breadcrumbs = ({ petName }: { petName: string }) => {
-  const navStyle: CSSProperties = {
-    marginBottom: "2rem",
-    display: "flex",
-    alignItems: "center",
-    gap: "0.5rem",
-    fontSize: "0.875rem",
-    color: tokens.colors.mutedForeground,
-  };
-
-  const linkStyle: CSSProperties = {
-    transition: "color 0.2s",
-  };
-
-  const chevronStyle: CSSProperties = {
-    height: "0.75rem",
-    width: "0.75rem",
-  };
-
-  return (
-    <Box component="nav" sx={navStyle}>
-      <StyledLink to="/" style={linkStyle}>
-        Home
-      </StyledLink>
-      <Box component="span" sx={chevronStyle}>
-        <ChevronRight size="0.75rem" />
-      </Box>
-      <StyledLink to="/pets" style={linkStyle}>
-        Pets
-      </StyledLink>
-      <Box component="span" sx={chevronStyle}>
-        <ChevronRight size="0.75rem" />
-      </Box>
-      <Box component="span" sx={{ color: tokens.colors.foreground }}>{petName}</Box>
-    </Box>
-  );
-};
-
 // Badge Component
-const Badge = ({
-  variant = "default",
-  children,
-}: {
-  variant?: "default" | "secondary" | "outline";
-  children: ReactNode;
-}) => {
-  const variants: Record<string, any> = {
-    default: {
-      backgroundColor: "hsla(270, 60%, 55%, 0.2)",
-      color: tokens.colors.primary,
-      borderColor: "hsla(270, 60%, 55%, 0.3)",
-    },
-    secondary: {
-      backgroundColor: "hsla(330, 70%, 55%, 0.2)",
-      color: tokens.colors.secondary,
-      borderColor: "hsla(330, 70%, 55%, 0.3)",
-    },
-    outline: {
-      backgroundColor: "transparent",
-      color: tokens.colors.mutedForeground,
-      borderColor: tokens.colors.border,
-    },
-  };
-
-  return (
-    <Chip
-      label={children}
-      sx={{
-        ...variants[variant],
-        border: "1px solid",
-        fontSize: "0.75rem",
-        fontWeight: 500,
-      }}
-    />
-  );
-};
+const badgeVariantSx = {
+  default: {
+    backgroundColor: "hsla(270, 60%, 55%, 0.2)",
+    color: tokens.colors.primary,
+    borderColor: "hsla(270, 60%, 55%, 0.3)",
+  },
+  secondary: {
+    backgroundColor: "hsla(330, 70%, 55%, 0.2)",
+    color: tokens.colors.secondary,
+    borderColor: "hsla(330, 70%, 55%, 0.3)",
+  },
+  outline: {
+    backgroundColor: "transparent",
+    color: tokens.colors.mutedForeground,
+    borderColor: tokens.colors.border,
+  },
+} as const;
+const badgeBaseSx = { border: "1px solid", fontSize: "0.75rem", fontWeight: 500 };
 
 // Pet Hero Section
 const PetHero = ({ pet }: { pet: Pet }) => {
-  const badgesStyle: CSSProperties = {
-    marginBottom: "1rem",
+  const owners = pet.owners ?? [];
+  
+  const badgesStyle = {
+    marginBottom: { xs: "0.75rem", md: "1rem" },
     display: "flex",
     flexWrap: "wrap",
     alignItems: "center",
-    gap: "0.75rem",
+    gap: { xs: "0.5rem", md: "0.75rem" },
   };
 
-  const titleStyle: CSSProperties = {
-    marginBottom: "1rem",
-    fontSize: "2.25rem",
+  const titleStyle = {
+    marginBottom: { xs: "0.75rem", md: "1rem" },
+    fontSize: { xs: "1.75rem", sm: "2.25rem", md: "3rem", lg: "3.75rem" },
     fontWeight: 700,
     letterSpacing: "-0.025em",
     color: tokens.colors.foreground,
+    lineHeight: 1.2,
   };
 
-  const descStyle: CSSProperties = {
-    fontSize: "1.125rem",
+  const descStyle = {
+    fontSize: { xs: "1rem", md: "1.125rem" },
     color: tokens.colors.mutedForeground,
+    lineHeight: 1.6,
   };
 
-  const imageContainerStyle: CSSProperties = {
+  const imageContainerStyle = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
   };
 
-  const imageBoxStyle: CSSProperties = {
+  const imageBoxStyle = {
     aspectRatio: "1",
     width: "100%",
-    maxWidth: "28rem",
+    maxWidth: { xs: "100%", md: "28rem" },
     overflow: "hidden",
-    borderRadius: "1rem",
+    borderRadius: { xs: "0.75rem", md: "1rem" },
     border: `1px solid ${tokens.colors.border}`,
-    backgroundColor: tokens.colors.card,
+    backgroundColor: "#ffffff",
   };
 
-  const imagePlaceholderStyle: CSSProperties = {
+  const imagePlaceholderStyle = {
     display: "flex",
     height: "100%",
     width: "100%",
@@ -258,40 +136,73 @@ const PetHero = ({ pet }: { pet: Pet }) => {
     backgroundColor: "hsla(0, 0%, 15%, 0.3)",
   };
 
-  const placeholderTextStyle: CSSProperties = {
+  const placeholderTextStyle = {
     textAlign: "center",
     color: tokens.colors.mutedForeground,
   };
 
   return (
     <Grid container spacing={2} component="section" sx={{
-      marginBottom: "3rem",
-      gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" },
-      gap: { xs: "2rem", lg: "3rem" },
+      marginBottom: { xs: "2rem", md: "3rem" },
+      gridTemplateColumns: { xs: "1fr", md: "1.1fr 0.9fr", lg: "1fr 1fr" },
+      gap: { xs: "1.5rem", md: "2rem", lg: "3rem" },
       display: "grid",
     }}>
-      <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+      <Box sx={{ display: "flex", flexDirection: "column", order: { xs: 2, sm: 2, md: 1, lg: 1 } }}>
+        <Typography variant="h1" sx={titleStyle}>
+          {pet.name}
+        </Typography>
         <Box sx={badgesStyle}>
-          <Badge>{pet.type ?? "Pet"}</Badge>
-          {pet.subtype && <Badge variant="outline">{pet.subtype}</Badge>}
+          <Badge variantSx={badgeVariantSx} baseSx={badgeBaseSx}>
+            {pet.type ?? "Pet"}
+          </Badge>
+          {pet.subtype && (
+            <Badge variant="outline" variantSx={badgeVariantSx} baseSx={badgeBaseSx}>
+              {pet.subtype}
+            </Badge>
+          )}
           {pet.rarity && pet.rarity !== "common" && (
-            <Badge variant="secondary">
-              <Box component="span" sx={{ marginRight: "0.25rem", display: "flex" }}>
+            <Badge variant="secondary" variantSx={badgeVariantSx} baseSx={badgeBaseSx}>
+              <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}>
                 <HeartIcon size="0.75rem" />
+                {pet.rarity.charAt(0).toUpperCase() + pet.rarity.slice(1)}
               </Box>
-              {pet.rarity.charAt(0).toUpperCase() + pet.rarity.slice(1)}
             </Badge>
           )}
         </Box>
-        <Typography variant="h1" sx={{
-          ...titleStyle,
-          fontSize: { xs: "2.25rem", md: "3rem", lg: "3.75rem" },
+        <Box sx={{ 
+          display: "grid", 
+          gridTemplateColumns: owners.length > 0 ? { xs: "1fr", md: "1fr 3fr" } : "1fr",
+          gap: { xs: 2, md: 3 },
+          alignItems: "start"
         }}>
-          {pet.name}
-        </Typography>
-        <Typography sx={descStyle}>{pet.description ?? ""}</Typography>
+          {owners.length === 1 && (
+            <Box sx={{ mt: { xs: 2, md: 0 } }}>
+              <Typography variant="h2" sx={{ mb: { xs: 1, md: 1.5 }, fontSize: { xs: "1.1rem", md: "1.3rem" }, fontWeight: 600, color: tokens.colors.foreground }}>
+                Ownership
+              </Typography>
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: { xs: "0.75rem", md: "1rem" } }}>
+                {owners.map((owner) => (
+                  <PetOwnerCard
+                    key={owner.id}
+                    id={owner.id}
+                    name={owner.name}
+                    role={`${owner.role} owner`}
+                    {...(owner.imageUrl ? { imageUrl: owner.imageUrl } : {})}
+                  />
+                ))}
+              </Box>
+            </Box>
+          )}
+          <Box sx={{ pl: { xs: 0, md: 3, lg: 4 } }}>
+            <Typography variant="h2" sx={{ mb: { xs: 1, md: 1.5 }, fontSize: { xs: "1.1rem", md: "1.3rem" }, fontWeight: 600, color: tokens.colors.foreground }}>
+              About
+            </Typography>
+            <Typography sx={descStyle}>{pet.description ?? ""}</Typography>
+          </Box>
+        </Box>
       </Box>
-      <Box sx={imageContainerStyle}>
+      <Box sx={{ ...imageContainerStyle, order: { xs: 1, sm: 1, md: 2, lg: 2 } }}>
         <Box sx={imageBoxStyle}>
           {pet.imageUrl ? (
             <Box component="img" src={pet.imageUrl} alt={pet.name} sx={{
@@ -317,131 +228,51 @@ const PetHero = ({ pet }: { pet: Pet }) => {
   );
 };
 
-// Ownership Section
-const OwnershipSection = ({ owners }: { owners?: PetOwner[] }) => {
-  const safeOwners = owners ?? [];
-  const sectionStyle: CSSProperties = {
-    marginBottom: "2.5rem",
-  };
-
-  const titleStyle: CSSProperties = {
-    marginBottom: "1rem",
-    fontSize: "1.125rem",
-    fontWeight: 600,
-    color: tokens.colors.foreground,
-  };
-
-  return (
-    <Box component="section" sx={sectionStyle}>
-      <Typography variant="h2" sx={titleStyle}>Ownership</Typography>
-      <Grid container spacing={2} sx={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: "1rem",
-      }}>
-        {safeOwners.map((owner) => (
-          <PetOwnerCard
-            key={owner.id}
-            id={owner.id}
-            name={owner.name}
-            role={`${owner.role} owner`}
-            imageUrl={owner.imageUrl}
-          />
-        ))}
-      </Grid>
-    </Box>
-  );
-};
-
 // Releases Section
 const ReleasesSection = ({ releases }: { releases?: PetRelease[] }) => {
   const safeReleases = releases ?? [];
-  const sectionStyle: CSSProperties = {
-    marginBottom: "2.5rem",
+  const [hoveredReleaseId, setHoveredReleaseId] = useState<string | number | null>(null);
+  const sectionStyle = {
+    marginBottom: { xs: "1.5rem", md: "2.5rem" },
   };
 
-  const titleStyle: CSSProperties = {
-    marginBottom: "1rem",
-    fontSize: "1.125rem",
+  const titleStyle = {
+    marginBottom: { xs: "0.75rem", md: "1rem" },
+    fontSize: { xs: "1.1rem", md: "1.3rem" },
     fontWeight: 600,
     color: tokens.colors.foreground,
   };
 
   // Get full release data from releaseById map
   const fullReleases = safeReleases
-    .map((petRelease) => releaseById.get(petRelease.id))
+    .map((petRelease) => releaseById.get(`${petRelease.id}`))
     .filter((release): release is NonNullable<typeof release> => release !== undefined);
 
   return (
     <Box component="section" sx={sectionStyle}>
       <Typography variant="h2" sx={titleStyle}>Appearances</Typography>
-      <Grid container spacing={2} sx={{
-        display: "grid",
-        gap: "1rem",
-        gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" },
-      }}>
+      <Grid container spacing={{ xs: 1.5, sm: 2, md: 2.5 }}>
         {fullReleases.map((release) => (
-          <ReleaseCardHome key={release.id} {...release} />
+          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={release.id}>
+            <ReleaseCardMinimal
+              doll={{
+                id: release.id,
+                releaseId: release.id,
+                character: release.characterName ?? "Unknown",
+                variant: release.name,
+                ...(release.imageUrl !== undefined ? { imageUrl: release.imageUrl } : {}),
+                rarity: release.rarity ?? (release.isExclusive ? "Rare" : "Common"),
+                ...(release.year !== undefined ? { year: release.year } : {}),
+              }}
+              isHovered={hoveredReleaseId === release.id}
+              onMouseEnter={() => setHoveredReleaseId(release.id)}
+              onMouseLeave={() => setHoveredReleaseId(null)}
+              size="reduced"
+              enableHoverLift
+            />
+          </Grid>
         ))}
       </Grid>
-    </Box>
-  );
-};
-
-// Exclusivity Section
-const ExclusivitySection = ({
-  exclusivity,
-  note,
-}: {
-  exclusivity?: Pet["exclusivity"];
-  note?: string;
-}) => {
-  const statusConfig = {
-    exclusive: { label: "Exclusive", variant: "secondary" as const },
-    shared: { label: "Shared", variant: "default" as const },
-    limited: { label: "Limited Edition", variant: "secondary" as const },
-  };
-
-  const resolvedExclusivity = exclusivity ?? "shared";
-  const config = statusConfig[resolvedExclusivity];
-
-  const sectionStyle: CSSProperties = {
-    marginBottom: "2.5rem",
-  };
-
-  const titleStyle: CSSProperties = {
-    marginBottom: "1rem",
-    fontSize: "1.125rem",
-    fontWeight: 600,
-    color: tokens.colors.foreground,
-  };
-
-  const cardStyle: CSSProperties = {
-    borderRadius: "0.75rem",
-    border: `1px solid ${tokens.colors.border}`,
-    backgroundColor: tokens.colors.card,
-    padding: "1.25rem",
-  };
-
-  const innerStyle: CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    gap: "0.75rem",
-  };
-
-  const noteStyle: CSSProperties = {
-    color: tokens.colors.mutedForeground,
-  };
-
-  return (
-    <Box component="section" sx={sectionStyle}>
-      <Typography variant="h2" sx={titleStyle}>Availability</Typography>
-      <Box sx={cardStyle}>
-        <Box sx={innerStyle}>
-          <Badge variant={config.variant}>{config.label}</Badge>
-          <Typography sx={noteStyle}>{note ?? "Availability varies across releases."}</Typography>
-        </Box>
-      </Box>
     </Box>
   );
 };
@@ -449,53 +280,38 @@ const ExclusivitySection = ({
 // Facts Section
 const FactsSection = ({ facts }: { facts?: PetFact[] }) => {
   const safeFacts = facts ?? [];
-  const sectionStyle: CSSProperties = {
-    marginBottom: "2.5rem",
-  };
-
-  const titleStyle: CSSProperties = {
-    marginBottom: "1rem",
-    fontSize: "1.125rem",
-    fontWeight: 600,
-    color: tokens.colors.foreground,
-  };
-
-  const cardStyle: CSSProperties = {
-    borderRadius: "0.5rem",
-    border: `1px solid ${tokens.colors.border}`,
-    backgroundColor: tokens.colors.card,
-    padding: "1rem",
-  };
-
-  const labelStyle: CSSProperties = {
-    marginBottom: "0.25rem",
-    fontSize: "0.75rem",
-    fontWeight: 500,
-    textTransform: "uppercase",
-    letterSpacing: "0.05em",
-    color: tokens.colors.mutedForeground,
-  };
-
-  const valueStyle: CSSProperties = {
-    fontWeight: 500,
-    color: tokens.colors.foreground,
-  };
-
+  
   return (
-    <Box component="section" sx={sectionStyle}>
-      <Typography variant="h2" sx={titleStyle}>Facts & Details</Typography>
-      <Grid container spacing={2} sx={{
-        display: "grid",
-        gap: "0.75rem",
-        gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" },
-      }}>
+    <Box component="section" sx={{ marginBottom: { xs: "1.5rem", md: "2.5rem" } }}>
+      <SectionTitle title="Facts & Details" titleSx={sectionTitleSx} />
+      <SurfaceCard>
         {safeFacts.map((fact, index) => (
-          <Box key={index} sx={cardStyle}>
-            <Typography sx={labelStyle}>{fact.label}</Typography>
-            <Typography sx={valueStyle}>{fact.value}</Typography>
+          <Box
+            key={fact.label}
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              alignItems: { xs: "flex-start", sm: "center" },
+              justifyContent: "space-between",
+              gap: { xs: 0.5, sm: 2 },
+              py: 1.5,
+              borderBottom: index < safeFacts.length - 1 ? `1px solid ${borderColor}` : "none",
+            }}
+          >
+            <Typography sx={{ color: "text.secondary", fontSize: "0.9rem" }}>{fact.label}</Typography>
+            <Typography
+              sx={{
+                fontWeight: 600,
+                textAlign: { xs: "left", sm: "right" },
+                maxWidth: { xs: "100%", sm: 480 },
+                width: { xs: "100%", sm: "auto" },
+              }}
+            >
+              {fact.value}
+            </Typography>
           </Box>
         ))}
-      </Grid>
+      </SurfaceCard>
     </Box>
   );
 };
@@ -503,18 +319,37 @@ const FactsSection = ({ facts }: { facts?: PetFact[] }) => {
 // Image Gallery
 const ImageGallery = ({ images, title }: { images?: string[]; title: string }) => {
   const safeImages = images ?? [];
-  const sectionStyle: CSSProperties = {
-    marginBottom: "2.5rem",
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  useEffect(() => {
+    setIsExpanded(safeImages.length > 1);
+  }, [safeImages.length]);
+  
+  const sectionStyle = {
+    marginBottom: { xs: "1.5rem", md: "2.5rem" },
   };
 
-  const titleStyle: CSSProperties = {
-    marginBottom: "1rem",
-    fontSize: "1.125rem",
+  const titleStyle = {
+    marginBottom: { xs: "0.75rem", md: "1rem" },
+    fontSize: { xs: "1rem", md: "1.125rem" },
     fontWeight: 600,
     color: tokens.colors.foreground,
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    gap: "0.5rem",
+    padding: "0.75rem 1rem",
+    borderRadius: "0.5rem",
+    border: `1px solid ${tokens.colors.border}`,
+    backgroundColor: tokens.colors.card,
+    transition: "all 0.2s",
+    "&:hover": {
+      borderColor: tokens.colors.primary,
+      backgroundColor: "hsla(270, 60%, 55%, 0.1)",
+    },
   };
 
-  const cardStyle: CSSProperties = {
+  const cardStyle = {
     aspectRatio: "1",
     cursor: "pointer",
     overflow: "hidden",
@@ -524,7 +359,7 @@ const ImageGallery = ({ images, title }: { images?: string[]; title: string }) =
     transition: "border-color 0.2s",
   };
 
-  const placeholderStyle: CSSProperties = {
+  const placeholderStyle = {
     display: "flex",
     height: "100%",
     width: "100%",
@@ -534,161 +369,62 @@ const ImageGallery = ({ images, title }: { images?: string[]; title: string }) =
     transition: "background-color 0.2s",
   };
 
-  const iconStyle: CSSProperties = {
+  const iconStyle = {
     opacity: 0.5,
     color: tokens.colors.mutedForeground,
   };
 
   return (
     <Box component="section" sx={sectionStyle}>
-      <Typography variant="h2" sx={titleStyle}>{title}</Typography>
-      <Grid container spacing={2} sx={{
-        display: "grid",
-        gridTemplateColumns: { xs: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" },
-        gap: "1rem",
-      }}>
-        <Box component="img" src={safeImages[0]} alt={`${title} 1`} sx={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          display: "block",
-        }} />
-
-        {/* {safeImages.map((imageUrl, index) => (
-          <Box key={index} sx={{
-            ...cardStyle,
-            "&:hover": {
-              borderColor: "hsla(270, 60%, 55%, 0.5)",
-              "& > div": {
-                backgroundColor: "hsla(0, 0%, 15%, 0.5)",
+      <Typography 
+        variant="h2" 
+        sx={titleStyle}
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <Box component="span" sx={{ 
+          transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
+          transition: "transform 0.2s",
+          display: "inline-flex",
+        }}>
+          ▶
+        </Box>
+        {title}
+      </Typography>
+      {isExpanded && (
+        <Grid container spacing={2} sx={{
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" },
+          gap: { xs: "0.5rem", md: "1rem" },
+          marginTop: "1rem",
+        }}>
+          {safeImages.map((imageUrl, index) => (
+            <Box key={index} sx={{
+              ...cardStyle,
+              "&:hover": {
+                borderColor: "hsla(270, 60%, 55%, 0.5)",
+                "& > div": {
+                  backgroundColor: "hsla(0, 0%, 15%, 0.5)",
+                }
               }
-            }
-          }}>
-            {imageUrl ? (
-              <Box component="img" src={imageUrl} alt={`${title} ${index + 1}`} sx={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                display: "block",
-              }} />
-            ) : (
-              <Box sx={placeholderStyle}>
-                <Box component="span" sx={iconStyle}>
-                  <ImageIcon />
-                </Box>
-              </Box>
-            )}
-          </Box>
-        ))} */}
-      </Grid>
-    </Box>
-  );
-};
-
-// Fan Art Section
-const FanArtSection = ({ fanArt }: { fanArt?: PetFanArt[] }) => {
-  const safeFanArt = fanArt ?? [];
-  const sectionStyle: CSSProperties = {
-    marginBottom: "2.5rem",
-  };
-
-  const headerStyle: CSSProperties = {
-    marginBottom: "1rem",
-    display: "flex",
-    alignItems: "baseline",
-    justifyContent: "space-between",
-  };
-
-  const titleStyle: CSSProperties = {
-    fontSize: "1.125rem",
-    fontWeight: 600,
-    color: tokens.colors.foreground,
-  };
-
-  const disclaimerStyle: CSSProperties = {
-    fontSize: "0.75rem",
-    color: tokens.colors.mutedForeground,
-  };
-
-  const cardStyle: CSSProperties = {
-    aspectRatio: "4/3",
-    cursor: "pointer",
-    overflow: "hidden",
-    borderRadius: "0.5rem",
-    border: `1px solid ${tokens.colors.border}`,
-    backgroundColor: tokens.colors.card,
-    transition: "border-color 0.2s",
-  };
-
-  const innerStyle: CSSProperties = {
-    position: "relative",
-    display: "flex",
-    height: "100%",
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "hsla(0, 0%, 15%, 0.2)",
-    transition: "background-color 0.2s",
-  };
-
-  const iconStyle: CSSProperties = {
-    opacity: 0.5,
-    color: tokens.colors.mutedForeground,
-  };
-
-  const artistOverlayStyle: CSSProperties = {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    background: "linear-gradient(to top, hsla(0, 0%, 5%, 0.9), transparent)",
-    padding: "0.75rem",
-    opacity: 0,
-    transition: "opacity 0.2s",
-  };
-
-  const artistTextStyle: CSSProperties = {
-    fontSize: "0.75rem",
-    color: tokens.colors.mutedForeground,
-  };
-
-  return (
-    <Box component="section" sx={sectionStyle}>
-      <Box sx={headerStyle}>
-        <Typography variant="h2" sx={titleStyle}>Community Creations</Typography>
-        <Box component="span" sx={disclaimerStyle}>Fan content — not official</Box>
-      </Box>
-      <Grid container spacing={2} sx={{
-        display: "grid",
-        gridTemplateColumns: { xs: "repeat(2, 1fr)", md: "repeat(3, 1fr)" },
-        gap: "1rem",
-      }}>
-        {safeFanArt.map((art) => (
-          <Box key={art.id} sx={{
-            ...cardStyle,
-            "&:hover": {
-              borderColor: "hsla(330, 70%, 55%, 0.5)",
-              "& > div": {
-                backgroundColor: "hsla(0, 0%, 15%, 0.4)",
-              },
-              "& .artist-overlay": {
-                opacity: 1,
-              }
-            }
-          }}>
-            <Box sx={innerStyle}>
-              <Box component="span" sx={iconStyle}>
-                <ImageIcon />
-              </Box>
-              {art.artist && (
-                <Box sx={artistOverlayStyle} className="artist-overlay">
-                  <Typography sx={artistTextStyle}>by {art.artist}</Typography>
+            }}>
+              {imageUrl ? (
+                <Box component="img" src={imageUrl} alt={`${title} ${index + 1}`} sx={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  display: "block",
+                }} />
+              ) : (
+                <Box sx={placeholderStyle}>
+                  <Box component="span" sx={iconStyle}>
+                    <ImageIcon />
+                  </Box>
                 </Box>
               )}
             </Box>
-          </Box>
-        ))}
-      </Grid>
+          ))}
+        </Grid>
+      )}
     </Box>
   );
 };
@@ -707,9 +443,11 @@ const PetIndex = () => {
     return byId ?? null;
   }, [resolvedId]);
 
-  const pageStyle: CSSProperties = {
+  const pageStyle = {
     minHeight: "100vh",
-    backgroundColor: tokens.colors.background,
+    backgroundColor: "#0B0D11",
+    backgroundImage:
+      "radial-gradient(900px 600px at 15% 0%, rgba(64, 160, 255, 0.16), transparent 60%), radial-gradient(900px 700px at 90% 10%, rgba(255, 120, 200, 0.12), transparent 65%), linear-gradient(180deg, #0B0D11 0%, #121622 100%)",
     color: tokens.colors.foreground,
     fontFamily:
       'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
@@ -717,39 +455,29 @@ const PetIndex = () => {
     MozOsxFontSmoothing: "grayscale",
   };
 
-  const footerStyle: CSSProperties = {
-    borderTop: `1px solid ${tokens.colors.border}`,
-    backgroundColor: tokens.colors.background,
-    padding: "2rem 0",
-  };
-
-  const footerInnerStyle: CSSProperties = {
-    maxWidth: tokens.container.maxWidth,
-    margin: "0 auto",
-    textAlign: "center",
-    fontSize: "0.875rem",
-    color: tokens.colors.mutedForeground,
-  };
-
   if (!pet) {
     return (
       <Box sx={pageStyle}>
         <Container component="main" maxWidth="lg" sx={{
-          py: { xs: 4, md: 6 }
+          px: { xs: 2, md: 3 },
+          py: { xs: 3, md: 6 }
         }}>
           <Box sx={{ textAlign: "center" }}>
             <Typography
               variant="h1"
               sx={{
-                marginBottom: "1rem",
-                fontSize: "1.5rem",
+                marginBottom: { xs: "0.75rem", md: "1rem" },
+                fontSize: { xs: "1.25rem", md: "1.5rem" },
                 fontWeight: 700,
                 color: tokens.colors.foreground,
               }}
             >
               Pet Not Found
             </Typography>
-            <Typography sx={{ color: tokens.colors.mutedForeground }}>
+            <Typography sx={{ 
+              color: tokens.colors.mutedForeground,
+              fontSize: { xs: "0.875rem", md: "1rem" }
+            }}>
               The pet you're looking for doesn't exist in our archives.
             </Typography>
             <StyledLink
@@ -776,37 +504,25 @@ const PetIndex = () => {
   return (
     <Box sx={pageStyle}>
       <Container component="main" maxWidth="lg" sx={{
-        py: { xs: 4, md: 6 }
+        px: { xs: 2, md: 3 },
+        pt: { xs: 1, md: 2 },
+        pb: { xs: 3, md: 6 }
       }}>
-        <Breadcrumbs petName={pet.name} />
+        <ReleaseBreadcrumb 
+          items={[
+            { label: 'Pets', link: '/catalog/p' },
+            { label: pet.name }
+          ]} 
+          colors={tokens.colors} 
+        />
         <PetHero pet={pet} />
         <Box>
-          {(pet.owners && pet.owners.length > 0) || (pet.releases && pet.releases.length > 0) ? (
-            <Grid container spacing={2} sx={{
-              display: "grid",
-              gap: "2rem",
-              gridTemplateColumns: {
-                xs: "1fr",
-                md: (pet.owners && pet.owners.length > 0) && (pet.releases && pet.releases.length > 0)
-                  ? "1fr 1fr"
-                  : "1fr"
-              },
-              mb: "2rem",
-            }}>
-              {pet.owners && pet.owners.length > 0 && <OwnershipSection owners={pet.owners} />}
-              {pet.releases && pet.releases.length > 0 && <ReleasesSection releases={pet.releases} />}
-            </Grid>
-          ) : null}
-          <FactsSection facts={pet.facts} />
+          <FactsSection {...(pet.facts ? { facts: pet.facts } : {})} />
+          {pet.releases && pet.releases.length > 0 && <ReleasesSection releases={pet.releases} />}
         </Box>
-        <ImageGallery images={pet.officialImages} title="Official Gallery" />
+        <ImageGallery title="Official Gallery" {...(pet.officialImages ? { images: pet.officialImages } : {})} />
         {/* <FanArtSection fanArt={pet.fanArt} /> */}
       </Container>
-      <Box component="footer" sx={footerStyle}>
-        <Box sx={footerInnerStyle}>
-          <Typography>© 2024 Monstrino — The Monster High Collector Archive</Typography>
-        </Box>
-      </Box>
     </Box>
   );
 };

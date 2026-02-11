@@ -65,6 +65,9 @@ const releaseTypeLinksByReleaseId = groupByReleaseId(releaseTypeLinkMock);
 
 const badgePalette = ['#ec4899', '#3b82f6', '#a855f7', '#f97316'];
 const rarityPalette = ['Common', 'Rare', 'Exclusive', 'Legendary'];
+const releaseRarities = ['Common', 'Uncommon', 'Rare', 'Ultra Rare', 'Grail'];
+
+const pickByRelease = <T,>(releaseId: number, values: T[]): T => values[releaseId % values.length];
 
 const buildStockStatus = (release: ReleaseRecord): ReleaseStockStatus => {
   const statuses: ReleaseStockStatus[] = ['in_stock', 'out_of_stock', 'preorder', 'limited'];
@@ -87,10 +90,14 @@ const truncate = (value: string, max = 60): string => {
 const buildPricing = (release: ReleaseRecord): ReleasePricing => {
   const base = 45 + ((release.year ?? 2024) % 10) * 4 + (release.id % 7) * 3;
   const regions: ReleasePricingRegion[] = [
-    { code: 'US', currency: '$', msrp: base, market: Math.round(base * 1.45), flag: 'US', msrpNote: 'Official MSRP', marketNote: 'Recent sales avg', recentSalesCount: 20 + (release.id % 40) },
-    { code: 'EU', currency: 'EUR', msrp: Math.round(base * 1.1), market: Math.round(base * 1.55), flag: 'EU', msrpNote: 'Official MSRP', marketNote: 'Recent sales avg', recentSalesCount: 20 + (release.id % 40) },
-    { code: 'JP', currency: 'JPY', msrp: Math.round(base * 120), market: Math.round(base * 180), flag: 'JP', msrpNote: 'Official MSRP', marketNote: 'Recent sales avg', recentSalesCount: 20 + (release.id % 40) },
-    { code: 'UK', currency: 'GBP', msrp: Math.round(base * 0.9), market: Math.round(base * 1.35), flag: 'UK', msrpNote: 'Official MSRP', marketNote: 'Recent sales avg', recentSalesCount: 20 + (release.id % 40) },
+    { code: 'US', currency: '$', msrp: base, market: Math.round(base * 1.45), flag: '🇺🇸', msrpNote: 'Official MSRP', marketNote: 'Recent sales avg', recentSalesCount: 20 + (release.id % 40) },
+    { code: 'EU', currency: '€', msrp: Math.round(base * 1.1), market: Math.round(base * 1.55), flag: '🇪🇺', msrpNote: 'Official MSRP', marketNote: 'Recent sales avg', recentSalesCount: 20 + (release.id % 40) },
+    { code: 'JP', currency: '¥', msrp: Math.round(base * 120), market: Math.round(base * 180), flag: '🇯🇵', msrpNote: 'Official MSRP', marketNote: 'Recent sales avg', recentSalesCount: 20 + (release.id % 40) },
+    { code: 'UK', currency: '£', msrp: Math.round(base * 0.9), market: Math.round(base * 1.35), flag: '🇬🇧', msrpNote: 'Official MSRP', marketNote: 'Recent sales avg', recentSalesCount: 20 + (release.id % 40) },
+    { code: 'CA', currency: 'C$', msrp: Math.round(base * 1.15), market: Math.round(base * 1.6), flag: '🇨🇦', msrpNote: 'Official MSRP', marketNote: 'Recent sales avg', recentSalesCount: 15 + (release.id % 30) },
+    { code: 'AU', currency: 'A$', msrp: Math.round(base * 1.25), market: Math.round(base * 1.75), flag: '🇦🇺', msrpNote: 'Official MSRP', marketNote: 'Recent sales avg', recentSalesCount: 12 + (release.id % 25) },
+    { code: 'MX', currency: 'MXN', msrp: Math.round(base * 18), market: Math.round(base * 26), flag: '🇲🇽', msrpNote: 'Official MSRP', marketNote: 'Recent sales avg', recentSalesCount: 10 + (release.id % 20) },
+    { code: 'BR', currency: 'R$', msrp: Math.round(base * 5), market: Math.round(base * 7.5), flag: '🇧🇷', msrpNote: 'Official MSRP', marketNote: 'Recent sales avg', recentSalesCount: 8 + (release.id % 15) },
   ];
 
   return { regions };
@@ -326,14 +333,91 @@ const buildRelease = (release: ReleaseRecord): Release => {
       {
         title: 'Product Details',
         items: [
-          { label: 'Release Name', value: truncate(release.display_name ?? release.name ?? 'Release') },
-          { label: 'Description', value: truncate((release.description ?? 'Collector release details.').replace(/\s+/g, ' '), 48) },
-          { label: 'Contents', value: `Accessories ${4 + (release.id % 5)}` },
-          { label: 'Edition Size', value: `${5000 + release.id * 20} units` },
-          { label: 'Certification', value: vendors.length > 0 ? 'Exclusive release' : 'Standard release' },
+          { label: 'Doll Height', value: release.id % 3 === 0 ? '10.5 inches' : release.id % 3 === 1 ? '11 inches' : '10 inches' },
+          { label: 'Articulation', value: `${9 + (release.id % 4)} points` },
+          { label: 'Hair Type', value: release.id % 2 === 0 ? 'Nylon' : 'Saran' },
+          { label: 'Stand Included', value: release.id % 5 !== 0 ? 'Yes' : 'No' },
+          { label: 'Accessories', value: `${4 + (release.id % 5)} pieces` },
         ],
       },
     ],
+    generalInfo: {
+      title: 'General Info',
+      columns: [
+        {
+          items: [
+            { label: 'Series', value: seriesName },
+            { label: 'Subline', value: '-' },
+            { label: 'Wave', value: `Wave ${1 + (release.id % 3)}` },
+            { label: 'Generation', value: release.name?.includes('generation-3') || (release.year ?? 0) >= 2023 ? 'G3' : 'G1' },
+            { label: 'Year', value: release.year ? `${release.year}` : 'Unknown' },
+            { label: 'SKU', value: release.mpn ?? 'TBD' },
+          ],
+        },
+        {
+          items: [
+            { label: 'Exclusive', value: vendors.length > 0 ? vendors.map((vendor) => vendor.display_name).join(', ') : 'Standard' },
+            { label: 'Multipack Type', value: pickByRelease(release.id, ['Single', '2-Pack', '3-Pack', '5-Pack']) },
+            { label: 'Pack Type', value: pickByRelease(release.id, ['Standard', 'Deluxe', 'Collector', 'Budget']) },
+            { label: 'Tier Type', value: pickByRelease(release.id, releaseRarities) },
+            { label: 'Rarity', value: pickByRelease(release.id, releaseRarities) },
+            { label: 'Age', value: pickByRelease(release.id, ['6+', '8+', '14+']) },
+          ],
+        },
+      ],
+    },
+    productDetails: {
+      title: 'Product Specs',
+      sections: [
+        {
+          title: 'Doll Specs',
+          items: [
+            { label: 'Doll Height', value: pickByRelease(release.id, ['10 in', '10.5 in', '11 in', '12 in']) },
+            { label: 'Weight', value: pickByRelease(release.id, ['0.35 kg', '0.4 kg', '0.45 kg', '0.5 kg']) },
+            { label: 'Body Type', value: pickByRelease(release.id, ['Original', 'Articulated', 'Budget']) },
+            { label: 'Articulation', value: `${9 + (release.id % 6)} points` },
+            { label: 'Face Mold', value: pickByRelease(release.id, ['Classic', 'Soft Glam', 'Collector', 'Modern']) },
+            { label: 'Eye Color', value: pickByRelease(release.id, ['Brown', 'Blue', 'Green', 'Hazel']) },
+            { label: 'Skin Tone', value: pickByRelease(release.id, ['Fair', 'Medium', 'Tan', 'Deep']) },
+            { label: 'Face Paint', value: pickByRelease(release.id, ['Soft Glam', 'Bold', 'Graphic', 'Classic']) },
+            { label: 'Hair Type', value: pickByRelease(release.id, ['Nylon', 'Saran', 'Poly']) },
+            { label: 'Hair Color', value: pickByRelease(release.id, ['Black', 'Brown', 'Blonde', 'Pink', 'Auburn']) },
+            { label: 'Hair Style', value: pickByRelease(release.id, ['Straight', 'Wavy', 'Curly', 'Updo']) },
+            { label: 'Hair Length', value: pickByRelease(release.id, ['Short', 'Medium', 'Long', 'Extra Long']) },
+            { label: 'Rooted/Removable', value: pickByRelease(release.id, ['Rooted', 'Removable']) },
+          ],
+        },
+        {
+          title: 'Collectibility',
+          items: [
+            { label: 'Edition Type', value: pickByRelease(release.id, ['Limited Edition', 'Collector Edition', 'Standard Edition']) },
+            { label: 'Certificate', value: release.id % 3 === 0 ? 'Yes' : 'No' },
+            { label: 'Signed Edition', value: release.id % 7 === 0 ? 'Yes' : 'No' },
+            { label: 'Designer/Artist', value: pickByRelease(release.id, ['Garrett Sander', 'Rebecca Shipman', 'Angel Kent', 'Team Design']) },
+            { label: 'Collaboration', value: pickByRelease(release.id, ['Mattel Creations', 'SDCC', 'Barbie', 'None']) },
+          ],
+        },
+        {
+          title: 'Box Contents',
+          items: [
+            { label: 'Stand Included', value: release.id % 5 !== 0 ? 'Yes' : 'No' },
+            { label: 'Accessories', value: `${4 + (release.id % 6)} pcs` },
+            { label: 'Outfit Pieces', value: `${3 + (release.id % 4)} pcs` },
+            { label: 'Removable Clothes', value: release.id % 4 === 0 ? 'Partial' : 'Yes' },
+            { label: 'Shoes Type', value: pickByRelease(release.id, ['Heels', 'Boots', 'Sneakers', 'Sandals']) },
+          ],
+        },
+        {
+          title: 'Packaging',
+          items: [
+            { label: 'Package Type', value: pickByRelease(release.id, ['Coffin Box', 'Window Box', 'Book Box', 'Blister']) },
+            { label: 'Package Dimensions', value: pickByRelease(release.id, ['12 x 4 x 14 in', '11 x 4 x 13 in', '10 x 3.5 x 12 in']) },
+            { label: 'Display Window', value: release.id % 2 === 0 ? 'Yes' : 'No' },
+            { label: 'Box Art Style', value: pickByRelease(release.id, ['Illustrated', 'Photo', 'Mixed Media', 'Minimal']) },
+          ],
+        },
+      ],
+    },
     physicalContents: [
       { name: 'Doll', count: 1 },
       { name: 'Stand', count: 1 },

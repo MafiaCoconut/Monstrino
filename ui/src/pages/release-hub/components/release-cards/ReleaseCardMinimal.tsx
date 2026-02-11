@@ -29,14 +29,16 @@ interface DollRelease {
   variant?: string;
   imageUrl?: string;
   rarity?: string;
-  msrp?: string;
+  year?: string | number;
 }
 
-interface ReleaseCardSeriesIndexProps {
+interface ReleaseCardMinimalProps {
   doll: DollRelease;
   isHovered: boolean;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
+  size?: 'compact' | 'full' | 'reduced';
+  enableHoverLift?: boolean;
 }
 
 // Rarity badge styling helper
@@ -51,12 +53,18 @@ const getRarityStyle = (rarity: string): React.CSSProperties => {
   }
 };
 
-const ReleaseCardSeriesIndex: React.FC<ReleaseCardSeriesIndexProps> = ({
+const ReleaseCardMinimal: React.FC<ReleaseCardMinimalProps> = ({
   doll,
   isHovered,
   onMouseEnter,
   onMouseLeave,
+  size = 'compact',
+  enableHoverLift = false,
 }) => {
+  const isFull = size === 'full';
+  const isReduced = size === 'reduced';
+  const cardMaxWidth = isFull ? '100%' : isReduced ? '220px' : '180px';
+  const cardMinWidth = isFull ? 0 : isReduced ? '160px' : '140px';
   const rarity = doll.rarity ?? 'Common';
   const releaseHref = `/catalog/r/${doll.releaseId ?? doll.id}`;
 
@@ -69,7 +77,10 @@ const ReleaseCardSeriesIndex: React.FC<ReleaseCardSeriesIndexProps> = ({
       sx={{
         textDecoration: 'none',
         color: 'inherit',
-        display: 'block',
+        display: isReduced ? 'flex' : 'block',
+        justifyContent: isReduced ? 'center' : 'flex-start',
+        height: isFull ? '100%' : 'auto',
+        width: '100%',
       }}
     >
       <Box
@@ -78,17 +89,30 @@ const ReleaseCardSeriesIndex: React.FC<ReleaseCardSeriesIndexProps> = ({
           border: `1px solid ${isHovered ? `${tokens.colors.primary}80` : tokens.colors.border}`,
           backgroundColor: tokens.colors.card,
           cursor: 'pointer',
-          transition: 'border-color 0.3s',
-          width: '220px',
-          height: '420px',
+          transition: enableHoverLift
+            ? 'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s'
+            : 'border-color 0.3s',
+          width: '100%',
+          maxWidth: cardMaxWidth,
+          minWidth: cardMinWidth,
+          height: isFull ? '100%' : 'auto',
           display: 'flex',
           flexDirection: 'column',
+          ...(enableHoverLift
+            ? {
+                '&:hover': {
+                  transform: { xs: 'none', md: 'translateY(-4px)' },
+                  boxShadow: { xs: 'none', md: '0 8px 24px rgba(236, 72, 153, 0.15)' },
+                },
+              }
+            : {}),
         }}
       >
         {/* Image Container */}
         <Box
           sx={{
-            height: '280px',
+            height: '0',
+            paddingTop: '140%', // Aspect ratio для изображения
             width: '100%',
             backgroundColor: '#FFFFFF',
             borderRadius: '0.375rem 0.375rem 0 0',
@@ -97,9 +121,11 @@ const ReleaseCardSeriesIndex: React.FC<ReleaseCardSeriesIndexProps> = ({
             alignItems: 'center',
             justifyContent: 'center',
             transition: 'background-color 0.15s',
+            position: 'relative',
             flexShrink: 0,
           }}
         >
+          <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           {doll.imageUrl ? (
             <Box
               component="img"
@@ -128,10 +154,11 @@ const ReleaseCardSeriesIndex: React.FC<ReleaseCardSeriesIndexProps> = ({
               <path d="M82 60 L95 90 L90 92 L80 70" fill={tokens.colors.secondary} />
             </svg>
           )}
+          </Box>
         </Box>
 
         {/* Content */}
-        <Box sx={{ p: '1rem', display: 'flex', flexDirection: 'column', gap: '0.25rem', flex: 1 }}>
+        <Box sx={{ p: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.25rem', flex: 1 }}>
           {/* Character Name */}
           <Typography
             variant="h3"
@@ -141,7 +168,7 @@ const ReleaseCardSeriesIndex: React.FC<ReleaseCardSeriesIndexProps> = ({
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              fontSize: '1rem',
+              fontSize: '0.875rem',
             }}
           >
             {doll.character}
@@ -160,13 +187,13 @@ const ReleaseCardSeriesIndex: React.FC<ReleaseCardSeriesIndexProps> = ({
             {doll.variant}
           </Typography>
 
-          {/* Footer: Rarity and MSRP */}
+          {/* Footer: Rarity and Year */}
           <Box
             sx={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              paddingTop: '0.5rem',
+              paddingTop: '0.375rem',
               marginTop: 'auto',
             }}
           >
@@ -188,7 +215,7 @@ const ReleaseCardSeriesIndex: React.FC<ReleaseCardSeriesIndexProps> = ({
                 color: tokens.colors.mutedForeground,
               }}
             >
-              {doll.msrp}
+              {doll.year}
             </Typography>
           </Box>
         </Box>
@@ -197,4 +224,4 @@ const ReleaseCardSeriesIndex: React.FC<ReleaseCardSeriesIndexProps> = ({
   );
 };
 
-export default ReleaseCardSeriesIndex;
+export default ReleaseCardMinimal;

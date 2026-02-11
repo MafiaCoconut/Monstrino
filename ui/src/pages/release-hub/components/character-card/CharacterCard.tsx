@@ -29,9 +29,18 @@ export const CharacterCard = ({
         display: "flex",
         flexDirection: "column",
         height: "100%",
+        width: "100%",
+        maxWidth: 220,
+        margin: "0 auto",
         textDecoration: "none",
         position: "relative",
         overflow: "hidden",
+        cursor: "pointer",
+        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+        "&:hover": {
+          transform: { xs: "none", md: "translateY(-4px)" },
+          boxShadow: { xs: "none", md: "0 8px 24px rgba(236, 72, 153, 0.15)" },
+        },
         "&::before": {
           content: '""',
           position: "absolute",
@@ -47,7 +56,7 @@ export const CharacterCard = ({
       <CardMedia
         component="div"
         sx={{
-          height: 320,
+          height: 170,
           backgroundColor: "background.default",
           backgroundImage: `url(${imageUrl ?? PLACEHOLDER_IMAGE})`,
           backgroundSize: "cover",
@@ -65,9 +74,9 @@ export const CharacterCard = ({
         }}
       />
 
-      <CardContent sx={{ pt: 0, mt: -4, position: "relative", zIndex: 2 }}>
+      <CardContent sx={{ pt: 0, mt: -3, position: "relative", zIndex: 2 }}>
         <Typography
-          variant="h5"
+          variant="h6"
           sx={{
             fontWeight: 800,
             color: "text.primary",
@@ -81,7 +90,7 @@ export const CharacterCard = ({
           variant="body2"
           sx={{
             color: "text.secondary",
-            mb: 2,
+            mb: 1.5,
             fontStyle: "italic",
           }}
         >
@@ -95,7 +104,7 @@ export const CharacterCard = ({
               backgroundColor: accentColor,
               color: "#000",
               fontWeight: 600,
-              fontSize: "0.7rem",
+              fontSize: "0.65rem",
             }}
           />
         </Box>

@@ -1,32 +1,22 @@
-import React, { useState, createContext, useContext, forwardRef, useId, useCallback, useEffect, useRef, useMemo } from "react";
-import {
-  Box,
-  Typography,
-  Link,
-  Chip,
-} from "@mui/material";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import React, { useState, forwardRef, useEffect, useMemo } from "react";
+import { Box, Typography } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
+import type { TypographyProps } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import LocalMoviesIcon from "@mui/icons-material/LocalMovies";
 import ImageIconMui from "@mui/icons-material/Image";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import InfoIconMui from "@mui/icons-material/Info";
 import StarIconMui from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import PeopleIcon from "@mui/icons-material/People";
-import LocalOfferIcon from "@mui/icons-material/LocalOffer";
-import ChevronRightIconMui from "@mui/icons-material/ChevronRight";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import ShoppingBagIconMui from "@mui/icons-material/ShoppingBag";
-import PublicIcon from "@mui/icons-material/Public";
 import TrendingUpIconMui from "@mui/icons-material/TrendingUp";
 import { useParams } from "react-router-dom";
 import type { Series } from "../entities/series";
 import { seriesIndexMock, seriesIndexByNumericId } from "@/data/real-data/seriesIndexMock";
-import { ReleaseCardSeriesIndex } from "../components/release-cards";
+import { ReleaseCardMinimal } from "../components/release-cards";
 import { CharacterCard } from "../components/character-card";
+import { ReleaseBreadcrumb } from "../components/breadcrumb/Breadcrumb";
+import { Badge } from "../components/ui";
 
 // ============================================================
 // DESIGN TOKENS — Monstrino Dark Archive Theme (Inlined)
@@ -98,80 +88,70 @@ const tokens = {
 // ============================================================
 // MUI ICONS
 // ============================================================
-const SparklesIcon = AutoAwesomeIcon;
 const CalendarIcon = CalendarMonthIcon;
-const MapPinIcon = LocationOnIcon;
-const FilmIcon = LocalMoviesIcon;
 const ImageIcon = ImageIconMui;
 const DollarSignIcon = AttachMoneyIcon;
-const InfoIcon = InfoIconMui;
 const UsersIcon = PeopleIcon;
-const TagIcon = LocalOfferIcon;
-const ChevronRightIcon = ChevronRightIconMui;
-const ChevronDownIcon = ExpandMoreIcon;
-const PlayIcon = PlayArrowIcon;
 const ShoppingBagIcon = ShoppingBagIconMui;
-const GlobeIcon = PublicIcon;
 const TrendingUpIcon = TrendingUpIconMui;
-const StarIcon = ({ style, filled }: { style?: React.CSSProperties; filled?: boolean }) =>
-  filled ? <StarIconMui style={style} /> : <StarBorderIcon style={style} />;
+const StarIcon = ({ sx, filled }: { sx?: SxProps<Theme>; filled?: boolean }) =>
+  filled
+    ? <StarIconMui {...(sx ? { sx } : {})} />
+    : <StarBorderIcon {...(sx ? { sx } : {})} />;
 
 // ============================================================
 // INLINED UI COMPONENTS
 // ============================================================
 
 // Badge Component
-interface BadgeProps {
-  variant?: "default" | "secondary" | "outline";
-  style?: React.CSSProperties;
-  children?: React.ReactNode;
-}
+const badgeVariantSx = {
+  default: {
+    backgroundColor: tokens.colors.primary,
+    color: tokens.colors.primaryForeground,
+  },
+  secondary: {
+    backgroundColor: tokens.colors.secondary,
+    color: tokens.colors.secondaryForeground,
+  },
+  outline: {
+    borderColor: tokens.colors.border,
+    color: tokens.colors.foreground,
+    backgroundColor: "transparent",
+    border: `1px solid ${tokens.colors.border}`,
+  },
+} as const;
+const badgeBaseSx = {
+  fontSize: tokens.fontSizes.xs,
+  fontWeight: tokens.fontWeights.semibold,
+  transition: "colors 0.15s",
+};
+const badgeProps = { variantSx: badgeVariantSx, baseSx: badgeBaseSx } as const;
 
-const Badge: React.FC<BadgeProps> = ({ variant = "default", style, children }) => {
-  const variantStyles: Record<string, any> = {
-    default: {
-      backgroundColor: tokens.colors.primary,
-      color: tokens.colors.primaryForeground,
-    },
-    secondary: {
-      backgroundColor: tokens.colors.secondary,
-      color: tokens.colors.secondaryForeground,
-    },
-    outline: {
-      borderColor: tokens.colors.border,
-      color: tokens.colors.foreground,
-      backgroundColor: "transparent",
-      border: `1px solid ${tokens.colors.border}`,
-    },
-  };
+type BoxStyleProps = Omit<React.HTMLAttributes<HTMLDivElement>, "style"> & { style?: SxProps<Theme> };
+type HeadingStyleProps = Omit<TypographyProps, "sx"> & { style?: SxProps<Theme> };
 
-  return (
-    <Chip
-      label={children}
-      sx={{
-        ...variantStyles[variant],
-        fontSize: tokens.fontSizes.xs,
-        fontWeight: tokens.fontWeights.semibold,
-        transition: "colors 0.15s",
-        ...style,
-      }}
-    />
-  );
+const mergeSx = (base: SxProps<Theme>, style?: SxProps<Theme>): SxProps<Theme> => {
+  if (!style) return base;
+  const baseArray = Array.isArray(base) ? base : [base];
+  const styleArray = Array.isArray(style) ? style : [style];
+  return [...baseArray, ...styleArray];
 };
 
 // Card Components
-const Card = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+const Card = forwardRef<HTMLDivElement, BoxStyleProps>(
   ({ style, children, ...props }, ref) => (
     <Box
       ref={ref}
-      sx={{
-        borderRadius: tokens.radius,
-        border: `1px solid ${tokens.colors.border}`,
-        backgroundColor: tokens.colors.card,
-        color: tokens.colors.cardForeground,
-        boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-        ...style,
-      }}
+      sx={mergeSx(
+        {
+          borderRadius: tokens.radius,
+          border: `1px solid ${tokens.colors.border}`,
+          backgroundColor: tokens.colors.card,
+          color: tokens.colors.cardForeground,
+          boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+        },
+        style
+      )}
       {...props}
     >
       {children}
@@ -179,17 +159,19 @@ const Card = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   )
 );
 
-const CardHeader = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+const CardHeader = forwardRef<HTMLDivElement, BoxStyleProps>(
   ({ style, children, ...props }, ref) => (
     <Box
       ref={ref}
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "0.375rem",
-        padding: tokens.spacing[6],
-        ...style,
-      }}
+      sx={mergeSx(
+        {
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.375rem",
+          padding: { xs: tokens.spacing[4], sm: tokens.spacing[5], md: tokens.spacing[6] },
+        },
+        style
+      )}
       {...props}
     >
       {children}
@@ -197,18 +179,21 @@ const CardHeader = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
   )
 );
 
-const CardTitle = forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
+const CardTitle = forwardRef<HTMLHeadingElement, HeadingStyleProps>(
   ({ style, children, ...props }, ref) => (
     <Typography
       ref={ref}
       variant="h3"
-      sx={{
-        fontSize: tokens.fontSizes["2xl"],
-        fontWeight: tokens.fontWeights.semibold,
-        lineHeight: tokens.lineHeights.tight,
-        letterSpacing: "-0.025em",
-        ...style,
-      }}
+      component="h3"
+      sx={mergeSx(
+        {
+          fontSize: tokens.fontSizes["2xl"],
+          fontWeight: tokens.fontWeights.semibold,
+          lineHeight: tokens.lineHeights.tight,
+          letterSpacing: "-0.025em",
+        },
+        style
+      )}
       {...props}
     >
       {children}
@@ -216,15 +201,17 @@ const CardTitle = forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadin
   )
 );
 
-const CardContent = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+const CardContent = forwardRef<HTMLDivElement, BoxStyleProps>(
   ({ style, children, ...props }, ref) => (
     <Box
       ref={ref}
-      sx={{
-        padding: tokens.spacing[6],
-        paddingTop: 0,
-        ...style,
-      }}
+      sx={mergeSx(
+        {
+          padding: { xs: tokens.spacing[4], sm: tokens.spacing[5], md: tokens.spacing[6] },
+          paddingTop: 0,
+        },
+        style
+      )}
       {...props}
     >
       {children}
@@ -233,40 +220,45 @@ const CardContent = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEleme
 );
 
 // Separator
-const Separator = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+const Separator = forwardRef<HTMLDivElement, BoxStyleProps>(
   ({ style, ...props }, ref) => (
     <Box
       ref={ref}
-      sx={{
-        height: "1px",
-        width: "100%",
-        backgroundColor: tokens.colors.border,
-        flexShrink: 0,
-        ...style,
-      }}
+      sx={mergeSx(
+        {
+          height: "1px",
+          width: "100%",
+          backgroundColor: tokens.colors.border,
+          flexShrink: 0,
+        },
+        style
+      )}
       {...props}
     />
   )
 );
 
 // Progress
-interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
+interface ProgressProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "style"> {
   value?: number;
+  style?: SxProps<Theme>;
 }
 
 const Progress = forwardRef<HTMLDivElement, ProgressProps>(
   ({ value = 0, style, ...props }, ref) => (
     <Box
       ref={ref}
-      sx={{
-        position: "relative",
-        height: "0.5rem",
-        width: "100%",
-        overflow: "hidden",
-        borderRadius: "9999px",
-        backgroundColor: tokens.colors.secondary,
-        ...style,
-      }}
+      sx={mergeSx(
+        {
+          position: "relative",
+          height: "0.5rem",
+          width: "100%",
+          overflow: "hidden",
+          borderRadius: "9999px",
+          backgroundColor: tokens.colors.secondary,
+        },
+        style
+      )}
       {...props}
     >
       <Box
@@ -283,327 +275,13 @@ const Progress = forwardRef<HTMLDivElement, ProgressProps>(
   )
 );
 
-// Table Components
-const Table = forwardRef<HTMLTableElement, React.TableHTMLAttributes<HTMLTableElement>>(
-  ({ style, children, ...props }, ref) => (
-    <Box sx={{ position: "relative", width: "100%", overflow: "auto" }}>
-      <Box
-        component="table"
-        ref={ref}
-        sx={{
-          width: "100%",
-          captionSide: "bottom",
-          fontSize: tokens.fontSizes.sm,
-          ...style,
-        }}
-        {...props}
-      >
-        {children}
-      </Box>
-    </Box>
-  )
-);
-
-const TableHeader = forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
-  ({ style, children, ...props }, ref) => (
-    <thead ref={ref} style={style} {...props}>
-      {children}
-    </thead>
-  )
-);
-
-const TableBody = forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
-  ({ style, children, ...props }, ref) => (
-    <tbody ref={ref} style={style} {...props}>
-      {children}
-    </tbody>
-  )
-);
-
-interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
-  isHoverable?: boolean;
-}
-
-const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
-  ({ style, children, ...props }, ref) => {
-    const [isHovered, setIsHovered] = useState(false);
-    return (
-      <tr
-        ref={ref}
-        style={{
-          borderBottom: `1px solid ${tokens.colors.border}`,
-          transition: "background-color 0.15s",
-          backgroundColor: isHovered ? `${tokens.colors.muted}80` : "transparent",
-          ...style,
-        }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        {...props}
-      >
-        {children}
-      </tr>
-    );
-  }
-);
-
-const TableHead = forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<HTMLTableCellElement>>(
-  ({ style, children, ...props }, ref) => (
-    <th
-      ref={ref}
-      style={{
-        height: "3rem",
-        padding: "0 1rem",
-        textAlign: "left",
-        verticalAlign: "middle",
-        fontWeight: tokens.fontWeights.medium,
-        color: tokens.colors.mutedForeground,
-        ...style,
-      }}
-      {...props}
-    >
-      {children}
-    </th>
-  )
-);
-
-const TableCell = forwardRef<HTMLTableCellElement, React.TdHTMLAttributes<HTMLTableCellElement>>(
-  ({ style, children, ...props }, ref) => (
-    <td
-      ref={ref}
-      style={{
-        padding: "1rem",
-        verticalAlign: "middle",
-        ...style,
-      }}
-      {...props}
-    >
-      {children}
-    </td>
-  )
-);
-
-// ScrollArea Components
-const ScrollArea = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ style, children, ...props }, ref) => (
-    <Box
-      ref={ref}
-      sx={{
-        position: "relative",
-        overflow: "auto",
-        ...style,
-      }}
-      {...props}
-    >
-      {children}
-    </Box>
-  )
-);
-
-// Accordion Components
-type AccordionContextType = {
-  openItems: string[];
-  toggleItem: (value: string) => void;
-  type: "single" | "multiple";
-};
-
-const AccordionContext = createContext<AccordionContextType | null>(null);
-
-interface AccordionProps extends React.HTMLAttributes<HTMLDivElement> {
-  type?: "single" | "multiple";
-  collapsible?: boolean;
-  defaultValue?: string | string[];
-}
-
-const Accordion: React.FC<AccordionProps> = ({
-  type = "single",
-  collapsible = false,
-  defaultValue,
-  children,
-  style,
-  ...props
-}) => {
-  const [openItems, setOpenItems] = useState<string[]>(() => {
-    if (defaultValue) {
-      return Array.isArray(defaultValue) ? defaultValue : [defaultValue];
-    }
-    return [];
-  });
-
-  const toggleItem = useCallback((value: string) => {
-    setOpenItems((prev) => {
-      if (type === "single") {
-        if (prev.includes(value)) {
-          return collapsible ? [] : prev;
-        }
-        return [value];
-      }
-      if (prev.includes(value)) {
-        return prev.filter((v) => v !== value);
-      }
-      return [...prev, value];
-    });
-  }, [type, collapsible]);
-
-  return (
-    <AccordionContext.Provider value={{ openItems, toggleItem, type }}>
-      <Box sx={{ ...style }} {...props}>
-        {children}
-      </Box>
-    </AccordionContext.Provider>
-  );
-};
-
-interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement> {
-  value: string;
-}
-
-const AccordionItemContext = createContext<{ value: string; isOpen: boolean } | null>(null);
-
-const AccordionItem: React.FC<AccordionItemProps> = ({ value, children, style, ...props }) => {
-  const ctx = useContext(AccordionContext);
-  const isOpen = ctx?.openItems.includes(value) ?? false;
-
-  return (
-    <AccordionItemContext.Provider value={{ value, isOpen }}>
-      <Box
-        sx={{
-          borderBottom: `1px solid ${tokens.colors.border}`,
-          ...style,
-        }}
-        {...props}
-      >
-        {children}
-      </Box>
-    </AccordionItemContext.Provider>
-  );
-};
-
-const AccordionTrigger = forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
-  ({ style, children, ...props }, ref) => {
-    const accordionCtx = useContext(AccordionContext);
-    const itemCtx = useContext(AccordionItemContext);
-    const [isHovered, setIsHovered] = useState(false);
-
-    if (!accordionCtx || !itemCtx) return null;
-
-    return (
-      <Box sx={{ display: "flex" }}>
-        <Box
-          component="button"
-          ref={ref}
-          onClick={() => accordionCtx.toggleItem(itemCtx.value)}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          sx={{
-            display: "flex",
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "1rem 0",
-            fontWeight: tokens.fontWeights.medium,
-            transition: "all 0.15s",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            color: isHovered ? tokens.colors.primary : tokens.colors.foreground,
-            textAlign: "left",
-            width: "100%",
-            fontSize: tokens.fontSizes.base,
-            ...style,
-          }}
-          {...props}
-        >
-          {children}
-          <ChevronDownIcon
-            style={{
-              width: "1rem",
-              height: "1rem",
-              flexShrink: 0,
-              transition: "transform 0.2s",
-              transform: itemCtx.isOpen ? "rotate(180deg)" : "rotate(0deg)",
-            }}
-          />
-        </Box>
-      </Box>
-    );
-  }
-);
-
-const AccordionContent: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ style, children, ...props }) => {
-  const itemCtx = useContext(AccordionItemContext);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [height, setHeight] = useState<number | undefined>(undefined);
-
-  useEffect(() => {
-    if (contentRef.current) {
-      setHeight(contentRef.current.scrollHeight);
-    }
-  }, [children]);
-
-  if (!itemCtx) return null;
-
-  return (
-    <Box
-      sx={{
-        overflow: "hidden",
-        fontSize: tokens.fontSizes.sm,
-        transition: "height 0.2s ease-out, opacity 0.2s ease-out",
-        height: itemCtx.isOpen ? height : 0,
-        opacity: itemCtx.isOpen ? 1 : 0,
-      }}
-    >
-      <Box ref={contentRef} sx={{ paddingBottom: "1rem", ...style }} {...props}>
-        {children}
-      </Box>
-    </Box>
-  );
-};
-
 // ============================================================
 // PLACEHOLDER COMPONENTS
 // ============================================================
 
-// Placeholder doll silhouette SVG
-const DollPlaceholder = () => (
-  <svg viewBox="0 0 120 180" style={{ width: "100%", height: "100%" }} fill="none" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="60" cy="30" rx="22" ry="26" fill={tokens.colors.muted} />
-    <path d="M38 56 C38 56 35 80 38 100 L44 140 L40 175 L50 178 L55 145 L60 178 L65 145 L70 178 L80 175 L76 140 L82 100 C85 80 82 56 82 56 Z" fill={tokens.colors.muted} />
-    <path d="M38 60 L25 90 L30 92 L40 70" fill={tokens.colors.muted} />
-    <path d="M82 60 L95 90 L90 92 L80 70" fill={tokens.colors.muted} />
-  </svg>
-);
-
-// Color swatch component
-const ColorSwatch = ({ hex, name }: { hex: string; name: string }) => (
-  <Box sx={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-    <Box
-      sx={{
-        width: "1.5rem",
-        height: "1.5rem",
-        borderRadius: "9999px",
-        border: `1px solid ${tokens.colors.border}`,
-        backgroundColor: hex,
-      }}
-    />
-    <Typography component="span" sx={{ fontSize: tokens.fontSizes.xs, color: tokens.colors.mutedForeground }}>{name}</Typography>
-  </Box>
-);
-
 // ============================================================
 // SERIES DATA (resolved via index mock)
 // ============================================================
-
-// Rarity badge styling helper
-const getRarityStyle = (rarity: string): React.CSSProperties => {
-  switch (rarity) {
-    case "Ultra Rare":
-      return { backgroundColor: tokens.colors.primary, color: tokens.colors.primaryForeground };
-    case "Rare":
-      return { backgroundColor: `${tokens.colors.accent}33`, color: tokens.colors.accent };
-    default:
-      return { backgroundColor: tokens.colors.secondary, color: tokens.colors.secondaryForeground };
-  }
-};
 
 // ============================================================
 // MAIN PAGE COMPONENT
@@ -623,16 +301,15 @@ const MonsterHighSeriesPage: React.FC = () => {
 
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [hoveredCard, setHoveredCard] = useState<string | number | null>(null);
-  const [hoveredRelatedSeries, setHoveredRelatedSeries] = useState<string | null>(null);
-  const [hoveredMedia, setHoveredMedia] = useState<string | null>(null);
-  const [hoveredGallery, setHoveredGallery] = useState<number | null>(null);
 
   // Responsive breakpoint detection
+  const [isSm, setIsSm] = useState(false);
   const [isMd, setIsMd] = useState(false);
   const [isLg, setIsLg] = useState(false);
 
   useEffect(() => {
     const checkSize = () => {
+      setIsSm(window.innerWidth >= 480);
       setIsMd(window.innerWidth >= 768);
       setIsLg(window.innerWidth >= 1024);
     };
@@ -642,20 +319,17 @@ const MonsterHighSeriesPage: React.FC = () => {
   }, []);
 
   // Grid column calculator
-  const dollGridCols = isLg ? 4 : isMd ? 3 : 2;
-  const mediaGridCols = isMd ? 3 : 1;
-  const galleryGridCols = isMd ? 4 : 2;
-  const distributionGridCols = isMd ? 3 : 1;
-  const pricingGridCols = isMd ? 4 : 1;
-  const overviewGridCols = isMd ? 2 : 1;
-  const designGridCols = isMd ? 3 : 1;
+  const dollGridCols = isLg ? 4 : isMd ? 3 : isSm ? 2 : 1;
+  const pricingGridCols = isLg ? 4 : isMd ? 3 : isSm ? 2 : 1;
 
   if (!seriesData) {
     return (
       <Box
         sx={{
           minHeight: "100vh",
-          backgroundColor: tokens.colors.background,
+          backgroundColor: "#0B0D11",
+          backgroundImage:
+            'radial-gradient(900px 600px at 15% 0%, rgba(64, 160, 255, 0.16), transparent 60%), radial-gradient(900px 700px at 90% 10%, rgba(255, 120, 200, 0.12), transparent 65%), linear-gradient(180deg, #0B0D11 0%, #121622 100%)',
           color: tokens.colors.foreground,
           display: "flex",
           alignItems: "center",
@@ -677,25 +351,15 @@ const MonsterHighSeriesPage: React.FC = () => {
 
   const releaseYears = seriesData.releaseYears ?? seriesData.yearLabel ?? "Unknown";
   const generation = seriesData.generation ?? "G1";
-  const status = seriesData.status ?? "Completed";
-  const concept = seriesData.concept ?? seriesData.description ?? "";
-  const canonicalPlacement = seriesData.canonicalPlacement ?? "";
-  const fashionStyles = seriesData.fashionStyles ?? [];
-  const colorPalette = seriesData.colorPalette ?? [];
-  const themeDescription = seriesData.themeDescription ?? "";
+  const description = seriesData.description ?? seriesData.concept ?? "";
   const dolls = seriesData.dolls ?? [];
   const characters = seriesData.characters ?? [];
-  const exclusives = seriesData.exclusives ?? [];
-  const distribution = seriesData.distribution ?? { targetMarket: [], channels: [], regions: [] };
-  const relatedSeries = seriesData.relatedSeries ?? [];
-  const relatedMedia = seriesData.relatedMedia ?? [];
   const pricing = seriesData.pricing ?? {
     msrpRange: "—",
     currentMarketRange: "—",
     rarityDistribution: { common: 0, rare: 0, ultraRare: 0 },
     demandLevel: "—",
   };
-  const facts = seriesData.facts ?? [];
   const community = {
     quotes: seriesData.community?.quotes ?? [],
     legacySummary: seriesData.community?.legacySummary ?? "",
@@ -705,49 +369,86 @@ const MonsterHighSeriesPage: React.FC = () => {
   return (
     <Box sx={{
       minHeight: "100vh",
-      backgroundColor: tokens.colors.background,
+      backgroundColor: "#0B0D11",
+      backgroundImage:
+        'radial-gradient(900px 600px at 15% 0%, rgba(64, 160, 255, 0.16), transparent 60%), radial-gradient(900px 700px at 90% 10%, rgba(255, 120, 200, 0.12), transparent 65%), linear-gradient(180deg, #0B0D11 0%, #121622 100%)',
       color: tokens.colors.foreground,
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
     }}>
+      {/* Breadcrumb */}
+      <Box sx={{
+        position: "relative",
+        padding: isLg ? `1rem ${tokens.spacing[24]} 0` : isMd ? `0.75rem ${tokens.spacing[8]} 0` : `0.5rem ${tokens.spacing[4]} 0`,
+      }}>
+        <Box sx={{ maxWidth: "80rem", margin: "0 auto" }}>
+          <ReleaseBreadcrumb
+            items={[
+              { label: "Release Hub", link: "/" },
+              { label: "Series", link: "/catalog/s" },
+              { label: seriesData.name },
+            ]}
+            colors={{
+              background: tokens.colors.background,
+              foreground: tokens.colors.foreground,
+              mutedForeground: tokens.colors.mutedForeground,
+            }}
+          />
+        </Box>
+      </Box>
+
       {/* Hero Header */}
       <Box component="header" sx={{
         position: "relative",
-        padding: `${tokens.spacing[16]} ${isLg ? tokens.spacing[24] : isMd ? tokens.spacing[12] : tokens.spacing[6]}`,
+        padding: isLg ? `${tokens.spacing[4]} ${tokens.spacing[24]} ${tokens.spacing[12]}` : isMd ? `${tokens.spacing[3]} ${tokens.spacing[8]} ${tokens.spacing[8]}` : `${tokens.spacing[2]} ${tokens.spacing[4]} ${tokens.spacing[6]}`,
         borderBottom: `1px solid ${tokens.colors.border}`,
       }}>
         <Box sx={{ maxWidth: "80rem", margin: "0 auto" }}>
-          <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.75rem", marginBottom: "1rem" }}>
-            <Badge variant="outline" style={{ color: tokens.colors.primary, borderColor: tokens.colors.primary }}>
+          <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: isMd ? "0.75rem" : "0.5rem", marginBottom: isMd ? "1rem" : "0.75rem" }}>
+            <Badge
+              variant="outline"
+              {...badgeProps}
+              sx={{ color: tokens.colors.primary, borderColor: tokens.colors.primary }}
+            >
               {generation}
             </Badge>
             <Typography component="span" sx={{ color: tokens.colors.mutedForeground, fontSize: tokens.fontSizes.sm, display: "flex", alignItems: "center", gap: "0.25rem" }}>
               <CalendarIcon style={{ width: "0.875rem", height: "0.875rem" }} />
               {releaseYears}
             </Typography>
-            <Badge
-              style={
-                status === "Completed"
-                  ? { backgroundColor: tokens.colors.green900_30, color: tokens.colors.green400, borderColor: tokens.colors.green800 }
-                  : status === "Ongoing"
-                  ? { backgroundColor: `${tokens.colors.primary}33`, color: tokens.colors.primary, borderColor: `${tokens.colors.primary}80` }
-                  : { backgroundColor: tokens.colors.red900_30, color: tokens.colors.red400, borderColor: tokens.colors.red800 }
-              }
-            >
-              {status}
-            </Badge>
           </Box>
-          <Typography variant="h1" sx={{
-            fontSize: isLg ? tokens.fontSizes["6xl"] : isMd ? tokens.fontSizes["5xl"] : tokens.fontSizes["4xl"],
-            fontWeight: tokens.fontWeights.bold,
-            letterSpacing: "-0.025em",
-            marginBottom: "0.5rem",
-            lineHeight: tokens.lineHeights.tight,
-          }}>
+          <Typography
+            variant="h1"
+            sx={{
+              fontSize: {
+                xs: tokens.fontSizes["2xl"],
+                sm: tokens.fontSizes["4xl"],
+                md: tokens.fontSizes["5xl"],
+                lg: tokens.fontSizes["6xl"],
+              },
+              fontWeight: tokens.fontWeights.bold,
+              letterSpacing: "-0.025em",
+              marginBottom: isMd ? "0.5rem" : "0.375rem",
+              lineHeight: tokens.lineHeights.tight,
+            }}
+          >
             {seriesData.name}
           </Typography>
-          <Typography sx={{ color: tokens.colors.mutedForeground, fontSize: tokens.fontSizes.lg, maxWidth: "42rem" }}>
+          <Typography sx={{ color: tokens.colors.mutedForeground, fontSize: isMd ? tokens.fontSizes.lg : tokens.fontSizes.base, maxWidth: "42rem" }}>
             Monster High {generation} • Collector Archive
           </Typography>
+          {description && (
+            <Typography
+              sx={{
+                color: tokens.colors.mutedForeground,
+                fontSize: isMd ? tokens.fontSizes.base : tokens.fontSizes.sm,
+                lineHeight: tokens.lineHeights.relaxed,
+                maxWidth: "48rem",
+                mt: "0.75rem",
+              }}
+            >
+              {description}
+            </Typography>
+          )}
         </Box>
         {/* Subtle gradient overlay */}
         <Box sx={{
@@ -761,97 +462,29 @@ const MonsterHighSeriesPage: React.FC = () => {
       <Box component="main" sx={{
         maxWidth: "80rem",
         margin: "0 auto",
-        padding: `${tokens.spacing[12]} ${isLg ? tokens.spacing[24] : isMd ? tokens.spacing[12] : tokens.spacing[6]}`,
+        padding: isLg ? `${tokens.spacing[12]} ${tokens.spacing[24]}` : isMd ? `${tokens.spacing[8]} ${tokens.spacing[8]}` : `${tokens.spacing[6]} ${tokens.spacing[4]}`,
       }}>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: tokens.spacing[16] }}>
-
-          {/* Series Overview */}
-          <Box component="section">
-            <Box sx={{
-              display: "grid",
-              gridTemplateColumns: `repeat(${overviewGridCols}, 1fr)`,
-              gap: tokens.spacing[8],
-            }}>
-              <Card>
-                <CardHeader>
-                  <CardTitle style={{ fontSize: tokens.fontSizes.lg, display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <SparklesIcon style={{ width: "1rem", height: "1rem", color: tokens.colors.primary }} />
-                    Concept & Description
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Typography sx={{ color: tokens.colors.mutedForeground, lineHeight: tokens.lineHeights.relaxed }}>
-                    {concept}
-                  </Typography>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle style={{ fontSize: tokens.fontSizes.lg, display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <InfoIcon style={{ width: "1rem", height: "1rem", color: tokens.colors.primary }} />
-                    Canonical Placement
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Typography sx={{ color: tokens.colors.mutedForeground, lineHeight: tokens.lineHeights.relaxed }}>
-                    {canonicalPlacement}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Box>
-          </Box>
-
-          {/* Design & Aesthetic */}
-          <Box component="section">
-            <Typography variant="h2" sx={{ fontSize: tokens.fontSizes["2xl"], fontWeight: tokens.fontWeights.semibold, marginBottom: tokens.spacing[6], display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <TagIcon style={{ width: "1.25rem", height: "1.25rem", color: tokens.colors.primary }} />
-              Design & Aesthetic
-            </Typography>
-            <Card>
-              <CardContent style={{ paddingTop: tokens.spacing[6] }}>
-                <Box sx={{ display: "grid", gridTemplateColumns: `repeat(${designGridCols}, 1fr)`, gap: tokens.spacing[8] }}>
-                  <Box>
-                    <Typography variant="h3" sx={{ fontSize: tokens.fontSizes.sm, fontWeight: tokens.fontWeights.medium, color: tokens.colors.foreground, marginBottom: "0.75rem" }}>Fashion Styles</Typography>
-                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                      {fashionStyles.map((style) => (
-                        <Badge key={style} variant="secondary" style={{ backgroundColor: `${tokens.colors.secondary}80` }}>
-                          {style}
-                        </Badge>
-                      ))}
-                    </Box>
-                  </Box>
-                  <Box>
-                    <Typography variant="h3" sx={{ fontSize: tokens.fontSizes.sm, fontWeight: tokens.fontWeights.medium, color: tokens.colors.foreground, marginBottom: "0.75rem" }}>Color Palette</Typography>
-                    <Box sx={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                      {colorPalette.map((color) => (
-                        <ColorSwatch key={color.hex} hex={color.hex} name={color.name} />
-                      ))}
-                    </Box>
-                  </Box>
-                  <Box>
-                    <Typography variant="h3" sx={{ fontSize: tokens.fontSizes.sm, fontWeight: tokens.fontWeights.medium, color: tokens.colors.foreground, marginBottom: "0.75rem" }}>Theme</Typography>
-                    <Typography sx={{ color: tokens.colors.mutedForeground, fontSize: tokens.fontSizes.sm, lineHeight: tokens.lineHeights.relaxed }}>
-                      {themeDescription}
-                    </Typography>
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
-          </Box>
-
+        <Box sx={{ display: "flex", flexDirection: "column", gap: isMd ? tokens.spacing[16] : tokens.spacing[8] }}>
           {/* Doll Releases Grid */}
           <Box component="section">
-            <Typography variant="h2" sx={{ fontSize: tokens.fontSizes["2xl"], fontWeight: tokens.fontWeights.semibold, marginBottom: tokens.spacing[6], display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <ShoppingBagIcon style={{ width: "1.25rem", height: "1.25rem", color: tokens.colors.primary }} />
-              Doll Releases
-              <Typography component="span" sx={{ color: tokens.colors.mutedForeground, fontSize: tokens.fontSizes.base, fontWeight: tokens.fontWeights.normal, marginLeft: "0.5rem" }}>
-                ({dolls.length} dolls)
+            <Box sx={{ marginBottom: isMd ? tokens.spacing[6] : tokens.spacing[4] }}>
+              <Typography variant="h2" sx={{ fontSize: isMd ? tokens.fontSizes["2xl"] : tokens.fontSizes.xl, fontWeight: tokens.fontWeights.semibold, display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                <ShoppingBagIcon style={{ width: "1.25rem", height: "1.25rem", color: tokens.colors.primary }} />
+                Doll Releases
+                <Typography component="span" sx={{ color: tokens.colors.mutedForeground, fontSize: isMd ? tokens.fontSizes.base : tokens.fontSizes.sm, fontWeight: tokens.fontWeights.normal, marginLeft: "0.5rem" }}>
+                  ({dolls.length} dolls)
+                </Typography>
               </Typography>
-            </Typography>
-            <Box sx={{ display: "grid", gridTemplateColumns: `repeat(${dollGridCols}, 1fr)`, gap: "1rem" }}>
+            </Box>
+            <Box sx={{ 
+              display: "grid", 
+              gridTemplateColumns: `repeat(${dollGridCols}, minmax(0, 1fr))`,
+              gap: isMd ? "1rem" : "0.5rem",
+              width: "100%",
+              overflow: "hidden"
+            }}>
               {dolls.map((doll) => (
-                <ReleaseCardSeriesIndex
+                <ReleaseCardMinimal
                   key={doll.id}
                   doll={doll}
                   isHovered={hoveredCard === doll.id}
@@ -864,14 +497,22 @@ const MonsterHighSeriesPage: React.FC = () => {
 
           {/* Characters Featured */}
           <Box component="section">
-            <Typography variant="h2" sx={{ fontSize: tokens.fontSizes["2xl"], fontWeight: tokens.fontWeights.semibold, marginBottom: tokens.spacing[6], display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <UsersIcon style={{ width: "1.25rem", height: "1.25rem", color: tokens.colors.primary }} />
-              Characters Featured
-              <Typography component="span" sx={{ color: tokens.colors.mutedForeground, fontSize: tokens.fontSizes.base, fontWeight: tokens.fontWeights.normal, marginLeft: "0.5rem" }}>
-                ({characters.length} characters)
+            <Box sx={{ marginBottom: isMd ? tokens.spacing[6] : tokens.spacing[4] }}>
+              <Typography variant="h2" sx={{ fontSize: isMd ? tokens.fontSizes["2xl"] : tokens.fontSizes.xl, fontWeight: tokens.fontWeights.semibold, display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                <UsersIcon style={{ width: "1.25rem", height: "1.25rem", color: tokens.colors.primary }} />
+                Characters Featured
+                <Typography component="span" sx={{ color: tokens.colors.mutedForeground, fontSize: isMd ? tokens.fontSizes.base : tokens.fontSizes.sm, fontWeight: tokens.fontWeights.normal, marginLeft: "0.5rem" }}>
+                  ({characters.length} characters)
+                </Typography>
               </Typography>
-            </Typography>
-            <Box sx={{ display: "grid", gridTemplateColumns: `repeat(${dollGridCols}, 1fr)`, gap: "1rem" }}>
+            </Box>
+            <Box sx={{ 
+              display: "grid", 
+              gridTemplateColumns: `repeat(${dollGridCols}, minmax(0, 1fr))`,
+              gap: isMd ? "1rem" : "0.5rem",
+              width: "100%",
+              overflow: "hidden"
+            }}>
               {characters.map((char) => (
                 <CharacterCard key={char.id} {...char} />
               ))}
@@ -1090,13 +731,15 @@ const MonsterHighSeriesPage: React.FC = () => {
 
           {/* Price & Rarity Overview */}
           <Box component="section">
-            <Typography variant="h2" sx={{ fontSize: tokens.fontSizes["2xl"], fontWeight: tokens.fontWeights.semibold, marginBottom: tokens.spacing[6], display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <DollarSignIcon style={{ width: "1.25rem", height: "1.25rem", color: tokens.colors.primary }} />
-              Price & Rarity Overview
-            </Typography>
+            <Box sx={{ marginBottom: isMd ? tokens.spacing[6] : tokens.spacing[4] }}>
+              <Typography variant="h2" sx={{ fontSize: isMd ? tokens.fontSizes["2xl"] : tokens.fontSizes.xl, fontWeight: tokens.fontWeights.semibold, display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                <DollarSignIcon style={{ width: "1.25rem", height: "1.25rem", color: tokens.colors.primary }} />
+                Price & Rarity Overview
+              </Typography>
+            </Box>
             <Card>
-              <CardContent style={{ paddingTop: tokens.spacing[6] }}>
-                <Box sx={{ display: "grid", gridTemplateColumns: `repeat(${pricingGridCols}, 1fr)`, gap: tokens.spacing[6] }}>
+              <CardContent style={{ paddingTop: isMd ? tokens.spacing[6] : tokens.spacing[4] }}>
+                <Box sx={{ display: "grid", gridTemplateColumns: `repeat(${pricingGridCols}, 1fr)`, gap: isMd ? tokens.spacing[6] : tokens.spacing[4] }}>
                   <Box>
                     <Typography sx={{ fontSize: tokens.fontSizes.sm, color: tokens.colors.mutedForeground, marginBottom: "0.25rem" }}>Original MSRP</Typography>
                     <Typography sx={{ fontSize: tokens.fontSizes.xl, fontWeight: tokens.fontWeights.semibold }}>{pricing.msrpRange}</Typography>
@@ -1167,15 +810,17 @@ const MonsterHighSeriesPage: React.FC = () => {
           </Box> */}
 
           {/* Community Reception & Legacy */}
-          <Box component="section" sx={{ paddingBottom: tokens.spacing[8] }}>
-            <Typography variant="h2" sx={{ fontSize: tokens.fontSizes["2xl"], fontWeight: tokens.fontWeights.semibold, marginBottom: tokens.spacing[6], display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <StarIcon style={{ width: "1.25rem", height: "1.25rem", color: tokens.colors.primary }} />
-              Community Reception & Legacy
-            </Typography>
+          <Box component="section" sx={{ paddingBottom: isMd ? tokens.spacing[8] : tokens.spacing[4] }}>
+            <Box sx={{ marginBottom: isMd ? tokens.spacing[6] : tokens.spacing[4] }}>
+              <Typography variant="h2" sx={{ fontSize: isMd ? tokens.fontSizes["2xl"] : tokens.fontSizes.xl, fontWeight: tokens.fontWeights.semibold, display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                <StarIcon sx={{ width: "1.25rem", height: "1.25rem", color: tokens.colors.primary }} />
+                Community Reception & Legacy
+              </Typography>
+            </Box>
             <Card>
-              <CardContent style={{ paddingTop: tokens.spacing[6], display: "flex", flexDirection: "column", gap: tokens.spacing[6] }}>
+              <CardContent style={{ paddingTop: isMd ? tokens.spacing[6] : tokens.spacing[4], display: "flex", flexDirection: "column", gap: isMd ? tokens.spacing[6] : tokens.spacing[4] }}>
                 {/* Rating */}
-                <Box sx={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", rowGap: "0.5rem" }}>
                   <Box sx={{ display: "flex" }}>
                     {[1, 2, 3, 4, 5].map((star) => {
                       const isFull = star <= Math.floor(community.rating);
@@ -1184,7 +829,7 @@ const MonsterHighSeriesPage: React.FC = () => {
                         <StarIcon
                           key={star}
                           filled={isFull || isHalf}
-                          style={{
+                          sx={{
                             width: "1.25rem",
                             height: "1.25rem",
                             color: isFull || isHalf ? tokens.colors.primary : tokens.colors.mutedForeground,
@@ -1227,21 +872,6 @@ const MonsterHighSeriesPage: React.FC = () => {
         </Box>
       </Box>
 
-      {/* Footer */}
-      <Box component="footer" sx={{
-        borderTop: `1px solid ${tokens.colors.border}`,
-        padding: `${tokens.spacing[8]} ${isLg ? tokens.spacing[24] : isMd ? tokens.spacing[12] : tokens.spacing[6]}`,
-      }}>
-        <Box sx={{ maxWidth: "80rem", margin: "0 auto", display: "flex", flexDirection: isMd ? "row" : "column", justifyContent: "space-between", alignItems: "center", gap: "1rem" }}>
-          <Typography sx={{ color: tokens.colors.mutedForeground, fontSize: tokens.fontSizes.sm }}>
-            Monstrino • Monster High Collector Archive
-          </Typography>
-          <Typography sx={{ color: tokens.colors.mutedForeground, fontSize: tokens.fontSizes.xs }}>
-            Data for illustration purposes only
-          </Typography>
-        </Box>
-      </Box>
-
       {/* Lightbox placeholder */}
       {selectedImage && (
         <Box
@@ -1255,6 +885,7 @@ const MonsterHighSeriesPage: React.FC = () => {
             alignItems: "center",
             justifyContent: "center",
             cursor: "pointer",
+            padding: isMd ? tokens.spacing[8] : tokens.spacing[4],
           }}
         >
           <Box sx={{
@@ -1267,7 +898,6 @@ const MonsterHighSeriesPage: React.FC = () => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            margin: tokens.spacing[8],
           }}>
             <ImageIcon style={{ width: "4rem", height: "4rem", color: `${tokens.colors.mutedForeground}4D` }} />
           </Box>

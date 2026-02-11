@@ -1086,7 +1086,7 @@ export const characterMock = [
     "display_name": "Skelita Calaveras",
     "gender": "ghoul",
     "description": "Skelita is a skeleton who transferred to Monster High from Campasuchill, Hexico. She is kind, creative, family-oriented, and is proud of her heritage.",
-    "primary_image": "/demo/releases/2025/retro-toys-skelita/main-image.png",
+    "primary_image": "/demo/releases/2025/scullector-skelita/main-image.png",
     "alt_names": null,
     "notes": null,
     "updated_at": "2026-01-05 22:41:35",

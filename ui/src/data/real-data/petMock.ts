@@ -13,7 +13,7 @@ export const petMock = [
     "id": 24,
     "name": "candelita",
     "display_name": "Candelita",
-    "description": null,
+    "description": "Candelita is a dog and the pet of Skelita Calaveras. She is decorated in Day of the Dead style.",
     "primary_image": "/demo/pets/candelita/main-image.png",
     "updated_at": "2026-01-05 22:41:49",
     "created_at": "2026-01-05 22:41:49"

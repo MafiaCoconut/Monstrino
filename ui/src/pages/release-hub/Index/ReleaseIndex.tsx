@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { useParams, Link as RouterLink } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -7,24 +7,18 @@ import {
   IconButton,
   Chip,
   Rating,
-  Tabs,
-  Tab,
   Collapse,
   Avatar,
+  Divider,
 } from '@mui/material';
 import {
-  Search,
   KeyboardArrowDown,
   KeyboardArrowUp,
   ChevronRight,
   Star,
-  Bookmark,
-  Share,
   ChevronLeft,
   TrendingUp,
   TrendingDown,
-  CheckCircle,
-  Error as ErrorIcon,
   PlayArrow,
   OpenInNew,
   ExpandMore,
@@ -35,11 +29,14 @@ import {
   LocalOffer,
   Checkroom,
   History,
-  PhotoLibrary,
-  Inventory,
 } from '@mui/icons-material';
 import type { Release } from '../entities/release';
+import type { CharacterId, CharacterSummary, HexColor } from '../entities';
 import { releaseIndexMock } from '@/data/real-data/releaseIndexMock';
+import { characterIndexMockById } from '@/data/real-data/CharacterIndexMock';
+import { ReleaseBreadcrumb } from '../components/breadcrumb';
+import { CharacterCard } from '../components/character-card';
+import { PetCardSimple } from '../components/pet-card';
 
 // Color palette
 const colors = {
@@ -61,6 +58,15 @@ const colors = {
   cyan: '#06b6d4',
 };
 
+const characterAccentPalette: HexColor[] = [
+  '#ec4899',
+  '#a855f7',
+  '#3b82f6',
+  '#f97316',
+  '#22c55e',
+  '#06b6d4',
+];
+
 const ReleasePage = () => {
   const { internal_id, release_id, id } = useParams();
   const resolvedId = internal_id ?? release_id ?? id ?? '';
@@ -71,40 +77,33 @@ const ReleasePage = () => {
     }
     return releaseIndexMock[0] ?? ({} as Release);
   }, [resolvedId]);
+  const primarySeries = releaseData.series?.[0];
   // Header Component
-
-// Breadcrumb Component
-  const Breadcrumb = () => (
-  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 2 }}>
-    {['Releases', releaseData.seriesName, releaseData.name].map((item, index, arr) => (
-      <React.Fragment key={item}>
-        <Typography
-          sx={{
-            fontSize: 14,
-            color: index === arr.length - 1 ? colors.textPrimary : colors.textSecondary,
-            cursor: index === arr.length - 1 ? 'default' : 'pointer',
-            '&:hover': index !== arr.length - 1 ? { color: colors.textPrimary } : {},
-          }}
-        >
-          {item}
-        </Typography>
-        {index < arr.length - 1 && (
-          <ChevronRight sx={{ fontSize: 16, color: colors.textMuted }} />
-        )}
-      </React.Fragment>
-    ))}
-  </Box>
-  );
 
 // Hero Section Component
   const HeroSection = () => (
-  <Box sx={{ py: 2 }}>
-    <Box sx={{ display: 'flex', gap: 1.5, mb: 2 }}>
+  <Box sx={{ py: { xs: 1, md: 2 } }}>
+    <Typography
+      sx={{
+        fontSize: { xs: 24, sm: 32, md: 42 },
+        fontWeight: 700,
+        color: colors.textPrimary,
+        mb: 0.5,
+        lineHeight: 1.2,
+      }}
+    >
+      {releaseData.name}
+    </Typography>
+    <Typography sx={{ fontSize: { xs: 14, sm: 16, md: 18 }, color: colors.textSecondary, mb: { xs: 2, md: 2 }, lineHeight: 1.5 }}>
+      {releaseData.subtitle}
+    </Typography>
+
+    <Box sx={{ display: 'flex', gap: { xs: 1, md: 1.5 }, mb: { xs: 2, md: 3 }, flexWrap: 'wrap' }}>
       {(releaseData.badges ?? []).map((badge) => (
         <Chip
           key={badge.label}
           label={badge.label}
-          variant={badge.variant === 'outlined' ? 'outlined' : undefined}
+          {...(badge.variant === 'outlined' ? { variant: 'outlined' } : {})}
           sx={{
             backgroundColor: badge.variant === 'outlined' ? 'transparent' : `${badge.color ?? colors.pink}20`,
             borderColor: badge.color ?? colors.pink,
@@ -117,21 +116,7 @@ const ReleasePage = () => {
       ))}
     </Box>
 
-    <Typography
-      sx={{
-        fontSize: 42,
-        fontWeight: 700,
-        color: colors.textPrimary,
-        mb: 0.5,
-      }}
-    >
-      {releaseData.name}
-    </Typography>
-    <Typography sx={{ fontSize: 18, color: colors.textSecondary, mb: 3 }}>
-      {releaseData.subtitle}
-    </Typography>
-
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 4, mb: 3, flexWrap: 'wrap' }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 2, md: 4 }, mb: { xs: 2, md: 3 }, flexWrap: 'wrap' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Typography sx={{ fontSize: 13, color: colors.textMuted }}>Released</Typography>
         <Typography sx={{ fontSize: 13, color: colors.textSecondary }}>
@@ -142,7 +127,7 @@ const ReleasePage = () => {
         <Typography sx={{ fontSize: 13, color: colors.textMuted }}>SKU</Typography>
         <Typography sx={{ fontSize: 13, color: colors.textSecondary }}>{releaseData.sku}</Typography>
       </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      {/* <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Box
           sx={{
             width: 8,
@@ -159,7 +144,7 @@ const ReleasePage = () => {
         >
           {releaseData.stockStatusLabel}
         </Typography>
-      </Box>
+      </Box> */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
         <Star sx={{ fontSize: 16, color: '#fbbf24' }} />
         <Typography sx={{ fontSize: 13, color: colors.textSecondary }}>
@@ -171,7 +156,8 @@ const ReleasePage = () => {
       </Box>
     </Box>
 
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+    {/* ACTUAL NOT NEEDED BUT WILL BE NEEDED IN THE FUTURE */}
+    {/* <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, md: 2 }, flexWrap: 'wrap' }}>
       <Button
         variant="contained"
         sx={{
@@ -179,8 +165,9 @@ const ReleasePage = () => {
           color: colors.textPrimary,
           textTransform: 'none',
           fontWeight: 600,
-          px: 3,
-          py: 1,
+          px: { xs: 2, md: 3 },
+          py: { xs: 0.75, md: 1 },
+          fontSize: { xs: 13, md: 14 },
           '&:hover': { backgroundColor: colors.pinkDark },
         }}
       >
@@ -204,138 +191,84 @@ const ReleasePage = () => {
       >
         <Share />
       </IconButton>
-    </Box>
+    </Box> */}
   </Box>
   );
 
 // Pricing Intelligence Component
   const PricingIntelligence = () => {
-  const [selectedRegion, setSelectedRegion] = useState(0);
+  const [showAll, setShowAll] = useState(false);
   const regions = releaseData.pricing?.regions ?? [];
-  const currentRegion = regions[selectedRegion];
-  const priceChange = currentRegion
-    ? ((currentRegion.market - currentRegion.msrp) / currentRegion.msrp * 100).toFixed(1)
-    : '0.0';
+  const displayedRegions = showAll ? regions : regions.slice(0, 4);
+  const hasMore = regions.length > 4;
 
   return (
-    <Box
-      sx={{
-        backgroundColor: colors.card,
-        borderRadius: 2,
-        border: `1px solid ${colors.cardBorder}`,
-        p: 3,
-        mt: 3,
-      }}
-    >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
+    <Box sx={{ backgroundColor: colors.card, borderRadius: 2, border: `1px solid ${colors.cardBorder}`, p: { xs: 2, md: 3 } }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
         <LocalOffer sx={{ fontSize: 18, color: colors.pink }} />
         <Typography sx={{ fontSize: 16, fontWeight: 600, color: colors.textPrimary }}>
-          Pricing Intelligence
+          MSRP - Manufacturer's Suggested Retail Price
         </Typography>
-      </Box>
-
-      {/* Region Tabs */}
-      <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
-        {regions.map((region, index) => (
-          <Box
-            key={region.code}
-            onClick={() => setSelectedRegion(index)}
+        {hasMore && (
+          <Chip
+            label={`${regions.length} regions`}
+            size="small"
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 0.5,
-              px: 2,
-              py: 1,
-              borderRadius: 1,
-              cursor: 'pointer',
-              backgroundColor: selectedRegion === index ? colors.pink : colors.bgLight,
-              color: selectedRegion === index ? colors.textPrimary : colors.textSecondary,
-              transition: 'all 0.2s',
-              '&:hover': { backgroundColor: selectedRegion === index ? colors.pink : colors.cardBorder },
+              backgroundColor: colors.bgLight,
+              color: colors.textMuted,
+              fontSize: 11,
+              height: 22,
             }}
-          >
-            <Typography sx={{ fontSize: 14 }}>{region.flag}</Typography>
-            <Typography sx={{ fontSize: 13, fontWeight: 500 }}>{region.code}</Typography>
+          />
+        )}
+      </Box>
+      <Typography sx={{ fontSize: 11, color: colors.textMuted, mb: 2, fontStyle: 'italic' }}>
+        Informational purposes only. Actual retail prices may vary by retailer and region.
+      </Typography>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: { xs: 1, sm: 1.5 } }}>
+        {displayedRegions.map((region) => (
+          <Box key={region.code} sx={{ 
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            rowGap: 0.5,
+            p: { xs: 1.5, sm: 2 },
+            backgroundColor: colors.bgLight,
+            borderRadius: 2,
+            '&:hover': { backgroundColor: colors.pink + '20' },
+            transition: 'background-color 0.2s'
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 } }}>
+              <Typography sx={{ fontSize: { xs: 24, sm: 28 } }}>{region.flag}</Typography>
+              <Box>
+                <Typography sx={{ fontSize: { xs: 12, sm: 14 }, fontWeight: 600, color: colors.textPrimary }}>{region.code}</Typography>
+                <Typography sx={{ fontSize: { xs: 9, sm: 10 }, color: colors.textMuted }}>MSRP</Typography>
+              </Box>
+            </Box>
+            <Typography sx={{ fontSize: { xs: 18, sm: 20 }, fontWeight: 700, color: colors.pink }}>
+              {region.currency}{region.msrp}
+            </Typography>
           </Box>
         ))}
       </Box>
-
-      {/* Price Display */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3 }}>
-        {/* Official MSRP */}
-        <Box
-          sx={{
-            p: 2.5,
-            borderRadius: 1.5,
-            backgroundColor: colors.bgLight,
-            border: `1px solid ${colors.cardBorder}`,
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-            <Chip
-              label="OFFICIAL"
-              size="small"
-              sx={{
-                backgroundColor: `${colors.blue}20`,
-                color: colors.blue,
-                fontSize: 10,
-                height: 20,
-                fontWeight: 600,
-              }}
-            />
-          </Box>
-          <Typography sx={{ fontSize: 12, color: colors.textMuted, mb: 0.5 }}>
-            Original MSRP
-          </Typography>
-          <Typography sx={{ fontSize: 28, fontWeight: 700, color: colors.textPrimary }}>
-            {currentRegion?.currency}
-            {currentRegion?.msrp.toLocaleString()}
-          </Typography>
-          <Typography sx={{ fontSize: 11, color: colors.textMuted, mt: 1 }}>
-            {currentRegion?.msrpNote}
-          </Typography>
+      {hasMore && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+          <Button
+            onClick={() => setShowAll(!showAll)}
+            sx={{
+              textTransform: 'none',
+              color: colors.pink,
+              fontSize: 13,
+              fontWeight: 600,
+              '&:hover': { backgroundColor: colors.pink + '20' },
+            }}
+            endIcon={showAll ? <KeyboardArrowUp /> : <ExpandMore />}
+          >
+            {showAll ? 'Show Less' : `Show ${regions.length - 4} More`}
+          </Button>
         </Box>
-
-        {/* Secondary Market */}
-        <Box
-          sx={{
-            p: 2.5,
-            borderRadius: 1.5,
-            backgroundColor: colors.bgLight,
-            border: `1px solid ${colors.cardBorder}`,
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-            <Chip
-              label="SECONDARY"
-              size="small"
-              sx={{
-                backgroundColor: `${colors.orange}20`,
-                color: colors.orange,
-                fontSize: 10,
-                height: 20,
-                fontWeight: 600,
-              }}
-            />
-          </Box>
-          <Typography sx={{ fontSize: 12, color: colors.textMuted, mb: 0.5 }}>
-            Current Market Price
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5 }}>
-            <Typography sx={{ fontSize: 28, fontWeight: 700, color: colors.textPrimary }}>
-              {currentRegion?.currency}
-              {currentRegion?.market.toLocaleString()}
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <TrendingUp sx={{ fontSize: 14, color: colors.green }} />
-              <Typography sx={{ fontSize: 12, color: colors.green }}>+{priceChange}%</Typography>
-            </Box>
-          </Box>
-          <Typography sx={{ fontSize: 11, color: colors.textMuted, mt: 1 }}>
-            {currentRegion?.marketNote}
-          </Typography>
-        </Box>
-      </Box>
+      )}
     </Box>
   );
   };
@@ -401,7 +334,7 @@ const ReleasePage = () => {
           <Box sx={{ position: 'relative', pl: 3 }}>
             {releases.map((release, index) => (
               <Box
-                key={release.sku}
+                key={release.sku ?? `${release.name}-${index}`}
                 sx={{
                   display: 'flex',
                   alignItems: 'flex-start',
@@ -449,11 +382,11 @@ const ReleasePage = () => {
                       }}
                     />
                     <Chip
-                      label={statusStyles[release.status].label}
+                      label={statusStyles[release.status]?.label ?? release.status}
                       size="small"
                       sx={{
-                        backgroundColor: statusStyles[release.status].bg,
-                        color: statusStyles[release.status].color,
+                        backgroundColor: statusStyles[release.status]?.bg ?? `${colors.textMuted}20`,
+                        color: statusStyles[release.status]?.color ?? colors.textMuted,
                         fontSize: 10,
                         height: 20,
                       }}
@@ -489,78 +422,80 @@ const ReleasePage = () => {
   );
   };
 
-// Official Media Gallery Component
-  const OfficialMediaGallery = () => {
-  const [selectedTab, setSelectedTab] = useState(0);
-  const [selectedImage, setSelectedImage] = useState(0);
-
-  const mediaCategories = releaseData.media ?? [];
-  const currentCategory = mediaCategories[selectedTab];
-
-  return (
-    <Box sx={{ mt: 6 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-        <PhotoLibrary sx={{ fontSize: 20, color: colors.pink }} />
-        <Typography sx={{ fontSize: 20, fontWeight: 600, color: colors.textPrimary }}>
-          Official Media
-        </Typography>
-      </Box>
-
-      {/* Category Tabs */}
-      <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
-        {mediaCategories.map((category, index) => (
-          <Box
-            key={category.label}
-            onClick={() => { setSelectedTab(index); setSelectedImage(0); }}
-            sx={{
-              px: 2.5,
-              py: 1,
-              borderRadius: 1,
-              cursor: 'pointer',
-              backgroundColor: selectedTab === index ? colors.card : 'transparent',
-              border: `1px solid ${selectedTab === index ? colors.cardBorder : 'transparent'}`,
-              color: selectedTab === index ? colors.textPrimary : colors.textMuted,
-              transition: 'all 0.2s',
-              '&:hover': { color: colors.textPrimary },
-            }}
-          >
-            <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
-              {category.label} ({category.images.length})
-            </Typography>
-          </Box>
-        ))}
-      </Box>
-
-      {/* Gallery Grid */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2 }}>
-        {currentCategory?.images.map((image, index) => (
+// Gallery Thumbnails Component
+  const GalleryThumbnails = ({ 
+    images, 
+    currentImage, 
+    onImageClick 
+  }: { 
+    images: Array<{ src: string; thumbnailSrc?: string; alt?: string }>;
+    currentImage: number;
+    onImageClick: (index: number) => void;
+  }) => {
+    return (
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          gap: { xs: 0.5, md: 1 }, 
+          mt: { xs: 1, md: 2 }, 
+          overflowX: 'auto',
+          overflowY: 'hidden',
+          pb: 0.5, 
+          width: '100%',
+          // Стили для скроллбара
+          '&::-webkit-scrollbar': {
+            height: 6,
+          },
+          '&::-webkit-scrollbar-track': {
+            backgroundColor: colors.cardBorder,
+            borderRadius: 3,
+          },
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: colors.pink,
+            borderRadius: 3,
+            '&:hover': {
+              backgroundColor: colors.pinkDark,
+            },
+          },
+          // Для Firefox
+          scrollbarWidth: 'thin',
+          scrollbarColor: `${colors.pink} ${colors.cardBorder}`,
+        }}
+      >
+        {images.map((image, index) => (
           <Box
             key={index}
-            onClick={() => setSelectedImage(index)}
+            onClick={() => onImageClick(index)}
             sx={{
-              aspectRatio: '1',
-              borderRadius: 2,
-              overflow: 'hidden',
+              width: { xs: 56, sm: 64, md: 72 },
+              height: { xs: 56, sm: 64, md: 72 },
+              minWidth: { xs: 56, sm: 64, md: 72 },
+              flex: '0 0 auto',
+              backgroundColor: '#ffffff',
+              borderRadius: 1,
+              border: `2px solid ${index === currentImage ? colors.pink : colors.cardBorder}`,
               cursor: 'pointer',
-              border: `2px solid ${selectedImage === index ? colors.pink : colors.cardBorder}`,
-              transition: 'all 0.2s',
-              '&:hover': { borderColor: colors.pink },
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'border-color 0.2s, transform 0.2s',
+              '&:hover': {
+                borderColor: colors.pink,
+                transform: 'translateY(-2px)',
+              },
             }}
           >
             <Box
               component="img"
-              src={image.src}
-              alt={image.caption}
-              sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              src={image.thumbnailSrc ?? image.src}
+              alt={`Thumbnail ${index + 1}`}
+              sx={{ width: '100%', height: '100%', objectFit: 'contain' }}
             />
           </Box>
         ))}
       </Box>
-      <Typography sx={{ fontSize: 12, color: colors.textMuted, mt: 2 }}>
-        {currentCategory?.images[selectedImage]?.caption}
-      </Typography>
-    </Box>
-  );
+    );
   };
 
 // Image Gallery Component
@@ -569,10 +504,10 @@ const ReleasePage = () => {
   const images = releaseData.gallery ?? [];
 
   return (
-    <Box sx={{ position: 'relative' }}>
+    <Box sx={{ position: 'relative', width: '100%' }}>
       <Box
         sx={{
-          backgroundColor: colors.card,
+          backgroundColor: '#ffffff',
           borderRadius: 2,
           aspectRatio: '1',
           display: 'flex',
@@ -651,90 +586,147 @@ const ReleasePage = () => {
         </Box>
       </Box>
 
-      <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
-        {images.map((image, index) => (
-          <Box
-            key={index}
-            onClick={() => setCurrentImage(index)}
-            sx={{
-              width: 72,
-              height: 72,
-              flex: '0 0 auto',
-              backgroundColor: colors.card,
-              borderRadius: 1,
-              border: `2px solid ${index === currentImage ? colors.pink : colors.cardBorder}`,
-              cursor: 'pointer',
-              overflow: 'hidden',
-            }}
-          >
-            <Box
-              component="img"
-              src={image.thumbnailSrc ?? image.src}
-              alt={`Thumbnail ${index + 1}`}
-              sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-          </Box>
-        ))}
-      </Box>
+      <GalleryThumbnails 
+        images={images}
+        currentImage={currentImage}
+        onImageClick={setCurrentImage}
+      />
     </Box>
   );
   };
 
-// Info Card Component
-  const InfoCard = ({ title, items }: { title: string; items: { label: string; value: string }[] }) => (
-  <Box
-    sx={{
-      backgroundColor: colors.card,
-      borderRadius: 2,
-      border: `1px solid ${colors.cardBorder}`,
-      p: 3,
-    }}
-  >
-    <Typography sx={{ fontSize: 16, fontWeight: 600, color: colors.textPrimary, mb: 2 }}>
-      {title}
-    </Typography>
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-      {items.map((item) => (
-        <Box key={item.label} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography sx={{ fontSize: 14, color: colors.textMuted }}>{item.label}</Typography>
-          <Typography sx={{ fontSize: 14, color: colors.textSecondary }}>{item.value}</Typography>
-        </Box>
-      ))}
-    </Box>
-  </Box>
-  );
-
-// Physical Contents Card Component
-  const PhysicalContentsCard = () => {
-  const items = releaseData.physicalContents ?? [];
-
-  return (
-    <Box
-      sx={{
-        backgroundColor: colors.card,
-        borderRadius: 2,
-        border: `1px solid ${colors.cardBorder}`,
-        p: 3,
-      }}
-    >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-        <Inventory sx={{ fontSize: 18, color: colors.pink }} />
-        <Typography sx={{ fontSize: 16, fontWeight: 600, color: colors.textPrimary }}>
-          Physical Contents
+// General Info Card Component (Two Columns)
+  const GeneralInfoCard = ({ data }: { data: typeof releaseData.generalInfo }) => {
+    if (!data) return null;
+    
+    return (
+      <Box
+        sx={{
+          backgroundColor: colors.card,
+          borderRadius: { xs: 1.5, md: 2 },
+          border: `1px solid ${colors.cardBorder}`,
+          p: { xs: 2, md: 3 },
+        }}
+      >
+        <Typography sx={{ fontSize: { xs: 14, md: 16 }, fontWeight: 600, color: colors.textPrimary, mb: { xs: 2, md: 3 } }}>
+          {data.title}
         </Typography>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: { xs: 3, md: 4 } }}>
+          {data.columns.map((column, colIndex) => (
+            <Box key={colIndex}>
+              {column.items.map((item, index) => (
+                <React.Fragment key={item.label}>
+                  <Box
+                    sx={{
+                      py: 1.5,
+                      display: 'flex',
+                      flexDirection: { xs: 'column', sm: 'row' },
+                      alignItems: { xs: 'flex-start', sm: 'center' },
+                      justifyContent: 'space-between',
+                      gap: { xs: 0.5, sm: 2 },
+                    }}
+                  >
+                    <Typography sx={{ fontSize: 14, color: colors.textMuted }}>{item.label}</Typography>
+                    <Typography sx={{ fontSize: 14, color: colors.textSecondary, fontWeight: 500, textAlign: { xs: 'left', sm: 'right' } }}>
+                      {item.value}
+                    </Typography>
+                  </Box>
+                  {index < column.items.length - 1 && <Divider sx={{ borderColor: colors.cardBorder }} />}
+                </React.Fragment>
+              ))}
+            </Box>
+          ))}
+        </Box>
       </Box>
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
-        {items.map((item) => (
-          <Box key={item.name} sx={{ textAlign: 'center' }}>
-            <Typography sx={{ fontSize: 24, fontWeight: 700, color: colors.textPrimary }}>
-              {item.count}
-            </Typography>
-            <Typography sx={{ fontSize: 12, color: colors.textMuted }}>{item.name}</Typography>
-          </Box>
-        ))}
+    );
+  };
+
+// Product Details Card Component (Sections)
+  const ProductDetailsCard = ({ data }: { data: typeof releaseData.productDetails }) => {
+    if (!data) return null;
+    const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+
+    const toggleSection = (title: string) =>
+      setOpenSections((prev) => ({ ...prev, [title]: !prev[title] }));
+    
+    return (
+      <Box
+        sx={{
+          backgroundColor: colors.card,
+          borderRadius: { xs: 1.5, md: 2 },
+          border: `1px solid ${colors.cardBorder}`,
+          p: { xs: 2, md: 3 },
+        }}
+      >
+        <Typography sx={{ fontSize: { xs: 14, md: 16 }, fontWeight: 600, color: colors.textPrimary, mb: { xs: 2, md: 3 } }}>
+          {data.title}
+        </Typography>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: { xs: 3, md: 4 } }}>
+          {data.sections.map((section) => {
+            const isOpen = openSections[section.title] ?? false;
+            const maxItems = 5;
+            const visibleItems = isOpen ? section.items : section.items.slice(0, maxItems);
+            const hasMore = section.items.length > maxItems;
+
+            return (
+              <Box key={section.title}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: { xs: 1.5, md: 2 } }}>
+                  <Typography sx={{ fontSize: { xs: 12, md: 13 }, fontWeight: 600, color: colors.textSecondary }}>
+                    {section.title}
+                  </Typography>
+                  {hasMore && (
+                    <Button
+                      onClick={() => toggleSection(section.title)}
+                      sx={{
+                        minWidth: 'auto',
+                        px: 0.5,
+                        color: colors.textMuted,
+                        textTransform: 'none',
+                        fontSize: 12,
+                        '&:hover': { backgroundColor: 'transparent', color: colors.textSecondary },
+                      }}
+                      endIcon={
+                        <ExpandMore
+                          sx={{
+                            fontSize: 16,
+                            transition: 'transform 0.2s',
+                            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                          }}
+                        />
+                      }
+                    >
+                      {isOpen ? 'Show less' : `Show all (${section.items.length})`}
+                    </Button>
+                  )}
+                </Box>
+              <Box>
+                {visibleItems.map((item, index) => (
+                  <React.Fragment key={item.label}>
+                    <Box
+                      sx={{
+                        py: 1.5,
+                        display: 'flex',
+                        flexDirection: { xs: 'column', sm: 'row' },
+                        alignItems: { xs: 'flex-start', sm: 'center' },
+                        justifyContent: 'space-between',
+                        gap: { xs: 0.5, sm: 2 },
+                      }}
+                    >
+                      <Typography sx={{ fontSize: 14, color: colors.textMuted }}>{item.label}</Typography>
+                      <Typography sx={{ fontSize: 14, color: colors.textSecondary, fontWeight: 500, textAlign: { xs: 'left', sm: 'right' } }}>
+                        {item.value}
+                      </Typography>
+                    </Box>
+                    {index < visibleItems.length - 1 && <Divider sx={{ borderColor: colors.cardBorder }} />}
+                  </React.Fragment>
+                ))}
+              </Box>
+              </Box>
+            );
+          })}
+        </Box>
       </Box>
-    </Box>
-  );
+    );
   };
 
 // Accessory Card Component
@@ -747,7 +739,7 @@ const ReleasePage = () => {
 }: {
   name: string;
   category: string;
-  rarity: string;
+  rarity?: string;
   image: string;
   placeholderIcon?: React.ReactNode;
   }) => {
@@ -761,9 +753,18 @@ const ReleasePage = () => {
     <Box
       sx={{
         backgroundColor: colors.card,
-        borderRadius: 2,
+        borderRadius: { xs: 1.5, md: 2 },
         border: `1px solid ${colors.cardBorder}`,
         overflow: 'hidden',
+        cursor: 'pointer',
+        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+        width: '100%',
+        maxWidth: { xs: '100%', sm: 220 },
+        margin: '0 auto',
+        '&:hover': {
+          transform: { xs: 'none', md: 'translateY(-4px)' },
+          boxShadow: { xs: 'none', md: '0 8px 24px rgba(236, 72, 153, 0.15)' },
+        },
       }}
     >
       <Box
@@ -788,17 +789,17 @@ const ReleasePage = () => {
           </Box>
         )}
       </Box>
-      <Box sx={{ p: 2 }}>
-        <Typography sx={{ fontSize: 11, color: colors.textMuted, mb: 0.5 }}>{category}</Typography>
-        <Typography sx={{ fontSize: 14, fontWeight: 500, color: colors.textPrimary, mb: 1 }}>
+      <Box sx={{ p: { xs: 1.5, md: 2 } }}>
+        <Typography sx={{ fontSize: { xs: 10, md: 11 }, color: colors.textMuted, mb: 0.5 }}>{category}</Typography>
+        <Typography sx={{ fontSize: { xs: 13, md: 14 }, fontWeight: 500, color: colors.textPrimary, mb: 1 }}>
           {name}
         </Typography>
         <Chip
           label={rarity}
           size="small"
           sx={{
-            backgroundColor: `${rarityColors[rarity] || colors.textMuted}20`,
-            color: rarityColors[rarity] || colors.textMuted,
+            backgroundColor: `${rarityColors[rarity ?? 'Common'] || colors.textMuted}20`,
+            color: rarityColors[rarity ?? 'Common'] || colors.textMuted,
             fontSize: 11,
             height: 22,
           }}
@@ -811,18 +812,20 @@ const ReleasePage = () => {
 // Accessories Section Component
   const AccessoriesSection = () => {
   const accessories = releaseData.accessories ?? [];
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
 
   return (
-    <Box sx={{ mb: 4 }}>
+    <Box sx={{ mb: { xs: 3, md: 4 } }}>
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center',
-          mb: expanded ? 3 : 0,
+          alignItems: { xs: 'flex-start', sm: 'center' },
+          flexWrap: 'wrap',
+          gap: { xs: 0.75, sm: 1 },
+          mb: expanded ? { xs: 2, md: 3 } : 0,
           cursor: 'pointer',
-          pb: 2,
+          pb: { xs: 1.5, md: 2 },
           borderBottom: `1px solid ${colors.cardBorder}`,
           '&:hover': {
             backgroundColor: `${colors.cardBorder}40`,
@@ -831,10 +834,10 @@ const ReleasePage = () => {
         onClick={() => setExpanded(!expanded)}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontSize: 20, fontWeight: 600, color: colors.textPrimary }}>
+          <Typography sx={{ fontSize: { xs: 18, md: 20 }, fontWeight: 600, color: colors.textPrimary }}>
             Accessories
           </Typography>
-          <Typography sx={{ fontSize: 14, color: colors.textMuted }}>
+          <Typography sx={{ fontSize: { xs: 13, md: 14 }, color: colors.textMuted }}>
             {accessories.length} items
           </Typography>
         </Box>
@@ -843,7 +846,15 @@ const ReleasePage = () => {
         </IconButton>
       </Box>
       <Collapse in={expanded}>
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2, mt: 3 }}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(auto-fit, minmax(200px, 220px))' },
+            justifyContent: 'start',
+            gap: { xs: 1, md: 1.5 },
+            mt: { xs: 2, md: 3 },
+          }}
+        >
           {accessories.map((item) => (
             <AccessoryCard
               key={item.name}
@@ -857,21 +868,36 @@ const ReleasePage = () => {
   );
   };
 
-// Clothing Section Component
-  const ClothingSection = () => {
-  const clothing = releaseData.clothing ?? [];
-  const [expanded, setExpanded] = useState(true);
+// Characters Section Component
+  const CharactersSection = () => {
+  const characters = releaseData.characters ?? [];
+  const [expanded, setExpanded] = useState(false);
+
+  const characterCards: CharacterSummary[] = characters.map((character, index) => {
+    const characterData = characterIndexMockById(character.id);
+    const accentColor = characterAccentPalette[index % characterAccentPalette.length] ?? '#ec4899';
+    return {
+      id: character.id as CharacterId,
+      name: characterData.name ?? character.name,
+      species: characterData.species ?? 'Unknown',
+      releaseCount: characterData.releaseCount ?? 0,
+      imageUrl: characterData.heroImage,
+      accentColor,
+    };
+  });
 
   return (
-    <Box sx={{ mb: 4 }}>
+    <Box sx={{ mb: { xs: 3, md: 4 } }}>
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center',
-          mb: expanded ? 3 : 0,
+          alignItems: { xs: 'flex-start', sm: 'center' },
+          flexWrap: 'wrap',
+          gap: { xs: 0.75, sm: 1 },
+          mb: expanded ? { xs: 2, md: 3 } : 0,
           cursor: 'pointer',
-          pb: 2,
+          pb: { xs: 1.5, md: 2 },
           borderBottom: `1px solid ${colors.cardBorder}`,
           '&:hover': {
             backgroundColor: `${colors.cardBorder}40`,
@@ -880,10 +906,65 @@ const ReleasePage = () => {
         onClick={() => setExpanded(!expanded)}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontSize: 20, fontWeight: 600, color: colors.textPrimary }}>
+          <Typography sx={{ fontSize: { xs: 18, md: 20 }, fontWeight: 600, color: colors.textPrimary }}>
+            Characters
+          </Typography>
+          <Typography sx={{ fontSize: { xs: 13, md: 14 }, color: colors.textMuted }}>
+            {characterCards.length} character{characterCards.length !== 1 ? 's' : ''}
+          </Typography>
+        </Box>
+        <IconButton size="small" sx={{ color: colors.textMuted }}>
+          {expanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+        </IconButton>
+      </Box>
+      <Collapse in={expanded}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(auto-fit, minmax(200px, 220px))' },
+            justifyContent: 'start',
+            gap: { xs: 1, md: 1.5 },
+            mt: { xs: 2, md: 3 },
+          }}
+        >
+          {characterCards.map((character) => (
+            <CharacterCard key={character.id} {...character} />
+          ))}
+        </Box>
+      </Collapse>
+    </Box>
+  );
+  };
+
+// Clothing Section Component
+  const ClothingSection = () => {
+  const clothing = releaseData.clothing ?? [];
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <Box sx={{ mb: { xs: 3, md: 4 } }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: { xs: 'flex-start', sm: 'center' },
+          flexWrap: 'wrap',
+          gap: { xs: 0.75, sm: 1 },
+          mb: expanded ? { xs: 2, md: 3 } : 0,
+          cursor: 'pointer',
+          pb: { xs: 1.5, md: 2 },
+          borderBottom: `1px solid ${colors.cardBorder}`,
+          '&:hover': {
+            backgroundColor: `${colors.cardBorder}40`,
+          },
+        }}
+        onClick={() => setExpanded(!expanded)}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography sx={{ fontSize: { xs: 18, md: 20 }, fontWeight: 600, color: colors.textPrimary }}>
             Clothing
           </Typography>
-          <Typography sx={{ fontSize: 14, color: colors.textMuted }}>
+          <Typography sx={{ fontSize: { xs: 13, md: 14 }, color: colors.textMuted }}>
             {clothing.length} items
           </Typography>
         </Box>
@@ -892,7 +973,15 @@ const ReleasePage = () => {
         </IconButton>
       </Box>
       <Collapse in={expanded}>
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2, mt: 3 }}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(auto-fit, minmax(200px, 220px))' },
+            justifyContent: 'start',
+            gap: { xs: 1, md: 1.5 },
+            mt: { xs: 2, md: 3 },
+          }}
+        >
           {clothing.map((item) => (
             <AccessoryCard
               key={item.name}
@@ -909,18 +998,20 @@ const ReleasePage = () => {
 // Pets Section Component
   const PetsSection = () => {
   const pets = releaseData.petsDetail ?? [];
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
 
   return (
-    <Box sx={{ mb: 4 }}>
+    <Box sx={{ mb: { xs: 3, md: 4 } }}>
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center',
-          mb: expanded ? 3 : 0,
+          alignItems: { xs: 'flex-start', sm: 'center' },
+          flexWrap: 'wrap',
+          gap: { xs: 0.75, sm: 1 },
+          mb: expanded ? { xs: 2, md: 3 } : 0,
           cursor: 'pointer',
-          pb: 2,
+          pb: { xs: 1.5, md: 2 },
           borderBottom: `1px solid ${colors.cardBorder}`,
           '&:hover': {
             backgroundColor: `${colors.cardBorder}40`,
@@ -929,10 +1020,10 @@ const ReleasePage = () => {
         onClick={() => setExpanded(!expanded)}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontSize: 20, fontWeight: 600, color: colors.textPrimary }}>
+          <Typography sx={{ fontSize: { xs: 18, md: 20 }, fontWeight: 600, color: colors.textPrimary }}>
             Pets
           </Typography>
-          <Typography sx={{ fontSize: 14, color: colors.textMuted }}>
+          <Typography sx={{ fontSize: { xs: 13, md: 14 }, color: colors.textMuted }}>
             {pets.length} item{pets.length !== 1 ? 's' : ''}
           </Typography>
         </Box>
@@ -941,63 +1032,24 @@ const ReleasePage = () => {
         </IconButton>
       </Box>
       <Collapse in={expanded}>
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 2, mt: 3 }}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(auto-fit, minmax(200px, 220px))' },
+            justifyContent: 'start',
+            gap: { xs: 1, md: 1.5 },
+            mt: { xs: 2, md: 3 },
+          }}
+        >
           {pets.map((pet) => (
-            <Box
+            <PetCardSimple
               key={pet.name}
-              component={RouterLink}
+              name={pet.name}
+              species={pet.category ?? "Pet"}
+              imageUrl={pet.image}
               to={`/catalog/p/${pet.id}`}
-              sx={{
-                backgroundColor: colors.card,
-                borderRadius: 2,
-                border: `1px solid ${colors.cardBorder}`,
-                overflow: 'hidden',
-                textDecoration: 'none',
-                cursor: 'pointer',
-                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: '0 8px 24px rgba(236, 72, 153, 0.15)',
-                },
-              }}
-            >
-              <Box
-                sx={{
-                  aspectRatio: '1',
-                  backgroundColor: colors.bgLight,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Box
-                  component="img"
-                  src={pet.image}
-                  alt={pet.name}
-                  sx={{ width: '60%', height: '60%', objectFit: 'contain' }}
-                />
-              </Box>
-              <Box sx={{ p: 2 }}>
-                <Typography sx={{ fontSize: 11, color: colors.textMuted, mb: 0.5 }}>
-                  {pet.category ?? 'Pet'}
-                </Typography>
-                <Typography sx={{ fontSize: 14, fontWeight: 500, color: colors.textPrimary, mb: 1 }}>
-                  {pet.name}
-                </Typography>
-                {pet.rarity && (
-                  <Chip
-                    label={pet.rarity}
-                    size="small"
-                    sx={{
-                      backgroundColor: `${colors.orange}20`,
-                      color: colors.orange,
-                      fontSize: 11,
-                      height: 22,
-                    }}
-                  />
-                )}
-              </Box>
-            </Box>
+              {...(pet.rarity !== undefined ? { rarity: pet.rarity } : {})}
+            />
           ))}
         </Box>
       </Collapse>
@@ -1009,48 +1061,193 @@ const ReleasePage = () => {
   const PriceHistoryChart = () => {
   const [selectedRegion, setSelectedRegion] = useState(0);
   const [selectedPeriod, setSelectedPeriod] = useState(1);
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+  const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number } | null>(null);
+  const chartRef = React.useRef<HTMLDivElement | null>(null);
 
   const regions = releaseData.priceHistory?.regions ?? [];
-  const periods = releaseData.priceHistory?.periods ?? [];
-  const currentRegion = regions[selectedRegion];
-  const maxValue = currentRegion ? Math.max(...currentRegion.data) : 0;
-  const minValue = currentRegion ? Math.min(...currentRegion.data) : 0;
-  const avgValue = currentRegion
-    ? Math.round(currentRegion.data.reduce((a, b) => a + b, 0) / currentRegion.data.length)
+  const periodOptions = releaseData.priceHistory?.periods ?? ['ALL'];
+  const regionIndex = Math.min(selectedRegion, Math.max(0, regions.length - 1));
+  const periodIndex = Math.min(selectedPeriod, Math.max(0, periodOptions.length - 1));
+  const currentRegion = regions[regionIndex];
+  const periodLabel = periodOptions[periodIndex] ?? 'ALL';
+
+  const periodWindowMap: Record<string, number> = {
+    '7D': 7,
+    '30D': 10,
+    '90D': 12,
+    '1Y': 15,
+    ALL: 15,
+  };
+
+  const fullData = currentRegion?.data ?? [];
+  const windowSize = Math.min(fullData.length, periodWindowMap[periodLabel] ?? fullData.length);
+  const data = windowSize ? fullData.slice(-windowSize) : [];
+
+  const meanValue = data.length ? data.reduce((a, b) => a + b, 0) / data.length : 0;
+  const maxValue = data.length ? Math.max(...data) : 0;
+  const minValue = data.length ? Math.min(...data) : 0;
+  const avgValue = Math.round(meanValue);
+  const currentValue = data.length ? (data[data.length - 1] ?? 0) : 0;
+  const startValue = data.length ? (data[0] ?? 0) : 0;
+  const changePercentValue = startValue ? ((currentValue - startValue) / startValue) * 100 : 0;
+  const isPositive = changePercentValue >= 0;
+  const variance = data.length
+    ? data.reduce((sum, value) => sum + Math.pow(value - meanValue, 2), 0) / data.length
     : 0;
-  const currentValue = currentRegion ? currentRegion.data[currentRegion.data.length - 1] : 0;
-  const previousValue = currentRegion ? currentRegion.data[0] : 0;
-  const changePercent = previousValue
-    ? ((currentValue - previousValue) / previousValue * 100).toFixed(1)
-    : '0.0';
-  const isPositive = currentValue > previousValue;
+  const volatilityValue = Math.round(Math.sqrt(variance));
+  const rangeValue = maxValue - minValue;
+  const fullMin = fullData.length ? Math.min(...fullData) : minValue;
+  const fullMax = fullData.length ? Math.max(...fullData) : maxValue;
+
+  const pricingRegion = releaseData.pricing?.regions?.find(
+    (region) => region.code === currentRegion?.code,
+  );
+  const msrpValue = pricingRegion?.msrp ?? null;
+  const msrpDeltaValue = msrpValue !== null ? currentValue - msrpValue : null;
+  const msrpDeltaPercent =
+    msrpValue !== null && msrpDeltaValue !== null ? (msrpDeltaValue / msrpValue) * 100 : null;
+  const recentSalesCount = pricingRegion?.recentSalesCount ?? null;
+
+  const currencyCodeMap: Record<string, string> = {
+    US: 'USD',
+    EU: 'EUR',
+    JP: 'JPY',
+    UK: 'GBP',
+    CA: 'CAD',
+    AU: 'AUD',
+    MX: 'MXN',
+    BR: 'BRL',
+  };
 
   const formatPrice = (value: number) => {
-    if (selectedRegion === 2) return `¥${value.toLocaleString()}`;
-    if (selectedRegion === 1) return `€${value}`;
-    return `$${value}`;
+    const currencyCode = currencyCodeMap[currentRegion?.code ?? 'US'] ?? 'USD';
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currencyCode,
+      maximumFractionDigits: currencyCode === 'JPY' ? 0 : 2,
+    }).format(value);
+  };
+
+  const regionFlagMap: Record<string, string> = {
+    US: '🇺🇸',
+    EU: '🇪🇺',
+    JP: '🇯🇵',
+    UK: '🇬🇧',
+    CA: '🇨🇦',
+    AU: '🇦🇺',
+    MX: '🇲🇽',
+    BR: '🇧🇷',
+  };
+
+  const regionNameMap: Record<string, string> = {
+    US: 'United States',
+    EU: 'Europe',
+    JP: 'Japan',
+    UK: 'United Kingdom',
+    CA: 'Canada',
+    AU: 'Australia',
+    MX: 'Mexico',
+    BR: 'Brazil',
+  };
+
+  const chartWidth = 560;
+  const chartHeight = 220;
+  const chartPadding = 8;
+  const chartLeft = 48;
+  const chartRight = 16;
+  const chartBottom = 30;
+  const chartTop = 12;
+  const innerWidth = chartWidth - chartLeft - chartRight;
+  const innerHeight = chartHeight - chartTop - chartBottom;
+  const linePoints = data.map((value, index) => {
+    const x = data.length > 1 ? chartLeft + (index / (data.length - 1)) * innerWidth : chartLeft;
+    const y = chartTop + (1 - (value - minValue) / (rangeValue || 1)) * innerHeight;
+    return { x, y, value };
+  });
+  const lastPoint = linePoints[linePoints.length - 1];
+  const maxPoint = linePoints.reduce(
+    (max, point) => (point.value > max.value ? point : max),
+    linePoints[0] ?? { x: 0, y: chartHeight - chartPadding, value: 0 },
+  );
+  const minPoint = linePoints.reduce(
+    (min, point) => (point.value < min.value ? point : min),
+    linePoints[0] ?? { x: 0, y: chartHeight - chartPadding, value: 0 },
+  );
+  const linePath = linePoints.map((point) => `${point.x},${point.y}`).join(' ');
+  const areaPath = linePoints.length
+    ? `M ${chartLeft} ${chartTop + innerHeight} L ${linePath} L ${chartLeft + innerWidth} ${chartTop + innerHeight} Z`
+    : '';
+
+  const yTicks = [
+    { label: formatPrice(maxValue), value: maxValue },
+    { label: formatPrice(Math.round((maxValue + minValue) / 2)), value: (maxValue + minValue) / 2 },
+    { label: formatPrice(minValue), value: minValue },
+  ];
+  const xLabels =
+    periodLabel === 'ALL'
+      ? ['Start', 'Mid', 'Now']
+      : [`${periodLabel} ago`, 'Mid', 'Now'];
+
+  const hoveredPoint = hoverIndex !== null ? linePoints[hoverIndex] : null;
+  const hoverValue = hoveredPoint?.value ?? 0;
+  const hoverDelta = hoverValue - startValue;
+  const hoverDeltaPercent = startValue ? (hoverDelta / startValue) * 100 : 0;
+  const hoverColor = hoverDelta >= 0 ? colors.green : colors.red;
+  const hoverLabel = hoverIndex !== null ? `${periodLabel} · point ${hoverIndex + 1}` : '';
+
+  const handleHoverMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!data.length || !chartRef.current) return;
+    const rect = chartRef.current.getBoundingClientRect();
+    const x = Math.min(Math.max(event.clientX - rect.left, 0), rect.width);
+    const ratio = rect.width ? x / rect.width : 0;
+    const index = Math.round(ratio * (data.length - 1));
+    const point = linePoints[index];
+    if (!point) return;
+    const xPos = (point.x / chartWidth) * rect.width;
+    const yPos = (point.y / chartHeight) * rect.height;
+    setHoverIndex(index);
+    setHoverPosition({ x: xPos, y: yPos });
+  };
+
+  const handleHoverLeave = () => {
+    setHoverIndex(null);
+    setHoverPosition(null);
   };
 
   return (
     <Box
       sx={{
         backgroundColor: colors.card,
-        borderRadius: 2,
+        borderRadius: { xs: 1.5, md: 2 },
         border: `1px solid ${colors.cardBorder}`,
-        p: 3,
-        mb: 4,
+        p: { xs: 2, md: 3 },
+        mb: { xs: 3, md: 4 },
       }}
     >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: { xs: 2, md: 3 }, flexWrap: 'wrap', gap: 2 }}>
         <Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
             <TrendingUp sx={{ fontSize: 18, color: colors.pink }} />
             <Typography sx={{ fontSize: 16, fontWeight: 600, color: colors.textPrimary }}>
               Price History
             </Typography>
+            <Chip
+              label={`${regionFlagMap[currentRegion?.code ?? 'US'] ?? '🌎'} ${regionNameMap[currentRegion?.code ?? 'US'] ?? 'Global'}`}
+              size="small"
+              sx={{
+                backgroundColor: colors.bgLight,
+                color: colors.textSecondary,
+                fontSize: 10,
+                height: 20,
+              }}
+            />
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
-            <Typography sx={{ fontSize: 32, fontWeight: 700, color: colors.textPrimary }}>
+          <Typography sx={{ fontSize: 12, color: colors.textMuted }}>
+            Collector view · {periodLabel} trend
+          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 2, mt: 1 }}>
+            <Typography sx={{ fontSize: { xs: 24, md: 32 }, fontWeight: 700, color: colors.textPrimary }}>
               {formatPrice(currentValue)}
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -1060,15 +1257,18 @@ const ReleasePage = () => {
                 <TrendingDown sx={{ fontSize: 16, color: colors.red }} />
               )}
               <Typography sx={{ fontSize: 14, color: isPositive ? colors.green : colors.red }}>
-                {isPositive ? '+' : ''}{changePercent}%
+                {isPositive ? '+' : ''}{changePercentValue.toFixed(1)}% vs {periodLabel}
               </Typography>
             </Box>
           </Box>
+          <Typography sx={{ fontSize: 12, color: colors.textMuted, mt: 0.5 }}>
+            Start {formatPrice(startValue)} · Spread {formatPrice(rangeValue)}
+          </Typography>
         </Box>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           {/* Region Selector */}
-          <Box sx={{ display: 'flex', gap: 0.5 }}>
+          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
             {regions.map((region, index) => (
               <Box
                 key={region.code}
@@ -1081,33 +1281,33 @@ const ReleasePage = () => {
                   py: 0.5,
                   borderRadius: 1,
                   cursor: 'pointer',
-                  backgroundColor: selectedRegion === index ? colors.bgLight : 'transparent',
-                  border: `1px solid ${selectedRegion === index ? colors.cardBorder : 'transparent'}`,
-                  color: selectedRegion === index ? colors.textPrimary : colors.textMuted,
+                  backgroundColor: regionIndex === index ? colors.bgLight : 'transparent',
+                  border: `1px solid ${regionIndex === index ? colors.cardBorder : 'transparent'}`,
+                  color: regionIndex === index ? colors.textPrimary : colors.textMuted,
                   fontSize: 12,
                   '&:hover': { color: colors.textPrimary },
                 }}
               >
-                <Typography component="span">{region.flag}</Typography>
+                <Typography component="span">{regionFlagMap[region.code] ?? '🌎'}</Typography>
                 <Typography component="span">{region.code}</Typography>
               </Box>
             ))}
           </Box>
 
           {/* Period Selector */}
-          <Box sx={{ display: 'flex', gap: 0.5 }}>
-            {periods.map((period, index) => (
+          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+            {periodOptions.map((period, index) => (
               <Button
                 key={period}
                 size="small"
                 onClick={() => setSelectedPeriod(index)}
                 sx={{
                   minWidth: 40,
-                  backgroundColor: selectedPeriod === index ? colors.pink : 'transparent',
-                  color: selectedPeriod === index ? colors.textPrimary : colors.textMuted,
+                  backgroundColor: periodIndex === index ? colors.pink : 'transparent',
+                  color: periodIndex === index ? colors.textPrimary : colors.textMuted,
                   fontSize: 11,
                   py: 0.5,
-                  '&:hover': { backgroundColor: selectedPeriod === index ? colors.pinkDark : colors.cardBorder },
+                  '&:hover': { backgroundColor: periodIndex === index ? colors.pinkDark : colors.cardBorder },
                 }}
               >
                 {period}
@@ -1120,71 +1320,200 @@ const ReleasePage = () => {
       {/* Chart */}
       <Box
         sx={{
-          height: 180,
-          display: 'flex',
-          alignItems: 'flex-end',
-          gap: 0.5,
-          mb: 3,
+          height: { xs: 220, md: 260 },
+          mb: { xs: 2, md: 3 },
           position: 'relative',
         }}
+        ref={chartRef}
+        onMouseMove={handleHoverMove}
+        onMouseLeave={handleHoverLeave}
       >
-        {/* Grid lines */}
-        {[0, 25, 50, 75, 100].map((pct) => (
+        <Box sx={{ position: 'absolute', inset: 0 }}>
+          <svg
+            viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+            width="100%"
+            height="100%"
+            preserveAspectRatio="xMidYMid meet"
+            style={{ display: 'block', pointerEvents: 'none' }}
+          >
+            <defs>
+              <linearGradient id="priceHistoryGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={`${colors.pink}66`} />
+                <stop offset="100%" stopColor="transparent" />
+              </linearGradient>
+            </defs>
+            {[0, 0.25, 0.5, 0.75, 1].map((line, index) => {
+              const y = chartTop + innerHeight * line;
+              return (
+                <line
+                  key={index}
+                  x1={chartLeft}
+                  y1={y}
+                  x2={chartLeft + innerWidth}
+                  y2={y}
+                  stroke={colors.cardBorder}
+                  strokeDasharray="4 6"
+                />
+              );
+            })}
+            {yTicks.map((tick, index) => {
+              const y = chartTop + innerHeight * (index / (yTicks.length - 1));
+              return (
+                <text
+                  key={tick.label}
+                  x={chartPadding}
+                  y={y + 4}
+                  fill={colors.textMuted}
+                  fontSize="10"
+                >
+                  {tick.label}
+                </text>
+              );
+            })}
+            {linePoints.length > 0 && (
+              <>
+                <path d={areaPath} fill="url(#priceHistoryGradient)" />
+                <polyline
+                  points={linePath}
+                  fill="none"
+                  stroke={colors.pink}
+                  strokeWidth="2"
+                />
+                <circle cx={minPoint.x} cy={minPoint.y} r="3" fill={colors.red} />
+                <circle cx={maxPoint.x} cy={maxPoint.y} r="3" fill={colors.green} />
+                {lastPoint && <circle cx={lastPoint.x} cy={lastPoint.y} r="4" fill={colors.textPrimary} />}
+              </>
+            )}
+            {hoveredPoint && (
+              <>
+                <line
+                  x1={hoveredPoint.x}
+                  y1={chartTop}
+                  x2={hoveredPoint.x}
+                  y2={chartTop + innerHeight}
+                  stroke={`${colors.textMuted}66`}
+                  strokeDasharray="4 6"
+                />
+                <line
+                  x1={chartLeft}
+                  y1={hoveredPoint.y}
+                  x2={chartLeft + innerWidth}
+                  y2={hoveredPoint.y}
+                  stroke={`${colors.textMuted}66`}
+                  strokeDasharray="4 6"
+                />
+                <circle cx={hoveredPoint.x} cy={hoveredPoint.y} r="5" fill={colors.pink} stroke={colors.bg} strokeWidth="2" />
+              </>
+            )}
+            {xLabels.map((label, index) => {
+              const x = chartLeft + (innerWidth / (xLabels.length - 1)) * index;
+              return (
+                <text
+                  key={label}
+                  x={x}
+                  y={chartTop + innerHeight + chartBottom - 8}
+                  fill={colors.textMuted}
+                  fontSize="10"
+                  textAnchor={index === 0 ? 'start' : index === xLabels.length - 1 ? 'end' : 'middle'}
+                >
+                  {label}
+                </text>
+              );
+            })}
+          </svg>
+        </Box>
+        {hoveredPoint && hoverPosition && (
           <Box
-            key={pct}
             sx={{
               position: 'absolute',
-              left: 0,
-              right: 0,
-              bottom: `${pct}%`,
-              borderBottom: `1px dashed ${colors.cardBorder}`,
-              opacity: 0.5,
+              left: Math.min(Math.max(hoverPosition.x + 12, 8), (chartRef.current?.clientWidth ?? 0) - 160),
+              top: Math.min(Math.max(hoverPosition.y - 40, 8), (chartRef.current?.clientHeight ?? 0) - 56),
+              backgroundColor: colors.card,
+              border: `1px solid ${colors.cardBorder}`,
+              borderRadius: 2,
+              px: 1.5,
+              py: 1,
+              minWidth: 140,
+              pointerEvents: 'none',
+              boxShadow: '0 10px 24px rgba(0,0,0,0.35)',
             }}
-          />
-        ))}
-
-        {currentRegion?.data.map((value, index) => (
-          <Box
-            key={index}
-            sx={{
-              flex: 1,
-              height: `${(value / maxValue) * 100}%`,
-              background: `linear-gradient(180deg, ${colors.pink} 0%, ${colors.pink}40 100%)`,
-              borderRadius: '4px 4px 0 0',
-              transition: 'height 0.3s',
-              position: 'relative',
-              zIndex: 1,
-              '&:hover': {
-                background: colors.pink,
-              },
-            }}
-          />
-        ))}
+          >
+            <Typography sx={{ fontSize: 11, color: colors.textMuted }}>{hoverLabel}</Typography>
+            <Typography sx={{ fontSize: 14, fontWeight: 700, color: colors.textPrimary }}>
+              {formatPrice(hoverValue)}
+            </Typography>
+            <Typography sx={{ fontSize: 11, color: hoverColor }}>
+              {hoverDelta >= 0 ? '+' : '-'}
+              {formatPrice(Math.abs(hoverDelta))} ({hoverDeltaPercent.toFixed(1)}%)
+            </Typography>
+          </Box>
+        )}
       </Box>
 
       {/* Stats */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(5, 1fr)' }, gap: 1.5 }}>
         {[
-          { label: 'Period Low', value: formatPrice(minValue), color: colors.red },
-          { label: 'Period High', value: formatPrice(maxValue), color: colors.green },
-          { label: 'Average', value: formatPrice(avgValue), color: colors.textSecondary },
+          {
+            label: 'Period Low',
+            value: formatPrice(minValue),
+            sublabel: `All-time ${formatPrice(fullMin)}`,
+            color: colors.red,
+          },
+          {
+            label: 'Period High',
+            value: formatPrice(maxValue),
+            sublabel: `All-time ${formatPrice(fullMax)}`,
+            color: colors.green,
+          },
+          {
+            label: 'Average',
+            value: formatPrice(avgValue),
+            sublabel: `Volatility ${formatPrice(volatilityValue)}`,
+            color: colors.textPrimary,
+          },
+          {
+            label: 'MSRP',
+            value: msrpValue ? formatPrice(msrpValue) : '—',
+            sublabel: msrpValue && msrpDeltaValue !== null
+              ? `${msrpDeltaValue >= 0 ? '+' : ''}${formatPrice(Math.abs(msrpDeltaValue))} (${msrpDeltaPercent?.toFixed(1)}%)`
+              : 'No MSRP data',
+            color: colors.textPrimary,
+          },
+          {
+            label: 'Recent Sales',
+            value: recentSalesCount ? `${recentSalesCount}` : '—',
+            sublabel: recentSalesCount ? 'Recent sales' : 'No sales data',
+            color: colors.textSecondary,
+          },
         ].map((stat) => (
-          <Box key={stat.label} sx={{ textAlign: 'center' }}>
-            <Typography sx={{ fontSize: 12, color: colors.textMuted, mb: 0.5 }}>
+          <Box
+            key={stat.label}
+            sx={{
+              backgroundColor: colors.bgLight,
+              borderRadius: 2,
+              border: `1px solid ${colors.cardBorder}`,
+              p: 1.5,
+            }}
+          >
+            <Typography sx={{ fontSize: 10, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.6 }}>
               {stat.label}
             </Typography>
-            <Typography sx={{ fontSize: 16, fontWeight: 600, color: stat.color }}>
+            <Typography sx={{ fontSize: 14, fontWeight: 600, color: stat.color }}>
               {stat.value}
+            </Typography>
+            <Typography sx={{ fontSize: 11, color: colors.textMuted }}>
+              {stat.sublabel}
             </Typography>
           </Box>
         ))}
       </Box>
     </Box>
   );
-  };
+};
+
 
 // Community Reviews Component
-  const CommunityReviews = () => {
+const CommunityReviews = () => {
   const reviews = releaseData.reviews ?? [];
 
   return (
@@ -1199,21 +1528,21 @@ const ReleasePage = () => {
             p: 2.5,
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: { xs: 1.5, md: 2 } }}>
             <Avatar
               sx={{
-                width: 40,
-                height: 40,
+                width: { xs: 36, md: 40 },
+                height: { xs: 36, md: 40 },
                 backgroundColor: colors.pink,
-                fontSize: 16,
+                fontSize: { xs: 14, md: 16 },
                 fontWeight: 600,
               }}
             >
               {review.avatar}
             </Avatar>
             <Box sx={{ flex: 1 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
-                <Typography sx={{ fontSize: 14, fontWeight: 500, color: colors.textPrimary }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5, flexWrap: 'wrap' }}>
+                <Typography sx={{ fontSize: { xs: 13, md: 14 }, fontWeight: 500, color: colors.textPrimary }}>
                   {review.user}
                 </Typography>
                 <Rating value={review.rating} readOnly size="small" sx={{ '& .MuiRating-iconFilled': { color: colors.yellow } }} />
@@ -1238,13 +1567,13 @@ const ReleasePage = () => {
   const customs = releaseData.customs ?? [];
 
   return (
-    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
+    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: { xs: 1.5, md: 2 } }}>
       {customs.map((custom) => (
         <Box
           key={custom.title}
           sx={{
             backgroundColor: colors.bgLight,
-            borderRadius: 2,
+            borderRadius: { xs: 1.5, md: 2 },
             border: `1px solid ${colors.cardBorder}`,
             overflow: 'hidden',
           }}
@@ -1270,13 +1599,13 @@ const ReleasePage = () => {
               }}
             />
           </Box>
-          <Box sx={{ p: 2 }}>
-            <Typography sx={{ fontSize: 13, fontWeight: 500, color: colors.textPrimary, mb: 0.5 }}>
+          <Box sx={{ p: { xs: 1.5, md: 2 } }}>
+            <Typography sx={{ fontSize: { xs: 12, md: 13 }, fontWeight: 500, color: colors.textPrimary, mb: 0.5 }}>
               {custom.title}
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Typography sx={{ fontSize: 12, color: colors.pink }}>{custom.artist}</Typography>
-              <Typography sx={{ fontSize: 11, color: colors.textMuted }}>♥ {custom.likes}</Typography>
+              <Typography sx={{ fontSize: { xs: 11, md: 12 }, color: colors.pink }}>{custom.artist}</Typography>
+              <Typography sx={{ fontSize: { xs: 10, md: 11 }, color: colors.textMuted }}>♥ {custom.likes}</Typography>
             </Box>
           </Box>
         </Box>
@@ -1293,25 +1622,26 @@ const ReleasePage = () => {
   return (
     <Box>
       {/* Tutorials */}
-      <Typography sx={{ fontSize: 14, fontWeight: 600, color: colors.textPrimary, mb: 2 }}>
+      <Typography sx={{ fontSize: { xs: 13, md: 14 }, fontWeight: 600, color: colors.textPrimary, mb: { xs: 1.5, md: 2 } }}>
         Related Tutorials
       </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 4 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, md: 2 }, mb: { xs: 3, md: 4 } }}>
         {tutorials.map((tutorial) => (
           <Box
             key={tutorial.title}
             sx={{
               display: 'flex',
-              gap: 2,
+              gap: { xs: 1.5, md: 2 },
               backgroundColor: colors.bgLight,
-              borderRadius: 2,
+              borderRadius: { xs: 1.5, md: 2 },
               border: `1px solid ${colors.cardBorder}`,
               overflow: 'hidden',
               cursor: 'pointer',
+              flexDirection: { xs: 'column', sm: 'row' },
               '&:hover': { borderColor: colors.pink },
             }}
           >
-            <Box sx={{ width: 160, aspectRatio: '16/9', position: 'relative', flexShrink: 0 }}>
+            <Box sx={{ width: { xs: '100%', sm: 160 }, aspectRatio: '16/9', position: 'relative', flexShrink: 0 }}>
               <Box
                 component="img"
                 src={tutorial.image}
@@ -1346,11 +1676,11 @@ const ReleasePage = () => {
                 {tutorial.duration}
               </Typography>
             </Box>
-            <Box sx={{ py: 1.5, pr: 2 }}>
-              <Typography sx={{ fontSize: 14, fontWeight: 500, color: colors.textPrimary, mb: 0.5 }}>
+            <Box sx={{ py: { xs: 1, sm: 1.5 }, pr: { xs: 1.5, sm: 2 }, px: { xs: 1.5, sm: 0 } }}>
+              <Typography sx={{ fontSize: { xs: 13, md: 14 }, fontWeight: 500, color: colors.textPrimary, mb: 0.5 }}>
                 {tutorial.title}
               </Typography>
-              <Typography sx={{ fontSize: 12, color: colors.textMuted }}>
+              <Typography sx={{ fontSize: { xs: 11, md: 12 }, color: colors.textMuted }}>
                 by {tutorial.creator}
               </Typography>
             </Box>
@@ -1359,20 +1689,20 @@ const ReleasePage = () => {
       </Box>
 
       {/* Featured Creators */}
-      <Typography sx={{ fontSize: 14, fontWeight: 600, color: colors.textPrimary, mb: 2 }}>
+      <Typography sx={{ fontSize: { xs: 13, md: 14 }, fontWeight: 600, color: colors.textPrimary, mb: 2 }}>
         Featured Creators
       </Typography>
-      <Box sx={{ display: 'flex', gap: 2 }}>
+      <Box sx={{ display: 'flex', gap: { xs: 1.5, md: 2 }, flexWrap: 'wrap' }}>
         {creators.map((creator) => (
           <Box
             key={creator.name}
             sx={{
-              flex: 1,
+              flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 8px)', md: 1 },
               display: 'flex',
               alignItems: 'center',
               gap: 1.5,
               backgroundColor: colors.bgLight,
-              borderRadius: 2,
+              borderRadius: { xs: 1.5, md: 2 },
               border: `1px solid ${colors.cardBorder}`,
               p: 1.5,
               cursor: 'pointer',
@@ -1381,17 +1711,17 @@ const ReleasePage = () => {
           >
             <Avatar
               sx={{
-                width: 36,
-                height: 36,
+                width: { xs: 32, md: 36 },
+                height: { xs: 32, md: 36 },
                 backgroundColor: colors.purple,
-                fontSize: 14,
+                fontSize: { xs: 13, md: 14 },
                 fontWeight: 600,
               }}
             >
               {creator.avatar}
             </Avatar>
             <Box>
-              <Typography sx={{ fontSize: 13, fontWeight: 500, color: colors.textPrimary }}>
+              <Typography sx={{ fontSize: { xs: 12, md: 13 }, fontWeight: 500, color: colors.textPrimary }}>
                 {creator.name}
               </Typography>
               <Typography sx={{ fontSize: 11, color: colors.textMuted }}>
@@ -1416,10 +1746,10 @@ const ReleasePage = () => {
   ];
 
   return (
-    <Box sx={{ mt: 6 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-        <Collections sx={{ fontSize: 20, color: colors.pink }} />
-        <Typography sx={{ fontSize: 20, fontWeight: 600, color: colors.textPrimary }}>
+    <Box sx={{ mt: { xs: 4, md: 6 } }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: { xs: 2, md: 3 } }}>
+        <Collections sx={{ fontSize: { xs: 18, md: 20 }, color: colors.pink }} />
+        <Typography sx={{ fontSize: { xs: 18, md: 20 }, fontWeight: 600, color: colors.textPrimary }}>
           Community
         </Typography>
       </Box>
@@ -1427,24 +1757,26 @@ const ReleasePage = () => {
       <Box
         sx={{
           backgroundColor: colors.card,
-          borderRadius: 2,
+          borderRadius: { xs: 1.5, md: 2 },
           border: `1px solid ${colors.cardBorder}`,
           overflow: 'hidden',
         }}
       >
         {/* Tabs */}
-        <Box sx={{ display: 'flex', borderBottom: `1px solid ${colors.cardBorder}` }}>
+        <Box sx={{ display: 'flex', borderBottom: `1px solid ${colors.cardBorder}`, overflowX: 'auto' }}>
           {tabs.map((tab, index) => (
             <Box
               key={tab.label}
               onClick={() => setSelectedTab(index)}
               sx={{
-                flex: 1,
+                flex: { xs: '0 0 auto', sm: 1 },
+                minWidth: { xs: 140, sm: 'auto' },
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: 1,
                 py: 2,
+                px: { xs: 1.5, sm: 0 },
                 cursor: 'pointer',
                 backgroundColor: selectedTab === index ? colors.bgLight : 'transparent',
                 borderBottom: `2px solid ${selectedTab === index ? colors.pink : 'transparent'}`,
@@ -1471,7 +1803,7 @@ const ReleasePage = () => {
         </Box>
 
         {/* Tab Content */}
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: { xs: 2, md: 3 } }}>
           {selectedTab === 0 && <CommunityReviews />}
           {selectedTab === 1 && <OOAKSection />}
           {selectedTab === 2 && <TutorialsSection />}
@@ -1485,137 +1817,316 @@ const ReleasePage = () => {
   );
   };
 
-// Market Offer Card Component
-  const MarketOfferCard = ({
-  seller,
-  condition,
-  platform,
-  shipping,
-  price,
-  verified,
-  lastUpdated,
-}: {
-  seller: string;
-  condition: string;
-  platform: string;
-  shipping: string;
-  price: string;
-  verified: boolean;
-  lastUpdated: string;
-  }) => {
-  const platformColors: Record<string, string> = {
-    eBay: colors.blue,
-    Mercari: colors.red,
-    Facebook: colors.blue,
-  };
-
-  return (
-    <Box
-      sx={{
-        backgroundColor: colors.card,
-        borderRadius: 2,
-        border: `1px solid ${colors.cardBorder}`,
-        p: 3,
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}
-    >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-        <Box
-          sx={{
-            width: 48,
-            height: 48,
-            borderRadius: '50%',
-            backgroundColor: colors.bgLight,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 18,
-            fontWeight: 600,
-            color: colors.textPrimary,
-          }}
-        >
-          {seller.charAt(0)}
-        </Box>
-        <Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-            <Typography sx={{ fontSize: 15, fontWeight: 500, color: colors.textPrimary }}>
-              {seller}
-            </Typography>
-            {verified ? (
-              <CheckCircle sx={{ fontSize: 16, color: colors.green }} />
-            ) : (
-              <ErrorIcon sx={{ fontSize: 16, color: colors.textMuted }} />
-            )}
-            <Chip
-              label={condition}
-              size="small"
-              sx={{
-                backgroundColor:
-                  condition === 'New' ? `${colors.green}20` : `${colors.orange}20`,
-                color: condition === 'New' ? colors.green : colors.orange,
-                fontSize: 11,
-                height: 20,
-              }}
-            />
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Typography
-              sx={{ fontSize: 13, color: platformColors[platform] || colors.textMuted }}
-            >
-              {platform}
-            </Typography>
-            <Typography sx={{ fontSize: 13, color: colors.textMuted }}>•</Typography>
-            <Typography sx={{ fontSize: 13, color: colors.textMuted }}>{shipping}</Typography>
-            <Typography sx={{ fontSize: 13, color: colors.textMuted }}>•</Typography>
-            <Typography sx={{ fontSize: 13, color: colors.textMuted }}>{lastUpdated}</Typography>
-          </Box>
-        </Box>
-      </Box>
-
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-        <Typography sx={{ fontSize: 20, fontWeight: 700, color: colors.textPrimary }}>
-          {price}
-        </Typography>
-        <Button
-          variant="outlined"
-          sx={{
-            borderColor: colors.cardBorder,
-            color: colors.textPrimary,
-            textTransform: 'none',
-            '&:hover': { borderColor: colors.pink, backgroundColor: 'transparent' },
-          }}
-        >
-          View Listing
-        </Button>
-      </Box>
-    </Box>
-  );
-  };
-
 // Market Offers Section Component
   const MarketOffersSection = () => {
-  const offers = releaseData.marketOffers ?? [];
+  type MarketOffer = {
+    store: string;
+    url: string;
+    logoUrl?: string;
+    channel: 'Official' | 'Marketplace';
+    official: boolean;
+    price: number;
+    shipping: string;
+    condition: string;
+    eta: string;
+  };
+
+  const marketCountries = [
+    { code: 'DE', label: 'Germany', flag: '🇩🇪', locale: 'de-DE', currency: 'EUR' },
+    { code: 'UK', label: 'United Kingdom', flag: '🇬🇧', locale: 'en-GB', currency: 'GBP' },
+    { code: 'US', label: 'United States', flag: '🇺🇸', locale: 'en-US', currency: 'USD' },
+    { code: 'JP', label: 'Japan', flag: '🇯🇵', locale: 'ja-JP', currency: 'JPY' },
+  ];
+
+  const marketOffersByCountry: Record<string, MarketOffer[]> = {
+    DE: [
+      { store: 'Amazon (EU)', url: 'https://www.amazon.de/', channel: 'Official', official: true, price: 82.99, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'Muller', url: 'https://www.mueller.de/', channel: 'Official', official: true, price: 79.99, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'Carrefour', url: 'https://www.carrefour.fr/', channel: 'Official', official: true, price: 84.5, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'Auchan', url: 'https://www.auchan.fr/', channel: 'Official', official: true, price: 83.0, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'JoueClub', url: 'https://www.joueclub.fr/', channel: 'Official', official: true, price: 86.0, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'King Jouet', url: 'https://www.king-jouet.com/', channel: 'Official', official: true, price: 85.0, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'El Corte Ingles', url: 'https://www.elcorteingles.es/', channel: 'Official', official: true, price: 88.0, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'eBay', url: 'https://www.ebay.de/', channel: 'Marketplace', official: false, price: 109.0, shipping: 'See site', condition: 'Varies', eta: 'Varies' },
+      { store: 'Vinted', url: 'https://www.vinted.de/', channel: 'Marketplace', official: false, price: 92.0, shipping: 'See site', condition: 'Varies', eta: 'Varies' },
+    ],
+    UK: [
+      { store: 'Amazon (EU)', url: 'https://www.amazon.co.uk/', channel: 'Official', official: true, price: 74.99, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'Smyths Toys', url: 'https://www.smythstoys.com/uk/en-gb', channel: 'Official', official: true, price: 69.99, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'Argos', url: 'https://www.argos.co.uk/', channel: 'Official', official: true, price: 72.0, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'The Entertainer', url: 'https://www.thetoyshop.com/', channel: 'Official', official: true, price: 73.5, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'eBay', url: 'https://www.ebay.co.uk/', channel: 'Marketplace', official: false, price: 98.0, shipping: 'See site', condition: 'Varies', eta: 'Varies' },
+      { store: 'Vinted', url: 'https://www.vinted.co.uk/', channel: 'Marketplace', official: false, price: 85.0, shipping: 'See site', condition: 'Varies', eta: 'Varies' },
+    ],
+    US: [
+      { store: 'Amazon (US)', url: 'https://www.amazon.com/', channel: 'Official', official: true, price: 79.99, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'Amazon (CA)', url: 'https://www.amazon.ca/', channel: 'Official', official: true, price: 84.99, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'Target', url: 'https://www.target.com/', channel: 'Official', official: true, price: 69.99, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'Walmart', url: 'https://www.walmart.com/', channel: 'Official', official: true, price: 71.99, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'Toys\"R\"Us (US)', url: 'https://www.toysrus.com/', channel: 'Official', official: true, price: 79.99, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'Toys\"R\"Us Canada', url: 'https://www.toysrus.ca/', channel: 'Official', official: true, price: 86.99, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'Kohl\'s', url: 'https://www.kohls.com/', channel: 'Official', official: true, price: 76.0, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'Macy\'s', url: 'https://www.macys.com/', channel: 'Official', official: true, price: 78.0, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'Best Buy', url: 'https://www.bestbuy.com/', channel: 'Official', official: true, price: 77.0, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'GameStop', url: 'https://www.gamestop.com/', channel: 'Official', official: true, price: 74.0, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'Hot Topic', url: 'https://www.hottopic.com/', channel: 'Official', official: true, price: 89.0, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'eBay', url: 'https://www.ebay.com/', channel: 'Marketplace', official: false, price: 109.5, shipping: 'See site', condition: 'Varies', eta: 'Varies' },
+      { store: 'Vinted', url: 'https://www.vinted.com/', channel: 'Marketplace', official: false, price: 95.0, shipping: 'See site', condition: 'Varies', eta: 'Varies' },
+    ],
+    JP: [
+      { store: 'Amazon JP', url: 'https://www.amazon.co.jp/', channel: 'Official', official: true, price: 9800, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'Toys\"R\"Us Japan', url: 'https://www.toysrus.co.jp/', channel: 'Official', official: true, price: 10400, shipping: 'See site', condition: 'New', eta: 'Varies' },
+      { store: 'eBay', url: 'https://www.ebay.com/', channel: 'Marketplace', official: false, price: 12800, shipping: 'See site', condition: 'Varies', eta: 'Varies' },
+    ],
+  };
+
+  const defaultCountry = marketCountries[0]?.code ?? 'DE';
+  const [selectedCountry, setSelectedCountry] = useState(defaultCountry);
+  const offers = [...(marketOffersByCountry[selectedCountry] ?? [])].sort(
+    (a, b) => a.price - b.price,
+  );
+
+  const formatPrice = (value: number, countryCode: string) => {
+    const country = marketCountries.find((item) => item.code === countryCode);
+    if (!country) return `$${value.toFixed(2)}`;
+    return new Intl.NumberFormat(country.locale, {
+      style: 'currency',
+      currency: country.currency,
+      maximumFractionDigits: country.currency === 'JPY' ? 0 : 2,
+    }).format(value);
+  };
+
+  const getLogoFromUrl = (url: string) => {
+    try {
+      const hostname = new URL(url).hostname;
+      return `https://logo.clearbit.com/${hostname}`;
+    } catch {
+      return '';
+    }
+  };
+
+  const CountryTabs = ({
+    size = 'small',
+    showLabel = true,
+  }: {
+    size?: 'small' | 'medium';
+    showLabel?: boolean;
+  }) => (
+    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+      {marketCountries.map((country) => {
+        const selected = selectedCountry === country.code;
+        return (
+          <Chip
+            key={country.code}
+            label={showLabel ? `${country.flag} ${country.code}` : `${country.flag}`}
+            size={size}
+            onClick={() => setSelectedCountry(country.code)}
+            sx={{
+              cursor: 'pointer',
+              backgroundColor: selected ? `${colors.pink}20` : colors.bgLight,
+              border: `1px solid ${selected ? colors.pink : colors.cardBorder}`,
+              color: selected ? colors.pink : colors.textMuted,
+              fontWeight: 600,
+              height: size === 'small' ? 26 : 30,
+              '&:hover': { color: colors.textPrimary },
+            }}
+          />
+        );
+      })}
+    </Box>
+  );
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography sx={{ fontSize: 20, fontWeight: 600, color: colors.textPrimary }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: { xs: 2, md: 3 }, flexWrap: 'wrap', gap: 1 }}>
+        <Typography sx={{ fontSize: { xs: 18, md: 20 }, fontWeight: 600, color: colors.textPrimary }}>
           Market Offers
         </Typography>
-        <Typography sx={{ fontSize: 14, color: colors.textMuted }}>
-          {offers.length} listings found
+        <Typography sx={{ fontSize: { xs: 12, md: 13 }, color: colors.textMuted }}>
+          {offers.length} listings in {selectedCountry}
         </Typography>
       </Box>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 3 }}>
-        {offers.map((offer) => (
-          <MarketOfferCard key={offer.seller} {...offer} />
-        ))}
+
+      <Box sx={{ backgroundColor: colors.bgLight, border: `1px solid ${colors.cardBorder}`, borderRadius: 2, p: 2, mb: 2 }}>
+        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 1 }}>
+          <Chip label="Affiliate disclosure" size="small" sx={{ backgroundColor: `${colors.pink}20`, color: colors.pink, fontWeight: 600 }} />
+          <Chip label="External links" size="small" sx={{ backgroundColor: colors.card, color: colors.textSecondary, fontWeight: 600 }} />
+        </Box>
+        <Typography sx={{ fontSize: 12, color: colors.textSecondary }}>
+          Some links are affiliate links. We may earn a commission if you make a purchase after clicking.
+        </Typography>
+        <Typography sx={{ fontSize: 12, color: colors.textMuted }}>
+          Prices and availability can change and may not include taxes, duties, or shipping. Offers are provided by third parties and you will be redirected to the retailer site.
+        </Typography>
+        <Typography sx={{ fontSize: 12, color: colors.textMuted }}>
+          Store names and logos are trademarks of their respective owners.
+        </Typography>
       </Box>
-      <Typography sx={{ fontSize: 12, color: colors.textMuted, textAlign: 'center' }}>
-        {releaseData.marketOffersDisclaimer}
-      </Typography>
+
+      <Box sx={{ mb: 2 }}>
+        <CountryTabs />
+      </Box>
+
+      {(() => {
+        const bestPriceValue = offers.length ? Math.min(...offers.map((offer) => offer.price)) : null;
+        const officialOffers = offers.filter((offer) => offer.official);
+        const officialBestValue = officialOffers.length ? Math.min(...officialOffers.map((offer) => offer.price)) : null;
+        const marketplaceOffers = offers.filter((offer) => !offer.official);
+        const marketplaceAvgValue = marketplaceOffers.length
+          ? marketplaceOffers.reduce((sum, offer) => sum + offer.price, 0) / marketplaceOffers.length
+          : null;
+
+        return (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 1.5 }}>
+              <Box sx={{ backgroundColor: colors.bgLight, borderRadius: 2, p: 1.5, border: `1px solid ${colors.cardBorder}` }}>
+                <Typography sx={{ fontSize: 11, color: colors.textMuted }}>Best price</Typography>
+                <Typography sx={{ fontSize: 16, fontWeight: 700, color: colors.green }}>
+                  {bestPriceValue === null ? '-' : formatPrice(bestPriceValue, selectedCountry)}
+                </Typography>
+              </Box>
+              <Box sx={{ backgroundColor: colors.bgLight, borderRadius: 2, p: 1.5, border: `1px solid ${colors.cardBorder}` }}>
+                <Typography sx={{ fontSize: 11, color: colors.textMuted }}>Official lowest</Typography>
+                <Typography sx={{ fontSize: 16, fontWeight: 700, color: colors.textPrimary }}>
+                  {officialBestValue === null ? '-' : formatPrice(officialBestValue, selectedCountry)}
+                </Typography>
+              </Box>
+              <Box sx={{ backgroundColor: colors.bgLight, borderRadius: 2, p: 1.5, border: `1px solid ${colors.cardBorder}` }}>
+                <Typography sx={{ fontSize: 11, color: colors.textMuted }}>Marketplace avg</Typography>
+                <Typography sx={{ fontSize: 16, fontWeight: 700, color: colors.textPrimary }}>
+                  {marketplaceAvgValue === null ? '-' : formatPrice(marketplaceAvgValue, selectedCountry)}
+                </Typography>
+              </Box>
+              <Box sx={{ backgroundColor: colors.bgLight, borderRadius: 2, p: 1.5, border: `1px solid ${colors.cardBorder}` }}>
+                <Typography sx={{ fontSize: 11, color: colors.textMuted }}>Listings</Typography>
+                <Typography sx={{ fontSize: 16, fontWeight: 700, color: colors.textPrimary }}>
+                  {offers.length}
+                </Typography>
+              </Box>
+            </Box>
+
+            {([
+              {
+                title: 'Official stores',
+                subtitle: `${officialOffers.length} offers`,
+                items: officialOffers,
+                chipColor: colors.green,
+              },
+              {
+                title: 'Secondary market',
+                subtitle: `${marketplaceOffers.length} offers`,
+                items: marketplaceOffers,
+                chipColor: colors.orange,
+              },
+            ] as const).map((section) => (
+              <Box key={section.title} sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                  <Typography sx={{ fontSize: 15, fontWeight: 600, color: colors.textPrimary }}>
+                    {section.title}
+                  </Typography>
+                  <Chip
+                    label={section.subtitle}
+                    size="small"
+                    sx={{
+                      backgroundColor: `${section.chipColor}20`,
+                      color: section.chipColor,
+                      fontSize: 10,
+                      height: 18,
+                    }}
+                  />
+                </Box>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 1.5 }}>
+                  {section.items.map((offer) => (
+                    <Box
+                      key={`${section.title}-${offer.store}-${selectedCountry}`}
+                      sx={{
+                        backgroundColor: colors.bgLight,
+                        borderRadius: 2,
+                        border: `1px solid ${colors.cardBorder}`,
+                        p: 2,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: 2,
+                        flexWrap: 'wrap',
+                      }}
+                    >
+                      <Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                          <Avatar
+                            src={offer.logoUrl || getLogoFromUrl(offer.url)}
+                            alt={offer.store}
+                            sx={{
+                              width: 28,
+                              height: 28,
+                              bgcolor: colors.cardBorder,
+                              color: colors.textPrimary,
+                              fontSize: 12,
+                              fontWeight: 700,
+                            }}
+                            imgProps={{ referrerPolicy: 'no-referrer' }}
+                          >
+                            {offer.store.slice(0, 1)}
+                          </Avatar>
+                          <Typography sx={{ fontSize: 14, fontWeight: 600, color: colors.textPrimary }}>{offer.store}</Typography>
+                          <Chip
+                            label={offer.official ? 'Official' : 'Marketplace'}
+                            size="small"
+                            sx={{
+                              backgroundColor: offer.official ? `${colors.green}20` : `${colors.orange}20`,
+                              color: offer.official ? colors.green : colors.orange,
+                              fontSize: 10,
+                              height: 18,
+                            }}
+                          />
+                          <Chip
+                            label="Affiliate"
+                            size="small"
+                            sx={{
+                              backgroundColor: colors.card,
+                              color: colors.textMuted,
+                              fontSize: 10,
+                              height: 18,
+                            }}
+                          />
+                          {bestPriceValue !== null && offer.price === bestPriceValue && (
+                            <Chip label="Best price" size="small" sx={{ backgroundColor: `${colors.green}20`, color: colors.green, fontSize: 10, height: 18 }} />
+                          )}
+                        </Box>
+                        <Typography sx={{ fontSize: 12, color: colors.textMuted }}>
+                          {offer.condition} • {offer.shipping} • {offer.eta}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                        <Typography sx={{ fontSize: 16, fontWeight: 700, color: colors.textPrimary }}>
+                          {formatPrice(offer.price, selectedCountry)}
+                        </Typography>
+                        <Button
+                          component="a"
+                          href={offer.url}
+                          target="_blank"
+                          rel="noopener noreferrer sponsored"
+                          variant="outlined"
+                          size="small"
+                          endIcon={<OpenInNew fontSize="small" />}
+                          sx={{
+                            borderColor: colors.cardBorder,
+                            color: colors.textPrimary,
+                            textTransform: 'none',
+                            '&:hover': { borderColor: colors.pink, backgroundColor: 'transparent' },
+                          }}
+                        >
+                          Open store
+                        </Button>
+                      </Box>
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+            ))}
+          </Box>
+        );
+      })()}
     </Box>
   );
   };
@@ -1625,7 +2136,9 @@ const ReleasePage = () => {
     <Box
       sx={{
         minHeight: '100vh',
-        backgroundColor: colors.bg,
+        backgroundColor: '#0B0D11',
+        backgroundImage:
+          'radial-gradient(900px 600px at 15% 0%, rgba(64, 160, 255, 0.16), transparent 60%), radial-gradient(900px 700px at 90% 10%, rgba(255, 120, 200, 0.12), transparent 65%), linear-gradient(180deg, #0B0D11 0%, #121622 100%)',
         fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
       }}
     >
@@ -1633,32 +2146,68 @@ const ReleasePage = () => {
       {/* Main Content Area - 70% width, centered */}
       <Box
         sx={{
-          width: '70%',
+          width: { xs: '100%', md: '85%', lg: '70%' },
           mx: 'auto',
-          px: 4,
-          pb: 8,
+          px: { xs: 2, sm: 3, md: 4 },
+          pb: { xs: 4, md: 8 },
         }}
       >
-        <Breadcrumb />
+        {/* Breadcrumb for Mobile - shows only on mobile */}
+        <Box sx={{ display: { xs: 'block', lg: 'none' }, pt: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 } }}>
+          <ReleaseBreadcrumb 
+            items={[
+              { label: 'Releases', link: '/catalog/r' },
+              ...(primarySeries
+                ? [{ label: primarySeries.name, link: `/catalog/s/${primarySeries.id}` }]
+                : [{ label: releaseData.seriesName }]
+              ),
+              { label: releaseData.name }
+            ]} 
+            colors={colors} 
+          />
+        </Box>
 
-        {/* Two Column Layout */}
+        {/* Image Gallery for Mobile - shows only on mobile after Breadcrumb */}
+        <Box sx={{ display: { xs: 'block', lg: 'none' }, mb: 3 }}>
+          <ImageGallery />
+        </Box>
+
+        {/* Two Column Layout - Desktop only */}
         <Box
           sx={{
-            display: 'flex',
+            display: { xs: 'block', lg: 'flex' },
             gap: 4,
+            alignItems: 'flex-start',
           }}
         >
-          {/* Left Column - Sticky Image Gallery */}
+          {/* Left Column - Sticky Breadcrumb & Image Gallery for Desktop */}
           <Box
             sx={{
-              width: '40%',
+              display: { xs: 'none', lg: 'block' },
+              width: '32%',
               flexShrink: 0,
               position: 'sticky',
-              top: 80,
-              alignSelf: 'flex-start',
+              top: { xs: 80, sm: 100 },
               height: 'fit-content',
+              maxHeight: { xs: 'calc(100vh - 96px)', sm: 'calc(100vh - 116px)' },
+              overflowY: 'auto',
+              zIndex: 10,
             }}
           >
+            {/* Breadcrumb for Desktop - sticky with gallery */}
+            <Box sx={{ mb: 3 }}>
+              <ReleaseBreadcrumb 
+                items={[
+                  { label: 'Releases', link: '/catalog/r' },
+                  ...(primarySeries
+                    ? [{ label: primarySeries.name, link: `/catalog/s/${primarySeries.id}` }]
+                    : [{ label: releaseData.seriesName }]
+                  ),
+                  { label: releaseData.name }
+                ]} 
+                colors={colors} 
+              />
+            </Box>
             <ImageGallery />
           </Box>
 
@@ -1673,26 +2222,22 @@ const ReleasePage = () => {
             <PricingIntelligence />
             <ReleasesReissues />
 
-            <Box sx={{ mt: 4, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3 }}>
-              {(releaseData.infoSections ?? []).map((section) => (
-                <InfoCard key={section.title} title={section.title} items={section.items} />
-              ))}
+            <Box sx={{ mt: { xs: 3, md: 4 }, display: 'flex', flexDirection: 'column', gap: { xs: 2, md: 3 } }}>
+              <GeneralInfoCard data={releaseData.generalInfo} />
+              <ProductDetailsCard data={releaseData.productDetails} />
             </Box>
 
-            <Box sx={{ mt: 3 }}>
-              <PhysicalContentsCard />
-            </Box>
-
-            <Box sx={{ mt: 6 }}>
+            <Box sx={{ mt: { xs: 4, md: 6 } }}>
+              <CharactersSection />
               <AccessoriesSection />
               <ClothingSection />
               <PetsSection />
             </Box>
 
-            <OfficialMediaGallery />
+            {/* <OfficialMediaGallery /> */}
             <CommunitySection />
 
-            <Box sx={{ mt: 6 }}>
+            <Box sx={{ mt: { xs: 4, md: 6 } }}>
               <PriceHistoryChart />
               <MarketOffersSection />
             </Box>

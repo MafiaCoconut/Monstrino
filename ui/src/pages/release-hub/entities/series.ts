@@ -28,6 +28,7 @@ export interface SeriesDoll {
   character: string;
   variant?: string;
   rarity?: string;
+  year?: string | number;
   msrp?: string;
   imageUrl?: UrlString;
 }

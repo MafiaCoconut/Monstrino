@@ -1,4 +1,6 @@
 import { characterMock } from "@/data/real-data/characterMock";
+import { characterPetOwnershipMock } from "@/data/real-data/characterPetOwnershipMock";
+import { petMock } from "@/data/real-data/petMock";
 import { releaseCharacterMock } from "@/data/real-data/releaseCharacterMock";
 import { releaseImageMock } from "@/data/real-data/releaseImageMock";
 import { releaseMock } from "@/data/real-data/releaseMock";
@@ -16,7 +18,7 @@ const baseCharacterIndexMock: CharacterIndexData = {
   species: "Vampire",
   age: "1,600 years old (looks 16)",
   birthday: "February 14th (Valentine's Day)",
-  debutYear: 2010,
+  debutYear: 2025,
   releaseCount: 47,
   signatureColors: ["Pink", "Black", "White"],
   motifs: ["Hearts", "Bats", "Polka Dots"],
@@ -115,7 +117,7 @@ const baseCharacterIndexMock: CharacterIndexData = {
       { name: "Clawd Wolf", role: "Boyfriend (G1)", link: "#" },
       { name: "Valentine", role: "Ex-boyfriend", link: "#" },
     ],
-    pets: [{ name: "Count Fabulous", species: "Bat", link: "#" }],
+    pets: [{ name: "Count Fabulous", species: "Bat", link: "#", image: "/demo/pets/count-fabulous/main-image.png" }],
   },
   timeline: [
     { year: 2010, event: "First appearance in Monster High toy line and webisodes" },
@@ -198,6 +200,54 @@ const groupByReleaseId = <T extends { release_id: number }>(items: T[]) => {
 };
 
 const releaseCharactersByReleaseId = groupByReleaseId(releaseCharacterMock);
+
+type PetRecord = (typeof petMock)[number];
+type CharacterPetOwnershipRecord = (typeof characterPetOwnershipMock)[number];
+
+const petById = new Map<number, PetRecord>(petMock.map((record) => [record.id, record]));
+
+const extractPetSpecies = (description: string | null): string => {
+  if (!description) return "Pet";
+  
+  // Common pet types to look for
+  const patterns = [
+    /is a ([a-z\s]+) (?:and|that|with|who|adorned)/i,
+    /is a ([a-z\s]+)\./i,
+    /is an? ([a-z\s]+) (?:and|that|with|who|adorned)/i,
+  ];
+  
+  for (const pattern of patterns) {
+    const match = description.match(pattern);
+    if (match && match[1]) {
+      const species = match[1].trim();
+      // Capitalize first letter
+      return species.charAt(0).toUpperCase() + species.slice(1);
+    }
+  }
+  
+  return "Pet";
+};
+
+const buildPetsForCharacter = (characterId: number): CharacterIndexData["relationships"]["pets"] => {
+  const petOwnerships = characterPetOwnershipMock.filter((link: CharacterPetOwnershipRecord) => link.character_id === characterId);
+  
+  return petOwnerships
+    .map((ownership) => {
+      const pet = petById.get(ownership.pet_id);
+      if (!pet) return null;
+      
+      const displayName = pet.display_name ?? toTitleCase(pet.name);
+      const species = extractPetSpecies(pet.description);
+      
+      return {
+        name: displayName,
+        species,
+        link: `#`,
+        image: pet.primary_image ?? undefined,
+      };
+    })
+    .filter(Boolean) as CharacterIndexData["relationships"]["pets"];
+};
 const releaseImagesByReleaseId = groupByReleaseId(releaseImageMock);
 const releaseSeriesByReleaseId = groupByReleaseId(releaseSeriesLinkMock);
 
@@ -276,6 +326,7 @@ const buildFallback = (record: CharacterRecord): CharacterIndexData => {
   const debutYear = parseYearFromDate(record.created_at) ?? baseCharacterIndexMock.debutYear;
   const description = record.description ?? "Biography is still being curated.";
   const releases = buildReleasesForCharacter(record.id);
+  const pets = buildPetsForCharacter(record.id);
 
   return {
     ...baseCharacterIndexMock,
@@ -298,7 +349,7 @@ const buildFallback = (record: CharacterRecord): CharacterIndexData => {
       family: [],
       friends: [],
       romantic: [],
-      pets: [],
+      pets,
     },
     timeline: [],
     trivia: [],
@@ -348,7 +399,7 @@ export const characterIndexMocks: CharacterIndexData[] = [
         { name: "Clawdeen Wolf", role: "Best Friend", link: "#" },
       ],
       romantic: [{ name: "Jackson Jekyll", role: "Boyfriend (G1)", link: "#" }],
-      pets: [{ name: "Watzit", species: "Dog", link: "#" }],
+      pets: [{ name: "Watzit", species: "Dog", link: "#", image: "/demo/pets/watzit/main-image.png" }],
     },
     timeline: [
       { year: 2010, event: "First appearance in Monster High toy line and webisodes" },
