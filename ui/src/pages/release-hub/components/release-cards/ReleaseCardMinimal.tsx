@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Box, Typography, Chip } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
 
 // Design tokens matching SeriesIndex theme
 const tokens = {
@@ -39,6 +40,10 @@ interface ReleaseCardMinimalProps {
   onMouseLeave: () => void;
   size?: 'compact' | 'full' | 'reduced';
   enableHoverLift?: boolean;
+  containerSx?: SxProps<Theme>;
+  cardSx?: SxProps<Theme>;
+  imageSx?: SxProps<Theme>;
+  contentSx?: SxProps<Theme>;
 }
 
 // Rarity badge styling helper
@@ -60,6 +65,10 @@ const ReleaseCardMinimal: React.FC<ReleaseCardMinimalProps> = ({
   onMouseLeave,
   size = 'compact',
   enableHoverLift = false,
+  containerSx,
+  cardSx,
+  imageSx,
+  contentSx,
 }) => {
   const isFull = size === 'full';
   const isReduced = size === 'reduced';
@@ -74,17 +83,17 @@ const ReleaseCardMinimal: React.FC<ReleaseCardMinimalProps> = ({
       to={releaseHref}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      sx={{
+      sx={[{
         textDecoration: 'none',
         color: 'inherit',
         display: isReduced ? 'flex' : 'block',
         justifyContent: isReduced ? 'center' : 'flex-start',
         height: isFull ? '100%' : 'auto',
         width: '100%',
-      }}
+      }, containerSx]}
     >
       <Box
-        sx={{
+        sx={[{
           borderRadius: '0.5rem',
           border: `1px solid ${isHovered ? `${tokens.colors.primary}80` : tokens.colors.border}`,
           backgroundColor: tokens.colors.card,
@@ -106,11 +115,11 @@ const ReleaseCardMinimal: React.FC<ReleaseCardMinimalProps> = ({
                 },
               }
             : {}),
-        }}
+        }, cardSx]}
       >
         {/* Image Container */}
         <Box
-          sx={{
+          sx={[{
             height: '0',
             paddingTop: '140%', // Aspect ratio для изображения
             width: '100%',
@@ -123,7 +132,7 @@ const ReleaseCardMinimal: React.FC<ReleaseCardMinimalProps> = ({
             transition: 'background-color 0.15s',
             position: 'relative',
             flexShrink: 0,
-          }}
+          }, imageSx]}
         >
           <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           {doll.imageUrl ? (
@@ -158,7 +167,7 @@ const ReleaseCardMinimal: React.FC<ReleaseCardMinimalProps> = ({
         </Box>
 
         {/* Content */}
-        <Box sx={{ p: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.25rem', flex: 1 }}>
+        <Box sx={[{ p: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.25rem', flex: 1 }, contentSx]}>
           {/* Character Name */}
           <Typography
             variant="h3"

@@ -7,13 +7,19 @@ import {
   Chip,
   Typography,
 } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import { Link as RouterLink } from "react-router-dom";
 import PetsIcon from "@mui/icons-material/Pets";
 import type { PetSummary } from "../../entities";
 
 const PLACEHOLDER_IMAGE = "/placeholder.svg";
 
-type PetCardProps = PetSummary;
+interface PetCardProps extends PetSummary {
+  containerSx?: SxProps<Theme>;
+  cardSx?: SxProps<Theme>;
+  mediaSx?: SxProps<Theme>;
+  contentSx?: SxProps<Theme>;
+}
 
 export const PetCard = ({
   id,
@@ -21,20 +27,32 @@ export const PetCard = ({
   species,
   ownerName,
   ownerImageUrl,
-  imageUrl
+  imageUrl,
+  containerSx,
+  cardSx,
+  mediaSx,
+  contentSx,
 }: PetCardProps) => {
   return (
-    <Card
+    <Box
       component={RouterLink}
       to={`/catalog/p/${id}`}
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
+      aria-label={`${name} pet`}
+      sx={[{
+        display: "block",
         textDecoration: "none",
-        position: "relative",
-      }}
+        color: "inherit",
+        height: "100%",
+      }, containerSx]}
     >
+      <Card
+        sx={[{
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          position: "relative",
+        }, cardSx]}
+      >
       <Box
         sx={{
           position: "absolute",
@@ -56,7 +74,7 @@ export const PetCard = ({
 
       <CardMedia
         component="div"
-        sx={{
+        sx={[{
           height: 220,
           backgroundColor: "background.default",
           backgroundImage: `url(${imageUrl ?? PLACEHOLDER_IMAGE})`,
@@ -72,10 +90,10 @@ export const PetCard = ({
             height: "40%",
             background: "linear-gradient(to top, rgba(20, 20, 32, 0.9) 0%, transparent 100%)",
           },
-        }}
+        }, mediaSx]}
       />
 
-      <CardContent>
+      <CardContent sx={contentSx}>
         <Typography
           variant="h6"
           sx={{
@@ -107,6 +125,7 @@ export const PetCard = ({
           </Typography>
         </Box>
       </CardContent>
-    </Card>
+      </Card>
+    </Box>
   );
 };

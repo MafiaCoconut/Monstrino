@@ -5,6 +5,7 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import { Link as RouterLink } from "react-router-dom";
 
 const PLACEHOLDER_IMAGE = "/placeholder.svg";
@@ -15,6 +16,9 @@ interface PetOwnerCardProps {
   role?: string;
   imageUrl?: string;
   accentColor?: string;
+  cardSx?: SxProps<Theme>;
+  mediaSx?: SxProps<Theme>;
+  contentSx?: SxProps<Theme>;
 }
 
 export const PetOwnerCard = ({
@@ -22,13 +26,16 @@ export const PetOwnerCard = ({
   name,
   role,
   imageUrl,
-  accentColor = "#FF1493"
+  accentColor = "#FF1493",
+  cardSx,
+  mediaSx,
+  contentSx,
 }: PetOwnerCardProps) => {
   return (
     <Card
       component={RouterLink}
       to={`/catalog/c/${id}`}
-      sx={{
+      sx={[{
         display: "flex",
         flexDirection: "column",
         height: "100%",
@@ -46,11 +53,11 @@ export const PetOwnerCard = ({
           background: `linear-gradient(90deg, ${accentColor} 0%, transparent 100%)`,
           zIndex: 1,
         },
-      }}
+      }, cardSx]}
     >
       <CardMedia
         component="div"
-        sx={{
+        sx={[{
           height: 200,
           backgroundColor: "background.default",
           backgroundImage: `url(${imageUrl ?? PLACEHOLDER_IMAGE})`,
@@ -66,10 +73,10 @@ export const PetOwnerCard = ({
             height: "40%",
             background: "linear-gradient(to top, rgba(20, 20, 32, 1) 0%, transparent 100%)",
           },
-        }}
+        }, mediaSx]}
       />
 
-      <CardContent sx={{ pt: 0, mt: -3, position: "relative", zIndex: 2, pb: 2 }}>
+      <CardContent sx={[{ pt: 0, mt: -3, position: "relative", zIndex: 2, pb: 2 }, contentSx]}>
         <Typography
           variant="h6"
           sx={{

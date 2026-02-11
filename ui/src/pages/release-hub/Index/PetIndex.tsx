@@ -41,6 +41,38 @@ const borderColor = "rgba(255,255,255,0.08)";
 
 const sectionTitleSx = { fontSize: { xs: "1.2rem", md: "1.35rem" } };
 
+const releaseCardLayout = {
+  gridSx: {
+    display: "grid",
+    gridTemplateColumns: {
+      xs: "repeat(auto-fit, minmax(150px, 1fr))",
+      sm: "repeat(2, minmax(0, 1fr))",
+      md: "repeat(3, minmax(0, 1fr))",
+      lg: "repeat(4, minmax(0, 1fr))",
+    },
+    gap: { xs: "0.5rem", sm: "0.75rem", md: "1rem" },
+  },
+  containerSx: {
+    display: "flex",
+    justifyContent: "center",
+    height: "100%",
+    minWidth: 0,
+  },
+  cardSx: {
+    width: "100%",
+    maxWidth: { xs: 180, sm: 220, md: 210, lg: 200 },
+    minWidth: { xs: 0, sm: 180 },
+  },
+  imageSx: { paddingTop: { xs: "150%", md: "145%", lg: "140%" } },
+  contentSx: { p: { xs: "0.6rem", md: "0.75rem" } },
+};
+
+const ownerCardLayout = {
+  cardSx: { width: "100%", maxWidth: { xs: 160, md: 180 }, margin: "0 auto" },
+  mediaSx: { height: { xs: 160, md: 180 } },
+  contentSx: { pb: 1.5 },
+};
+
 // ==================== RELEASE MAP ====================
 const releaseById = new Map<string, (typeof releaseIndexMock)[number]>(
   releaseIndexMock.map((release) => [release.id, release])
@@ -189,6 +221,9 @@ const PetHero = ({ pet }: { pet: Pet }) => {
                     name={owner.name}
                     role={`${owner.role} owner`}
                     {...(owner.imageUrl ? { imageUrl: owner.imageUrl } : {})}
+                    cardSx={ownerCardLayout.cardSx}
+                    mediaSx={ownerCardLayout.mediaSx}
+                    contentSx={ownerCardLayout.contentSx}
                   />
                 ))}
               </Box>
@@ -251,28 +286,31 @@ const ReleasesSection = ({ releases }: { releases?: PetRelease[] }) => {
   return (
     <Box component="section" sx={sectionStyle}>
       <Typography variant="h2" sx={titleStyle}>Appearances</Typography>
-      <Grid container spacing={{ xs: 1.5, sm: 2, md: 2.5 }}>
+      <Box sx={releaseCardLayout.gridSx}>
         {fullReleases.map((release) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={release.id}>
-            <ReleaseCardMinimal
-              doll={{
-                id: release.id,
-                releaseId: release.id,
-                character: release.characterName ?? "Unknown",
-                variant: release.name,
-                ...(release.imageUrl !== undefined ? { imageUrl: release.imageUrl } : {}),
-                rarity: release.rarity ?? (release.isExclusive ? "Rare" : "Common"),
-                ...(release.year !== undefined ? { year: release.year } : {}),
-              }}
-              isHovered={hoveredReleaseId === release.id}
-              onMouseEnter={() => setHoveredReleaseId(release.id)}
-              onMouseLeave={() => setHoveredReleaseId(null)}
-              size="reduced"
-              enableHoverLift
-            />
-          </Grid>
+          <ReleaseCardMinimal
+            key={release.id}
+            doll={{
+              id: release.id,
+              releaseId: release.id,
+              character: release.characterName ?? "Unknown",
+              variant: release.name,
+              ...(release.imageUrl !== undefined ? { imageUrl: release.imageUrl } : {}),
+              rarity: release.rarity ?? (release.isExclusive ? "Rare" : "Common"),
+              ...(release.year !== undefined ? { year: release.year } : {}),
+            }}
+            isHovered={hoveredReleaseId === release.id}
+            onMouseEnter={() => setHoveredReleaseId(release.id)}
+            onMouseLeave={() => setHoveredReleaseId(null)}
+            size="compact"
+            enableHoverLift
+            containerSx={releaseCardLayout.containerSx}
+            cardSx={releaseCardLayout.cardSx}
+            imageSx={releaseCardLayout.imageSx}
+            contentSx={releaseCardLayout.contentSx}
+          />
         ))}
-      </Grid>
+      </Box>
     </Box>
   );
 };

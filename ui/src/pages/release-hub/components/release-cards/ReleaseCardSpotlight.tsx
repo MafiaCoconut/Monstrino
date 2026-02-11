@@ -9,13 +9,18 @@ import {
   IconButton,
   Typography,
 } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import type { ReleaseSummary } from '../../entities';
 
 const PLACEHOLDER_IMAGE = '/placeholder.svg';
 
-type ReleaseCardSpotlightProps = ReleaseSummary;
+interface ReleaseCardSpotlightProps extends ReleaseSummary {
+  cardSx?: SxProps<Theme>;
+  mediaSx?: SxProps<Theme>;
+  contentSx?: SxProps<Theme>;
+}
 
 const ReleaseCardSpotlight = ({
   id,
@@ -26,19 +31,22 @@ const ReleaseCardSpotlight = ({
   imageUrl,
   price,
   isExclusive,
+  cardSx,
+  mediaSx,
+  contentSx,
 }: ReleaseCardSpotlightProps) => {
   return (
     <Card
       component={RouterLink}
       to={`/catalog/r/${id}`}
-      sx={{
+      sx={[{
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
         textDecoration: 'none',
         position: 'relative',
         overflow: 'visible',
-      }}
+      }, cardSx]}
     >
       <IconButton
         size="small"
@@ -83,7 +91,7 @@ const ReleaseCardSpotlight = ({
 
       <CardMedia
         component="div"
-        sx={{
+        sx={[{
           height: 340,
           backgroundColor: 'background.default',
           backgroundImage: `url(${imageUrl ?? PLACEHOLDER_IMAGE})`,
@@ -99,10 +107,10 @@ const ReleaseCardSpotlight = ({
             height: '60%',
             background: 'linear-gradient(to top, rgba(20, 20, 32, 0.9) 0%, transparent 100%)',
           },
-        }}
+        }, mediaSx]}
       />
 
-      <CardContent sx={{ flex: 1, pt: 2 }}>
+      <CardContent sx={[{ flex: 1, pt: 2 }, contentSx]}>
         <Typography
           variant="body2"
           sx={{

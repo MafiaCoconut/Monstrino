@@ -43,7 +43,7 @@ export const ReleaseBreadcrumb: React.FC<ReleaseBreadcrumbProps> = ({ items, col
         py: { xs: 0.5, md: 0.75 },
         flexWrap: 'wrap',
         marginBottom: { xs: '0.25rem', md: '0.5rem' },
-        fontSize: { xs: '0.75rem', md: '0.875rem' },
+        fontSize: { xs: '0.875rem', md: '0.875rem' },
         position: colors.bg ? 'sticky' : 'relative',
         top: colors.bg ? { xs: 46, sm: 56 } : 'auto',
         zIndex: colors.bg ? 50 : 'auto',
@@ -55,7 +55,7 @@ export const ReleaseBreadcrumb: React.FC<ReleaseBreadcrumbProps> = ({ items, col
           <Typography
             onClick={() => handleClick(item, index)}
             sx={{
-              fontSize: { xs: 12, md: 14 },
+              fontSize: { xs: 14, md: 14 },
               color: index === arr.length - 1 ? textPrimary : textSecondary,
               cursor: index === arr.length - 1 || !item.link ? 'default' : 'pointer',
               '&:hover': (index !== arr.length - 1 && item.link) ? { color: textPrimary, transition: 'color 0.2s' } : {},
@@ -65,7 +65,7 @@ export const ReleaseBreadcrumb: React.FC<ReleaseBreadcrumbProps> = ({ items, col
             {item.label}
           </Typography>
           {index < arr.length - 1 && (
-            <ChevronRight sx={{ fontSize: { xs: 14, md: 16 }, color: textMuted }} />
+            <ChevronRight sx={{ fontSize: { xs: 16, md: 16 }, color: textMuted }} />
           )}
         </React.Fragment>
       ))}

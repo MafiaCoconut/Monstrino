@@ -25,10 +25,7 @@ const InfoOperatorCard = () => (
         Germany
       </Typography>
       <Typography>
-        <strong>Email:</strong>{" "}
-        <Link href="mailto:contact@monstrino.example" underline="hover">
-          contact@monstrino.example
-        </Link>
+        <strong>Email:</strong> Not yet ready
       </Typography>
     </Stack>
   </InfoCard>

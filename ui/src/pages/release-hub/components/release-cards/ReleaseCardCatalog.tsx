@@ -1,13 +1,22 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Box, Typography, Chip } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
 import { type Release } from '../../entities';
 
 interface ReleaseCardCatalogProps {
   release: Release;
+  cardSx?: SxProps<Theme>;
+  imageSx?: SxProps<Theme>;
+  contentSx?: SxProps<Theme>;
 }
 
-const ReleaseCardCatalog: React.FC<ReleaseCardCatalogProps> = ({ release }) => {
+const ReleaseCardCatalog: React.FC<ReleaseCardCatalogProps> = ({
+  release,
+  cardSx,
+  imageSx,
+  contentSx,
+}) => {
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return 'Unknown';
     const date = new Date(dateStr);
@@ -24,7 +33,7 @@ const ReleaseCardCatalog: React.FC<ReleaseCardCatalogProps> = ({ release }) => {
       component={RouterLink}
       to={`/catalog/r/${release.id}`}
       aria-label={`${release.characterName} release`}
-      sx={{
+      sx={[{
         backgroundColor: 'background.paper',
         borderRadius: { xs: 1.5, sm: 2 },
         overflow: 'hidden',
@@ -38,17 +47,17 @@ const ReleaseCardCatalog: React.FC<ReleaseCardCatalogProps> = ({ release }) => {
           transform: 'translateY(-4px)',
           boxShadow: '0 12px 40px rgba(139, 92, 246, 0.15)',
         },
-      }}
+      }, cardSx]}
     >
       {/* Portrait Image Container - ~1:1.5 aspect ratio */}
       <Box
-        sx={{
+        sx={[{
           position: 'relative',
           width: '100%',
           paddingTop: { xs: '140%', sm: '145%', md: '150%' }, // Creates adaptive aspect ratio
           backgroundColor: '#FFFFFF',
           overflow: 'hidden',
-        }}
+        }, imageSx]}
       >
         <Box
           component="img"
@@ -67,7 +76,7 @@ const ReleaseCardCatalog: React.FC<ReleaseCardCatalogProps> = ({ release }) => {
       </Box>
 
       {/* Card Content */}
-      <Box sx={{ p: { xs: 1, sm: 1.5, md: 2 } }}>
+      <Box sx={[{ p: { xs: 1, sm: 1.5, md: 2 } }, contentSx]}>
         {/* Character Name */}
         <Typography
           variant="h6"

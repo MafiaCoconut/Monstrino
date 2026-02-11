@@ -24,6 +24,93 @@ const characterAccentPalette: HexColor[] = ['#ec4899', '#8b5cf6', '#22d3ee', '#f
 
 const sectionTitleSx = { fontSize: { xs: '1.1rem', md: '1.2rem' } };
 
+const relationshipCardLayout = {
+  cardSx: { width: '100%', maxWidth: { xs: 180, sm: 220 }, margin: '0 auto' },
+  mediaSx: { height: 160 },
+  contentSx: { pb: 2 },
+};
+
+const petCardLayout = {
+  cardSx: { width: '100%', maxWidth: { xs: 180, sm: 220 }, margin: '0 auto' },
+  mediaSx: { height: 150 },
+  contentSx: { pb: 1.5 },
+};
+
+const relationshipGridSx = {
+  display: 'grid',
+  gridTemplateColumns: { xs: 'repeat(auto-fit, minmax(150px, 1fr))', sm: 'repeat(auto-fit, minmax(200px, 220px))' },
+  justifyContent: 'start',
+  gap: { xs: 1, md: 1.5 },
+  width: '100%',
+  overflow: 'visible',
+  paddingTop: '0.25rem',
+  paddingBottom: '0.75rem',
+};
+
+const releaseGridSx = {
+  display: 'grid',
+  gridTemplateColumns: { xs: 'repeat(auto-fit, minmax(150px, 1fr))', sm: 'repeat(auto-fit, minmax(200px, 220px))' },
+  justifyContent: 'start',
+  gap: { xs: 1, md: 1.5 },
+  width: '100%',
+  overflow: 'visible',
+  paddingTop: '0.25rem',
+  paddingBottom: '0.75rem',
+};
+
+const releaseCardLayout = {
+  containerSx: { display: 'flex', height: '100%', minWidth: 0 },
+  cardSx: { maxWidth: { xs: 180, sm: 220 }, minWidth: { xs: 0, sm: 160 } },
+  imageSx: { paddingTop: '140%' },
+  contentSx: { p: { xs: '0.6rem', md: '0.75rem' } },
+};
+
+const heroCardLayout = {
+  cardSx: { p: { xs: 2, md: 3 } },
+  imageWrapSx: {
+    width: '100%',
+    aspectRatio: '3 / 4',
+    borderRadius: 2,
+    backgroundColor: '#ffffff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+};
+
+const factRowSx = {
+  display: 'flex',
+  flexDirection: { xs: 'column', sm: 'row' },
+  alignItems: { xs: 'flex-start', sm: 'center' },
+  justifyContent: 'space-between',
+  gap: { xs: 0.5, sm: 2 },
+  py: 1.5,
+};
+
+const factLabelSx = { color: 'text.secondary', fontSize: '0.9rem' };
+
+const factValueSx = {
+  fontWeight: 600,
+  textAlign: { xs: 'left', sm: 'right' },
+  maxWidth: { xs: '100%', sm: 480 },
+  width: { xs: '100%', sm: 'auto' },
+};
+
+const ReleasesCount = ({ count }: { count: number }) => (
+  <Typography
+    component="span"
+    sx={{
+      fontSize: { xs: '0.75rem', md: '0.8rem' },
+      color: 'text.secondary',
+      fontWeight: 500,
+      letterSpacing: 0.2,
+    }}
+  >
+    {count} total
+  </Typography>
+);
+
 type SegmentBaseProps = {
   title: string;
   count: number;
@@ -105,21 +192,15 @@ const RelationshipSection = ({ title, items }: { title: string; items: Relations
       count={items.length}
       countLabel={`item${items.length !== 1 ? 's' : ''}`}
     >
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', sm: 'repeat(auto-fit, minmax(200px, 220px))' },
-          justifyContent: 'start',
-          gap: { xs: 1, md: 1.5 },
-          width: '100%',
-          overflow: 'visible',
-          paddingTop: '0.25rem',
-          paddingBottom: '0.75rem',
-          mt: { xs: 2, md: 3 },
-        }}
-      >
+      <Box sx={[relationshipGridSx, { mt: { xs: 2, md: 3 } }]}>
         {cards.map((card) => (
-          <CharacterCard key={`${title}-${card.id}`} {...card} />
+          <CharacterCard
+            key={`${title}-${card.id}`}
+            {...card}
+            cardSx={relationshipCardLayout.cardSx}
+            mediaSx={relationshipCardLayout.mediaSx}
+            contentSx={relationshipCardLayout.contentSx}
+          />
         ))}
       </Box>
     </SegmentBase>
@@ -133,25 +214,17 @@ const PetsSection = ({ items }: { items: PetRelationshipItem[] }) => (
     count={items.length}
     countLabel={`pet${items.length !== 1 ? 's' : ''}`}
   >
-    <Box
-      sx={{
-        display: 'grid',
-        gridTemplateColumns: { xs: '1fr', sm: 'repeat(auto-fit, minmax(200px, 220px))' },
-        justifyContent: 'start',
-        gap: { xs: 1, md: 1.5 },
-        width: '100%',
-        overflow: 'visible',
-        paddingTop: '0.25rem',
-        paddingBottom: '0.75rem',
-      }}
-    >
+    <Box sx={relationshipGridSx}>
       {items.map((pet) => (
         <PetCardSimple
           key={pet.name}
           name={pet.name}
           species={pet.species}
           imageUrl={pet.image}
-          link={pet.link}
+          to={pet.link}
+          cardSx={petCardLayout.cardSx}
+          mediaSx={petCardLayout.mediaSx}
+          contentSx={petCardLayout.contentSx}
         />
       ))}
     </Box>
@@ -310,24 +383,11 @@ const CharacterIndex = () => {
                   {facts.map((fact, index) => (
                     <Box
                       key={fact.label}
-                      sx={{
-                        display: 'flex',
-                        flexDirection: { xs: 'column', sm: 'row' },
-                        alignItems: { xs: 'flex-start', sm: 'center' },
-                        justifyContent: 'space-between',
-                        gap: { xs: 0.5, sm: 2 },
-                        py: 1.5,
-                        borderBottom: index < facts.length - 1 ? `1px solid ${borderColor}` : 'none',
-                      }}
+                      sx={[factRowSx, { borderBottom: index < facts.length - 1 ? `1px solid ${borderColor}` : 'none' }]}
                     >
-                      <Typography sx={{ color: 'text.secondary', fontSize: '0.9rem' }}>{fact.label}</Typography>
+                      <Typography sx={factLabelSx}>{fact.label}</Typography>
                       <Typography
-                        sx={{
-                          fontWeight: 600,
-                          textAlign: { xs: 'left', sm: 'right' },
-                          maxWidth: { xs: '100%', sm: 480 },
-                          width: { xs: '100%', sm: 'auto' },
-                        }}
+                        sx={factValueSx}
                       >
                         {fact.value}
                       </Typography>
@@ -339,25 +399,9 @@ const CharacterIndex = () => {
           </Box>
 
           <Box sx={{ order: { xs: 1, sm: 1, md: 2, lg: 2 } }}>
-            <Box
-              sx={{
-                backgroundColor: 'background.paper',
-                borderRadius: 2,
-                border: `1px solid ${borderColor}`,
-                p: { xs: 2, md: 3 },
-              }}
-            >
+            <SurfaceCard sx={heroCardLayout.cardSx}>
               <Box
-                sx={{
-                  width: '100%',
-                  aspectRatio: '3 / 4',
-                  borderRadius: 2,
-                  backgroundColor: '#ffffff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  overflow: 'hidden',
-                }}
+                sx={heroCardLayout.imageWrapSx}
               >
                 <Box
                   component="img"
@@ -370,23 +414,17 @@ const CharacterIndex = () => {
                   }}
                 />
               </Box>
-            </Box>
+            </SurfaceCard>
           </Box>
         </Box>
 
         <Box sx={{ mt: 4 }}>
-          <SectionTitle title="Releases" subtitle={`${data.releases.length} total`} titleSx={sectionTitleSx} />
+          <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 2 }}>
+            <Typography sx={{ fontWeight: 700, ...sectionTitleSx }}>Releases</Typography>
+            <ReleasesCount count={data.releases.length} />
+          </Box>
           <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: 'repeat(auto-fit, minmax(200px, 220px))' },
-              justifyContent: 'start',
-              gap: { xs: 1, md: 1.5 },
-              width: '100%',
-              overflow: 'visible',
-              paddingTop: '0.25rem',
-              paddingBottom: '0.75rem',
-            }}
+            sx={releaseGridSx}
           >
             {data.releases.map((release) => (
                 <ReleaseCardMinimal
@@ -405,6 +443,10 @@ const CharacterIndex = () => {
                   onMouseLeave={() => setHoveredReleaseId(null)}
                   size="reduced"
                   enableHoverLift
+                  containerSx={releaseCardLayout.containerSx}
+                  cardSx={releaseCardLayout.cardSx}
+                  imageSx={releaseCardLayout.imageSx}
+                  contentSx={releaseCardLayout.contentSx}
                 />
             ))}
           </Box>

@@ -153,8 +153,14 @@ const InfoLinkCard = ({ title, description, to }: { title: string; description: 
         endIcon={<ArrowForwardIcon fontSize="small" />}
         sx={{
           px: 0,
+          borderRadius: 1,
+          minHeight: 32,
           alignSelf: { xs: "stretch", sm: "flex-start" },
           justifyContent: { xs: "center", sm: "flex-start" },
+          "&:hover": {
+            borderRadius: 1,
+            backgroundColor: "rgba(255, 20, 147, 0.1)",
+          },
         }}
       >
         View

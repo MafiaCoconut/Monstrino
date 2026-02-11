@@ -160,6 +160,7 @@ const CollectorHubHeader = ({ searchQuery, onSearchChange, searchPlaceholder }: 
         <Box
           sx={{
             display: { xs: searchOpen ? "none" : "flex", md: "flex" },
+            cursor: "pointer",
           }}
         >
           <WordmarkGradient onClick={() => navigate("/")} />

@@ -5,26 +5,12 @@ import {
   Button,
   Checkbox,
   Chip,
-  Collapse,
-  Drawer,
-  FormControl,
   FormControlLabel,
   FormGroup,
   Grid,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Pagination,
-  Select,
   Tooltip,
   Typography,
-  useMediaQuery,
-  useTheme,
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import CloseIcon from '@mui/icons-material/Close';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { characterMock } from '@/data/real-data/characterMock';
 import { releaseCharacterMock } from '@/data/real-data/releaseCharacterMock';
@@ -40,6 +26,17 @@ import {
   type CharacterTag,
   type Generation,
 } from '../entities';
+import {
+  CatalogFiltersDrawer,
+  CatalogFiltersShell,
+  CatalogHeader,
+  CatalogLayout,
+  CatalogPage,
+  CatalogPagination,
+  CatalogResultsToolbar,
+  FilterSection,
+  type CatalogSortOption,
+} from '../components/catalog';
 
 // ============================================
 // DATA TRANSFORMATION (mock -> character models)
@@ -187,75 +184,22 @@ const SPECIES_LIST = Array.from(new Set(characterModels.map((character) => chara
 const TAGS = Array.from(new Set(characterModels.flatMap((character) => character.tags ?? []))).sort();
 
 // ============================================
-// FILTER SECTION COMPONENT
-// ============================================
-
-interface FilterSectionProps {
-  title: string;
-  children: React.ReactNode;
-  defaultOpen?: boolean;
-}
-
-const FilterSection: React.FC<FilterSectionProps> = ({ title, children, defaultOpen = true }) => {
-  const [open, setOpen] = useState(defaultOpen);
-
-  return (
-    <Box sx={{ mb: 2 }}>
-      <Box
-        onClick={() => setOpen(!open)}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          cursor: 'pointer',
-          py: 1,
-          px: { xs: 0, md: 0 },
-          borderRadius: 1,
-          transition: 'all 0.2s ease',
-          '&:hover': { 
-            backgroundColor: { xs: 'rgba(255,255,255,0.03)', md: 'transparent' },
-          },
-        }}
-      >
-        <Typography
-          variant="subtitle2"
-          sx={{
-            color: 'text.primary',
-            fontWeight: 600,
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
-            fontSize: { xs: '0.75rem', md: '0.65rem', lg: '0.7rem' },
-          }}
-        >
-          {title}
-        </Typography>
-        <IconButton 
-          size="small" 
-          sx={{ 
-            color: 'text.secondary', 
-            p: 0.5,
-            transition: 'transform 0.2s ease',
-          }}
-        >
-          {open ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
-        </IconButton>
-      </Box>
-      <Collapse in={open}>
-        <Box sx={{ pt: 1.5, pb: 0.5 }}>{children}</Box>
-      </Collapse>
-    </Box>
-  );
-};
-
-// ============================================
 // CHARACTER CARD COMPONENT
 // ============================================
 
 interface CharacterCardProps {
   character: Character;
+  cardSx?: React.ComponentProps<typeof Box>['sx'];
+  imageSx?: React.ComponentProps<typeof Box>['sx'];
+  contentSx?: React.ComponentProps<typeof Box>['sx'];
 }
 
-const CharacterCard: React.FC<CharacterCardProps> = ({ character }) => {
+const CharacterCard: React.FC<CharacterCardProps> = ({
+  character,
+  cardSx,
+  imageSx,
+  contentSx,
+}) => {
   const generations = character.generations ?? [];
   const releaseCount = character.releaseCount ?? 0;
 
@@ -264,7 +208,7 @@ const CharacterCard: React.FC<CharacterCardProps> = ({ character }) => {
       component={RouterLink}
       to={`/catalog/c/${character.id}`}
       aria-label={`${character.name} character`}
-      sx={{
+      sx={[{
         backgroundColor: 'background.paper',
         borderRadius: 2,
         overflow: 'hidden',
@@ -277,16 +221,16 @@ const CharacterCard: React.FC<CharacterCardProps> = ({ character }) => {
           transform: 'translateY(-4px)',
           boxShadow: '0 12px 40px rgba(139, 92, 246, 0.15)',
         },
-      }}
+      }, cardSx]}
     >
       <Box
-        sx={{
+        sx={[{
           position: 'relative',
           width: '100%',
           paddingTop: '150%',
           backgroundColor: '#ffffff',
           overflow: 'hidden',
-        }}
+        }, imageSx]}
       >
         <Box
           component="img"
@@ -304,7 +248,7 @@ const CharacterCard: React.FC<CharacterCardProps> = ({ character }) => {
         />
       </Box>
 
-      <Box sx={{ p: 2 }}>
+      <Box sx={[{ p: 2 }, contentSx]}>
         <Typography
           variant="h6"
           sx={{
@@ -357,30 +301,11 @@ const CharacterCard: React.FC<CharacterCardProps> = ({ character }) => {
 // WIDGET COMPONENTS
 // ============================================
 
-const CatalogHeader: React.FC = () => (
-  <Box sx={{ mb: { xs: 2, sm: 2.5, md: 3 } }}>
-    <Typography 
-      variant="h4" 
-      sx={{ 
-        fontWeight: 700, 
-        letterSpacing: '-0.02em', 
-        mb: 0.5,
-        fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2.125rem' }
-      }}
-    >
-      Characters Catalog
-    </Typography>
-    {/* <Typography 
-      variant="body2" 
-      sx={{ 
-        color: 'text.secondary',
-        fontSize: { xs: '0.8125rem', sm: '0.875rem' }
-      }}
-    >
-      {totalCharacters} characters in the archive
-    </Typography> */}
-  </Box>
-);
+const CATALOG_SORT_OPTIONS: CatalogSortOption[] = [
+  { value: 'name', label: 'Name (A-Z)' },
+  { value: 'releaseCount', label: 'Most Releases' },
+  { value: 'species', label: 'Gender' },
+];
 
 interface FiltersSidebarProps {
   activeFilterCount: number;
@@ -404,6 +329,7 @@ interface FiltersSidebarProps {
   onClose?: () => void;
 }
 
+
 const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
   activeFilterCount,
   clearAllFilters,
@@ -422,218 +348,153 @@ const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
   isMobile = false,
   onClose,
 }) => (
-  <Box
-    sx={{
-      width: isMobile ? '100%' : { md: 240, lg: 260 },
-      flexShrink: 0,
-      borderRight: isMobile ? 'none' : '1px solid rgba(255,255,255,0.06)',
-      p: isMobile ? 0 : { md: 2, lg: 3 },
-      display: isMobile ? 'block' : { xs: 'none', md: 'block' },
-      height: isMobile ? '100%' : catalogHeight ? `${catalogHeight}px` : 'auto',
-      maxHeight: isMobile ? '100vh' : catalogHeight ? `${catalogHeight}px` : 'none',
-      overflowY: 'auto',
-      overflowX: 'hidden',
-      backgroundColor: isMobile ? 'background.paper' : 'transparent',
-      '&::-webkit-scrollbar': {
-        width: '8px',
-      },
-      '&::-webkit-scrollbar-track': {
-        backgroundColor: 'rgba(255,255,255,0.02)',
-      },
-      '&::-webkit-scrollbar-thumb': {
-        backgroundColor: 'rgba(255,255,255,0.15)',
-        borderRadius: '4px',
-        '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.25)',
-        },
-      },
-    }}
+  <CatalogFiltersShell
+    activeFilterCount={activeFilterCount}
+    onClearAll={clearAllFilters}
+    height={catalogHeight}
+    isMobile={isMobile}
+    onClose={onClose}
   >
-    {/* Mobile Header */}
-    {isMobile && (
-      <Box
-        sx={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 10,
-          backgroundColor: 'background.paper',
-          backdropFilter: 'blur(10px)',
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
-          px: 3,
-          py: 2.5,
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <FilterListIcon sx={{ color: 'primary.main', fontSize: '1.25rem' }} />
-            <Typography 
-              variant="h6" 
-              sx={{ 
-                fontWeight: 700,
-                fontSize: '1.125rem',
-                letterSpacing: '-0.01em',
-              }}
-            >
-              Filters
-            </Typography>
-            {activeFilterCount > 0 && (
-              <Chip
-                label={activeFilterCount}
+    <FilterSection title="Generation">
+      <FormGroup>
+        {GENERATIONS.map((gen) => (
+          <FormControlLabel
+            key={gen}
+            control={
+              <Checkbox
+                checked={selectedGenerations.includes(gen)}
+                onChange={() => toggleArrayFilter(gen, setSelectedGenerations)}
                 size="small"
                 sx={{
-                  height: 22,
-                  backgroundColor: 'primary.main',
-                  color: 'white',
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  px: 0.5,
+                  '&.Mui-checked': {
+                    color: 'primary.main',
+                  },
                 }}
               />
-            )}
-          </Box>
-          <IconButton 
-            onClick={onClose} 
-            size="small"
+            }
+            label={
+              <Typography
+                variant="body2"
+                sx={{
+                  fontSize: { xs: '0.9375rem', md: '0.8rem', lg: '0.85rem' },
+                  fontWeight: 500,
+                  color: selectedGenerations.includes(gen) ? 'text.primary' : 'text.secondary',
+                  transition: 'color 0.2s',
+                }}
+              >
+                {gen}
+              </Typography>
+            }
             sx={{
-              backgroundColor: 'rgba(255,255,255,0.05)',
+              mb: 0.25,
+              ml: -0.5,
+              py: 0.5,
+              borderRadius: 1,
               '&:hover': {
-                backgroundColor: 'rgba(255,255,255,0.1)',
+                backgroundColor: 'rgba(255,255,255,0.03)',
               },
             }}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        </Box>
-        {activeFilterCount > 0 && (
-          <Button
-            onClick={clearAllFilters}
-            size="small"
-            sx={{
-              mt: 1.5,
-              fontSize: '0.8125rem',
-              color: 'text.secondary',
-              textTransform: 'none',
-              fontWeight: 500,
-              px: 0,
-              minWidth: 'auto',
-              '&:hover': { 
-                color: 'primary.main',
-                backgroundColor: 'transparent',
-              },
-            }}
-          >
-            Clear all filters
-          </Button>
-        )}
-      </Box>
-    )}
+          />
+        ))}
+      </FormGroup>
+    </FilterSection>
 
-    {/* Desktop Header */}
-    {!isMobile && (
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          mb: { md: 2, lg: 3 },
-        }}
-      >
-        <Typography 
-          variant="subtitle2" 
-          sx={{ 
-            fontWeight: 600, 
-            color: 'text.primary',
-            fontSize: { md: '0.8125rem', lg: '0.875rem' }
-          }}
-        >
-          Filters
-          {activeFilterCount > 0 && (
-            <Chip
-              label={activeFilterCount}
-              size="small"
-              sx={{
-                ml: 1,
-                height: { md: 18, lg: 20 },
-                backgroundColor: 'primary.main',
-                color: 'white',
-                fontSize: { md: '0.65rem', lg: '0.7rem' },
-              }}
-            />
-          )}
-        </Typography>
-        {activeFilterCount > 0 && (
-          <Button
-            onClick={clearAllFilters}
-            size="small"
-            sx={{
-              fontSize: { md: '0.65rem', lg: '0.7rem' },
-              color: 'text.secondary',
-              textTransform: 'none',
-              p: { md: '2px 6px', lg: '4px 8px' },
-              minWidth: 'auto',
-              '&:hover': { color: 'primary.main' },
-            }}
-          >
-            Clear All
-          </Button>
-        )}
-      </Box>
-    )}
-
-    <Box sx={{ px: isMobile ? 3 : 0, py: isMobile ? 2 : 0 }}>
-      <FilterSection title="Generation">
-        <FormGroup>
-          {GENERATIONS.map((gen) => (
-            <FormControlLabel
-              key={gen}
-              control={
-                <Checkbox
-                  checked={selectedGenerations.includes(gen)}
-                  onChange={() => toggleArrayFilter(gen, setSelectedGenerations)}
-                  size="small"
+    <FilterSection title="Gender">
+      <FormGroup>
+        {(showMoreSpecies ? SPECIES_LIST : SPECIES_LIST.slice(0, 8)).map((species) => (
+          <FormControlLabel
+            key={species}
+            control={
+              <Checkbox
+                checked={selectedSpecies.includes(species)}
+                onChange={() => toggleArrayFilter(species, setSelectedSpecies)}
+                size="small"
+                sx={{
+                  '&.Mui-checked': {
+                    color: 'primary.main',
+                  },
+                }}
+              />
+            }
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                <Typography
+                  variant="body2"
                   sx={{
-                    '&.Mui-checked': {
-                      color: 'primary.main',
-                    },
-                  }}
-                />
-              }
-              label={
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
                     fontSize: { xs: '0.9375rem', md: '0.8rem', lg: '0.85rem' },
                     fontWeight: 500,
-                    color: selectedGenerations.includes(gen) ? 'text.primary' : 'text.secondary',
+                    color: selectedSpecies.includes(species) ? 'text.primary' : 'text.secondary',
                     transition: 'color 0.2s',
                   }}
                 >
-                  {gen}
+                  {species}
                 </Typography>
-              }
-              sx={{ 
-                mb: 0.25,
-                ml: -0.5,
-                py: 0.5,
-                borderRadius: 1,
-                '&:hover': {
-                  backgroundColor: 'rgba(255,255,255,0.03)',
-                },
-              }}
-            />
-          ))}
-        </FormGroup>
-      </FilterSection>
+                {(species.toLowerCase() === 'ghoul' || species.toLowerCase() === 'manster') && (
+                  <Tooltip
+                    title={
+                      species.toLowerCase() === 'ghoul'
+                        ? 'Ghoul refers to a female character.'
+                        : 'Manster refers to a male character.'
+                    }
+                    arrow
+                  >
+                    <Box
+                      component="span"
+                      onClick={(event) => event.stopPropagation()}
+                      onMouseDown={(event) => event.stopPropagation()}
+                      sx={{ display: 'inline-flex', color: 'text.secondary' }}
+                    >
+                      <InfoOutlinedIcon sx={{ fontSize: 14 }} />
+                    </Box>
+                  </Tooltip>
+                )}
+              </Box>
+            }
+            sx={{
+              mb: 0.25,
+              ml: -0.5,
+              py: 0.5,
+              borderRadius: 1,
+              '&:hover': {
+                backgroundColor: 'rgba(255,255,255,0.03)',
+              },
+            }}
+          />
+        ))}
+      </FormGroup>
+      {SPECIES_LIST.length > 8 && (
+        <Button
+          onClick={() => setShowMoreSpecies(!showMoreSpecies)}
+          size="small"
+          sx={{
+            mt: 1,
+            fontSize: { xs: '0.8125rem', md: '0.75rem', lg: '0.8rem' },
+            color: 'primary.main',
+            textTransform: 'none',
+            fontWeight: 500,
+            px: 0,
+            minWidth: 'auto',
+            '&:hover': {
+              backgroundColor: 'transparent',
+              textDecoration: 'underline',
+            },
+          }}
+        >
+          {showMoreSpecies ? 'Show less' : `Show more (${SPECIES_LIST.length - 8})`}
+        </Button>
+      )}
+    </FilterSection>
 
-      <FilterSection title="Gender">
+    {TAGS.length > 0 && (
+      <FilterSection title="Tags">
         <FormGroup>
-          {(showMoreSpecies ? SPECIES_LIST : SPECIES_LIST.slice(0, 8)).map((species) => (
+          {(showMoreTags ? TAGS : TAGS.slice(0, 8)).map((tag) => (
             <FormControlLabel
-              key={species}
+              key={tag}
               control={
                 <Checkbox
-                  checked={selectedSpecies.includes(species)}
-                  onChange={() => toggleArrayFilter(species, setSelectedSpecies)}
+                  checked={selectedTags.includes(tag)}
+                  onChange={() => toggleArrayFilter(tag, setSelectedTags)}
                   size="small"
                   sx={{
                     '&.Mui-checked': {
@@ -643,40 +504,19 @@ const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
                 />
               }
               label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                  <Typography 
-                    variant="body2" 
-                    sx={{ 
-                      fontSize: { xs: '0.9375rem', md: '0.8rem', lg: '0.85rem' },
-                      fontWeight: 500,
-                      color: selectedSpecies.includes(species) ? 'text.primary' : 'text.secondary',
-                      transition: 'color 0.2s',
-                    }}
-                  >
-                    {species}
-                  </Typography>
-                  {(species.toLowerCase() === 'ghoul' || species.toLowerCase() === 'manster') && (
-                    <Tooltip
-                      title={
-                        species.toLowerCase() === 'ghoul'
-                          ? 'Ghoul refers to a female character.'
-                          : 'Manster refers to a male character.'
-                      }
-                      arrow
-                    >
-                      <Box
-                        component="span"
-                        onClick={(event) => event.stopPropagation()}
-                        onMouseDown={(event) => event.stopPropagation()}
-                        sx={{ display: 'inline-flex', color: 'text.secondary' }}
-                      >
-                        <InfoOutlinedIcon sx={{ fontSize: 14 }} />
-                      </Box>
-                    </Tooltip>
-                  )}
-                </Box>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontSize: { xs: '0.9375rem', md: '0.8rem', lg: '0.85rem' },
+                    fontWeight: 500,
+                    color: selectedTags.includes(tag) ? 'text.primary' : 'text.secondary',
+                    transition: 'color 0.2s',
+                  }}
+                >
+                  {tag}
+                </Typography>
               }
-              sx={{ 
+              sx={{
                 mb: 0.25,
                 ml: -0.5,
                 py: 0.5,
@@ -688,9 +528,9 @@ const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
             />
           ))}
         </FormGroup>
-        {SPECIES_LIST.length > 8 && (
+        {TAGS.length > 8 && (
           <Button
-            onClick={() => setShowMoreSpecies(!showMoreSpecies)}
+            onClick={() => setShowMoreTags(!showMoreTags)}
             size="small"
             sx={{
               mt: 1,
@@ -700,185 +540,40 @@ const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
               fontWeight: 500,
               px: 0,
               minWidth: 'auto',
-              '&:hover': { 
+              '&:hover': {
                 backgroundColor: 'transparent',
                 textDecoration: 'underline',
               },
             }}
           >
-            {showMoreSpecies ? 'Show less' : `Show more (${SPECIES_LIST.length - 8})`}
+            {showMoreTags ? 'Show less' : `Show more (${TAGS.length - 8})`}
           </Button>
         )}
       </FilterSection>
-
-      {TAGS.length > 0 && (
-        <FilterSection title="Tags">
-          <FormGroup>
-            {(showMoreTags ? TAGS : TAGS.slice(0, 8)).map((tag) => (
-              <FormControlLabel
-                key={tag}
-                control={
-                  <Checkbox
-                    checked={selectedTags.includes(tag)}
-                    onChange={() => toggleArrayFilter(tag, setSelectedTags)}
-                    size="small"
-                    sx={{
-                      '&.Mui-checked': {
-                        color: 'primary.main',
-                      },
-                    }}
-                  />
-                }
-                label={
-                  <Typography 
-                    variant="body2" 
-                    sx={{ 
-                      fontSize: { xs: '0.9375rem', md: '0.8rem', lg: '0.85rem' },
-                      fontWeight: 500,
-                      color: selectedTags.includes(tag) ? 'text.primary' : 'text.secondary',
-                      transition: 'color 0.2s',
-                    }}
-                  >
-                    {tag}
-                  </Typography>
-                }
-                sx={{ 
-                  mb: 0.25,
-                  ml: -0.5,
-                  py: 0.5,
-                  borderRadius: 1,
-                  '&:hover': {
-                    backgroundColor: 'rgba(255,255,255,0.03)',
-                  },
-                }}
-              />
-            ))}
-          </FormGroup>
-          {TAGS.length > 8 && (
-            <Button
-              onClick={() => setShowMoreTags(!showMoreTags)}
-              size="small"
-              sx={{
-                mt: 1,
-                fontSize: { xs: '0.8125rem', md: '0.75rem', lg: '0.8rem' },
-                color: 'primary.main',
-                textTransform: 'none',
-                fontWeight: 500,
-                px: 0,
-                minWidth: 'auto',
-                '&:hover': { 
-                  backgroundColor: 'transparent',
-                  textDecoration: 'underline',
-                },
-              }}
-            >
-              {showMoreTags ? 'Show less' : `Show more (${TAGS.length - 8})`}
-            </Button>
-          )}
-        </FilterSection>
-      )}
-
-      {/* Bottom Spacing for Mobile */}
-      {isMobile && <Box sx={{ height: 24 }} />}
-    </Box>
-  </Box>
-);
-
-interface ResultsToolbarProps {
-  resultCount: number;
-  sortBy: string;
-  onSortChange: (value: string) => void;
-  onFiltersClick?: () => void;
-  activeFilterCount?: number;
-}
-
-const ResultsToolbar: React.FC<ResultsToolbarProps> = ({
-  resultCount,
-  sortBy,
-  onSortChange,
-  onFiltersClick,
-  activeFilterCount = 0,
-}) => (
-  <Box
-    sx={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      mb: { xs: 1.5, sm: 2 },
-      flexDirection: { xs: 'column', sm: 'row' },
-      gap: { xs: 1.5, sm: 0 },
-    }}
-  >
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: { xs: '100%', sm: 'auto' } }}>
-      {/* Mobile Filters Button */}
-      <Button
-        variant="outlined"
-        startIcon={<FilterListIcon />}
-        onClick={onFiltersClick}
-        sx={{
-          display: { xs: 'flex', md: 'none' },
-          textTransform: 'none',
-          flex: { xs: 1, sm: 'none' },
-        }}
-      >
-        Filters
-        {activeFilterCount > 0 && (
-          <Chip
-            label={activeFilterCount}
-            size="small"
-            sx={{
-              ml: 1,
-              height: 18,
-              backgroundColor: 'primary.main',
-              color: 'white',
-              fontSize: '0.65rem',
-            }}
-          />
-        )}
-      </Button>
-
-      <Typography 
-        variant="body2" 
-        sx={{ 
-          color: 'text.secondary',
-          fontSize: { xs: '0.8125rem', sm: '0.875rem' },
-          display: { xs: 'none', sm: 'block' }
-        }}
-      >
-        {resultCount} result{resultCount !== 1 ? 's' : ''}
-      </Typography>
-    </Box>
-
-    <FormControl size="small" sx={{ minWidth: { xs: '100%', sm: 160 }, flex: { xs: 1, sm: 'none' } }}>
-      <InputLabel sx={{ fontSize: { xs: '0.8125rem', sm: '0.85rem' } }}>Sort By</InputLabel>
-      <Select
-        value={sortBy}
-        label="Sort By"
-        onChange={(e) => onSortChange(e.target.value)}
-        sx={{ 
-          '& .MuiSelect-select': { 
-            py: { xs: 0.75, sm: 1 },
-            fontSize: { xs: '0.8125rem', sm: '0.875rem' }
-          } 
-        }}
-      >
-        <MenuItem value="name">Name (A-Z)</MenuItem>
-        <MenuItem value="releaseCount">Most Releases</MenuItem>
-        <MenuItem value="species">Gender</MenuItem>
-      </Select>
-    </FormControl>
-  </Box>
+    )}
+  </CatalogFiltersShell>
 );
 
 interface CharacterGridProps {
   characters: Character[];
 }
 
+const characterCatalogCardLayout = {
+  cardSx: { height: '100%' },
+  imageSx: { paddingTop: '150%' },
+  contentSx: { p: 2 },
+};
+
 const CharacterGrid: React.FC<CharacterGridProps> = ({ characters }) => (
   <Grid container spacing={{ xs: 1.5, sm: 2, md: 2.5 }}>
     {characters.map((character) => (
       <Grid size={{ xs: 6, sm: 4, md: 4, lg: 3 }} key={character.id}>
-        <CharacterCard character={character} />
+        <CharacterCard
+          character={character}
+          cardSx={characterCatalogCardLayout.cardSx}
+          imageSx={characterCatalogCardLayout.imageSx}
+          contentSx={characterCatalogCardLayout.contentSx}
+        />
       </Grid>
     ))}
   </Grid>
@@ -907,45 +602,6 @@ const EmptyResults: React.FC = () => (
     </Typography>
   </Box>
 );
-
-interface CatalogPaginationProps {
-  totalPages: number;
-  currentPage: number;
-  onPageChange: (page: number) => void;
-}
-
-const CatalogPagination: React.FC<CatalogPaginationProps> = ({
-  totalPages,
-  currentPage,
-  onPageChange,
-}) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', mt: { xs: 3, sm: 4 } }}>
-      <Pagination
-        count={totalPages}
-        page={currentPage}
-        onChange={(_, page) => onPageChange(page)}
-        size="medium"
-        siblingCount={isMobile ? 0 : 1}
-        sx={{
-          '& .MuiPaginationItem-root': {
-            color: 'text.secondary',
-            fontSize: { xs: '0.8125rem', sm: '0.875rem' },
-            minWidth: { xs: 28, sm: 32 },
-            height: { xs: 28, sm: 32 },
-            '&.Mui-selected': {
-              backgroundColor: 'primary.main',
-              color: 'white',
-            },
-          },
-        }}
-      />
-    </Box>
-  );
-};
 
 // ============================================
 // MAIN CHARACTER CATALOG COMPONENT
@@ -1060,30 +716,10 @@ const CharacterCatalog: React.FC = () => {
   );
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        backgroundColor: '#0B0D11',
-        backgroundImage:
-          'radial-gradient(900px 600px at 15% 0%, rgba(64, 160, 255, 0.16), transparent 60%), radial-gradient(900px 700px at 90% 10%, rgba(255, 120, 200, 0.12), transparent 65%), linear-gradient(180deg, #0B0D11 0%, #121622 100%)',
-      }}
-    >
-      {/* Mobile Filters Drawer */}
-      <Drawer
-        anchor="left"
+    <CatalogPage minHeight="100vh">
+      <CatalogFiltersDrawer
         open={mobileFiltersOpen}
         onClose={() => setMobileFiltersOpen(false)}
-        sx={{
-          display: { xs: 'block', md: 'none' },
-          '& .MuiDrawer-paper': {
-            width: { xs: '90%', sm: 380 },
-            maxWidth: '100%',
-            backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))',
-          },
-          '& .MuiBackdrop-root': {
-            backdropFilter: 'blur(4px)',
-          },
-        }}
       >
         <FiltersSidebar
           activeFilterCount={activeFilterCount}
@@ -1103,33 +739,35 @@ const CharacterCatalog: React.FC = () => {
           isMobile={true}
           onClose={() => setMobileFiltersOpen(false)}
         />
-      </Drawer>
+      </CatalogFiltersDrawer>
 
-      <Box sx={{ display: 'flex', maxWidth: 1600, mx: 'auto', px: { xs: 1.5, sm: 2, md: 4 }, pt: { xs: 1, sm: 1.5, md: 2 } }}>
-        {/* Desktop Filters */}
-        <FiltersSidebar
-          activeFilterCount={activeFilterCount}
-          clearAllFilters={clearAllFilters}
-          selectedGenerations={selectedGenerations}
-          selectedSpecies={selectedSpecies}
-          selectedTags={selectedTags}
-          setSelectedGenerations={setSelectedGenerations}
-          setSelectedSpecies={setSelectedSpecies}
-          setSelectedTags={setSelectedTags}
-          toggleArrayFilter={toggleArrayFilter}
-          showMoreSpecies={showMoreSpecies}
-          showMoreTags={showMoreTags}
-          setShowMoreSpecies={setShowMoreSpecies}
-          setShowMoreTags={setShowMoreTags}
-          catalogHeight={catalogHeight}
-        />
-
+      <CatalogLayout
+        sidebar={
+          <FiltersSidebar
+            activeFilterCount={activeFilterCount}
+            clearAllFilters={clearAllFilters}
+            selectedGenerations={selectedGenerations}
+            selectedSpecies={selectedSpecies}
+            selectedTags={selectedTags}
+            setSelectedGenerations={setSelectedGenerations}
+            setSelectedSpecies={setSelectedSpecies}
+            setSelectedTags={setSelectedTags}
+            toggleArrayFilter={toggleArrayFilter}
+            showMoreSpecies={showMoreSpecies}
+            showMoreTags={showMoreTags}
+            setShowMoreSpecies={setShowMoreSpecies}
+            setShowMoreTags={setShowMoreTags}
+            catalogHeight={catalogHeight}
+          />
+        }
+      >
         <Box ref={catalogRef} sx={{ flex: 1, p: { xs: 1, sm: 1.5, md: 2 } }}>
-          <CatalogHeader />
+          <CatalogHeader title="Characters Catalog" />
 
-          <ResultsToolbar
+          <CatalogResultsToolbar
             resultCount={filteredCharacters.length}
             sortBy={sortBy}
+            sortOptions={CATALOG_SORT_OPTIONS}
             onSortChange={setSortBy}
             onFiltersClick={() => setMobileFiltersOpen(true)}
             activeFilterCount={activeFilterCount}
@@ -1147,8 +785,8 @@ const CharacterCatalog: React.FC = () => {
             />
           )}
         </Box>
-      </Box>
-    </Box>
+      </CatalogLayout>
+    </CatalogPage>
   );
 };
 

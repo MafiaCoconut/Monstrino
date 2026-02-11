@@ -212,74 +212,136 @@ export const Footer = () => {
 
         <Box sx={{ display: { xs: 'block', md: 'none' } }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', fontSize: '0.8125rem' }}>
-                Catalog
-              </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
-                {footerLinks.catalog.map((link) => (
-                  <MuiLink
-                    key={link.path}
-                    component={Link}
-                    to={link.path}
-                    sx={{
-                      color: 'text.secondary',
-                      textDecoration: 'none',
-                      fontSize: '0.8125rem',
-                      '&:hover': { color: 'primary.main' },
-                    }}
-                  >
-                    {link.label}
-                  </MuiLink>
-                ))}
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <AutoAwesomeIcon sx={{ color: 'primary.main', fontSize: 20 }} />
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 800,
+                    fontSize: '1rem',
+                    background: 'linear-gradient(135deg, #FF1493 0%, #00D4FF 100%)',
+                    backgroundClip: 'text',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  Monstrino
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', gap: 0.5 }}>
+                <IconButton size="small" sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}>
+                  <TwitterIcon fontSize="small" />
+                </IconButton>
+                <IconButton size="small" sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}>
+                  <InstagramIcon fontSize="small" />
+                </IconButton>
+                <IconButton size="small" sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}>
+                  <GitHubIcon fontSize="small" />
+                </IconButton>
               </Box>
             </Box>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', fontSize: '0.8125rem' }}>
-                Info
-              </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
-                {footerLinks.info.map((link) => (
-                  <MuiLink
-                    key={link.path}
-                    component={Link}
-                    to={link.path}
-                    sx={{
-                      color: 'text.secondary',
-                      textDecoration: 'none',
-                      fontSize: '0.8125rem',
-                      '&:hover': { color: 'primary.main' },
-                    }}
-                  >
-                    {link.label}
-                  </MuiLink>
-                ))}
-              </Box>
-            </Box>
+            <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8125rem', lineHeight: 1.6 }}>
+              The ultimate catalog platform for Monster High collectors. Track releases, discover characters, and connect with the community.
+            </Typography>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary', fontSize: '0.8125rem' }}>
-                Legal
-              </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
-                {footerLinks.legal.map((link) => (
-                  <MuiLink
-                    key={link.path}
-                    component={Link}
-                    to={link.path}
-                    sx={{
-                      color: 'text.secondary',
-                      textDecoration: 'none',
-                      fontSize: '0.8125rem',
-                      '&:hover': { color: 'primary.main' },
-                    }}
-                  >
-                    {link.label}
-                  </MuiLink>
-                ))}
-              </Box>
-            </Box>
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 6 }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'text.primary', fontSize: '0.8125rem', mb: 1 }}>
+                  Catalog
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+                  {footerLinks.catalog.map((link) => (
+                    <MuiLink
+                      key={link.path}
+                      component={Link}
+                      to={link.path}
+                      sx={{
+                        color: 'text.secondary',
+                        textDecoration: 'none',
+                        fontSize: '0.8125rem',
+                        py: 0.25,
+                        '&:hover': { color: 'primary.main' },
+                      }}
+                    >
+                      {link.label}
+                    </MuiLink>
+                  ))}
+                </Box>
+              </Grid>
+
+              <Grid size={{ xs: 6 }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'text.primary', fontSize: '0.8125rem', mb: 1 }}>
+                  Info
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+                  {footerLinks.info.map((link) => (
+                    <MuiLink
+                      key={link.path}
+                      component={Link}
+                      to={link.path}
+                      sx={{
+                        color: 'text.secondary',
+                        textDecoration: 'none',
+                        fontSize: '0.8125rem',
+                        py: 0.25,
+                        '&:hover': { color: 'primary.main' },
+                      }}
+                    >
+                      {link.label}
+                    </MuiLink>
+                  ))}
+                </Box>
+              </Grid>
+
+              <Grid size={{ xs: 6 }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'text.primary', fontSize: '0.8125rem', mb: 1 }}>
+                  Legal
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+                  {footerLinks.legal.map((link) => (
+                    <MuiLink
+                      key={link.path}
+                      component={Link}
+                      to={link.path}
+                      sx={{
+                        color: 'text.secondary',
+                        textDecoration: 'none',
+                        fontSize: '0.8125rem',
+                        py: 0.25,
+                        '&:hover': { color: 'primary.main' },
+                      }}
+                    >
+                      {link.label}
+                    </MuiLink>
+                  ))}
+                </Box>
+              </Grid>
+
+              <Grid size={{ xs: 6 }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'text.primary', fontSize: '0.8125rem', mb: 1 }}>
+                  Resources
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+                  {footerLinks.resources.map((link) => (
+                    <MuiLink
+                      key={link.label}
+                      href={link.path}
+                      sx={{
+                        color: 'text.secondary',
+                        textDecoration: 'none',
+                        fontSize: '0.8125rem',
+                        py: 0.25,
+                        '&:hover': { color: 'primary.main' },
+                      }}
+                    >
+                      {link.label}
+                    </MuiLink>
+                  ))}
+                </Box>
+              </Grid>
+            </Grid>
           </Box>
         </Box>
 

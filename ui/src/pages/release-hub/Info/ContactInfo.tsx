@@ -145,7 +145,7 @@ const InfoContactForm = ({ onSubmit }: InfoContactFormProps) => {
             id="email"
             type="email"
             label="Email (optional)"
-            placeholder="your@email.com"
+            placeholder="Not yet ready"
             variant="standard"
             InputProps={{ disableUnderline: true }}
             InputLabelProps={{ shrink: true }}
@@ -200,7 +200,7 @@ const InfoContactForm = ({ onSubmit }: InfoContactFormProps) => {
         <TextField sx={{ display: "none" }} type="text" tabIndex={-1} autoComplete="off" {...register("website")} />
 
         <Box sx={{ px: { xs: 2, sm: 3 }, py: { xs: 1.5, sm: 2 }, display: "flex", justifyContent: "flex-end" }}>
-          <Button type="submit" disabled={isSubmitting} variant="contained">
+          <Button type="submit" disabled variant="contained">
             {isSubmitting ? "Sending..." : "Send Message"}
           </Button>
         </Box>
@@ -251,9 +251,9 @@ const InfoAlternativeContact = () => (
     <Stack spacing={1.5}>
       <Typography variant="body2" color="text.secondary">
         You can also reach us directly via email at{" "}
-        <Link href="mailto:contact@monstrino.example" underline="hover">
-          contact@monstrino.example
-        </Link>
+        <Typography component="span" color="text.secondary">
+          Not yet ready
+        </Typography>
         .
       </Typography>
       <Typography variant="body2" color="text.secondary">

@@ -117,7 +117,7 @@ const baseCharacterIndexMock: CharacterIndexData = {
       { name: "Clawd Wolf", role: "Boyfriend (G1)", link: "#" },
       { name: "Valentine", role: "Ex-boyfriend", link: "#" },
     ],
-    pets: [{ name: "Count Fabulous", species: "Bat", link: "#", image: "/demo/pets/count-fabulous/main-image.png" }],
+    pets: [{ name: "Count Fabulous", species: "Bat", link: "/catalog/p/27", image: "/demo/pets/count-fabulous/main-image.png" }],
   },
   timeline: [
     { year: 2010, event: "First appearance in Monster High toy line and webisodes" },
@@ -242,7 +242,7 @@ const buildPetsForCharacter = (characterId: number): CharacterIndexData["relatio
       return {
         name: displayName,
         species,
-        link: `#`,
+        link: `/catalog/p/${pet.id}`,
         image: pet.primary_image ?? undefined,
       };
     })
@@ -399,7 +399,7 @@ export const characterIndexMocks: CharacterIndexData[] = [
         { name: "Clawdeen Wolf", role: "Best Friend", link: "#" },
       ],
       romantic: [{ name: "Jackson Jekyll", role: "Boyfriend (G1)", link: "#" }],
-      pets: [{ name: "Watzit", species: "Dog", link: "#", image: "/demo/pets/watzit/main-image.png" }],
+      pets: [{ name: "Watzit", species: "Dog", link: "/catalog/p/43", image: "/demo/pets/watzit/main-image.png" }],
     },
     timeline: [
       { year: 2010, event: "First appearance in Monster High toy line and webisodes" },

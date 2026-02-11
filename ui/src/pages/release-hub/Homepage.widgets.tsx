@@ -116,6 +116,29 @@ const seriesCollection: SeriesSummary[] = [...seriesModels]
 
 const monsterPets: PetSummary[] = [...petModels].slice(0, 6);
 
+const homepageCardLayout = {
+  spotlight: {
+    cardSx: { width: "100%", maxWidth: 260 },
+    mediaSx: { height: 300 },
+    contentSx: { pt: 1.5 },
+  },
+  character: {
+    cardSx: { width: "100%", maxWidth: 240, margin: "0 auto" },
+    mediaSx: { height: 180 },
+    contentSx: { pb: 2 },
+  },
+  series: {
+    cardSx: { height: "100%", minHeight: 200 },
+    contentSx: { p: { xs: 1.5, md: 2 } },
+  },
+  pet: {
+    containerSx: { width: "100%" },
+    cardSx: { width: "100%", maxWidth: 240, margin: "0 auto" },
+    mediaSx: { height: 190 },
+    contentSx: { pb: 2 },
+  },
+};
+
 // ============================================
 // SECTIONS
 // ============================================
@@ -146,7 +169,7 @@ export const HeroSection = () => {
         },
       }}
     >
-      <Container maxWidth="xl" sx={{ position: "relative", zIndex: 1, py: 8 }}>
+      <Container maxWidth="xl" sx={{ position: "relative", zIndex: 1, py: 8, pb: { xs: 10, sm: 8 } }}>
         <Box sx={{ maxWidth: 800 }}>
           <Chip
             icon={<AutoAwesomeIcon sx={{ fontSize: 16 }} />}
@@ -199,7 +222,7 @@ export const HeroSection = () => {
           >
             The most comprehensive catalog for Monster High collectors. Track releases, compare prices, and connect with the community.
           </Typography>
-          <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+          <Box sx={{ display: "flex", gap: { xs: 1.5, sm: 2 }, flexWrap: "wrap" }}>
             <Button
               component={Link}
               to="/catalog/r"
@@ -237,8 +260,15 @@ export const HeroSection = () => {
 
 export const StatsSection = () => {
   return (
-    <Container maxWidth="xl" sx={{ mt: -8, position: "relative", zIndex: 2 }}>
-      <Grid container spacing={3}>
+    <Container
+      maxWidth="xl"
+      sx={{
+        mt: { xs: -4, sm: -8 },
+        position: "relative",
+        zIndex: 2,
+      }}
+    >
+      <Grid container spacing={{ xs: 1.5, sm: 2.5 }}>
         {[
           { icon: <CollectionsIcon />, value: stats.totalReleases, label: "Releases", color: "#FF1493" },
           { icon: <PeopleIcon />, value: stats.totalCharacters, label: "Characters", color: "#00D4FF" },
@@ -248,8 +278,11 @@ export const StatsSection = () => {
           <Grid size={{ xs: 6, md: 3 }} key={stat.label}>
             <Card
               sx={{
-                p: 3,
-                textAlign: "center",
+                p: { xs: 1.5, sm: 2.25 },
+                textAlign: { xs: "left", sm: "center" },
+                display: { xs: "flex", sm: "block" },
+                alignItems: { xs: "center", sm: "initial" },
+                gap: { xs: 1.25, sm: 0 },
                 background: "linear-gradient(135deg, rgba(20, 20, 32, 0.9) 0%, rgba(30, 30, 50, 0.9) 100%)",
                 backdropFilter: "blur(10px)",
                 border: "1px solid",
@@ -258,26 +291,35 @@ export const StatsSection = () => {
             >
               <Box
                 sx={{
-                  width: 48,
-                  height: 48,
+                  width: { xs: 30, sm: 40 },
+                  height: { xs: 30, sm: 40 },
                   borderRadius: 2,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   backgroundColor: `${stat.color}20`,
                   color: stat.color,
-                  mx: "auto",
-                  mb: 2,
+                  mx: { xs: 0, sm: "auto" },
+                  mb: { xs: 0, sm: 1.5 },
+                  flexShrink: 0,
+                  "& svg": {
+                    fontSize: { xs: 18, sm: 24 },
+                  },
                 }}
               >
                 {stat.icon}
               </Box>
-              <Typography variant="h3" sx={{ fontWeight: 800, color: "text.primary", mb: 0.5 }}>
-                {stat.value.toLocaleString()}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {stat.label}
-              </Typography>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: { xs: 0.25, sm: 0 } }}>
+                <Typography
+                  variant="h3"
+                  sx={{ fontWeight: 800, color: "text.primary", mb: { xs: 0, sm: 0.25 }, fontSize: { xs: "1.25rem", sm: "1.5rem" } }}
+                >
+                  {stat.value.toLocaleString()}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: "0.7rem", sm: "0.8rem" } }}>
+                  {stat.label}
+                </Typography>
+              </Box>
             </Card>
           </Grid>
         ))}
@@ -357,7 +399,12 @@ export const FeaturedReleasesSection = () => {
       >
         {featuredReleases.map((item) => (
           <Box key={item.id} sx={{ minWidth: 260, maxWidth: 260 }}>
-            <ReleaseCardSpotlight {...item} />
+            <ReleaseCardSpotlight
+              {...item}
+              cardSx={homepageCardLayout.spotlight.cardSx}
+              mediaSx={homepageCardLayout.spotlight.mediaSx}
+              contentSx={homepageCardLayout.spotlight.contentSx}
+            />
           </Box>
         ))}
       </Box>
@@ -384,7 +431,12 @@ export const PopularCharactersSection = () => {
       >
         {popularCharacters.map((character) => (
           <Box key={character.id} sx={{ minWidth: 240, maxWidth: 240 }}>
-            <CharacterCard {...character} />
+            <CharacterCard
+              {...character}
+              cardSx={homepageCardLayout.character.cardSx}
+              mediaSx={homepageCardLayout.character.mediaSx}
+              contentSx={homepageCardLayout.character.contentSx}
+            />
           </Box>
         ))}
       </Box>
@@ -399,7 +451,11 @@ export const ExploreSeriesSection = () => {
       <Grid container spacing={2.2}>
         {seriesCollection.map((entry) => (
           <Grid key={entry.id} size={{ xs: 12, md: 4 }}>
-            <SeriesCard {...entry} />
+            <SeriesCard
+              {...entry}
+              cardSx={homepageCardLayout.series.cardSx}
+              contentSx={homepageCardLayout.series.contentSx}
+            />
           </Grid>
         ))}
       </Grid>
@@ -426,7 +482,13 @@ export const MonsterPetsSection = () => {
       >
         {monsterPets.map((pet) => (
           <Box key={pet.id} sx={{ minWidth: 240, maxWidth: 240 }}>
-            <PetCard {...pet} />
+            <PetCard
+              {...pet}
+              containerSx={homepageCardLayout.pet.containerSx}
+              cardSx={homepageCardLayout.pet.cardSx}
+              mediaSx={homepageCardLayout.pet.mediaSx}
+              contentSx={homepageCardLayout.pet.contentSx}
+            />
           </Box>
         ))}
       </Box>
@@ -533,7 +595,7 @@ export const HomepageContent = () => {
       <PopularCharactersSection />
       <ExploreSeriesSection />
       <MonsterPetsSection />
-      <CommunityCtaSection />
+      {/* <CommunityCtaSection /> */}
     </Container>
   );
 };

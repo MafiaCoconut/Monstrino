@@ -6,12 +6,17 @@ import {
   Chip,
   Typography,
 } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import { Link as RouterLink } from "react-router-dom";
 import type { CharacterSummary } from "../../entities";
 
 const PLACEHOLDER_IMAGE = "/placeholder.svg";
 
-type CharacterCardProps = CharacterSummary;
+interface CharacterCardProps extends CharacterSummary {
+  cardSx?: SxProps<Theme>;
+  mediaSx?: SxProps<Theme>;
+  contentSx?: SxProps<Theme>;
+}
 
 export const CharacterCard = ({
   id,
@@ -19,13 +24,16 @@ export const CharacterCard = ({
   species,
   releaseCount,
   imageUrl,
-  accentColor = "#FF1493"
+  accentColor = "#FF1493",
+  cardSx,
+  mediaSx,
+  contentSx,
 }: CharacterCardProps) => {
   return (
     <Card
       component={RouterLink}
       to={`/catalog/c/${id}`}
-      sx={{
+      sx={[{
         display: "flex",
         flexDirection: "column",
         height: "100%",
@@ -51,11 +59,11 @@ export const CharacterCard = ({
           background: `linear-gradient(90deg, ${accentColor} 0%, transparent 100%)`,
           zIndex: 1,
         },
-      }}
+      }, cardSx]}
     >
       <CardMedia
         component="div"
-        sx={{
+        sx={[{
           height: 170,
           backgroundColor: "background.default",
           backgroundImage: `url(${imageUrl ?? PLACEHOLDER_IMAGE})`,
@@ -71,10 +79,10 @@ export const CharacterCard = ({
             height: "50%",
             background: "linear-gradient(to top, rgba(20, 20, 32, 1) 0%, transparent 100%)",
           },
-        }}
+        }, mediaSx]}
       />
 
-      <CardContent sx={{ pt: 0, mt: -3, position: "relative", zIndex: 2 }}>
+      <CardContent sx={[{ pt: 0, mt: -3, position: "relative", zIndex: 2 }, contentSx]}>
         <Typography
           variant="h6"
           sx={{

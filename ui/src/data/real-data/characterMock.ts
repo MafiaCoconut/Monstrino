@@ -702,7 +702,7 @@ export const characterMock = [
     "display_name": "Lagoona Blue",
     "gender": "ghoul",
     "description": "Lagoona is a patient and laid-back hybrid of a sea monster and ocean nymph. She is the captain of the swim team and friends with everyone. Her pet piranha,Neptuna, travels with her in a fishbowl purse.",
-    "primary_image": "/demo/releases/2025/haunted-dance-lagoona-blue/main-image.png",
+    "primary_image": "/demo/releases/2025/skulltimate-secrets-lagoona-blue/main-image.png",
     "alt_names": null,
     "notes": null,
     "updated_at": "2026-01-05 22:41:29",

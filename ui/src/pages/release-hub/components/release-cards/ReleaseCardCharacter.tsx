@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Box, Typography, Chip } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
 import type { CharacterIndexRelease } from '../../entities/character-index';
 
 // Gothic theme colors matching CharacterIndex
@@ -25,14 +26,22 @@ const hslAlpha = (value: string, alpha: number) => {
 
 interface ReleaseCardCharacterProps {
   release: CharacterIndexRelease;
+  cardSx?: SxProps<Theme>;
+  imageSx?: SxProps<Theme>;
+  contentSx?: SxProps<Theme>;
 }
 
-const ReleaseCardCharacter: React.FC<ReleaseCardCharacterProps> = ({ release }) => {
+const ReleaseCardCharacter: React.FC<ReleaseCardCharacterProps> = ({
+  release,
+  cardSx,
+  imageSx,
+  contentSx,
+}) => {
   return (
     <Box
       component={RouterLink}
       to={`/catalog/r/${release.id}`}
-      sx={{
+      sx={[{
         display: 'flex',
         height: '100%',
         textDecoration: 'none',
@@ -51,16 +60,16 @@ const ReleaseCardCharacter: React.FC<ReleaseCardCharacterProps> = ({ release }) 
             transform: 'scale(1.05)',
           },
         },
-      }}
+      }, cardSx]}
     >
       {/* Image Container */}
       <Box
-        sx={{
+        sx={[{
           aspectRatio: '5/7',
           overflow: 'hidden',
           backgroundColor: '#FFFFFF',
           position: 'relative',
-        }}
+        }, imageSx]}
       >
         <Box
           component="img"
@@ -78,12 +87,12 @@ const ReleaseCardCharacter: React.FC<ReleaseCardCharacterProps> = ({ release }) 
 
       {/* Content */}
       <Box
-        sx={{
+        sx={[{
           padding: '1rem',
           display: 'flex',
           flexDirection: 'column',
           flex: 1,
-        }}
+        }, contentSx]}
       >
         {/* Release Name */}
         <Typography

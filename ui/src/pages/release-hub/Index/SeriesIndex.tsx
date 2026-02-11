@@ -1,7 +1,6 @@
-import React, { useState, forwardRef, useEffect, useMemo } from "react";
-import { Box, Typography } from "@mui/material";
+import React, { useMemo, useState } from "react";
+import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
-import type { TypographyProps } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import ImageIconMui from "@mui/icons-material/Image";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
@@ -16,7 +15,7 @@ import { seriesIndexMock, seriesIndexByNumericId } from "@/data/real-data/series
 import { ReleaseCardMinimal } from "../components/release-cards";
 import { CharacterCard } from "../components/character-card";
 import { ReleaseBreadcrumb } from "../components/breadcrumb/Breadcrumb";
-import { Badge } from "../components/ui";
+import { Badge, Card, CardContent, Progress, Separator } from "../components/ui";
 
 // ============================================================
 // DESIGN TOKENS — Monstrino Dark Archive Theme (Inlined)
@@ -85,6 +84,19 @@ const tokens = {
   },
 };
 
+const characterCardLayout = {
+  cardSx: { width: "100%", maxWidth: 220, margin: "0 auto" },
+  mediaSx: { height: 160 },
+  contentSx: { pb: 2 },
+};
+
+const releaseCardLayout = {
+  containerSx: { display: "flex", justifyContent: "center", height: "100%", minWidth: 0 },
+  cardSx: { width: "100%", maxWidth: { xs: 180, sm: 220, md: 210, lg: 200 }, minWidth: 0 },
+  imageSx: { paddingTop: { xs: "145%", md: "140%", lg: "135%" } },
+  contentSx: { p: { xs: "0.6rem", md: "0.75rem" } },
+};
+
 // ============================================================
 // MUI ICONS
 // ============================================================
@@ -127,153 +139,6 @@ const badgeBaseSx = {
 };
 const badgeProps = { variantSx: badgeVariantSx, baseSx: badgeBaseSx } as const;
 
-type BoxStyleProps = Omit<React.HTMLAttributes<HTMLDivElement>, "style"> & { style?: SxProps<Theme> };
-type HeadingStyleProps = Omit<TypographyProps, "sx"> & { style?: SxProps<Theme> };
-
-const mergeSx = (base: SxProps<Theme>, style?: SxProps<Theme>): SxProps<Theme> => {
-  if (!style) return base;
-  const baseArray = Array.isArray(base) ? base : [base];
-  const styleArray = Array.isArray(style) ? style : [style];
-  return [...baseArray, ...styleArray];
-};
-
-// Card Components
-const Card = forwardRef<HTMLDivElement, BoxStyleProps>(
-  ({ style, children, ...props }, ref) => (
-    <Box
-      ref={ref}
-      sx={mergeSx(
-        {
-          borderRadius: tokens.radius,
-          border: `1px solid ${tokens.colors.border}`,
-          backgroundColor: tokens.colors.card,
-          color: tokens.colors.cardForeground,
-          boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-        },
-        style
-      )}
-      {...props}
-    >
-      {children}
-    </Box>
-  )
-);
-
-const CardHeader = forwardRef<HTMLDivElement, BoxStyleProps>(
-  ({ style, children, ...props }, ref) => (
-    <Box
-      ref={ref}
-      sx={mergeSx(
-        {
-          display: "flex",
-          flexDirection: "column",
-          gap: "0.375rem",
-          padding: { xs: tokens.spacing[4], sm: tokens.spacing[5], md: tokens.spacing[6] },
-        },
-        style
-      )}
-      {...props}
-    >
-      {children}
-    </Box>
-  )
-);
-
-const CardTitle = forwardRef<HTMLHeadingElement, HeadingStyleProps>(
-  ({ style, children, ...props }, ref) => (
-    <Typography
-      ref={ref}
-      variant="h3"
-      component="h3"
-      sx={mergeSx(
-        {
-          fontSize: tokens.fontSizes["2xl"],
-          fontWeight: tokens.fontWeights.semibold,
-          lineHeight: tokens.lineHeights.tight,
-          letterSpacing: "-0.025em",
-        },
-        style
-      )}
-      {...props}
-    >
-      {children}
-    </Typography>
-  )
-);
-
-const CardContent = forwardRef<HTMLDivElement, BoxStyleProps>(
-  ({ style, children, ...props }, ref) => (
-    <Box
-      ref={ref}
-      sx={mergeSx(
-        {
-          padding: { xs: tokens.spacing[4], sm: tokens.spacing[5], md: tokens.spacing[6] },
-          paddingTop: 0,
-        },
-        style
-      )}
-      {...props}
-    >
-      {children}
-    </Box>
-  )
-);
-
-// Separator
-const Separator = forwardRef<HTMLDivElement, BoxStyleProps>(
-  ({ style, ...props }, ref) => (
-    <Box
-      ref={ref}
-      sx={mergeSx(
-        {
-          height: "1px",
-          width: "100%",
-          backgroundColor: tokens.colors.border,
-          flexShrink: 0,
-        },
-        style
-      )}
-      {...props}
-    />
-  )
-);
-
-// Progress
-interface ProgressProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "style"> {
-  value?: number;
-  style?: SxProps<Theme>;
-}
-
-const Progress = forwardRef<HTMLDivElement, ProgressProps>(
-  ({ value = 0, style, ...props }, ref) => (
-    <Box
-      ref={ref}
-      sx={mergeSx(
-        {
-          position: "relative",
-          height: "0.5rem",
-          width: "100%",
-          overflow: "hidden",
-          borderRadius: "9999px",
-          backgroundColor: tokens.colors.secondary,
-        },
-        style
-      )}
-      {...props}
-    >
-      <Box
-        sx={{
-          height: "100%",
-          width: "100%",
-          flex: 1,
-          backgroundColor: tokens.colors.primary,
-          transition: "transform 0.2s",
-          transform: `translateX(-${100 - (value || 0)}%)`,
-        }}
-      />
-    </Box>
-  )
-);
 
 // ============================================================
 // PLACEHOLDER COMPONENTS
@@ -302,25 +167,9 @@ const MonsterHighSeriesPage: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [hoveredCard, setHoveredCard] = useState<string | number | null>(null);
 
-  // Responsive breakpoint detection
-  const [isSm, setIsSm] = useState(false);
-  const [isMd, setIsMd] = useState(false);
-  const [isLg, setIsLg] = useState(false);
-
-  useEffect(() => {
-    const checkSize = () => {
-      setIsSm(window.innerWidth >= 480);
-      setIsMd(window.innerWidth >= 768);
-      setIsLg(window.innerWidth >= 1024);
-    };
-    checkSize();
-    window.addEventListener("resize", checkSize);
-    return () => window.removeEventListener("resize", checkSize);
-  }, []);
-
-  // Grid column calculator
-  const dollGridCols = isLg ? 4 : isMd ? 3 : isSm ? 2 : 1;
-  const pricingGridCols = isLg ? 4 : isMd ? 3 : isSm ? 2 : 1;
+  const theme = useTheme();
+  const isMd = useMediaQuery(theme.breakpoints.up("md"));
+  const isLg = useMediaQuery(theme.breakpoints.up("lg"));
 
   if (!seriesData) {
     return (
@@ -478,10 +327,16 @@ const MonsterHighSeriesPage: React.FC = () => {
             </Box>
             <Box sx={{ 
               display: "grid", 
-              gridTemplateColumns: `repeat(${dollGridCols}, minmax(0, 1fr))`,
+              gridTemplateColumns: {
+                xs: "repeat(auto-fit, minmax(150px, 1fr))",
+                sm: "repeat(2, minmax(0, 1fr))",
+                md: "repeat(3, minmax(0, 1fr))",
+                lg: "repeat(4, minmax(0, 1fr))",
+              },
               gap: isMd ? "1rem" : "0.5rem",
               width: "100%",
-              overflow: "hidden"
+              overflow: "hidden",
+              justifyItems: "center",
             }}>
               {dolls.map((doll) => (
                 <ReleaseCardMinimal
@@ -490,6 +345,10 @@ const MonsterHighSeriesPage: React.FC = () => {
                   isHovered={hoveredCard === doll.id}
                   onMouseEnter={() => setHoveredCard(doll.id)}
                   onMouseLeave={() => setHoveredCard(null)}
+                  containerSx={releaseCardLayout.containerSx}
+                  cardSx={releaseCardLayout.cardSx}
+                  imageSx={releaseCardLayout.imageSx}
+                  contentSx={releaseCardLayout.contentSx}
                 />
               ))}
             </Box>
@@ -508,13 +367,25 @@ const MonsterHighSeriesPage: React.FC = () => {
             </Box>
             <Box sx={{ 
               display: "grid", 
-              gridTemplateColumns: `repeat(${dollGridCols}, minmax(0, 1fr))`,
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2, minmax(0, 1fr))",
+                md: "repeat(3, minmax(0, 1fr))",
+                lg: "repeat(4, minmax(0, 1fr))",
+              },
               gap: isMd ? "1rem" : "0.5rem",
               width: "100%",
-              overflow: "hidden"
+              overflow: "hidden",
+              justifyItems: "center",
             }}>
               {characters.map((char) => (
-                <CharacterCard key={char.id} {...char} />
+                <CharacterCard
+                  key={char.id}
+                  {...char}
+                  cardSx={characterCardLayout.cardSx}
+                  mediaSx={characterCardLayout.mediaSx}
+                  contentSx={characterCardLayout.contentSx}
+                />
               ))}
             </Box>
           </Box>
@@ -738,8 +609,17 @@ const MonsterHighSeriesPage: React.FC = () => {
               </Typography>
             </Box>
             <Card>
-              <CardContent style={{ paddingTop: isMd ? tokens.spacing[6] : tokens.spacing[4] }}>
-                <Box sx={{ display: "grid", gridTemplateColumns: `repeat(${pricingGridCols}, 1fr)`, gap: isMd ? tokens.spacing[6] : tokens.spacing[4] }}>
+              <CardContent contentSx={{ paddingTop: isMd ? tokens.spacing[6] : tokens.spacing[4] }}>
+                <Box sx={{ 
+                  display: "grid",
+                  gridTemplateColumns: {
+                    xs: "1fr",
+                    sm: "repeat(2, minmax(0, 1fr))",
+                    md: "repeat(3, minmax(0, 1fr))",
+                    lg: "repeat(4, minmax(0, 1fr))",
+                  },
+                  gap: isMd ? tokens.spacing[6] : tokens.spacing[4],
+                }}>
                   <Box>
                     <Typography sx={{ fontSize: tokens.fontSizes.sm, color: tokens.colors.mutedForeground, marginBottom: "0.25rem" }}>Original MSRP</Typography>
                     <Typography sx={{ fontSize: tokens.fontSizes.xl, fontWeight: tokens.fontWeights.semibold }}>{pricing.msrpRange}</Typography>
@@ -760,17 +640,17 @@ const MonsterHighSeriesPage: React.FC = () => {
                     <Box sx={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                       <Box sx={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                         <Typography component="span" sx={{ fontSize: tokens.fontSizes.xs, color: tokens.colors.mutedForeground, width: "4rem" }}>Common</Typography>
-                        <Progress value={pricing.rarityDistribution.common} style={{ height: "0.5rem", flex: 1 }} />
+                        <Progress value={pricing.rarityDistribution.common} trackSx={{ height: "0.5rem", flex: 1 }} />
                         <Typography component="span" sx={{ fontSize: tokens.fontSizes.xs, color: tokens.colors.mutedForeground, width: "2rem" }}>{pricing.rarityDistribution.common}%</Typography>
                       </Box>
                       <Box sx={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                         <Typography component="span" sx={{ fontSize: tokens.fontSizes.xs, color: tokens.colors.mutedForeground, width: "4rem" }}>Rare</Typography>
-                        <Progress value={pricing.rarityDistribution.rare} style={{ height: "0.5rem", flex: 1 }} />
+                        <Progress value={pricing.rarityDistribution.rare} trackSx={{ height: "0.5rem", flex: 1 }} />
                         <Typography component="span" sx={{ fontSize: tokens.fontSizes.xs, color: tokens.colors.mutedForeground, width: "2rem" }}>{pricing.rarityDistribution.rare}%</Typography>
                       </Box>
                       <Box sx={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                         <Typography component="span" sx={{ fontSize: tokens.fontSizes.xs, color: tokens.colors.mutedForeground, width: "4rem" }}>Ultra Rare</Typography>
-                        <Progress value={pricing.rarityDistribution.ultraRare} style={{ height: "0.5rem", flex: 1 }} />
+                        <Progress value={pricing.rarityDistribution.ultraRare} trackSx={{ height: "0.5rem", flex: 1 }} />
                         <Typography component="span" sx={{ fontSize: tokens.fontSizes.xs, color: tokens.colors.mutedForeground, width: "2rem" }}>{pricing.rarityDistribution.ultraRare}%</Typography>
                       </Box>
                     </Box>
@@ -818,7 +698,7 @@ const MonsterHighSeriesPage: React.FC = () => {
               </Typography>
             </Box>
             <Card>
-              <CardContent style={{ paddingTop: isMd ? tokens.spacing[6] : tokens.spacing[4], display: "flex", flexDirection: "column", gap: isMd ? tokens.spacing[6] : tokens.spacing[4] }}>
+              <CardContent contentSx={{ paddingTop: isMd ? tokens.spacing[6] : tokens.spacing[4], display: "flex", flexDirection: "column", gap: isMd ? tokens.spacing[6] : tokens.spacing[4] }}>
                 {/* Rating */}
                 <Box sx={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", rowGap: "0.5rem" }}>
                   <Box sx={{ display: "flex" }}>

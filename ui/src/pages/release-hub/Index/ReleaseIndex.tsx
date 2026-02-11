@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Box,
@@ -10,7 +10,10 @@ import {
   Collapse,
   Avatar,
   Divider,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
 import {
   KeyboardArrowDown,
   KeyboardArrowUp,
@@ -37,6 +40,7 @@ import { characterIndexMockById } from '@/data/real-data/CharacterIndexMock';
 import { ReleaseBreadcrumb } from '../components/breadcrumb';
 import { CharacterCard } from '../components/character-card';
 import { PetCardSimple } from '../components/pet-card';
+import { MarketOffers, MarketOverview, type MarketCountry, type MarketOffer } from '../components/market';
 
 // Color palette
 const colors = {
@@ -67,6 +71,89 @@ const characterAccentPalette: HexColor[] = [
   '#06b6d4',
 ];
 
+const segmentTitleSx = {
+  fontSize: { xs: 18, sm: 20, md: 22 },
+  fontWeight: 700,
+  color: colors.textPrimary,
+  letterSpacing: '-0.01em',
+} as const;
+
+const releaseCharacterCardLayout = {
+  cardSx: { width: '100%', maxWidth: 210, margin: '0 auto' },
+  mediaSx: { height: 150 },
+  contentSx: { pb: 1.5 },
+};
+
+const releasePetCardLayout = {
+  cardSx: { width: '100%', maxWidth: 210, margin: '0 auto' },
+  mediaSx: { height: 150 },
+  contentSx: { pb: 1.5 },
+};
+
+const sectionCardSx: SxProps<Theme> = {
+  backgroundColor: colors.card,
+  borderRadius: { xs: 1.5, md: 2 },
+  border: `1px solid ${colors.cardBorder}`,
+  p: { xs: 2, md: 3 },
+};
+
+const msrpLayout = {
+  gridSx: {
+    display: 'grid',
+    gridTemplateColumns: {
+      xs: '1fr',
+      sm: 'repeat(2, minmax(0, 1fr))',
+      md: 'repeat(3, minmax(0, 1fr))',
+      lg: 'repeat(4, minmax(0, 1fr))',
+    },
+    gap: { xs: 1, sm: 1.5 },
+    justifyContent: 'start',
+  },
+  itemSx: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: { xs: 1, sm: 1.25 },
+    p: { xs: 1.5, sm: 2 },
+    width: '100%',
+    minWidth: 0,
+    backgroundColor: colors.bgLight,
+    borderRadius: 2,
+    overflow: 'hidden',
+    '&:hover': { backgroundColor: `${colors.pink}20` },
+    transition: 'background-color 0.2s',
+  },
+};
+
+const accessoryCardLayout = {
+  cardSx: { maxWidth: { xs: '100%', sm: 220 }, margin: '0 auto' },
+  imageSx: { aspectRatio: '1' },
+  contentSx: { p: { xs: 1.5, md: 2 } },
+};
+
+const infoCardLayout = {
+  cardSx: sectionCardSx,
+};
+
+const marketCardLayout = {
+  statCardSx: { p: 1.5 },
+  noticeCardSx: { p: 2 },
+  offerCardSx: { p: 2 },
+};
+
+const sectionGridSx: SxProps<Theme> = {
+  display: 'grid',
+  gridTemplateColumns: {
+    xs: 'repeat(2, minmax(0, 1fr))',
+    sm: 'repeat(3, minmax(0, 1fr))',
+    md: 'repeat(3, minmax(0, 1fr))',
+    lg: 'repeat(4, minmax(0, 1fr))',
+  },
+  justifyContent: 'start',
+  gap: { xs: 1, md: 1.5 },
+  mt: { xs: 2, md: 3 },
+};
+
 const ReleasePage = () => {
   const { internal_id, release_id, id } = useParams();
   const resolvedId = internal_id ?? release_id ?? id ?? '';
@@ -82,7 +169,7 @@ const ReleasePage = () => {
 
 // Hero Section Component
   const HeroSection = () => (
-  <Box sx={{ py: { xs: 1, md: 2 } }}>
+  <Box sx={{ pt: { xs: 1, md: 2 }, pb: 0 }}>
     <Typography
       sx={{
         fontSize: { xs: 24, sm: 32, md: 42 },
@@ -98,7 +185,7 @@ const ReleasePage = () => {
       {releaseData.subtitle}
     </Typography>
 
-    <Box sx={{ display: 'flex', gap: { xs: 1, md: 1.5 }, mb: { xs: 2, md: 3 }, flexWrap: 'wrap' }}>
+    <Box sx={{ display: 'flex', gap: { xs: 1, md: 1.5 }, mb: { xs: 1.5, md: 2 }, flexWrap: 'wrap' }}>
       {(releaseData.badges ?? []).map((badge) => (
         <Chip
           key={badge.label}
@@ -116,7 +203,7 @@ const ReleasePage = () => {
       ))}
     </Box>
 
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 2, md: 4 }, mb: { xs: 2, md: 3 }, flexWrap: 'wrap' }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 2, md: 4 }, mb: { xs: 1, md: 1.5 }, flexWrap: 'wrap' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Typography sx={{ fontSize: 13, color: colors.textMuted }}>Released</Typography>
         <Typography sx={{ fontSize: 13, color: colors.textSecondary }}>
@@ -195,18 +282,63 @@ const ReleasePage = () => {
   </Box>
   );
 
-// Pricing Intelligence Component
-  const PricingIntelligence = () => {
+// MSRP Overview Component
+  const MsrpOverview = () => {
+  const [expanded, setExpanded] = useState(true);
   const [showAll, setShowAll] = useState(false);
   const regions = releaseData.pricing?.regions ?? [];
-  const displayedRegions = showAll ? regions : regions.slice(0, 4);
-  const hasMore = regions.length > 4;
+  const gridRef = useRef<HTMLDivElement | null>(null);
+  const [gridLayout, setGridLayout] = useState({ columns: 1 });
+  const minCardWidth = 200;
+  const cardGap = 12;
+  const defaultRows = 2;
+  const maxVisible = showAll ? regions.length : Math.max(gridLayout.columns * defaultRows, 1);
+  const displayedRegions = expanded
+    ? showAll
+      ? regions
+      : regions.slice(0, maxVisible)
+    : regions.slice(0, Math.max(gridLayout.columns, 1));
+  const hasMore = regions.length > maxVisible;
+
+  useEffect(() => {
+    const node = gridRef.current;
+    if (!node) return undefined;
+
+    const updateColumns = () => {
+      const width = node.clientWidth;
+      if (!width) return;
+      const cols = Math.max(1, Math.floor((width + cardGap) / (minCardWidth + cardGap)));
+      setGridLayout((prev) => (prev.columns === cols ? prev : { columns: cols }));
+    };
+
+    updateColumns();
+    const observer = new ResizeObserver(() => updateColumns());
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [minCardWidth]);
+
+  useEffect(() => {
+    if (!expanded && showAll) {
+      setShowAll(false);
+    }
+  }, [expanded, showAll]);
 
   return (
-    <Box sx={{ backgroundColor: colors.card, borderRadius: 2, border: `1px solid ${colors.cardBorder}`, p: { xs: 2, md: 3 } }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+    <Box sx={sectionCardSx}>
+      <Box
+        onClick={() => setExpanded((prev) => !prev)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setExpanded((prev) => !prev);
+          }
+        }}
+        sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, cursor: 'pointer' }}
+      >
         <LocalOffer sx={{ fontSize: 18, color: colors.pink }} />
-        <Typography sx={{ fontSize: 16, fontWeight: 600, color: colors.textPrimary }}>
+        <Typography sx={segmentTitleSx}>
           MSRP - Manufacturer's Suggested Retail Price
         </Typography>
         {hasMore && (
@@ -221,54 +353,80 @@ const ReleasePage = () => {
             }}
           />
         )}
-      </Box>
-      <Typography sx={{ fontSize: 11, color: colors.textMuted, mb: 2, fontStyle: 'italic' }}>
-        Informational purposes only. Actual retail prices may vary by retailer and region.
-      </Typography>
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: { xs: 1, sm: 1.5 } }}>
-        {displayedRegions.map((region) => (
-          <Box key={region.code} sx={{ 
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            rowGap: 0.5,
-            p: { xs: 1.5, sm: 2 },
-            backgroundColor: colors.bgLight,
-            borderRadius: 2,
-            '&:hover': { backgroundColor: colors.pink + '20' },
-            transition: 'background-color 0.2s'
-          }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 } }}>
-              <Typography sx={{ fontSize: { xs: 24, sm: 28 } }}>{region.flag}</Typography>
-              <Box>
-                <Typography sx={{ fontSize: { xs: 12, sm: 14 }, fontWeight: 600, color: colors.textPrimary }}>{region.code}</Typography>
-                <Typography sx={{ fontSize: { xs: 9, sm: 10 }, color: colors.textMuted }}>MSRP</Typography>
-              </Box>
-            </Box>
-            <Typography sx={{ fontSize: { xs: 18, sm: 20 }, fontWeight: 700, color: colors.pink }}>
-              {region.currency}{region.msrp}
-            </Typography>
-          </Box>
-        ))}
-      </Box>
-      {hasMore && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-          <Button
-            onClick={() => setShowAll(!showAll)}
+        <IconButton
+          size="small"
+          aria-label={expanded ? 'Collapse section' : 'Expand section'}
+          onClick={(event) => {
+            event.stopPropagation();
+            setExpanded((prev) => !prev);
+          }}
+          sx={{ marginLeft: 'auto', color: colors.textMuted }}
+        >
+          <ExpandMore
             sx={{
-              textTransform: 'none',
-              color: colors.pink,
-              fontSize: 13,
-              fontWeight: 600,
-              '&:hover': { backgroundColor: colors.pink + '20' },
+              fontSize: 20,
+              transition: 'transform 0.2s',
+              transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
             }}
-            endIcon={showAll ? <KeyboardArrowUp /> : <ExpandMore />}
-          >
-            {showAll ? 'Show Less' : `Show ${regions.length - 4} More`}
-          </Button>
+          />
+        </IconButton>
+      </Box>
+      <Collapse in={expanded} unmountOnExit>
+        <Typography sx={{ fontSize: 11, color: colors.textMuted, mb: 2, fontStyle: 'italic' }}>
+          Informational purposes only. Actual retail prices may vary by retailer and region.
+        </Typography>
+        <Box
+          ref={gridRef}
+          sx={{
+            ...msrpLayout.gridSx,
+            gridTemplateColumns: `repeat(${gridLayout.columns}, minmax(0, 1fr))`,
+            gap: `${cardGap}px`,
+          }}
+        >
+          {displayedRegions.map((region) => (
+            <Box key={region.code} sx={msrpLayout.itemSx}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.25 } }}>
+                <Typography sx={{ fontSize: { xs: 24, sm: 28 } }}>{region.flag}</Typography>
+                <Box>
+                  <Typography sx={{ fontSize: { xs: 12, sm: 14 }, fontWeight: 600, color: colors.textPrimary }}>{region.code}</Typography>
+                  <Typography sx={{ fontSize: { xs: 9, sm: 10 }, color: colors.textMuted }}>MSRP</Typography>
+                </Box>
+              </Box>
+              <Typography
+                sx={{
+                  fontSize: { xs: 18, sm: 20 },
+                  fontWeight: 700,
+                  color: colors.pink,
+                  marginLeft: 'auto',
+                  textAlign: 'right',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {region.currency}{region.msrp}
+              </Typography>
+            </Box>
+          ))}
         </Box>
-      )}
+        {hasMore && (
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+            <Button
+              onClick={() => setShowAll(!showAll)}
+              sx={{
+                textTransform: 'none',
+                color: colors.pink,
+                fontSize: 12,
+                fontWeight: 600,
+                minWidth: 'auto',
+                px: 1,
+                '&:hover': { backgroundColor: colors.pink + '20' },
+              }}
+              endIcon={showAll ? <KeyboardArrowUp /> : <ExpandMore />}
+            >
+              {showAll ? 'Show Less' : `Show ${Math.max(regions.length - maxVisible, 0)} More`}
+            </Button>
+          </Box>
+        )}
+      </Collapse>
     </Box>
   );
   };
@@ -293,7 +451,6 @@ const ReleasePage = () => {
         borderRadius: 2,
         border: `1px solid ${colors.cardBorder}`,
         p: 3,
-        mt: 3,
       }}
     >
       <Box
@@ -307,7 +464,7 @@ const ReleasePage = () => {
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <History sx={{ fontSize: 18, color: colors.pink }} />
-          <Typography sx={{ fontSize: 16, fontWeight: 600, color: colors.textPrimary }}>
+          <Typography sx={segmentTitleSx}>
             Releases & Variants
           </Typography>
           <Chip
@@ -596,111 +753,60 @@ const ReleasePage = () => {
   };
 
 // General Info Card Component (Two Columns)
-  const GeneralInfoCard = ({ data }: { data: typeof releaseData.generalInfo }) => {
+  const GeneralInfoCard = ({
+    data,
+    cardSx,
+  }: {
+    data: typeof releaseData.generalInfo;
+    cardSx?: SxProps<Theme>;
+  }) => {
     if (!data) return null;
+    const [open, setOpen] = useState(true);
     
     return (
       <Box
-        sx={{
-          backgroundColor: colors.card,
-          borderRadius: { xs: 1.5, md: 2 },
-          border: `1px solid ${colors.cardBorder}`,
-          p: { xs: 2, md: 3 },
-        }}
+        sx={[sectionCardSx, cardSx]}
       >
-        <Typography sx={{ fontSize: { xs: 14, md: 16 }, fontWeight: 600, color: colors.textPrimary, mb: { xs: 2, md: 3 } }}>
-          {data.title}
-        </Typography>
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: { xs: 3, md: 4 } }}>
-          {data.columns.map((column, colIndex) => (
-            <Box key={colIndex}>
-              {column.items.map((item, index) => (
-                <React.Fragment key={item.label}>
-                  <Box
-                    sx={{
-                      py: 1.5,
-                      display: 'flex',
-                      flexDirection: { xs: 'column', sm: 'row' },
-                      alignItems: { xs: 'flex-start', sm: 'center' },
-                      justifyContent: 'space-between',
-                      gap: { xs: 0.5, sm: 2 },
-                    }}
-                  >
-                    <Typography sx={{ fontSize: 14, color: colors.textMuted }}>{item.label}</Typography>
-                    <Typography sx={{ fontSize: 14, color: colors.textSecondary, fontWeight: 500, textAlign: { xs: 'left', sm: 'right' } }}>
-                      {item.value}
-                    </Typography>
-                  </Box>
-                  {index < column.items.length - 1 && <Divider sx={{ borderColor: colors.cardBorder }} />}
-                </React.Fragment>
-              ))}
-            </Box>
-          ))}
+        <Box
+          onClick={() => setOpen((prev) => !prev)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              setOpen((prev) => !prev);
+            }
+          }}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            mb: { xs: 2, md: 3 },
+            cursor: 'pointer',
+          }}
+        >
+          <Typography sx={segmentTitleSx}>
+            {data.title}
+          </Typography>
+          <IconButton
+            size="small"
+            aria-label={open ? 'Collapse section' : 'Expand section'}
+            sx={{ color: colors.textMuted }}
+          >
+            <ExpandMore
+              sx={{
+                fontSize: 20,
+                transition: 'transform 0.2s',
+                transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+              }}
+            />
+          </IconButton>
         </Box>
-      </Box>
-    );
-  };
-
-// Product Details Card Component (Sections)
-  const ProductDetailsCard = ({ data }: { data: typeof releaseData.productDetails }) => {
-    if (!data) return null;
-    const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
-
-    const toggleSection = (title: string) =>
-      setOpenSections((prev) => ({ ...prev, [title]: !prev[title] }));
-    
-    return (
-      <Box
-        sx={{
-          backgroundColor: colors.card,
-          borderRadius: { xs: 1.5, md: 2 },
-          border: `1px solid ${colors.cardBorder}`,
-          p: { xs: 2, md: 3 },
-        }}
-      >
-        <Typography sx={{ fontSize: { xs: 14, md: 16 }, fontWeight: 600, color: colors.textPrimary, mb: { xs: 2, md: 3 } }}>
-          {data.title}
-        </Typography>
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: { xs: 3, md: 4 } }}>
-          {data.sections.map((section) => {
-            const isOpen = openSections[section.title] ?? false;
-            const maxItems = 5;
-            const visibleItems = isOpen ? section.items : section.items.slice(0, maxItems);
-            const hasMore = section.items.length > maxItems;
-
-            return (
-              <Box key={section.title}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: { xs: 1.5, md: 2 } }}>
-                  <Typography sx={{ fontSize: { xs: 12, md: 13 }, fontWeight: 600, color: colors.textSecondary }}>
-                    {section.title}
-                  </Typography>
-                  {hasMore && (
-                    <Button
-                      onClick={() => toggleSection(section.title)}
-                      sx={{
-                        minWidth: 'auto',
-                        px: 0.5,
-                        color: colors.textMuted,
-                        textTransform: 'none',
-                        fontSize: 12,
-                        '&:hover': { backgroundColor: 'transparent', color: colors.textSecondary },
-                      }}
-                      endIcon={
-                        <ExpandMore
-                          sx={{
-                            fontSize: 16,
-                            transition: 'transform 0.2s',
-                            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                          }}
-                        />
-                      }
-                    >
-                      {isOpen ? 'Show less' : `Show all (${section.items.length})`}
-                    </Button>
-                  )}
-                </Box>
-              <Box>
-                {visibleItems.map((item, index) => (
+        <Collapse in={open}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(2, 1fr)' }, gap: { xs: 3, md: 4 } }}>
+            {data.columns.map((column, colIndex) => (
+              <Box key={colIndex}>
+                {column.items.map((item, index) => (
                   <React.Fragment key={item.label}>
                     <Box
                       sx={{
@@ -717,14 +823,143 @@ const ReleasePage = () => {
                         {item.value}
                       </Typography>
                     </Box>
-                    {index < visibleItems.length - 1 && <Divider sx={{ borderColor: colors.cardBorder }} />}
+                    {index < column.items.length - 1 && <Divider sx={{ borderColor: colors.cardBorder }} />}
                   </React.Fragment>
                 ))}
               </Box>
-              </Box>
-            );
-          })}
+            ))}
+          </Box>
+        </Collapse>
+      </Box>
+    );
+  };
+
+// Product Details Card Component (Sections)
+  const ProductDetailsCard = ({
+    data,
+    cardSx,
+  }: {
+    data: typeof releaseData.productDetails;
+    cardSx?: SxProps<Theme>;
+  }) => {
+    if (!data) return null;
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+    const [open, setOpen] = useState(!isMobile);
+    
+    useEffect(() => {
+      setOpen(!isMobile);
+    }, [isMobile]);
+
+    const toggleSection = (title: string) =>
+      setOpenSections((prev) => ({ ...prev, [title]: !prev[title] }));
+    
+    return (
+      <Box
+        sx={[sectionCardSx, cardSx]}
+      >
+        <Box
+          onClick={() => setOpen((prev) => !prev)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              setOpen((prev) => !prev);
+            }
+          }}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            mb: { xs: 2, md: 3 },
+            cursor: 'pointer',
+          }}
+        >
+          <Typography sx={segmentTitleSx}>
+            {data.title}
+          </Typography>
+          <IconButton
+            size="small"
+            aria-label={open ? 'Collapse section' : 'Expand section'}
+            sx={{ color: colors.textMuted }}
+          >
+            <ExpandMore
+              sx={{
+                fontSize: 20,
+                transition: 'transform 0.2s',
+                transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+              }}
+            />
+          </IconButton>
         </Box>
+        <Collapse in={open}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(2, 1fr)' }, gap: { xs: 3, md: 4 } }}>
+            {data.sections.map((section) => {
+              const isOpen = openSections[section.title] ?? false;
+              const maxItems = 5;
+              const visibleItems = isOpen ? section.items : section.items.slice(0, maxItems);
+              const hasMore = section.items.length > maxItems;
+
+              return (
+                <Box key={section.title}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: { xs: 1.5, md: 2 } }}>
+                    <Typography sx={{ fontSize: { xs: 12, md: 13 }, fontWeight: 600, color: colors.textSecondary }}>
+                      {section.title}
+                    </Typography>
+                    {hasMore && (
+                      <Button
+                        onClick={() => toggleSection(section.title)}
+                        sx={{
+                          minWidth: 'auto',
+                          px: 0.5,
+                          color: colors.textMuted,
+                          textTransform: 'none',
+                          fontSize: 12,
+                          '&:hover': { backgroundColor: 'transparent', color: colors.textSecondary },
+                        }}
+                        endIcon={
+                          <ExpandMore
+                            sx={{
+                              fontSize: 16,
+                              transition: 'transform 0.2s',
+                              transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                            }}
+                          />
+                        }
+                      >
+                        {isOpen ? 'Show less' : `Show all (${section.items.length})`}
+                      </Button>
+                    )}
+                  </Box>
+                  <Box>
+                    {visibleItems.map((item, index) => (
+                      <React.Fragment key={item.label}>
+                        <Box
+                          sx={{
+                            py: 1.5,
+                            display: 'flex',
+                            flexDirection: { xs: 'column', sm: 'row' },
+                            alignItems: { xs: 'flex-start', sm: 'center' },
+                            justifyContent: 'space-between',
+                            gap: { xs: 0.5, sm: 2 },
+                          }}
+                        >
+                          <Typography sx={{ fontSize: 14, color: colors.textMuted }}>{item.label}</Typography>
+                          <Typography sx={{ fontSize: 14, color: colors.textSecondary, fontWeight: 500, textAlign: { xs: 'left', sm: 'right' } }}>
+                            {item.value}
+                          </Typography>
+                        </Box>
+                        {index < visibleItems.length - 1 && <Divider sx={{ borderColor: colors.cardBorder }} />}
+                      </React.Fragment>
+                    ))}
+                  </Box>
+                </Box>
+              );
+            })}
+          </Box>
+        </Collapse>
       </Box>
     );
   };
@@ -736,12 +971,18 @@ const ReleasePage = () => {
   rarity,
   image,
   placeholderIcon,
+  cardSx,
+  imageSx,
+  contentSx,
 }: {
   name: string;
   category: string;
   rarity?: string;
   image: string;
   placeholderIcon?: React.ReactNode;
+  cardSx?: SxProps<Theme>;
+  imageSx?: SxProps<Theme>;
+  contentSx?: SxProps<Theme>;
   }) => {
   const rarityColors: Record<string, string> = {
     Rare: colors.purple,
@@ -751,7 +992,7 @@ const ReleasePage = () => {
 
   return (
     <Box
-      sx={{
+      sx={[{
         backgroundColor: colors.card,
         borderRadius: { xs: 1.5, md: 2 },
         border: `1px solid ${colors.cardBorder}`,
@@ -765,16 +1006,16 @@ const ReleasePage = () => {
           transform: { xs: 'none', md: 'translateY(-4px)' },
           boxShadow: { xs: 'none', md: '0 8px 24px rgba(236, 72, 153, 0.15)' },
         },
-      }}
+      }, cardSx]}
     >
       <Box
-        sx={{
+        sx={[{
           aspectRatio: '1',
           backgroundColor: colors.bgLight,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-        }}
+        }, imageSx]}
       >
         {image && false ? (
           <Box
@@ -789,7 +1030,7 @@ const ReleasePage = () => {
           </Box>
         )}
       </Box>
-      <Box sx={{ p: { xs: 1.5, md: 2 } }}>
+      <Box sx={[{ p: { xs: 1.5, md: 2 } }, contentSx]}>
         <Typography sx={{ fontSize: { xs: 10, md: 11 }, color: colors.textMuted, mb: 0.5 }}>{category}</Typography>
         <Typography sx={{ fontSize: { xs: 13, md: 14 }, fontWeight: 500, color: colors.textPrimary, mb: 1 }}>
           {name}
@@ -815,7 +1056,9 @@ const ReleasePage = () => {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <Box sx={{ mb: { xs: 3, md: 4 } }}>
+    <Box
+      sx={sectionCardSx}
+    >
       <Box
         sx={{
           display: 'flex',
@@ -826,7 +1069,7 @@ const ReleasePage = () => {
           mb: expanded ? { xs: 2, md: 3 } : 0,
           cursor: 'pointer',
           pb: { xs: 1.5, md: 2 },
-          borderBottom: `1px solid ${colors.cardBorder}`,
+          borderBottom: 'none',
           '&:hover': {
             backgroundColor: `${colors.cardBorder}40`,
           },
@@ -834,7 +1077,7 @@ const ReleasePage = () => {
         onClick={() => setExpanded(!expanded)}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontSize: { xs: 18, md: 20 }, fontWeight: 600, color: colors.textPrimary }}>
+          <Typography sx={segmentTitleSx}>
             Accessories
           </Typography>
           <Typography sx={{ fontSize: { xs: 13, md: 14 }, color: colors.textMuted }}>
@@ -846,20 +1089,15 @@ const ReleasePage = () => {
         </IconButton>
       </Box>
       <Collapse in={expanded}>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: 'repeat(auto-fit, minmax(200px, 220px))' },
-            justifyContent: 'start',
-            gap: { xs: 1, md: 1.5 },
-            mt: { xs: 2, md: 3 },
-          }}
-        >
+        <Box sx={sectionGridSx}>
           {accessories.map((item) => (
             <AccessoryCard
               key={item.name}
               {...item}
               placeholderIcon={<LocalOffer sx={{ fontSize: 40 }} />}
+              cardSx={accessoryCardLayout.cardSx}
+              imageSx={accessoryCardLayout.imageSx}
+              contentSx={accessoryCardLayout.contentSx}
             />
           ))}
         </Box>
@@ -887,7 +1125,9 @@ const ReleasePage = () => {
   });
 
   return (
-    <Box sx={{ mb: { xs: 3, md: 4 } }}>
+    <Box
+      sx={sectionCardSx}
+    >
       <Box
         sx={{
           display: 'flex',
@@ -898,7 +1138,7 @@ const ReleasePage = () => {
           mb: expanded ? { xs: 2, md: 3 } : 0,
           cursor: 'pointer',
           pb: { xs: 1.5, md: 2 },
-          borderBottom: `1px solid ${colors.cardBorder}`,
+          borderBottom: 'none',
           '&:hover': {
             backgroundColor: `${colors.cardBorder}40`,
           },
@@ -906,7 +1146,7 @@ const ReleasePage = () => {
         onClick={() => setExpanded(!expanded)}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontSize: { xs: 18, md: 20 }, fontWeight: 600, color: colors.textPrimary }}>
+          <Typography sx={segmentTitleSx}>
             Characters
           </Typography>
           <Typography sx={{ fontSize: { xs: 13, md: 14 }, color: colors.textMuted }}>
@@ -918,17 +1158,15 @@ const ReleasePage = () => {
         </IconButton>
       </Box>
       <Collapse in={expanded}>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: 'repeat(auto-fit, minmax(200px, 220px))' },
-            justifyContent: 'start',
-            gap: { xs: 1, md: 1.5 },
-            mt: { xs: 2, md: 3 },
-          }}
-        >
+        <Box sx={sectionGridSx}>
           {characterCards.map((character) => (
-            <CharacterCard key={character.id} {...character} />
+            <CharacterCard
+              key={character.id}
+              {...character}
+              cardSx={releaseCharacterCardLayout.cardSx}
+              mediaSx={releaseCharacterCardLayout.mediaSx}
+              contentSx={releaseCharacterCardLayout.contentSx}
+            />
           ))}
         </Box>
       </Collapse>
@@ -942,7 +1180,9 @@ const ReleasePage = () => {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <Box sx={{ mb: { xs: 3, md: 4 } }}>
+    <Box
+      sx={sectionCardSx}
+    >
       <Box
         sx={{
           display: 'flex',
@@ -953,7 +1193,7 @@ const ReleasePage = () => {
           mb: expanded ? { xs: 2, md: 3 } : 0,
           cursor: 'pointer',
           pb: { xs: 1.5, md: 2 },
-          borderBottom: `1px solid ${colors.cardBorder}`,
+          borderBottom: 'none',
           '&:hover': {
             backgroundColor: `${colors.cardBorder}40`,
           },
@@ -961,7 +1201,7 @@ const ReleasePage = () => {
         onClick={() => setExpanded(!expanded)}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontSize: { xs: 18, md: 20 }, fontWeight: 600, color: colors.textPrimary }}>
+          <Typography sx={segmentTitleSx}>
             Clothing
           </Typography>
           <Typography sx={{ fontSize: { xs: 13, md: 14 }, color: colors.textMuted }}>
@@ -973,20 +1213,15 @@ const ReleasePage = () => {
         </IconButton>
       </Box>
       <Collapse in={expanded}>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: 'repeat(auto-fit, minmax(200px, 220px))' },
-            justifyContent: 'start',
-            gap: { xs: 1, md: 1.5 },
-            mt: { xs: 2, md: 3 },
-          }}
-        >
+        <Box sx={sectionGridSx}>
           {clothing.map((item) => (
             <AccessoryCard
               key={item.name}
               {...item}
               placeholderIcon={<Checkroom sx={{ fontSize: 40 }} />}
+              cardSx={accessoryCardLayout.cardSx}
+              imageSx={accessoryCardLayout.imageSx}
+              contentSx={accessoryCardLayout.contentSx}
             />
           ))}
         </Box>
@@ -1001,7 +1236,9 @@ const ReleasePage = () => {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <Box sx={{ mb: { xs: 3, md: 4 } }}>
+    <Box
+      sx={sectionCardSx}
+    >
       <Box
         sx={{
           display: 'flex',
@@ -1012,7 +1249,7 @@ const ReleasePage = () => {
           mb: expanded ? { xs: 2, md: 3 } : 0,
           cursor: 'pointer',
           pb: { xs: 1.5, md: 2 },
-          borderBottom: `1px solid ${colors.cardBorder}`,
+          borderBottom: 'none',
           '&:hover': {
             backgroundColor: `${colors.cardBorder}40`,
           },
@@ -1020,7 +1257,7 @@ const ReleasePage = () => {
         onClick={() => setExpanded(!expanded)}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography sx={{ fontSize: { xs: 18, md: 20 }, fontWeight: 600, color: colors.textPrimary }}>
+          <Typography sx={segmentTitleSx}>
             Pets
           </Typography>
           <Typography sx={{ fontSize: { xs: 13, md: 14 }, color: colors.textMuted }}>
@@ -1032,15 +1269,7 @@ const ReleasePage = () => {
         </IconButton>
       </Box>
       <Collapse in={expanded}>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: 'repeat(auto-fit, minmax(200px, 220px))' },
-            justifyContent: 'start',
-            gap: { xs: 1, md: 1.5 },
-            mt: { xs: 2, md: 3 },
-          }}
-        >
+        <Box sx={sectionGridSx}>
           {pets.map((pet) => (
             <PetCardSimple
               key={pet.name}
@@ -1049,6 +1278,9 @@ const ReleasePage = () => {
               imageUrl={pet.image}
               to={`/catalog/p/${pet.id}`}
               {...(pet.rarity !== undefined ? { rarity: pet.rarity } : {})}
+              cardSx={releasePetCardLayout.cardSx}
+              mediaSx={releasePetCardLayout.mediaSx}
+              contentSx={releasePetCardLayout.contentSx}
             />
           ))}
         </Box>
@@ -1063,6 +1295,7 @@ const ReleasePage = () => {
   const [selectedPeriod, setSelectedPeriod] = useState(1);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number } | null>(null);
+  const [expanded, setExpanded] = useState(true);
   const chartRef = React.useRef<HTMLDivElement | null>(null);
 
   const regions = releaseData.priceHistory?.regions ?? [];
@@ -1222,14 +1455,32 @@ const ReleasePage = () => {
         borderRadius: { xs: 1.5, md: 2 },
         border: `1px solid ${colors.cardBorder}`,
         p: { xs: 2, md: 3 },
-        mb: { xs: 3, md: 4 },
       }}
     >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: { xs: 2, md: 3 }, flexWrap: 'wrap', gap: 2 }}>
+      <Box
+        onClick={() => setExpanded((prev) => !prev)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setExpanded((prev) => !prev);
+          }
+        }}
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          mb: { xs: 2, md: 3 },
+          flexWrap: 'wrap',
+          gap: 2,
+          cursor: 'pointer',
+        }}
+      >
         <Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
             <TrendingUp sx={{ fontSize: 18, color: colors.pink }} />
-            <Typography sx={{ fontSize: 16, fontWeight: 600, color: colors.textPrimary }}>
+            <Typography sx={segmentTitleSx}>
               Price History
             </Typography>
             <Chip
@@ -1265,248 +1516,259 @@ const ReleasePage = () => {
             Start {formatPrice(startValue)} · Spread {formatPrice(rangeValue)}
           </Typography>
         </Box>
+        <IconButton
+          size="small"
+          aria-label={expanded ? 'Collapse section' : 'Expand section'}
+          sx={{ color: colors.textMuted, mt: 0.5 }}
+        >
+          <ExpandMore
+            sx={{
+              fontSize: 20,
+              transition: 'transform 0.2s',
+              transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+            }}
+          />
+        </IconButton>
+      </Box>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-          {/* Region Selector */}
-          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-            {regions.map((region, index) => (
+      <Collapse in={expanded}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            {/* Region Selector */}
+            <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+              {regions.map((region, index) => (
+                <Box
+                  key={region.code}
+                  onClick={() => setSelectedRegion(index)}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                    px: 1.5,
+                    py: 0.5,
+                    borderRadius: 1,
+                    cursor: 'pointer',
+                    backgroundColor: regionIndex === index ? colors.bgLight : 'transparent',
+                    border: `1px solid ${regionIndex === index ? colors.cardBorder : 'transparent'}`,
+                    color: regionIndex === index ? colors.textPrimary : colors.textMuted,
+                    fontSize: 12,
+                    '&:hover': { color: colors.textPrimary },
+                  }}
+                >
+                  <Typography component="span">{regionFlagMap[region.code] ?? '🌎'}</Typography>
+                  <Typography component="span">{region.code}</Typography>
+                </Box>
+              ))}
+            </Box>
+
+            {/* Period Selector */}
+            <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+              {periodOptions.map((period, index) => (
+                <Button
+                  key={period}
+                  size="small"
+                  onClick={() => setSelectedPeriod(index)}
+                  sx={{
+                    minWidth: 40,
+                    backgroundColor: periodIndex === index ? colors.pink : 'transparent',
+                    color: periodIndex === index ? colors.textPrimary : colors.textMuted,
+                    fontSize: 11,
+                    py: 0.5,
+                    '&:hover': { backgroundColor: periodIndex === index ? colors.pinkDark : colors.cardBorder },
+                  }}
+                >
+                  {period}
+                </Button>
+              ))}
+            </Box>
+          </Box>
+
+          {/* Chart */}
+          <Box
+            sx={{
+              height: { xs: 220, md: 260 },
+              mb: { xs: 2, md: 3 },
+              position: 'relative',
+            }}
+            ref={chartRef}
+            onMouseMove={handleHoverMove}
+            onMouseLeave={handleHoverLeave}
+          >
+            <Box sx={{ position: 'absolute', inset: 0 }}>
+              <svg
+                viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+                width="100%"
+                height="100%"
+                preserveAspectRatio="xMidYMid meet"
+                style={{ display: 'block', pointerEvents: 'none' }}
+              >
+                <defs>
+                  <linearGradient id="priceHistoryGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={`${colors.pink}66`} />
+                    <stop offset="100%" stopColor="transparent" />
+                  </linearGradient>
+                </defs>
+                {[0, 0.25, 0.5, 0.75, 1].map((line, index) => {
+                  const y = chartTop + innerHeight * line;
+                  return (
+                    <line
+                      key={index}
+                      x1={chartLeft}
+                      y1={y}
+                      x2={chartLeft + innerWidth}
+                      y2={y}
+                      stroke={colors.cardBorder}
+                      strokeDasharray="4 6"
+                    />
+                  );
+                })}
+                {yTicks.map((tick, index) => {
+                  const y = chartTop + innerHeight * (index / (yTicks.length - 1));
+                  return (
+                    <text
+                      key={tick.label}
+                      x={chartPadding}
+                      y={y + 4}
+                      fill={colors.textMuted}
+                      fontSize="10"
+                    >
+                      {tick.label}
+                    </text>
+                  );
+                })}
+                {linePoints.length > 0 && (
+                  <>
+                    <path d={areaPath} fill="url(#priceHistoryGradient)" />
+                    <polyline
+                      points={linePath}
+                      fill="none"
+                      stroke={colors.pink}
+                      strokeWidth="2"
+                    />
+                    <circle cx={minPoint.x} cy={minPoint.y} r="3" fill={colors.red} />
+                    <circle cx={maxPoint.x} cy={maxPoint.y} r="3" fill={colors.green} />
+                    {lastPoint && <circle cx={lastPoint.x} cy={lastPoint.y} r="4" fill={colors.textPrimary} />}
+                  </>
+                )}
+                {hoveredPoint && (
+                  <>
+                    <line
+                      x1={hoveredPoint.x}
+                      y1={chartTop}
+                      x2={hoveredPoint.x}
+                      y2={chartTop + innerHeight}
+                      stroke={`${colors.textMuted}66`}
+                      strokeDasharray="4 6"
+                    />
+                    <line
+                      x1={chartLeft}
+                      y1={hoveredPoint.y}
+                      x2={chartLeft + innerWidth}
+                      y2={hoveredPoint.y}
+                      stroke={`${colors.textMuted}66`}
+                      strokeDasharray="4 6"
+                    />
+                    <circle cx={hoveredPoint.x} cy={hoveredPoint.y} r="5" fill={colors.pink} stroke={colors.bg} strokeWidth="2" />
+                  </>
+                )}
+                {xLabels.map((label, index) => {
+                  const x = chartLeft + (innerWidth / (xLabels.length - 1)) * index;
+                  return (
+                    <text
+                      key={label}
+                      x={x}
+                      y={chartTop + innerHeight + chartBottom - 8}
+                      fill={colors.textMuted}
+                      fontSize="10"
+                      textAnchor={index === 0 ? 'start' : index === xLabels.length - 1 ? 'end' : 'middle'}
+                    >
+                      {label}
+                    </text>
+                  );
+                })}
+              </svg>
+            </Box>
+            {hoveredPoint && hoverPosition && (
               <Box
-                key={region.code}
-                onClick={() => setSelectedRegion(index)}
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 0.5,
+                  position: 'absolute',
+                  left: Math.min(Math.max(hoverPosition.x + 12, 8), (chartRef.current?.clientWidth ?? 0) - 160),
+                  top: Math.min(Math.max(hoverPosition.y - 40, 8), (chartRef.current?.clientHeight ?? 0) - 56),
+                  backgroundColor: colors.card,
+                  border: `1px solid ${colors.cardBorder}`,
+                  borderRadius: 2,
                   px: 1.5,
-                  py: 0.5,
-                  borderRadius: 1,
-                  cursor: 'pointer',
-                  backgroundColor: regionIndex === index ? colors.bgLight : 'transparent',
-                  border: `1px solid ${regionIndex === index ? colors.cardBorder : 'transparent'}`,
-                  color: regionIndex === index ? colors.textPrimary : colors.textMuted,
-                  fontSize: 12,
-                  '&:hover': { color: colors.textPrimary },
+                  py: 1,
+                  minWidth: 140,
+                  pointerEvents: 'none',
+                  boxShadow: '0 10px 24px rgba(0,0,0,0.35)',
                 }}
               >
-                <Typography component="span">{regionFlagMap[region.code] ?? '🌎'}</Typography>
-                <Typography component="span">{region.code}</Typography>
+                <Typography sx={{ fontSize: 11, color: colors.textMuted }}>{hoverLabel}</Typography>
+                <Typography sx={{ fontSize: 14, fontWeight: 700, color: colors.textPrimary }}>
+                  {formatPrice(hoverValue)}
+                </Typography>
+                <Typography sx={{ fontSize: 11, color: hoverColor }}>
+                  {hoverDelta >= 0 ? '+' : '-'}
+                  {formatPrice(Math.abs(hoverDelta))} ({hoverDeltaPercent.toFixed(1)}%)
+                </Typography>
+              </Box>
+            )}
+          </Box>
+
+          {/* Stats */}
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(5, 1fr)' }, gap: 1.5 }}>
+            {[
+              {
+                label: 'Period Low',
+                value: formatPrice(minValue),
+                sublabel: `All-time ${formatPrice(fullMin)}`,
+                color: colors.red,
+              },
+              {
+                label: 'Period High',
+                value: formatPrice(maxValue),
+                sublabel: `All-time ${formatPrice(fullMax)}`,
+                color: colors.green,
+              },
+              {
+                label: 'Average',
+                value: formatPrice(avgValue),
+                sublabel: `Volatility ${formatPrice(volatilityValue)}`,
+                color: colors.textPrimary,
+              },
+              {
+                label: 'MSRP',
+                value: msrpValue ? formatPrice(msrpValue) : '—',
+                sublabel: msrpValue && msrpDeltaValue !== null
+                  ? `${msrpDeltaValue >= 0 ? '+' : ''}${formatPrice(Math.abs(msrpDeltaValue))} (${msrpDeltaPercent?.toFixed(1)}%)`
+                  : 'No MSRP data',
+                color: colors.textPrimary,
+              },
+            ].map((stat) => (
+              <Box
+                key={stat.label}
+                sx={{
+                  backgroundColor: colors.bgLight,
+                  borderRadius: 2,
+                  border: `1px solid ${colors.cardBorder}`,
+                  p: 1.5,
+                }}
+              >
+                <Typography sx={{ fontSize: 10, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.6 }}>
+                  {stat.label}
+                </Typography>
+                <Typography sx={{ fontSize: 14, fontWeight: 600, color: stat.color }}>
+                  {stat.value}
+                </Typography>
+                <Typography sx={{ fontSize: 11, color: colors.textMuted }}>
+                  {stat.sublabel}
+                </Typography>
               </Box>
             ))}
           </Box>
-
-          {/* Period Selector */}
-          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-            {periodOptions.map((period, index) => (
-              <Button
-                key={period}
-                size="small"
-                onClick={() => setSelectedPeriod(index)}
-                sx={{
-                  minWidth: 40,
-                  backgroundColor: periodIndex === index ? colors.pink : 'transparent',
-                  color: periodIndex === index ? colors.textPrimary : colors.textMuted,
-                  fontSize: 11,
-                  py: 0.5,
-                  '&:hover': { backgroundColor: periodIndex === index ? colors.pinkDark : colors.cardBorder },
-                }}
-              >
-                {period}
-              </Button>
-            ))}
-          </Box>
         </Box>
-      </Box>
-
-      {/* Chart */}
-      <Box
-        sx={{
-          height: { xs: 220, md: 260 },
-          mb: { xs: 2, md: 3 },
-          position: 'relative',
-        }}
-        ref={chartRef}
-        onMouseMove={handleHoverMove}
-        onMouseLeave={handleHoverLeave}
-      >
-        <Box sx={{ position: 'absolute', inset: 0 }}>
-          <svg
-            viewBox={`0 0 ${chartWidth} ${chartHeight}`}
-            width="100%"
-            height="100%"
-            preserveAspectRatio="xMidYMid meet"
-            style={{ display: 'block', pointerEvents: 'none' }}
-          >
-            <defs>
-              <linearGradient id="priceHistoryGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={`${colors.pink}66`} />
-                <stop offset="100%" stopColor="transparent" />
-              </linearGradient>
-            </defs>
-            {[0, 0.25, 0.5, 0.75, 1].map((line, index) => {
-              const y = chartTop + innerHeight * line;
-              return (
-                <line
-                  key={index}
-                  x1={chartLeft}
-                  y1={y}
-                  x2={chartLeft + innerWidth}
-                  y2={y}
-                  stroke={colors.cardBorder}
-                  strokeDasharray="4 6"
-                />
-              );
-            })}
-            {yTicks.map((tick, index) => {
-              const y = chartTop + innerHeight * (index / (yTicks.length - 1));
-              return (
-                <text
-                  key={tick.label}
-                  x={chartPadding}
-                  y={y + 4}
-                  fill={colors.textMuted}
-                  fontSize="10"
-                >
-                  {tick.label}
-                </text>
-              );
-            })}
-            {linePoints.length > 0 && (
-              <>
-                <path d={areaPath} fill="url(#priceHistoryGradient)" />
-                <polyline
-                  points={linePath}
-                  fill="none"
-                  stroke={colors.pink}
-                  strokeWidth="2"
-                />
-                <circle cx={minPoint.x} cy={minPoint.y} r="3" fill={colors.red} />
-                <circle cx={maxPoint.x} cy={maxPoint.y} r="3" fill={colors.green} />
-                {lastPoint && <circle cx={lastPoint.x} cy={lastPoint.y} r="4" fill={colors.textPrimary} />}
-              </>
-            )}
-            {hoveredPoint && (
-              <>
-                <line
-                  x1={hoveredPoint.x}
-                  y1={chartTop}
-                  x2={hoveredPoint.x}
-                  y2={chartTop + innerHeight}
-                  stroke={`${colors.textMuted}66`}
-                  strokeDasharray="4 6"
-                />
-                <line
-                  x1={chartLeft}
-                  y1={hoveredPoint.y}
-                  x2={chartLeft + innerWidth}
-                  y2={hoveredPoint.y}
-                  stroke={`${colors.textMuted}66`}
-                  strokeDasharray="4 6"
-                />
-                <circle cx={hoveredPoint.x} cy={hoveredPoint.y} r="5" fill={colors.pink} stroke={colors.bg} strokeWidth="2" />
-              </>
-            )}
-            {xLabels.map((label, index) => {
-              const x = chartLeft + (innerWidth / (xLabels.length - 1)) * index;
-              return (
-                <text
-                  key={label}
-                  x={x}
-                  y={chartTop + innerHeight + chartBottom - 8}
-                  fill={colors.textMuted}
-                  fontSize="10"
-                  textAnchor={index === 0 ? 'start' : index === xLabels.length - 1 ? 'end' : 'middle'}
-                >
-                  {label}
-                </text>
-              );
-            })}
-          </svg>
-        </Box>
-        {hoveredPoint && hoverPosition && (
-          <Box
-            sx={{
-              position: 'absolute',
-              left: Math.min(Math.max(hoverPosition.x + 12, 8), (chartRef.current?.clientWidth ?? 0) - 160),
-              top: Math.min(Math.max(hoverPosition.y - 40, 8), (chartRef.current?.clientHeight ?? 0) - 56),
-              backgroundColor: colors.card,
-              border: `1px solid ${colors.cardBorder}`,
-              borderRadius: 2,
-              px: 1.5,
-              py: 1,
-              minWidth: 140,
-              pointerEvents: 'none',
-              boxShadow: '0 10px 24px rgba(0,0,0,0.35)',
-            }}
-          >
-            <Typography sx={{ fontSize: 11, color: colors.textMuted }}>{hoverLabel}</Typography>
-            <Typography sx={{ fontSize: 14, fontWeight: 700, color: colors.textPrimary }}>
-              {formatPrice(hoverValue)}
-            </Typography>
-            <Typography sx={{ fontSize: 11, color: hoverColor }}>
-              {hoverDelta >= 0 ? '+' : '-'}
-              {formatPrice(Math.abs(hoverDelta))} ({hoverDeltaPercent.toFixed(1)}%)
-            </Typography>
-          </Box>
-        )}
-      </Box>
-
-      {/* Stats */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(5, 1fr)' }, gap: 1.5 }}>
-        {[
-          {
-            label: 'Period Low',
-            value: formatPrice(minValue),
-            sublabel: `All-time ${formatPrice(fullMin)}`,
-            color: colors.red,
-          },
-          {
-            label: 'Period High',
-            value: formatPrice(maxValue),
-            sublabel: `All-time ${formatPrice(fullMax)}`,
-            color: colors.green,
-          },
-          {
-            label: 'Average',
-            value: formatPrice(avgValue),
-            sublabel: `Volatility ${formatPrice(volatilityValue)}`,
-            color: colors.textPrimary,
-          },
-          {
-            label: 'MSRP',
-            value: msrpValue ? formatPrice(msrpValue) : '—',
-            sublabel: msrpValue && msrpDeltaValue !== null
-              ? `${msrpDeltaValue >= 0 ? '+' : ''}${formatPrice(Math.abs(msrpDeltaValue))} (${msrpDeltaPercent?.toFixed(1)}%)`
-              : 'No MSRP data',
-            color: colors.textPrimary,
-          },
-          {
-            label: 'Recent Sales',
-            value: recentSalesCount ? `${recentSalesCount}` : '—',
-            sublabel: recentSalesCount ? 'Recent sales' : 'No sales data',
-            color: colors.textSecondary,
-          },
-        ].map((stat) => (
-          <Box
-            key={stat.label}
-            sx={{
-              backgroundColor: colors.bgLight,
-              borderRadius: 2,
-              border: `1px solid ${colors.cardBorder}`,
-              p: 1.5,
-            }}
-          >
-            <Typography sx={{ fontSize: 10, color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.6 }}>
-              {stat.label}
-            </Typography>
-            <Typography sx={{ fontSize: 14, fontWeight: 600, color: stat.color }}>
-              {stat.value}
-            </Typography>
-            <Typography sx={{ fontSize: 11, color: colors.textMuted }}>
-              {stat.sublabel}
-            </Typography>
-          </Box>
-        ))}
-      </Box>
+      </Collapse>
     </Box>
   );
 };
@@ -1620,7 +1882,14 @@ const CommunityReviews = () => {
   const creators = releaseData.creators ?? [];
 
   return (
-    <Box>
+    <Box
+      sx={{
+        backgroundColor: colors.card,
+        borderRadius: { xs: 1.5, md: 2 },
+        border: `1px solid ${colors.cardBorder}`,
+        p: { xs: 2, md: 3 },
+      }}
+    >
       {/* Tutorials */}
       <Typography sx={{ fontSize: { xs: 13, md: 14 }, fontWeight: 600, color: colors.textPrimary, mb: { xs: 1.5, md: 2 } }}>
         Related Tutorials
@@ -1738,100 +2007,131 @@ const CommunityReviews = () => {
 // Community Section with Tabs
   const CommunitySection = () => {
   const [selectedTab, setSelectedTab] = useState(0);
+  const [expanded, setExpanded] = useState(true);
 
   const tabs = [
     { label: 'Reviews', icon: <People sx={{ fontSize: 16 }} />, count: releaseData.communityCounts?.reviews ?? 0 },
     { label: 'Customs & OOAK', icon: <Brush sx={{ fontSize: 16 }} />, count: releaseData.communityCounts?.customs ?? 0 },
-    { label: 'Tutorials', icon: <School sx={{ fontSize: 16 }} />, count: releaseData.communityCounts?.tutorials ?? 0 },
+    // { label: 'Tutorials', icon: <School sx={{ fontSize: 16 }} />, count: releaseData.communityCounts?.tutorials ?? 0 },
   ];
 
   return (
-    <Box sx={{ mt: { xs: 4, md: 6 } }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: { xs: 2, md: 3 } }}>
-        <Collections sx={{ fontSize: { xs: 18, md: 20 }, color: colors.pink }} />
-        <Typography sx={{ fontSize: { xs: 18, md: 20 }, fontWeight: 600, color: colors.textPrimary }}>
-          Community
-        </Typography>
-      </Box>
-
+    <Box
+      sx={{
+        backgroundColor: colors.card,
+        borderRadius: { xs: 1.5, md: 2 },
+        border: `1px solid ${colors.cardBorder}`,
+        p: { xs: 2, md: 3 },
+      }}
+    >
       <Box
+        onClick={() => setExpanded((prev) => !prev)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setExpanded((prev) => !prev);
+          }
+        }}
         sx={{
-          backgroundColor: colors.card,
-          borderRadius: { xs: 1.5, md: 2 },
-          border: `1px solid ${colors.cardBorder}`,
-          overflow: 'hidden',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 1,
+          mb: { xs: 2, md: 3 },
+          cursor: 'pointer',
         }}
       >
-        {/* Tabs */}
-        <Box sx={{ display: 'flex', borderBottom: `1px solid ${colors.cardBorder}`, overflowX: 'auto' }}>
-          {tabs.map((tab, index) => (
-            <Box
-              key={tab.label}
-              onClick={() => setSelectedTab(index)}
-              sx={{
-                flex: { xs: '0 0 auto', sm: 1 },
-                minWidth: { xs: 140, sm: 'auto' },
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 1,
-                py: 2,
-                px: { xs: 1.5, sm: 0 },
-                cursor: 'pointer',
-                backgroundColor: selectedTab === index ? colors.bgLight : 'transparent',
-                borderBottom: `2px solid ${selectedTab === index ? colors.pink : 'transparent'}`,
-                color: selectedTab === index ? colors.textPrimary : colors.textMuted,
-                transition: 'all 0.2s',
-                '&:hover': { color: colors.textPrimary },
-              }}
-            >
-              {tab.icon}
-              <Typography sx={{ fontSize: 13, fontWeight: 500 }}>{tab.label}</Typography>
-              <Chip
-                label={tab.count}
-                size="small"
-                sx={{
-                  backgroundColor: `${colors.pink}20`,
-                  color: colors.pink,
-                  fontSize: 10,
-                  height: 18,
-                  minWidth: 28,
-                }}
-              />
-            </Box>
-          ))}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Collections sx={{ fontSize: { xs: 18, md: 20 }, color: colors.pink }} />
+          <Typography sx={segmentTitleSx}>
+            Community
+          </Typography>
         </Box>
-
-        {/* Tab Content */}
-        <Box sx={{ p: { xs: 2, md: 3 } }}>
-          {selectedTab === 0 && <CommunityReviews />}
-          {selectedTab === 1 && <OOAKSection />}
-          {selectedTab === 2 && <TutorialsSection />}
-        </Box>
+        <IconButton
+          size="small"
+          aria-label={expanded ? 'Collapse section' : 'Expand section'}
+          sx={{ color: colors.textMuted }}
+        >
+          <ExpandMore
+            sx={{
+              fontSize: 20,
+              transition: 'transform 0.2s',
+              transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+            }}
+          />
+        </IconButton>
       </Box>
 
-      <Typography sx={{ fontSize: 11, color: colors.textMuted, mt: 2, fontStyle: 'italic' }}>
-        Community content is created by collectors and fans. Official content is clearly labeled above.
-      </Typography>
+      <Collapse in={expanded}>
+        <Box
+          sx={{
+            backgroundColor: colors.bgLight,
+            borderRadius: { xs: 1.5, md: 2 },
+            border: `1px solid ${colors.cardBorder}`,
+            overflow: 'hidden',
+          }}
+        >
+          {/* Tabs */}
+          <Box sx={{ display: 'flex', borderBottom: `1px solid ${colors.cardBorder}`, overflowX: 'auto' }}>
+            {tabs.map((tab, index) => (
+              <Box
+                key={tab.label}
+                onClick={() => setSelectedTab(index)}
+                sx={{
+                  flex: { xs: '0 0 auto', sm: 1 },
+                  minWidth: { xs: 140, sm: 'auto' },
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 1,
+                  py: 2,
+                  px: { xs: 1.5, sm: 0 },
+                  cursor: 'pointer',
+                  backgroundColor: selectedTab === index ? colors.bgLight : 'transparent',
+                  borderBottom: `2px solid ${selectedTab === index ? colors.pink : 'transparent'}`,
+                  color: selectedTab === index ? colors.textPrimary : colors.textMuted,
+                  transition: 'all 0.2s',
+                  '&:hover': { color: colors.textPrimary },
+                }}
+              >
+                {tab.icon}
+                <Typography sx={{ fontSize: 13, fontWeight: 500 }}>{tab.label}</Typography>
+                <Chip
+                  label={tab.count}
+                  size="small"
+                  sx={{
+                    backgroundColor: `${colors.pink}20`,
+                    color: colors.pink,
+                    fontSize: 10,
+                    height: 18,
+                    minWidth: 28,
+                  }}
+                />
+              </Box>
+            ))}
+          </Box>
+
+          {/* Tab Content */}
+          <Box sx={{ p: { xs: 2, md: 3 } }}>
+            {selectedTab === 0 && <CommunityReviews />}
+            {selectedTab === 1 && <OOAKSection />}
+            {/* {selectedTab === 2 && <TutorialsSection />} */}
+          </Box>
+        </Box>
+
+        <Typography sx={{ fontSize: 11, color: colors.textMuted, mt: 2, fontStyle: 'italic' }}>
+          Community content is created by collectors and fans. Official content is clearly labeled above.
+        </Typography>
+      </Collapse>
     </Box>
   );
   };
 
-// Market Offers Section Component
   const MarketOffersSection = () => {
-  type MarketOffer = {
-    store: string;
-    url: string;
-    logoUrl?: string;
-    channel: 'Official' | 'Marketplace';
-    official: boolean;
-    price: number;
-    shipping: string;
-    condition: string;
-    eta: string;
-  };
 
-  const marketCountries = [
+  const marketCountries: MarketCountry[] = [
     { code: 'DE', label: 'Germany', flag: '🇩🇪', locale: 'de-DE', currency: 'EUR' },
     { code: 'UK', label: 'United Kingdom', flag: '🇬🇧', locale: 'en-GB', currency: 'GBP' },
     { code: 'US', label: 'United States', flag: '🇺🇸', locale: 'en-US', currency: 'USD' },
@@ -1881,8 +2181,12 @@ const CommunityReviews = () => {
   };
 
   const defaultCountry = marketCountries[0]?.code ?? 'DE';
-  const [selectedCountry, setSelectedCountry] = useState(defaultCountry);
-  const offers = [...(marketOffersByCountry[selectedCountry] ?? [])].sort(
+  const [selectedOverviewCountry, setSelectedOverviewCountry] = useState(defaultCountry);
+  const [selectedOffersCountry, setSelectedOffersCountry] = useState(defaultCountry);
+  const overviewOffers = [...(marketOffersByCountry[selectedOverviewCountry] ?? [])].sort(
+    (a, b) => a.price - b.price,
+  );
+  const offerList = [...(marketOffersByCountry[selectedOffersCountry] ?? [])].sort(
     (a, b) => a.price - b.price,
   );
 
@@ -1905,228 +2209,64 @@ const CommunityReviews = () => {
     }
   };
 
-  const CountryTabs = ({
-    size = 'small',
-    showLabel = true,
-  }: {
-    size?: 'small' | 'medium';
-    showLabel?: boolean;
-  }) => (
-    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-      {marketCountries.map((country) => {
-        const selected = selectedCountry === country.code;
-        return (
-          <Chip
-            key={country.code}
-            label={showLabel ? `${country.flag} ${country.code}` : `${country.flag}`}
-            size={size}
-            onClick={() => setSelectedCountry(country.code)}
-            sx={{
-              cursor: 'pointer',
-              backgroundColor: selected ? `${colors.pink}20` : colors.bgLight,
-              border: `1px solid ${selected ? colors.pink : colors.cardBorder}`,
-              color: selected ? colors.pink : colors.textMuted,
-              fontWeight: 600,
-              height: size === 'small' ? 26 : 30,
-              '&:hover': { color: colors.textPrimary },
-            }}
-          />
-        );
-      })}
-    </Box>
-  );
+  const bestPriceValue = overviewOffers.length ? Math.min(...overviewOffers.map((offer) => offer.price)) : null;
+  const officialOffers = overviewOffers.filter((offer) => offer.official);
+  const officialBestValue = officialOffers.length ? Math.min(...officialOffers.map((offer) => offer.price)) : null;
+  const marketplaceOffers = overviewOffers.filter((offer) => !offer.official);
+  const marketplaceAvgValue = marketplaceOffers.length
+    ? marketplaceOffers.reduce((sum, offer) => sum + offer.price, 0) / marketplaceOffers.length
+    : null;
+
+  const offerListBestPriceValue = offerList.length ? Math.min(...offerList.map((offer) => offer.price)) : null;
+  const offerListOfficialOffers = offerList.filter((offer) => offer.official);
+  const offerListMarketplaceOffers = offerList.filter((offer) => !offer.official);
+  const offerListOfficialSubtitle = `${offerListOfficialOffers.length} offers`;
+  const offerListMarketplaceSubtitle = `${offerListMarketplaceOffers.length} offers`;
+  const offerListSections = [
+    {
+      title: 'Official stores',
+      subtitle: offerListOfficialSubtitle,
+      items: offerListOfficialOffers,
+      chipColor: colors.green,
+    },
+    {
+      title: 'Secondary market',
+      subtitle: offerListMarketplaceSubtitle,
+      items: offerListMarketplaceOffers,
+      chipColor: colors.orange,
+    },
+  ] as const;
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: { xs: 2, md: 3 }, flexWrap: 'wrap', gap: 1 }}>
-        <Typography sx={{ fontSize: { xs: 18, md: 20 }, fontWeight: 600, color: colors.textPrimary }}>
-          Market Offers
-        </Typography>
-        <Typography sx={{ fontSize: { xs: 12, md: 13 }, color: colors.textMuted }}>
-          {offers.length} listings in {selectedCountry}
-        </Typography>
-      </Box>
+      <MarketOverview
+        countries={marketCountries}
+        selected={selectedOverviewCountry}
+        onSelect={setSelectedOverviewCountry}
+        bestPriceValue={bestPriceValue}
+        officialBestValue={officialBestValue}
+        marketplaceAvgValue={marketplaceAvgValue}
+        offersCount={overviewOffers.length}
+        formatPrice={formatPrice}
+        colors={colors}
+        segmentTitleSx={segmentTitleSx}
+        statCardSx={marketCardLayout.statCardSx}
+      />
 
-      <Box sx={{ backgroundColor: colors.bgLight, border: `1px solid ${colors.cardBorder}`, borderRadius: 2, p: 2, mb: 2 }}>
-        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 1 }}>
-          <Chip label="Affiliate disclosure" size="small" sx={{ backgroundColor: `${colors.pink}20`, color: colors.pink, fontWeight: 600 }} />
-          <Chip label="External links" size="small" sx={{ backgroundColor: colors.card, color: colors.textSecondary, fontWeight: 600 }} />
-        </Box>
-        <Typography sx={{ fontSize: 12, color: colors.textSecondary }}>
-          Some links are affiliate links. We may earn a commission if you make a purchase after clicking.
-        </Typography>
-        <Typography sx={{ fontSize: 12, color: colors.textMuted }}>
-          Prices and availability can change and may not include taxes, duties, or shipping. Offers are provided by third parties and you will be redirected to the retailer site.
-        </Typography>
-        <Typography sx={{ fontSize: 12, color: colors.textMuted }}>
-          Store names and logos are trademarks of their respective owners.
-        </Typography>
-      </Box>
-
-      <Box sx={{ mb: 2 }}>
-        <CountryTabs />
-      </Box>
-
-      {(() => {
-        const bestPriceValue = offers.length ? Math.min(...offers.map((offer) => offer.price)) : null;
-        const officialOffers = offers.filter((offer) => offer.official);
-        const officialBestValue = officialOffers.length ? Math.min(...officialOffers.map((offer) => offer.price)) : null;
-        const marketplaceOffers = offers.filter((offer) => !offer.official);
-        const marketplaceAvgValue = marketplaceOffers.length
-          ? marketplaceOffers.reduce((sum, offer) => sum + offer.price, 0) / marketplaceOffers.length
-          : null;
-
-        return (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 1.5 }}>
-              <Box sx={{ backgroundColor: colors.bgLight, borderRadius: 2, p: 1.5, border: `1px solid ${colors.cardBorder}` }}>
-                <Typography sx={{ fontSize: 11, color: colors.textMuted }}>Best price</Typography>
-                <Typography sx={{ fontSize: 16, fontWeight: 700, color: colors.green }}>
-                  {bestPriceValue === null ? '-' : formatPrice(bestPriceValue, selectedCountry)}
-                </Typography>
-              </Box>
-              <Box sx={{ backgroundColor: colors.bgLight, borderRadius: 2, p: 1.5, border: `1px solid ${colors.cardBorder}` }}>
-                <Typography sx={{ fontSize: 11, color: colors.textMuted }}>Official lowest</Typography>
-                <Typography sx={{ fontSize: 16, fontWeight: 700, color: colors.textPrimary }}>
-                  {officialBestValue === null ? '-' : formatPrice(officialBestValue, selectedCountry)}
-                </Typography>
-              </Box>
-              <Box sx={{ backgroundColor: colors.bgLight, borderRadius: 2, p: 1.5, border: `1px solid ${colors.cardBorder}` }}>
-                <Typography sx={{ fontSize: 11, color: colors.textMuted }}>Marketplace avg</Typography>
-                <Typography sx={{ fontSize: 16, fontWeight: 700, color: colors.textPrimary }}>
-                  {marketplaceAvgValue === null ? '-' : formatPrice(marketplaceAvgValue, selectedCountry)}
-                </Typography>
-              </Box>
-              <Box sx={{ backgroundColor: colors.bgLight, borderRadius: 2, p: 1.5, border: `1px solid ${colors.cardBorder}` }}>
-                <Typography sx={{ fontSize: 11, color: colors.textMuted }}>Listings</Typography>
-                <Typography sx={{ fontSize: 16, fontWeight: 700, color: colors.textPrimary }}>
-                  {offers.length}
-                </Typography>
-              </Box>
-            </Box>
-
-            {([
-              {
-                title: 'Official stores',
-                subtitle: `${officialOffers.length} offers`,
-                items: officialOffers,
-                chipColor: colors.green,
-              },
-              {
-                title: 'Secondary market',
-                subtitle: `${marketplaceOffers.length} offers`,
-                items: marketplaceOffers,
-                chipColor: colors.orange,
-              },
-            ] as const).map((section) => (
-              <Box key={section.title} sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-                  <Typography sx={{ fontSize: 15, fontWeight: 600, color: colors.textPrimary }}>
-                    {section.title}
-                  </Typography>
-                  <Chip
-                    label={section.subtitle}
-                    size="small"
-                    sx={{
-                      backgroundColor: `${section.chipColor}20`,
-                      color: section.chipColor,
-                      fontSize: 10,
-                      height: 18,
-                    }}
-                  />
-                </Box>
-                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 1.5 }}>
-                  {section.items.map((offer) => (
-                    <Box
-                      key={`${section.title}-${offer.store}-${selectedCountry}`}
-                      sx={{
-                        backgroundColor: colors.bgLight,
-                        borderRadius: 2,
-                        border: `1px solid ${colors.cardBorder}`,
-                        p: 2,
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        gap: 2,
-                        flexWrap: 'wrap',
-                      }}
-                    >
-                      <Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-                          <Avatar
-                            src={offer.logoUrl || getLogoFromUrl(offer.url)}
-                            alt={offer.store}
-                            sx={{
-                              width: 28,
-                              height: 28,
-                              bgcolor: colors.cardBorder,
-                              color: colors.textPrimary,
-                              fontSize: 12,
-                              fontWeight: 700,
-                            }}
-                            imgProps={{ referrerPolicy: 'no-referrer' }}
-                          >
-                            {offer.store.slice(0, 1)}
-                          </Avatar>
-                          <Typography sx={{ fontSize: 14, fontWeight: 600, color: colors.textPrimary }}>{offer.store}</Typography>
-                          <Chip
-                            label={offer.official ? 'Official' : 'Marketplace'}
-                            size="small"
-                            sx={{
-                              backgroundColor: offer.official ? `${colors.green}20` : `${colors.orange}20`,
-                              color: offer.official ? colors.green : colors.orange,
-                              fontSize: 10,
-                              height: 18,
-                            }}
-                          />
-                          <Chip
-                            label="Affiliate"
-                            size="small"
-                            sx={{
-                              backgroundColor: colors.card,
-                              color: colors.textMuted,
-                              fontSize: 10,
-                              height: 18,
-                            }}
-                          />
-                          {bestPriceValue !== null && offer.price === bestPriceValue && (
-                            <Chip label="Best price" size="small" sx={{ backgroundColor: `${colors.green}20`, color: colors.green, fontSize: 10, height: 18 }} />
-                          )}
-                        </Box>
-                        <Typography sx={{ fontSize: 12, color: colors.textMuted }}>
-                          {offer.condition} • {offer.shipping} • {offer.eta}
-                        </Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                        <Typography sx={{ fontSize: 16, fontWeight: 700, color: colors.textPrimary }}>
-                          {formatPrice(offer.price, selectedCountry)}
-                        </Typography>
-                        <Button
-                          component="a"
-                          href={offer.url}
-                          target="_blank"
-                          rel="noopener noreferrer sponsored"
-                          variant="outlined"
-                          size="small"
-                          endIcon={<OpenInNew fontSize="small" />}
-                          sx={{
-                            borderColor: colors.cardBorder,
-                            color: colors.textPrimary,
-                            textTransform: 'none',
-                            '&:hover': { borderColor: colors.pink, backgroundColor: 'transparent' },
-                          }}
-                        >
-                          Open store
-                        </Button>
-                      </Box>
-                    </Box>
-                  ))}
-                </Box>
-              </Box>
-            ))}
-          </Box>
-        );
-      })()}
+      <MarketOffers
+        countries={marketCountries}
+        selected={selectedOffersCountry}
+        onSelect={setSelectedOffersCountry}
+        sections={offerListSections}
+        bestPriceValue={offerListBestPriceValue}
+        selectedCountry={selectedOffersCountry}
+        formatPrice={formatPrice}
+        getLogoFromUrl={getLogoFromUrl}
+        colors={colors}
+        segmentTitleSx={segmentTitleSx}
+        offerCardSx={marketCardLayout.offerCardSx}
+        noticeCardSx={marketCardLayout.noticeCardSx}
+      />
     </Box>
   );
   };
@@ -2218,28 +2358,29 @@ const CommunityReviews = () => {
               minWidth: 0,
             }}
           >
-            <HeroSection />
-            <PricingIntelligence />
-            <ReleasesReissues />
-
-            <Box sx={{ mt: { xs: 3, md: 4 }, display: 'flex', flexDirection: 'column', gap: { xs: 2, md: 3 } }}>
-              <GeneralInfoCard data={releaseData.generalInfo} />
-              <ProductDetailsCard data={releaseData.productDetails} />
-            </Box>
-
-            <Box sx={{ mt: { xs: 4, md: 6 } }}>
-              <CharactersSection />
-              <AccessoriesSection />
-              <ClothingSection />
-              <PetsSection />
-            </Box>
-
-            {/* <OfficialMediaGallery /> */}
-            <CommunitySection />
-
-            <Box sx={{ mt: { xs: 4, md: 6 } }}>
-              <PriceHistoryChart />
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 3, sm: 4, md: 5 } }}>
+              <HeroSection />
+              <Box sx={{ mt: { xs: 2, sm: '-20px', md: '-40px' } }}>
+                <MsrpOverview />
+              </Box>
               <MarketOffersSection />
+              <PriceHistoryChart />
+              {/* <ReleasesReissues /> */}
+
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2, md: 3 } }}>
+                <GeneralInfoCard data={releaseData.generalInfo} cardSx={infoCardLayout.cardSx} />
+                <ProductDetailsCard data={releaseData.productDetails} cardSx={infoCardLayout.cardSx} />
+              </Box>
+
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 2.5, md: 3.5 } }}>
+                <CharactersSection />
+                <AccessoriesSection />
+                <ClothingSection />
+                <PetsSection />
+              </Box>
+
+              {/* <OfficialMediaGallery /> */}
+              <CommunitySection />
             </Box>
           </Box>
         </Box>

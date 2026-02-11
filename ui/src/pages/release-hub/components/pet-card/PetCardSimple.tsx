@@ -6,6 +6,7 @@ import {
   Chip,
   Typography,
 } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import PetsIcon from "@mui/icons-material/Pets";
 import { Link as RouterLink } from "react-router-dom";
 
@@ -18,6 +19,9 @@ interface PetCardSimpleProps {
   link?: string;
   to?: string;
   rarity?: string;
+  cardSx?: SxProps<Theme>;
+  mediaSx?: SxProps<Theme>;
+  contentSx?: SxProps<Theme>;
 }
 
 export const PetCardSimple = ({
@@ -27,6 +31,9 @@ export const PetCardSimple = ({
   link = "#",
   to,
   rarity,
+  cardSx,
+  mediaSx,
+  contentSx,
 }: PetCardSimpleProps) => {
   const isRouterLink = Boolean(to);
 
@@ -34,7 +41,7 @@ export const PetCardSimple = ({
     <Card
       component={isRouterLink ? RouterLink : "a"}
       {...(isRouterLink ? { to } : { href: link })}
-      sx={{
+      sx={[{
         display: "flex",
         flexDirection: "column",
         height: "100%",
@@ -45,7 +52,7 @@ export const PetCardSimple = ({
           transform: { xs: "none", md: "translateY(-4px)" },
           boxShadow: { xs: "none", md: "0 8px 24px rgba(236, 72, 153, 0.15)" },
         }
-      }}
+      }, cardSx]}
     >
       <Box
         sx={{
@@ -68,7 +75,7 @@ export const PetCardSimple = ({
 
       <CardMedia
         component="div"
-        sx={{
+        sx={[{
           height: 180,
           backgroundColor: "#FFFFFF",
           backgroundImage: `url(${imageUrl ?? PLACEHOLDER_IMAGE})`,
@@ -85,10 +92,10 @@ export const PetCardSimple = ({
             height: "40%",
             background: "linear-gradient(to top, rgba(20, 20, 32, 0.9) 0%, transparent 100%)",
           },
-        }}
+        }, mediaSx]}
       />
 
-      <CardContent>
+      <CardContent sx={contentSx}>
         <Typography
           variant="h6"
           sx={{

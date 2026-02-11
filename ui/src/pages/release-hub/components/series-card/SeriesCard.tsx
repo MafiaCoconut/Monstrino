@@ -5,10 +5,14 @@ import {
   Chip,
   Typography,
 } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import { Link as RouterLink } from "react-router-dom";
 import type { SeriesSummary } from "../../entities";
 
-type SeriesCardProps = SeriesSummary;
+interface SeriesCardProps extends SeriesSummary {
+  cardSx?: SxProps<Theme>;
+  contentSx?: SxProps<Theme>;
+}
 
 export const SeriesCard = ({
   id,
@@ -17,21 +21,23 @@ export const SeriesCard = ({
   releaseCount,
   characterCount,
   imageUrl,
-  description
+  description,
+  cardSx,
+  contentSx,
 }: SeriesCardProps) => {
   return (
     <Card
       component={RouterLink}
       to={`/catalog/s/${id}`}
-      sx={{
+      sx={[{
         display: "flex",
         flexDirection: "column",
         height: "100%",
         textDecoration: "none",
         position: "relative",
-      }}
+      }, cardSx]}
     >
-      <CardContent sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      <CardContent sx={[{ flex: 1, display: "flex", flexDirection: "column", pb: 1 }, contentSx]}>
         <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", mb: 1 }}>
           <Typography
             variant="h6"
@@ -74,7 +80,7 @@ export const SeriesCard = ({
         )}
 
         <Box sx={{ mt: "auto" }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography variant="caption" color="text.secondary">
               {characterCount ?? 0} characters
             </Typography>

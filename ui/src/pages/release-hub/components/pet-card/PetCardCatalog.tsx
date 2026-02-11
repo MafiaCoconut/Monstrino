@@ -1,12 +1,21 @@
 import { Box, Chip, Typography } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import { Link as RouterLink } from "react-router-dom";
 import type { Pet } from "../../entities";
 
 interface PetCardCatalogProps {
   pet: Pet;
+  cardSx?: SxProps<Theme>;
+  imageSx?: SxProps<Theme>;
+  contentSx?: SxProps<Theme>;
 }
 
-export const PetCardCatalog = ({ pet }: PetCardCatalogProps) => {
+export const PetCardCatalog = ({
+  pet,
+  cardSx,
+  imageSx,
+  contentSx,
+}: PetCardCatalogProps) => {
   const ownerName = pet.ownerName ?? "Unknown";
   const generationLabel = pet.generation ?? "Unknown";
 
@@ -15,7 +24,7 @@ export const PetCardCatalog = ({ pet }: PetCardCatalogProps) => {
       component={RouterLink}
       to={`/catalog/p/${pet.id}`}
       aria-label={`${pet.name} pet`}
-      sx={{
+      sx={[{
         backgroundColor: "background.paper",
         borderRadius: 2,
         overflow: "hidden",
@@ -28,17 +37,17 @@ export const PetCardCatalog = ({ pet }: PetCardCatalogProps) => {
           transform: "translateY(-4px)",
           boxShadow: "0 12px 40px rgba(139, 92, 246, 0.15)",
         },
-      }}
+      }, cardSx]}
     >
       {/* Portrait Image Container - ~1:1.5 aspect ratio */}
       <Box
-        sx={{
+        sx={[{
           position: "relative",
           width: "100%",
           paddingTop: "150%", // ~1:1.5 aspect ratio
           backgroundColor: "#ffffff",
           overflow: "hidden",
-        }}
+        }, imageSx]}
       >
         <Box
           component="img"
@@ -57,7 +66,7 @@ export const PetCardCatalog = ({ pet }: PetCardCatalogProps) => {
       </Box>
 
       {/* Card Content */}
-      <Box sx={{ p: 2 }}>
+      <Box sx={[{ p: 2 }, contentSx]}>
         {/* Pet Name */}
         <Typography
           variant="h6"
