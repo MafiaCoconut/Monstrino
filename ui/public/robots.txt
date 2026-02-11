@@ -1,0 +1,7 @@
+# robots.txt for Monstrino UI
+# Last updated: 2026-02-11
+
+User-agent: *
+Allow: /
+
+Sitemap: https://monstrino.com/sitemap.xml

@@ -2,6 +2,7 @@ import './App.css'
 import { Routes, Route, Navigate } from 'react-router-dom';
 import UserCollectionsPage from './pages/user/collections/UserCollectionsPage';
 import { PrivacyPage } from './pages/static/privacy';
+import { NotFoundPage } from './pages/static/not-found';
 import HomePage from './pages/release-hub/Homepage';
 import ReleasePage from './pages/release-hub/Index/ReleaseIndex';
 import CharacterPageV2 from './pages/release-hub/Index/CharacterIndex';
@@ -61,6 +62,9 @@ function App() {
           <Route path="impressum" element={<ImpressumInfo />} />
           <Route path="privacy" element={<PrivacyPage />} />
         </Route>
+
+        {/* 404 - Catch all unmatched routes */}
+        <Route path="*" element={<NotFoundPage />} />
 
       </Routes>
       <DemoBadge />
