@@ -1,0 +1,1 @@
+export { DemoBadge } from './DemoBadge';

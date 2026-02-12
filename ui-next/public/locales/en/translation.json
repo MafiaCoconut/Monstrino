@@ -1,0 +1,38 @@
+{
+    "registerPage": {
+        "title": "Register",
+        "subtitle": "Create a new account",
+        "username": {
+            "label": "Username",
+            "placeholder": "Enter your username",
+            "helperText": "Length: 3-20 characters, allowed: 0-9, a-z, A-Z, _ -"
+        },
+        "email": {
+            "label": "Email",
+            "placeholder": "Enter your email address",
+            "helperText": "Please enter a valid email address"
+        },
+        "firstName": {
+            "label": "First Name",
+            "placeholder": "Enter your first name",
+            "helperText": "Only letters and spaces are allowed"
+        },
+        "lastName": {
+            "label": "Last Name",
+            "placeholder": "Enter your last name",
+            "helperText": "Only letters and spaces are allowed"
+        },
+        "password": {
+            "label": "Password",
+            "placeholder": "Enter your password",
+            "helperText": "Must contain at least one uppercase letter, one number, and one special character"
+        },
+        "confirmPassword": {
+            "label": "Confirm Password",
+            "placeholder": "Re-enter your password"
+        },
+        "submitButton": {
+            "text": "Register"
+        }
+    }
+}
