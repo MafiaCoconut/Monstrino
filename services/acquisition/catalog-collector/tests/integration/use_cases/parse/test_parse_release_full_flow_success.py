@@ -2,9 +2,9 @@
 import pytest
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from application.ports.repositories import Repositories
-from application.registries.ports_registry import PortsRegistry
-from application.use_cases.parse.parse_releases_use_case import ParseReleasesUseCase
+from app.ports.repositories import Repositories
+from app.registries.ports_registry import PortsRegistry
+from app.use_cases.parse.parse_releases_use_case import ParseReleasesUseCase
 from domain.entities.parse_scope import ParseScope
 from domain.enums.source_key import SourceKey
 

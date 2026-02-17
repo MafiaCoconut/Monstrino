@@ -3,8 +3,8 @@ from typing import Optional
 from icecream import ic
 from monstrino_core.domain.value_objects import CharacterGender
 
-from application.use_cases.parse.parse_characters_use_case import ParseCharactersUseCase
-from application.use_cases.parse_by_external_id import ParseCharacterByExternalIdUseCase
+from app.use_cases.parse.parse_characters_use_case import ParseCharactersUseCase
+from app.use_cases.parse_by_external_id import ParseCharacterByExternalIdUseCase
 from domain.entities.parse_scope import ParseScope
 from domain.enums.source_key import SourceKey
 

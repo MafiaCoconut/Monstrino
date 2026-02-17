@@ -16,7 +16,7 @@ from monstrino_models.dto import ParsedSeries
 from pydantic import BaseModel
 from bs4 import BeautifulSoup
 
-from application.ports.parse.parse_series_port import ParseSeriesPort
+from app.ports.parse.parse_series_port import ParseSeriesPort
 from domain.entities.parse_scope import ParseScope
 from domain.entities.refs import SeriesRef
 from infra.parsers.helper import Helper

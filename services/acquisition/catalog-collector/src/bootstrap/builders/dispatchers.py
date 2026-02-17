@@ -1,5 +1,5 @@
 from domain.entities import ParseJobs
-from application.dispatchers import (
+from app.dispatchers import (
     ParsingDispatcher,
     ParsingCharactersDispatcher,
     ParsingPetsDispatcher,

@@ -8,7 +8,7 @@ from icecream import ic
 from monstrino_models.dto import ParsedRelease
 from bs4 import BeautifulSoup
 
-from application.ports.parse.parse_release_port import ParseReleasePort
+from app.ports.parse.parse_release_port import ParseReleasePort
 from domain.entities.parse_scope import ParseScope
 from domain.entities.refs.release_ref import ReleaseRef
 from infra.parsers.helper import Helper

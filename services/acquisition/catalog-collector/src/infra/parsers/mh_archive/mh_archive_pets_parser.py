@@ -14,7 +14,7 @@ from monstrino_models.dto import ParsedPet
 from pydantic import BaseModel
 from bs4 import BeautifulSoup
 
-from application.ports.parse.parse_pet_port import ParsePetPort
+from app.ports.parse.parse_pet_port import ParsePetPort
 from domain.entities.parse_scope import ParseScope
 from domain.entities.refs import PetRef
 from infra.parsers.helper import Helper
@@ -104,21 +104,21 @@ class MHArchivePetsParser(MHArchiveParser, ParsePetPort):
 
         # Get Name
         h1 = soup.find("h1")
-        name = h1.get_text(" ", strip=True)
-        name = re.sub(r"\s+", " ", name).strip()
+        title = h1.get_text(" ", strip=True)
+        title = re.sub(r"\s+", " ", title).strip()
 
         # Get Owner Name
         h2_tag = soup.find("h2")
-        owner_name = None
+        owner_title = None
         owner_name_url = h2_tag.find("a")
         if owner_name_url:
             owner_name_str = owner_name_url.get_text(strip=True)
-            owner_name = re.sub(r"\s*\([^)]*\)", "", owner_name_str).strip()
+            owner_title = re.sub(r"\s*\([^)]*\)", "", owner_name_str).strip()
         else:
             text = h2_tag.get_text(" ", strip=True)
             if "with" in text:
-                    owner_name = text.split("with", 1)[-1].strip()
-                    owner_name = re.sub(r"\s*\([^)]*\)", "", owner_name).strip()
+                    owner_title = text.split("with", 1)[-1].strip()
+                    owner_title = re.sub(r"\s*\([^)]*\)", "", owner_title).strip()
 
         # Get Description
         title_tag = soup.find("h1")
@@ -132,9 +132,9 @@ class MHArchivePetsParser(MHArchiveParser, ParsePetPort):
 
         # Save original HTML
         parsed_pet = ParsedPet(
-            name=name,
+            title=title,
             description=description,
-            owner_name=owner_name,
+            owner_title=owner_title,
             url=url,
             original_html_content=html,
             external_id=self._get_external_id(url),

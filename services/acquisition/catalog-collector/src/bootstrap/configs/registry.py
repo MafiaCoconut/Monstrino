@@ -1,9 +1,9 @@
 import logging
 
 from bootstrap.container_components.adapters import Adapters
-from application.ports.parse import ParseCharacterPort, ParsePetPort, ParseSeriesPort, ParseReleasePort
-from application.ports.website_catalog_port import WebsiteCatalogPort
-from application.registries.ports_registry import PortsRegistry
+from app.ports.parse import ParseCharacterPort, ParsePetPort, ParseSeriesPort, ParseReleasePort
+from app.ports.website_catalog_port import WebsiteCatalogPort
+from app.registries.ports_registry import PortsRegistry
 from domain.enums.source_key import SourceKey
 
 logger = logging.getLogger(__name__)

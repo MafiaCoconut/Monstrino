@@ -7,9 +7,9 @@ from datetime import datetime
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_models.dto import ParsedRelease, Source
 
-from application.ports.repositories import Repositories
-from application.ports.parse.parse_release_port import ParseReleasePort
-from application.registries.ports_registry import PortsRegistry
+from app.ports.repositories import Repositories
+from app.ports.parse.parse_release_port import ParseReleasePort
+from app.registries.ports_registry import PortsRegistry
 from domain.entities.parse_scope import ParseScope
 from domain.enums.source_key import SourceKey
 

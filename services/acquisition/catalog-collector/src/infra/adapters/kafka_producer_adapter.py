@@ -2,7 +2,7 @@ from aiokafka import AIOKafkaProducer
 import asyncio
 import json
 
-from application.ports.kafka_producer_port import KafkaProducerPort
+from app.ports.kafka_producer_port import KafkaProducerPort
 
 
 class KafkaProducerAdapter(KafkaProducerPort):

@@ -6,9 +6,9 @@ from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfW
 from monstrino_models.dto import ParsedPet, Source
 from monstrino_testing.fixtures import uow_factory
 
-from application.ports.repositories import Repositories
-from application.ports.parse.parse_pet_port import ParsePetPort
-from application.registries.ports_registry import PortsRegistry
+from app.ports.repositories import Repositories
+from app.ports.parse.parse_pet_port import ParsePetPort
+from app.registries.ports_registry import PortsRegistry
 
 from domain.entities.parse_scope import ParseScope
 from domain.enums.source_key import SourceKey

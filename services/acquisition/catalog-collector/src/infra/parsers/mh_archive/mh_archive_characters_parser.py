@@ -16,7 +16,7 @@ from monstrino_models.dto import ParsedCharacter
 from pydantic import BaseModel
 from bs4 import BeautifulSoup
 
-from application.ports.parse.parse_character_port import ParseCharacterPort
+from app.ports.parse.parse_character_port import ParseCharacterPort
 from domain.entities.parse_scope import ParseScope
 from domain.entities.refs import CharacterRef
 from infra.parsers.helper import Helper
@@ -173,8 +173,8 @@ class MHArchiveCharacterParser(MHArchiveParser, ParseCharacterPort):
 
         title_tag = soup.find("h1")
 
-        name = title_tag.get_text(strip=True) if title_tag else None
-        if name == "Oops":
+        title = title_tag.get_text(strip=True) if title_tag else None
+        if title == "Oops":
             raise ValueError(f"Character not found at url: {url}")
 
         p = title_tag.find_next("p")
@@ -191,7 +191,7 @@ class MHArchiveCharacterParser(MHArchiveParser, ParseCharacterPort):
             raise ValueError(f"Unknown gender: {url}")
 
         return ParsedCharacter(
-            name=name,
+            title=title,
             gender=gender,
             description=description,
             url=url,

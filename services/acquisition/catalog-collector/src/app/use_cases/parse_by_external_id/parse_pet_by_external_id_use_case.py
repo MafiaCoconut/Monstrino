@@ -3,9 +3,9 @@ from typing import Any
 
 from monstrino_models.dto import Source, ParsedPet
 
-from application.ports.repositories import Repositories
-from application.ports.parse import ParsePetPort
-from application.registries.ports_registry import PortsRegistry
+from app.ports.repositories import Repositories
+from app.ports.parse import ParsePetPort
+from app.registries.ports_registry import PortsRegistry
 from domain.enums.source_key import SourceKey
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 

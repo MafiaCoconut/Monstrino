@@ -1,7 +1,7 @@
 from typing import Optional
 from typing import Optional
 
-from application.use_cases.parse_by_external_id import ParseReleaseByExternalIdUseCase
+from app.use_cases.parse_by_external_id import ParseReleaseByExternalIdUseCase
 from domain.enums.source_key import SourceKey
 
 

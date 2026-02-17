@@ -1,5 +1,5 @@
 from domain.entities import ParseJobs
-from application.registries.ports_registry import PortsRegistry
+from app.registries.ports_registry import PortsRegistry
 from infra.parse_jobs import ParseCharactersJob, ParsePetsJob, ParseSeriesJob, ParseReleasesJob, \
     ParsePetByExternalIdJob, ParseCharacterByExternalIdJob, ParseReleaseByExternalIdJob, ParseSeriesByExternalIdJob
 from infra.parse_jobs.characters.parse_by_external_id_job import ParseCharacterByExternalIdJob

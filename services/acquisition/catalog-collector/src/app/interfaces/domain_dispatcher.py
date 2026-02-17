@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from application.interfaces.parse_command import ParseCommandInterface
+from app.interfaces.parse_command import ParseCommandInterface
 
 
 class DomainDispatcherInterface(Protocol):

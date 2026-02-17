@@ -1,6 +1,6 @@
 from typing import Optional
 
-from application.use_cases.parse.parse_characters_use_case import ParseCharactersUseCase
+from app.use_cases.parse.parse_characters_use_case import ParseCharactersUseCase
 from domain.entities.parse_scope import ParseScope
 from domain.enums.source_key import SourceKey
 

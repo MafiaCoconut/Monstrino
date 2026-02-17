@@ -4,9 +4,9 @@ from typing import Any
 from monstrino_core.domain.value_objects import CharacterGender
 from monstrino_models.dto import ParsedCharacter, Source
 
-from application.ports.repositories import Repositories
-from application.ports.parse.parse_character_port import ParseCharacterPort
-from application.registries.ports_registry import PortsRegistry
+from app.ports.repositories import Repositories
+from app.ports.parse.parse_character_port import ParseCharacterPort
+from app.registries.ports_registry import PortsRegistry
 from domain.enums.source_key import SourceKey
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 

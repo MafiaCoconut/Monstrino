@@ -5,7 +5,7 @@ from icecream import ic
 from monstrino_core.shared.enums import ProcessingStates
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from application.ports.repositories import Repositories
+from app.ports.repositories import Repositories
 from infra.parsers import MHArchiveReleasesParser
 
 

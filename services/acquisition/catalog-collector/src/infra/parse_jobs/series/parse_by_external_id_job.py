@@ -1,6 +1,6 @@
 from typing import Optional
 
-from application.use_cases.parse_by_external_id.parse_series_by_external_id_use_case import \
+from app.use_cases.parse_by_external_id.parse_series_by_external_id_use_case import \
     ParseSeriesByExternalIdUseCase
 from domain.enums.source_key import SourceKey
 

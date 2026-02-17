@@ -4,9 +4,9 @@ from typing import Any
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import Source, ParsedSeries
 
-from application.ports.repositories import Repositories
-from application.ports.parse import ParseSeriesPort
-from application.registries.ports_registry import PortsRegistry
+from app.ports.repositories import Repositories
+from app.ports.parse import ParseSeriesPort
+from app.registries.ports_registry import PortsRegistry
 from domain.enums.source_key import SourceKey
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 

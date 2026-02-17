@@ -6,8 +6,8 @@ from monstrino_api.v1.shared.errors import SelectorValidationError, UnsupportedC
 from monstrino_contracts.v1.domains.acquisition.catalog_collector.contracts import RunParseContract
 from monstrino_contracts.v1.domains.acquisition.catalog_collector.enums import SelectorTypeEnum, ParseKindEnum
 
-from application.commands.parse_command import ParseCommand
-from application.interfaces import ParseCommandInterface
+from app.commands.parse_command import ParseCommand
+from app.interfaces import ParseCommandInterface
 from domain.enums import SourceKey
 from domain.enums.parse_selector_type_enum import ParseSelectorTypeEnum
 

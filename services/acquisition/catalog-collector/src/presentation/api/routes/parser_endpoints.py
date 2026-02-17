@@ -13,8 +13,8 @@ from monstrino_contracts.v1.domains.acquisition.catalog_collector.enums import R
 from monstrino_core.scheduler import SchedulerPort
 from pydantic import ValidationError
 
-from application.dispatchers import ParsingDispatcher
-from application.use_cases.auth.verify_token_use_case import VerifyToken
+from app.dispatchers import ParsingDispatcher
+from app.use_cases.auth.verify_token_use_case import VerifyToken
 from domain.enums.source_key import SourceKey
 from infra.mappers.parse_contract_to_command import ParseContractToCommandMapper
 from infra.parse_jobs import ParseCharactersJob

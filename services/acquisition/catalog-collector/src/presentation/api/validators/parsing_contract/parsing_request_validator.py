@@ -1,7 +1,7 @@
 from monstrino_contracts.v1.domains.acquisition.catalog_collector.contracts import RunParseContract
 from monstrino_contracts.v1.domains.acquisition.catalog_collector.enums import SelectorTypeEnum
 
-from application.interfaces import ScenarioValidator
+from app.interfaces import ScenarioValidator
 from domain.enums import ParseKindEnum
 
 

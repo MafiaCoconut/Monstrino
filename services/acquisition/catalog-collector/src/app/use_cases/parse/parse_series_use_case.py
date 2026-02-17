@@ -8,9 +8,9 @@ from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfW
 from monstrino_core.shared.enums import ProcessingStates
 from monstrino_models.dto import ParsedSeries, Source
 
-from application.ports.repositories import Repositories
-from application.ports.parse.parse_series_port import ParseSeriesPort
-from application.registries.ports_registry import PortsRegistry
+from app.ports.repositories import Repositories
+from app.ports.parse.parse_series_port import ParseSeriesPort
+from app.registries.ports_registry import PortsRegistry
 from domain.entities.parse_scope import ParseScope
 from domain.enums.source_key import SourceKey
 

@@ -7,9 +7,9 @@ from bootstrap.container_components import Validators
 from domain.entities import ParseJobs
 from bootstrap.container_components.adapters import Adapters
 from bootstrap.container_components.dispatchers import Dispatchers
-from application.ports.repositories import Repositories
+from app.ports.repositories import Repositories
 from bootstrap.container_components.services import Services
-from application.registries.ports_registry import PortsRegistry
+from app.registries.ports_registry import PortsRegistry
 
 @dataclass
 class AppContainer:
