@@ -23,7 +23,7 @@ class ParseReleaseByExternalIdUseCase:
 
     async def execute(self, source: SourceKey, external_id: str):
         async with self.uow_factory.create() as uow:
-            source_id = await uow.repos.source.get_id_by(**{Source.NAME: source.value})
+            source_id = await uow.repos.source.get_id_by(**{Source.TITLE: source.value})
             if not source_id:
                 raise ValueError(f"Source ID not found for source: {source.value}")
 
@@ -46,9 +46,9 @@ class ParseReleaseByExternalIdUseCase:
 
     async def _save_result(self, release: ParsedRelease) -> None:
         try:
-            logger.info(f"Saving release: {release.name} from sourceID={release.source_id}")
+            logger.info(f"Saving release: {release.title} from sourceID={release.source_id}")
             async with self.uow_factory.create() as uow:
                 await uow.repos.parsed_release.save(release)
         except Exception as e:
-            logger.error(f"Failed to save release: {release.name} from sourceID={release.source_id}: {e}")
+            logger.error(f"Failed to save release: {release.title} from sourceID={release.source_id}: {e}")
 

@@ -24,7 +24,7 @@ class ParsePetByExternalIdUseCase:
     async def execute(self, source: SourceKey, external_id: str):
         logger.info(f"Starting to parse pet with external_id={external_id} from source={source.value}")
         async with self.uow_factory.create() as uow:
-            source_id = await uow.repos.source.get_id_by(**{Source.NAME: source.value})
+            source_id = await uow.repos.source.get_id_by(**{Source.TITLE: source.value})
             if not source_id:
                 raise ValueError(f"Source ID not found for source: {source.value}")
 
@@ -48,9 +48,9 @@ class ParsePetByExternalIdUseCase:
 
     async def _save_result(self, pet: ParsedPet) -> None:
         try:
-            logger.info(f"Saving pet: {pet.name} from sourceID={pet.source_id}")
+            logger.info(f"Saving pet: {pet.title} from sourceID={pet.source_id}")
             async with self.uow_factory.create() as uow:
                 await uow.repos.parsed_pet.save(pet)
         except Exception as e:
-            logger.error(f"Failed to save pet: {pet.name} from sourceID={pet.source_id}: {e}")
+            logger.error(f"Failed to save pet: {pet.title} from sourceID={pet.source_id}: {e}")
 
