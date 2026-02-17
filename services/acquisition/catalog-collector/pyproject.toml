@@ -10,7 +10,6 @@ dependencies = [
     "alembic>=1.17.2",
     "apscheduler>=3.11.2",
     "asyncpg>=0.30.0",
-    "backports-zstd>=1.2.0",
     "bcrypt>=4.3.0",
     "beautifulsoup4>=4.14.3",
     "brotli>=1.2.0",
