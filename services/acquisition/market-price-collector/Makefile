@@ -53,6 +53,7 @@ LOCAL_DEPS := \
     $(PACKAGES_DIR)/monstrino-testing \
     $(PACKAGES_DIR)/monstrino-api \
     $(PACKAGES_DIR)/monstrino-infra \
+    $(PACKAGES_DIR)/monstrino-contracts
 
 # =========== Commands ===========
 run:
@@ -67,7 +68,7 @@ pytest:
 	poetry run pytest -q --disable-warnings --tb=short
 
 pytest-with-logs:
-	poetry run pytest --log-cli-level=INFO -s -ra $(ARGS)
+	poetry run pytest --log-cli-level=DEBUG -s -ra $(ARGS)
 
 
 # ==================== Deployment ====================

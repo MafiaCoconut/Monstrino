@@ -1,9 +1,9 @@
 from typing import Protocol, AsyncGenerator
 
-from src.domain import WebsiteRef
+from domain import WebsiteRef
 
 
-class ParseCharacterPort(Protocol):
+class ParseMarketPort(Protocol):
     def iter_refs(
             self,
             # scope: ParseScope,
@@ -20,4 +20,8 @@ class ParseCharacterPort(Protocol):
             # gender: CharacterGender
     ):
         """Function parses a single release from a given external_id."""
+        ...
+
+    async def parse_all_release_links(self):
+        """Function parses all release links."""
         ...

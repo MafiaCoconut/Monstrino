@@ -3,7 +3,7 @@ name = "release-catalog-service"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13.2"
+requires-python = ">=3.14.3"
 dependencies = [
     "alembic>=1.17.2",
     "apscheduler>=3.11.1",

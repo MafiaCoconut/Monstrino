@@ -3,6 +3,7 @@ import unicodedata
 import logging
 import aiohttp
 import os
+from yarl import URL
 
 from monstrino_core.domain.errors import RequestIsBlockedError, GetPageError
 
@@ -12,9 +13,10 @@ headers = {
     # "Host": os.getenv("MHARCHIVE_URL").replace('https://', ''),
     "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:146.0) Gecko/20100101 Firefox/146.0",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.5",
+    "Accept-Language": "en-US,en;q=0.9",
     "Accept-Encoding": "gzip, deflate, br, zstd",
     "Referer": os.getenv("MHARCHIVE_URL"),
+    "Cache-Control": "no-cache",
     "Connection": "keep-alive",
     "Upgrade-Insecure-Requests": "1",
     "Sec-Fetch-Site": "same-origin",
@@ -26,12 +28,12 @@ headers = {
 
 
 
+
 cookies = {
     "cf_clearance": os.getenv("MHARCHIVE_COOKIE"),
     # "session": os.getenv("MHARCHIVE_SESSION"),
     "session": "e58ebc84-d248-4a69-b504-0bc2c0495ac1",
 }
-logger.info(os.getenv("MHARCHIVE_COOKIE"))
 
 class Helper:
     @staticmethod
@@ -49,34 +51,75 @@ class Helper:
     async def get_page(url: str):
         local_headers = headers.copy()
         local_headers["Referer"] = url[:url.find('/', 24)]
-        logger.info(f"Request")
-        logger.info(f"Cookies: {cookies}")
-        logger.info(f"Headers: {local_headers}")
 
         async with aiohttp.ClientSession(headers=local_headers, cookies=cookies) as session:
             async with session.get(
                     url,
-                    allow_redirects=False, ssl=False
+                    allow_redirects=True, ssl=False
             ) as resp:
                 logger.debug(f"Request on url={url} completed with status code={resp.status}")
                 if resp.status == 200:
-                    logger.info(resp.headers)
-                    # logger.info(await resp.text())
                     return await resp.text()
                 elif resp.status == 403:
-                    logger.error(f"Request blocked with status 403: {url}")
-                    logger.error(f"Headers: {resp.headers}")
-                    logger.error(f"Body: {await resp.text()}")
                     raise RequestIsBlockedError(f"Request is blocked with status 403: {url}")
                 else:
-                    logger.error(f"Request blocked with status {resp.status}: {url}")
-                    logger.error(f"Headers: {resp.headers}")
-                    logger.error(f"Body: {await resp.text()}")
+                    raise GetPageError(f"Get page error with status {resp.status}: {url}")
+
+    @staticmethod
+    async def get_bytes_from_page(url: str):
+        local_headers = headers.copy()
+        local_headers["Referer"] = url[:url.find('/', 24)]
+
+        async with aiohttp.ClientSession(headers=local_headers, cookies=cookies) as session:
+            async with session.get(
+                    url,
+                    allow_redirects=True, ssl=False
+            ) as resp:
+                logger.debug(f"Request on url={url} completed with status code={resp.status}")
+                if resp.status == 200:
+                    return await resp.read()
+                elif resp.status == 403:
+                    raise RequestIsBlockedError(f"Request is blocked with status 403: {url}")
+                else:
                     raise GetPageError(f"Get page error with status {resp.status}: {url}")
 
 
     @staticmethod
-    async def save_page_in_file(html: str):
+    async def get_json(url: str) -> dict:
+        timeout = aiohttp.ClientTimeout(total=60)
+
+        async with aiohttp.ClientSession(
+            headers=headers.copy(),
+            cookie_jar=aiohttp.CookieJar(unsafe=True),
+        ) as session:
+            session.cookie_jar.update_cookies(cookies, response_url=URL(url))
+
+            async with session.get(
+                url,
+                allow_redirects=True,   # важно
+                max_redirects=10,
+                ssl=False,
+                timeout=timeout,
+            ) as resp:
+                logger.debug(
+                    "status=%s final_url=%s redirects=%s",
+                    resp.status,
+                    resp.url,
+                    len(resp.history),
+                )
+
+                if resp.status == 200:
+                    # ВАЖНО: указать content_type=None
+                    return await resp.json(content_type=None)
+
+                if resp.status == 403:
+                    raise RequestIsBlockedError(f"403 blocked: {resp.url}")
+
+                raise GetPageError(f"Unexpected status {resp.status}: {resp.url}")
+
+
+    @staticmethod
+    def save_page_in_file(html: str):
         logger.debug(f"Starting saving file: page.html ({len(html)} symbols)")
 
         with open("src/data/page.html", "w", encoding="utf-8") as f:

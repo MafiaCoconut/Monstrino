@@ -4,13 +4,14 @@ from monstrino_models.dto import ReleaseMsrpSource
 from monstrino_core.shared.enums import MsrpSourceType
 
 
-@pytest.mark.usefixtures("seed_release_msrp_list", "seed_release_msrp_source_list")
+@pytest.mark.usefixtures("seed_market_default_values", "seed_release_msrp_list", "seed_release_market_link_list", "seed_release_msrp_source_list")
 class TestReleaseMsrpSourceRepo(BaseCrudRepoTest):
     entity_cls = ReleaseMsrpSource
     repo_attr = "release_msrp_source"
 
     sample_create_data = {
         "release_msrp_id": 1,
+        "release_market_link_id": 1,
         "url": "https://www.target.com/p/monster-high-draculaura/-/A-000000",
         "source_type": MsrpSourceType.RETAILER,
         "confidence": 75,

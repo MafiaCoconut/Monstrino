@@ -1,0 +1,135 @@
+{
+  "product": {
+    "id": 7842163785970,
+    "title": "Monster High Howliday: Winter Edition Draculaura Doll",
+    "body_html": "​Tis the season for a fab-boo-lous good time, and Draculaura doll is the undead queen of the Monster High ball in a gore-geous headpiece and gown. A sheer black coat with a snowflake motif floats over the vampire's satiny spiderweb minidress, cinched together with a statement belt. Winter-themed accessories, including candy cane gloves and ornament earrings, complete her spooktacular look. May your howlidays be a scary defright! Fully articulated. Doll cannot stand alone. Colors and decorations may vary.",
+    "vendor": "Monster High",
+    "product_type": "",
+    "created_at": "2022-12-05T12:55:06+00:00",
+    "handle": "monster-high-howliday-winter-edition-draculaura-doll-hkx66-en-gb",
+    "updated_at": "2026-02-11T23:29:41+00:00",
+    "published_at": "2023-07-14T11:35:01+01:00",
+    "template_suffix": "",
+    "published_scope": "web",
+    "tags": "Brand: Monster High, Filter-AgeGrade: 6Y+, Filter-Language: en-GB, Filter-MarketingAgeWeb: 5+ Years, Filter-Region: GB, Filter-Subtype: Collector, Filter-SuperCategory: Dolls \u0026 Dollhouses, Filter-WebCategory: Dolls, Filter-WebCategory: Fashion Dolls",
+    "variants": [
+      {
+        "id": 43920314007794,
+        "product_id": 7842163785970,
+        "title": "Default Title",
+        "price": "49.99",
+        "sku": "HKX66",
+        "position": 1,
+        "compare_at_price": "",
+        "fulfillment_service": "manual",
+        "inventory_management": "shopify",
+        "option1": "Default Title",
+        "option2": null,
+        "option3": null,
+        "created_at": "2022-12-05T12:55:06+00:00",
+        "updated_at": "2026-02-11T23:29:41+00:00",
+        "taxable": true,
+        "barcode": "194735109906",
+        "grams": 0,
+        "image_id": null,
+        "weight": 0.0,
+        "weight_unit": "lb",
+        "tax_code": "",
+        "requires_shipping": true,
+        "quantity_rule": {
+          "min": 1,
+          "max": null,
+          "increment": 1
+        },
+        "price_currency": "EUR",
+        "compare_at_price_currency": "",
+        "quantity_price_breaks": []
+      }
+    ],
+    "options": [
+      {
+        "id": 9968652517618,
+        "product_id": 7842163785970,
+        "name": "Title",
+        "position": 1,
+        "values": [
+          "Default Title"
+        ]
+      }
+    ],
+    "images": [
+      {
+        "id": 51482389217604,
+        "product_id": 7842163785970,
+        "position": 1,
+        "created_at": "2023-07-14T11:35:12+01:00",
+        "updated_at": "2023-07-14T11:35:12+01:00",
+        "alt": null,
+        "width": 2000,
+        "height": 2000,
+        "src": "https:\/\/cdn.shopify.com\/s\/files\/1\/0612\/7563\/5954\/products\/rlusfdfkmwcuctumchyk.jpg?v=1689330912",
+        "variant_ids": []
+      },
+      {
+        "id": 51482389250372,
+        "product_id": 7842163785970,
+        "position": 2,
+        "created_at": "2023-07-14T11:35:12+01:00",
+        "updated_at": "2023-07-14T11:35:12+01:00",
+        "alt": null,
+        "width": 2000,
+        "height": 2000,
+        "src": "https:\/\/cdn.shopify.com\/s\/files\/1\/0612\/7563\/5954\/products\/uhmv63wgywtbegil1zxg_ff6643af-4bda-48a6-89c4-b4b4b26eef18.jpg?v=1689330912",
+        "variant_ids": []
+      },
+      {
+        "id": 51482389315908,
+        "product_id": 7842163785970,
+        "position": 3,
+        "created_at": "2023-07-14T11:35:12+01:00",
+        "updated_at": "2023-07-14T11:35:12+01:00",
+        "alt": null,
+        "width": 2000,
+        "height": 2000,
+        "src": "https:\/\/cdn.shopify.com\/s\/files\/1\/0612\/7563\/5954\/products\/k4wyj7x8ob4wg5xyskbf_e6071c0d-027c-44ee-909a-273d7f150835.jpg?v=1689330912",
+        "variant_ids": []
+      },
+      {
+        "id": 51482389348676,
+        "product_id": 7842163785970,
+        "position": 4,
+        "created_at": "2023-07-14T11:35:12+01:00",
+        "updated_at": "2023-07-14T11:35:12+01:00",
+        "alt": null,
+        "width": 2000,
+        "height": 2000,
+        "src": "https:\/\/cdn.shopify.com\/s\/files\/1\/0612\/7563\/5954\/products\/icg3yabqwunoivo3mlma_118a5108-c302-49ea-8d01-7b8846afcf1e.jpg?v=1689330912",
+        "variant_ids": []
+      },
+      {
+        "id": 51482389381444,
+        "product_id": 7842163785970,
+        "position": 5,
+        "created_at": "2023-07-14T11:35:12+01:00",
+        "updated_at": "2023-07-14T11:35:12+01:00",
+        "alt": null,
+        "width": 2000,
+        "height": 2000,
+        "src": "https:\/\/cdn.shopify.com\/s\/files\/1\/0612\/7563\/5954\/products\/qcti2548cxpc6izvlvhu_69952f4f-05e7-430a-a538-60edefe5a79f.jpg?v=1689330912",
+        "variant_ids": []
+      }
+    ],
+    "image": {
+      "id": 51482389217604,
+      "product_id": 7842163785970,
+      "position": 1,
+      "created_at": "2023-07-14T11:35:12+01:00",
+      "updated_at": "2023-07-14T11:35:12+01:00",
+      "alt": null,
+      "width": 2000,
+      "height": 2000,
+      "src": "https:\/\/cdn.shopify.com\/s\/files\/1\/0612\/7563\/5954\/products\/rlusfdfkmwcuctumchyk.jpg?v=1689330912",
+      "variant_ids": []
+    }
+  }
+}

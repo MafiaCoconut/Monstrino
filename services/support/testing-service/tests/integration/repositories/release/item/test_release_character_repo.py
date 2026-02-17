@@ -14,8 +14,6 @@ class TestReleaseCharacterRepo(BaseCrudRepoTest):
         "role_id": 1,
         "standalone_release_id": None,
         "position": 2,
-        "name": "clawdeen-wolf",
-        "display_name": "Clawdeen Wolf",
         "notes": "Werewolf",
         "description": "Fashion-forward werewolf",
         "is_uniq_to_release": False,

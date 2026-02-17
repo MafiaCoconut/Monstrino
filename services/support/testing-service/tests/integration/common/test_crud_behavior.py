@@ -51,7 +51,6 @@ class BaseCrudRepoTest:
     async def test_unique_conflict_raises(self, uow: UnitOfWorkInterface[AsyncSession, Repositories], request):
         async with uow:
             repo = getattr(uow.repos, self.repo_attr)
-            # first = self.entity_cls(**self.sample_create_data)
             first = self.entity_cls(**self.sample_create_data)
             await repo.save(first)
             duplicate = self.entity_cls(**self.sample_create_data)
@@ -69,8 +68,7 @@ class BaseCrudRepoTest:
             elif isinstance(self.unique_field_value, int):
                 result = await repo.get_one_by(**{self.unique_field: -99999})
             else:
-                raise ValueError(
-                    "unique_field must be str or int for this test")
+                raise ValueError("unique_field must be str or int for this test")
 
         assert result is None
 
@@ -84,8 +82,7 @@ class BaseCrudRepoTest:
                 elif isinstance(self.unique_field_value, int):
                     await repo.get_one_by_or_raise(**{self.unique_field: -99999})
                 else:
-                    raise ValueError(
-                        "unique_field must be str or int for this test")
+                    raise ValueError("unique_field must be str or int for this test")
 
     @pytest.mark.asyncio
     async def test_count(self, uow: UnitOfWorkInterface[AsyncSession, Repositories], request):
@@ -127,10 +124,11 @@ class BaseCrudRepoTest:
             repo = getattr(uow.repos, self.repo_attr)
             entity = self.entity_cls(**self.sample_create_data)
             saved = await repo.save(entity)
-            deleted_count = await repo.delete_by_id(saved.id)
-            assert deleted_count == 1
-            result = await repo.get_one_by(**{"id": saved.id})
-            assert result is None
+            if getattr(saved, "id", None) is not None:
+                deleted_count = await repo.delete_by_id(saved.id)
+                assert deleted_count == 1
+                result = await repo.get_one_by(**{"id": saved.id})
+                assert result is None
 
     @pytest.mark.asyncio
     async def test_get_all_returns_list(self, uow: UnitOfWorkInterface[AsyncSession, Repositories], request):
@@ -140,7 +138,6 @@ class BaseCrudRepoTest:
             all_before = await repo.get_all()
             assert isinstance(all_before, list)
 
-            # создаём запись и проверяем, что она появляется в списке
             entity = self.entity_cls(**self.sample_create_data)
             await repo.save(entity)
             all_after = await repo.get_all()

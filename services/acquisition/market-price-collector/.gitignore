@@ -168,3 +168,5 @@ src/test2.txt
 
 ./src/certs/jwt-private.pem
 services/dolls-parser-service/src/data/
+
+./src/data/*

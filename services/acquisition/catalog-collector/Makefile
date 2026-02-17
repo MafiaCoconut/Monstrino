@@ -53,6 +53,7 @@ LOCAL_DEPS := \
     $(PACKAGES_DIR)/monstrino-testing \
     $(PACKAGES_DIR)/monstrino-api \
     $(PACKAGES_DIR)/monstrino-infra \
+    $(PACKAGES_DIR)/monstrino-contracts \
 
 # =========== Commands ===========
 run:

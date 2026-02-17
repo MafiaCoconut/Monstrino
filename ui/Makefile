@@ -38,13 +38,13 @@ push-ui: build
 
 #deploy-ui-test: use-tc-m70q-context push-ui
 deploy-ui-test: use-tc-m70q-context push-ui
-	kubectl apply -f ../../monstrino-configurations/kubernetes/.test/ui/deployment.yaml -n $(NAMESPACE_TEST)
-	kubectl apply -f ../../monstrino-configurations/kubernetes/.test/ui/service.yaml    -n $(NAMESPACE_TEST)
+	kubectl apply -f ../monstrino-configurations/kubernetes/.test/ui/deployment.yaml -n $(NAMESPACE_TEST)
+	kubectl apply -f ../monstrino-configurations/kubernetes/.test/ui/service.yaml    -n $(NAMESPACE_TEST)
 	kubectl set image deployment/monstrino-ui -n $(NAMESPACE_TEST) monstrino-ui=$(MONSTRINO_UI_IMAGE_NAME):$(GIT_SHA1)
 deploy-ui-prod: use-tc-m70q-context push-ui
 # deploy-ui-prod: use-tc-m70q-context push-ui
-	kubectl apply -f ../../monstrino-configurations/kubernetes/.prod/ui/deployment.yaml -n $(NAMESPACE_PROD)
-	kubectl apply -f ../../monstrino-configurations/kubernetes/.prod/ui/service.yaml    -n $(NAMESPACE_PROD)
+	kubectl apply -f ../monstrino-configurations/kubernetes/.prod/ui/deployment.yaml -n $(NAMESPACE_PROD)
+	kubectl apply -f ../monstrino-configurations/kubernetes/.prod/ui/service.yaml    -n $(NAMESPACE_PROD)
 	kubectl set image deployment/monstrino-ui -n $(NAMESPACE_PROD) monstrino-ui=$(MONSTRINO_UI_IMAGE_NAME):$(GIT_SHA1)
 
 

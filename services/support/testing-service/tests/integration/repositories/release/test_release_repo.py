@@ -11,17 +11,17 @@ class TestReleaseRepo(BaseCrudRepoTest):
     entity_cls = Release
     repo_attr = "release"
     sample_create_data = {
-        "name": "Clawdeen Wolf Music Festival",
+        "slug": "clawdeen-wolf-music-festival",
+        "title": "Clawdeen Wolf - Music Festival",
+        "code": "clawdeen-wolf-music-festival",
+        "name": "clawdeen-wolf-music-festival",
         "display_name": "Clawdeen Wolf - Music Festival",
         "mpn": "MH34567",
-        "type_ids": [1],
-        "exclusive_ids": [3],
         "year": 2013,
         "description": "Festival-themed Clawdeen Wolf with purple outfit and guitar.",
-        "from_the_box": "Rock your freaky style!",
-        "link": "https://monsterhigh.fandom.com/wiki/Clawdeen_Wolf_(Music_Festival)",
+        "text_from_box": "Rock your freaky style!",
     }
-    unique_field = Release.NAME
-    unique_field_value = "Clawdeen Wolf Music Festival"
-    update_field = "display_name"
+    unique_field = Release.SLUG
+    unique_field_value = "clawdeen-wolf-music-festival"
+    update_field = "title"
     updated_value = "Clawdeen Wolf - Music Fest Edition"
