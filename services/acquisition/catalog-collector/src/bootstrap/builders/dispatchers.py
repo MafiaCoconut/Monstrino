@@ -1,4 +1,4 @@
-from domain.entities import ParseJobs
+from app.jobs.parse import ParseJobs
 from app.dispatchers import (
     ParsingDispatcher,
     ParsingCharactersDispatcher,

@@ -87,8 +87,8 @@ class MHArchivePetsParser(MHArchiveParser, ParsePetPort):
         results = []
 
         for div in soup.select("div.cat_div_three"):
-            name_tag = div.find("h3").find("a")
-            url = name_tag["href"] if name_tag and name_tag.has_attr("href") else None
+            title_tag = div.find("h3").find("a")
+            url = title_tag["href"] if title_tag and title_tag.has_attr("href") else None
 
             if url:
                 results.append(url)
@@ -102,18 +102,18 @@ class MHArchivePetsParser(MHArchiveParser, ParsePetPort):
 
         soup = BeautifulSoup(html, "html.parser")
 
-        # Get Name
+        # Get Title
         h1 = soup.find("h1")
         title = h1.get_text(" ", strip=True)
         title = re.sub(r"\s+", " ", title).strip()
 
-        # Get Owner Name
+        # Get Owner Title
         h2_tag = soup.find("h2")
         owner_title = None
-        owner_name_url = h2_tag.find("a")
-        if owner_name_url:
-            owner_name_str = owner_name_url.get_text(strip=True)
-            owner_title = re.sub(r"\s*\([^)]*\)", "", owner_name_str).strip()
+        owner_title_url = h2_tag.find("a")
+        if owner_title_url:
+            owner_title_str = owner_title_url.get_text(strip=True)
+            owner_title = re.sub(r"\s*\([^)]*\)", "", owner_title_str).strip()
         else:
             text = h2_tag.get_text(" ", strip=True)
             if "with" in text:

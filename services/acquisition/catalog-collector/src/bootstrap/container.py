@@ -4,7 +4,7 @@ from typing import Any
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 
 from bootstrap.container_components import Validators
-from domain.entities import ParseJobs
+from app.jobs.parse import ParseJobs
 from bootstrap.container_components.adapters import Adapters
 from bootstrap.container_components.dispatchers import Dispatchers
 from app.ports.repositories import Repositories

@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 
-from infra.parse_jobs import ParseCharactersJob, ParsePetsJob, ParseSeriesJob, ParseReleasesJob, \
-    ParseCharacterByExternalIdJob, ParseSeriesByExternalIdJob, ParsePetByExternalIdJob, ParseReleaseByExternalIdJob
+from .characters import *
+from .pets import *
+from .releases import *
+from .series import *
 
 
 @dataclass(frozen=True)

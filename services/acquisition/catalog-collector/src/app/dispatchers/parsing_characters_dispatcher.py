@@ -1,8 +1,8 @@
 from icecream import ic
 from monstrino_core.domain.value_objects import CharacterGender
 
-from domain.entities import ParseJobs
 from app.interfaces import ParseCommandInterface
+from app.jobs.parse import ParseJobs
 from domain.entities.refs import ExternalRef
 from domain.enums.parse_selector_type_enum import ParseSelectorTypeEnum
 

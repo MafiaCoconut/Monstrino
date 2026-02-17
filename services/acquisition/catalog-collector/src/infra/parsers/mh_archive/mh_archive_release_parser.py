@@ -129,18 +129,18 @@ class MHArchiveReleasesParser(MHArchiveParser, ParseReleasePort):
 
         soup = BeautifulSoup(html, "html.parser")
 
-        name = await self._get_release_name(soup)
+        title = await self._get_release_title(soup)
         desc_html = await self._get_release_description_html(soup)
         primary_image = await self._get_prime_image(soup)
         from_the_box = await self._get_from_the_box(soup)
         stats = await self._get_stats_dict_v5(soup)
         # ---------- Main Attributes ----------
         dto = ParsedRelease(
-            name=name,
+            title=title,
             description_raw=desc_html,
             primary_image=primary_image,
             from_the_box_text_raw=from_the_box,
-            original_html_content=html,
+            # original_html_content=html,
             url=url,
             external_id=self._get_external_id(url),
         )
@@ -166,7 +166,7 @@ class MHArchiveReleasesParser(MHArchiveParser, ParseReleasePort):
                 case "Model Number":
                     dto.mpn = stats[key][0]
                 case "Pet":
-                    dto.pet_names_raw = stats[key]
+                    dto.pet_title_raw = stats[key]
                 case "Gallery":
                     dto.images_url = self.domain_url + stats["Gallery"][0]
                 case "Doll Type":
@@ -186,7 +186,7 @@ class MHArchiveReleasesParser(MHArchiveParser, ParseReleasePort):
         return dto
 
     @staticmethod
-    async def _get_release_name(soup: BeautifulSoup) -> str:
+    async def _get_release_title(soup: BeautifulSoup) -> str:
         h1 = soup.find("h1")
         return h1.get_text(strip=True) if h1 else None
 

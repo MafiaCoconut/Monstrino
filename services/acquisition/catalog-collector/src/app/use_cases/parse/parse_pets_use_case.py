@@ -7,7 +7,7 @@ from monstrino_models.dto import ParsedPet, Source
 from monstrino_testing.fixtures import uow_factory
 
 from app.ports.repositories import Repositories
-from app.ports.parse.parse_pet_port import ParsePetPort
+from app.ports.parse import ParsePetPort
 from app.registries.ports_registry import PortsRegistry
 
 from domain.entities.parse_scope import ParseScope
@@ -28,7 +28,7 @@ class ParsePetsUseCase:
     async def execute(self, source: SourceKey, scope: ParseScope, batch_size: int = 10, limit: int = 9999999):
         port: ParsePetPort = self._r.get(source, ParsePetPort)
         async with self.uow_factory.create() as uow:
-            source_id = await uow.repos.source.get_id_by(**{Source.NAME: source.value})
+            source_id = await uow.repos.source.get_id_by(**{Source.TITLE: source.value})
 
         urls_to_parse = []
         async for refs_batch in port.iter_refs(scope=scope):
@@ -38,7 +38,10 @@ class ParsePetsUseCase:
                     source_id=source_id,
                     external_ids=ext_ids
                 )
-            new_refs = [r for r in refs_batch if r.external_id not in existing_ids]
+            if existing_ids:
+                new_refs = [r for r in refs_batch if r.external_id not in existing_ids]
+            else:
+                new_refs = refs_batch
             if not new_refs:
                 logger.debug(f"New pets not found in batch. Skipping batch")
                 continue
@@ -53,18 +56,18 @@ class ParsePetsUseCase:
 
     async def _save_batch(self, source: SourceKey, batch: list[ParsedPet]):
         async with self.uow_factory.create() as uow:
-            source_id = await uow.repos.source.get_id_by(**{Source.NAME: source.value})
+            source_id = await uow.repos.source.get_id_by(**{Source.TITLE: source.value})
         if not source_id:
             raise ValueError(f"Source ID not found for source: {source.value}")
 
         for pet in batch:
             try:
-                logger.info(f"Saving pet: {pet.name} from sourceID={source_id}")
+                logger.info(f"Saving pet: {pet.title} from sourceID={source_id}")
                 pet.source_id=source_id
                 async with self.uow_factory.create() as uow:
                     if await uow.repos.parsed_pet.get_id_by(**{ParsedPet.SOURCE_ID: source_id, ParsedPet.EXTERNAL_ID: pet.external_id}) is not None:
-                        logger.info(f"Skipping pet: {pet.name} due to pet is already parsed")
+                        logger.info(f"Skipping pet: {pet.title} due to pet is already parsed")
                     await uow.repos.parsed_pet.save(pet)
             except Exception as e:
                 logger.error(
-                    f"Failed to save pet: {pet.name} from sourceID={source_id}: {e}")
+                    f"Failed to save pet: {pet.title} from sourceID={source_id}: {e}")

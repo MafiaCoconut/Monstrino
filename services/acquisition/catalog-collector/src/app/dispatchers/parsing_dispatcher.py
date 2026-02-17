@@ -1,9 +1,9 @@
 import logging
 
-from domain.entities.parse_jobs import ParseJobs
 from domain.enums import ParseKindEnum
 from ..commands import ParseCommand
 from ..interfaces import DomainDispatcherInterface
+from ..jobs.parse import ParseJobs
 
 logger = logging.getLogger(__name__)
 

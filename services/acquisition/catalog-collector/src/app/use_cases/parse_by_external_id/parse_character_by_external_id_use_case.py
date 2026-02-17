@@ -24,7 +24,7 @@ class ParseCharacterByExternalIdUseCase:
 
     async def execute(self, source: SourceKey, external_id: str, gender: CharacterGender):
         async with self.uow_factory.create() as uow:
-            source_id = await uow.repos.source.get_id_by(**{Source.NAME: source.value})
+            source_id = await uow.repos.source.get_id_by(**{Source.TITLE: source.value})
             if not source_id:
                 raise ValueError(f"Source ID not found for source: {source.value}")
 
@@ -49,9 +49,9 @@ class ParseCharacterByExternalIdUseCase:
 
     async def _save_result(self, character: ParsedCharacter) -> None:
         try:
-            logger.info(f"Saving character: {character.name} from sourceID={character.source_id}")
+            logger.info(f"Saving character: {character.title} from sourceID={character.source_id}")
             async with self.uow_factory.create() as uow:
                 await uow.repos.parsed_character.save(character)
         except Exception as e:
-            logger.error(f"Failed to save character: {character.name} from sourceID={character.source_id}: {e}")
+            logger.error(f"Failed to save character: {character.title} from sourceID={character.source_id}: {e}")
 

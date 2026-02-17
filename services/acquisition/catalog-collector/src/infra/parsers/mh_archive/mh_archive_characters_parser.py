@@ -196,7 +196,7 @@ class MHArchiveCharacterParser(MHArchiveParser, ParseCharacterPort):
             description=description,
             url=url,
             external_id=self._get_external_id(url),
-            original_html_content=html
+            # original_html_content=html
         )
 
     def _get_external_id(self, url: str) -> str:

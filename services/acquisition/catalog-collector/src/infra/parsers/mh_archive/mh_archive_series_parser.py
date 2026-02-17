@@ -93,9 +93,9 @@ class MHArchiveSeriesParser(MHArchiveParser, ParseSeriesPort):
             if not h3_tag:
                 continue
 
-            name_tag = h3_tag.find("a")
+            title_tag = h3_tag.find("a")
 
-            url = name_tag["href"] if name_tag and name_tag.has_attr("href") else None
+            url = title_tag["href"] if title_tag and title_tag.has_attr("href") else None
             urls.append(url)
 
         return urls
@@ -106,10 +106,10 @@ class MHArchiveSeriesParser(MHArchiveParser, ParseSeriesPort):
         html = await Helper.get_page(url)
 
         soup = BeautifulSoup(html, "html.parser")
-        title_tag = soup.find("h1")
 
-        # ----------------- Display Name -------------------
-        name = title_tag.get_text(strip=True) if title_tag else None
+        # ----------------- Title -------------------
+        title_tag = soup.find("h1")
+        title = title_tag.get_text(strip=True) if title_tag else None
         # ----------------- Description -------------------
         meta_desc = soup.find("meta", {"property": "og:description"})
         description = meta_desc["content"].strip() if meta_desc and meta_desc.has_attr("content") else None
@@ -118,7 +118,7 @@ class MHArchiveSeriesParser(MHArchiveParser, ParseSeriesPort):
             description = p_tag.get_text(strip=True) if p_tag else None
 
         series = ParsedSeries(
-            name=name,
+            title=title,
             description=description,
             series_type=SeriesTypes.PRIMARY,
             url=url,
@@ -129,16 +129,16 @@ class MHArchiveSeriesParser(MHArchiveParser, ParseSeriesPort):
 
         subseries = await self._get_subseries(soup)
         if subseries:
-            logger.info(f"Found series {series.name} with subseries. Subseries count: {len(subseries)}")
-            for sub_name in subseries:
+            logger.info(f"Found series {series.title} with subseries. Subseries count: {len(subseries)}")
+            for sub_title in subseries:
                 list_of_dto.append(
                     ParsedSeries(
-                        name=sub_name,
+                        title=sub_title,
                         description=None,
                         series_type=SeriesTypes.SECONDARY,
-                        parent_name=series.name,
+                        parent_title=series.title,
                         url=series.url,
-                        external_id=NameFormatter.format_name(sub_name),
+                        external_id=NameFormatter.format_name(sub_title),
                         original_html_content=series.original_html_content,
                     )
                 )

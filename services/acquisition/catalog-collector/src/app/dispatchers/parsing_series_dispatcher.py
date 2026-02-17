@@ -1,7 +1,7 @@
 from monstrino_api.v1.shared.errors import UnsupportedSelectorTypeError
 from monstrino_contracts.v1.domains.acquisition.catalog_collector.contracts import RunParseContract
 
-from domain.entities import ParseJobs
+from app.jobs.parse import ParseJobs
 from app.interfaces import ParseCommandInterface
 from domain.enums.parse_selector_type_enum import ParseSelectorTypeEnum
 

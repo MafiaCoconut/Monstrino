@@ -37,7 +37,7 @@ class ParseSeriesUseCase:
         # Step 1
         port: ParseSeriesPort = self._r.get(source, ParseSeriesPort)
         async with self.uow_factory.create() as uow:
-            source_id = await uow.repos.source.get_id_by(**{Source.NAME: source.value})
+            source_id = await uow.repos.source.get_id_by(**{Source.TITLE: source.value})
 
         # Step 2
         urls_to_parse = []
@@ -48,9 +48,12 @@ class ParseSeriesUseCase:
                     source_id=source_id,
                     external_ids=ext_ids
                 )
-            new_refs = [r for r in refs_batch if r.external_id not in existing_ids]
+            if existing_ids:
+                new_refs = [r for r in refs_batch if r.external_id not in existing_ids]
+            else:
+                new_refs = refs_batch
             if not new_refs:
-                logger.debug(f"New releases not found in batch. Skipping batch")
+                logger.debug(f"New series not found in batch. Skipping batch")
                 continue
 
             urls_to_parse.extend(new_refs)
@@ -73,15 +76,15 @@ class ParseSeriesUseCase:
                 await self._process_parent_ids(list_of_series)
 
     async def _save_list(self, source: SourceKey, series_list: list[ParsedSeries]) -> list[ParsedSeries]:
-        series_name = series_list[0].name
+        series_title = series_list[0].title
         start_time = datetime.now()
 
         async with self.uow_factory.create() as uow:
-            source_id = await uow.repos.source.get_id_by(**{Source.NAME: source.value})
+            source_id = await uow.repos.source.get_id_by(**{Source.TITLE: source.value})
         if not source_id:
             raise ValueError(f"Source ID not found for source: {source.value}")
 
-        logger.info(f"Saving series: {series_name} from {series_list[0].url} and subseries from sourceID={source_id}")
+        logger.info(f"Saving series: {series_title} from {series_list[0].url} and subseries from sourceID={source_id}")
         try:
             async with self.uow_factory.create() as uow:
                 if await uow.repos.parsed_series.get_id_by(
@@ -90,37 +93,37 @@ class ParseSeriesUseCase:
                             ParsedSeries.EXTERNAL_ID: series_list[0].external_id
                         }
                 ) is not None:
-                    logger.info(f"Skipping series: {series_list[0].name} due to series is already parsed")
+                    logger.info(f"Skipping series: {series_title} due to series is already parsed")
                 for series in series_list:
                     series.source_id = source_id
                 list_of_series = await uow.repos.parsed_series.save_many(series_list)
         except Exception as e:
-            logger.error(f"Failed to save series: {series_name} from {series_list[0].url} from sourceID={source_id}: {e}")
+            logger.error(f"Failed to save series: {series_title} from {series_list[0].url} from sourceID={source_id}: {e}")
 
         end_time = datetime.now()
-        logger.info(f"Series saving process: {series_name} in {(end_time - start_time).total_seconds()} seconds")
+        logger.info(f"Series saving process: {series_title} in {(end_time - start_time).total_seconds()} seconds")
         return list_of_series
 
     async def _process_parent_ids(self, series_list: list[ParsedSeries]):
         async with self.uow_factory.create() as uow:
             for series in series_list:
-                if series.parent_name and not series.parent_id:
+                if series.parent_title and not series.parent_id:
                     try:
-                        parent_series = await uow.repos.parsed_series.get_one_by(**{ParsedSeries.NAME: series.parent_name})
+                        parent_series = await uow.repos.parsed_series.get_one_by(**{ParsedSeries.TITLE: series.parent_title})
                         if parent_series:
                             series.parent_id = parent_series.id
-                            logger.info(f"Set parent_id for series {series.name} to ParentID={series.parent_id}")
+                            logger.info(f"Set parent_id for series {series.title} to ParentID={series.parent_id}")
                             await self._set_parent_id(uow, series)
                     except Exception as e:
-                        logger.error(f"Failed to set parent_id for series {series.name}: {e}")
+                        logger.error(f"Failed to set parent_id for series {series.title}: {e}")
 
     async def _set_parent_id(self, uow: UnitOfWorkInterface[Any, Repositories], parsed_series: ParsedSeries):
         try:
             await uow.repos.parsed_series.update(filters={ParsedSeries.ID: parsed_series.id}, values={ParsedSeries.PARENT_ID: parsed_series.parent_id})
         except Exception as e:
-            logger.error(f"Failed to set parent_id for series {parsed_series.name}: {e}")
-            logger.error(f"Deleting parsed series {parsed_series.name} due to error")
+            logger.error(f"Failed to set parent_id for series {parsed_series.title}: {e}")
+            logger.error(f"Deleting parsed series {parsed_series.title} due to error")
             try:
                 await uow.repos.parsed_series.update(filters={ParsedSeries.ID: parsed_series.id}, values={ParsedSeries.processing_state: ProcessingStates.WITH_ERRORS})
             except Exception as delete_error:
-                logger.error(f"Failed to delete parsed series {parsed_series.name}: {delete_error}")
+                logger.error(f"Failed to delete parsed series {parsed_series.title}: {delete_error}")

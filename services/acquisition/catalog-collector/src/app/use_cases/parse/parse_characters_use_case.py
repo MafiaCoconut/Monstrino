@@ -2,6 +2,7 @@ import logging
 import time
 from typing import Any
 
+from icecream import ic
 from monstrino_models.dto import ParsedCharacter, Source
 
 from app.ports.repositories import Repositories
@@ -26,17 +27,21 @@ class ParseCharactersUseCase:
     async def execute(self, source: SourceKey, scope: ParseScope, batch_size: int = 10, limit: int = 9999999):
         port: ParseCharacterPort = self._r.get(source, ParseCharacterPort)
         async with self.uow_factory.create() as uow:
-            source_id = await uow.repos.source.get_id_by(**{Source.NAME: source.value})
-
+            source_id = await uow.repos.source.get_id_by(**{Source.TITLE: source.value})
+        ic(source)
         links_to_parse = []
         async for refs_batch in port.iter_refs(scope=scope):
             ext_ids = [r.external_id for r in refs_batch]
+            ic(ext_ids)
             async with self.uow_factory.create() as uow:
                 existing_ids = await uow.repos.parsed_character.get_existed_external_ids_by(
                     source_id=source_id,
                     external_ids=ext_ids
                 )
-            new_refs = [r for r in refs_batch if r.external_id not in existing_ids]
+            if existing_ids:
+                new_refs = [r for r in refs_batch if r.external_id not in existing_ids]
+            else:
+                new_refs = refs_batch
             if not new_refs:
                 logger.debug(f"New characters not found in batch. Skipping batch")
                 continue
@@ -64,7 +69,7 @@ class ParseCharactersUseCase:
 
     async def _save_batch(self, source: SourceKey, batch: list[ParsedCharacter]):
         async with self.uow_factory.create() as uow:
-            source_id = await uow.repos.source.get_id_by(**{Source.NAME: source.value})
+            source_id = await uow.repos.source.get_id_by(**{Source.TITLE: source.value})
         if not source_id:
             raise ValueError(f"Source ID not found for source: {source.value}")
 
@@ -72,13 +77,13 @@ class ParseCharactersUseCase:
             if character is None:
                 continue
             try:
-                logger.info(f"Saving character: {character.name} from sourceID={source_id}")
+                logger.info(f"Saving character: {character.title} from sourceID={source_id}")
                 character.source_id = source_id
                 async with self.uow_factory.create() as uow:
                     if await uow.repos.parsed_character.get_id_by(**{ParsedCharacter.SOURCE_ID: source_id, ParsedCharacter.EXTERNAL_ID: character.external_id}) is not None:
-                        logger.info(f"Skipping character: {character.name} due to character is already parsed")
+                        logger.info(f"Skipping character: {character.title} due to character is already parsed")
                     await uow.repos.parsed_character.save(character)
 
             except Exception as e:
                 logger.error(
-                    f"Failed to save character: {character.name} from sourceID={source_id}: {e}")
+                    f"Failed to save character: {character.title} from sourceID={source_id}: {e}")

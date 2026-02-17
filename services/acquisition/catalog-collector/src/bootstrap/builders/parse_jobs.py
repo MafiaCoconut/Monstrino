@@ -1,8 +1,5 @@
-from domain.entities import ParseJobs
+from app.jobs.parse import *
 from app.registries.ports_registry import PortsRegistry
-from infra.parse_jobs import ParseCharactersJob, ParsePetsJob, ParseSeriesJob, ParseReleasesJob, \
-    ParsePetByExternalIdJob, ParseCharacterByExternalIdJob, ParseReleaseByExternalIdJob, ParseSeriesByExternalIdJob
-from infra.parse_jobs.characters.parse_by_external_id_job import ParseCharacterByExternalIdJob
 
 
 def build_parse_jobs(uow_factory, registry: PortsRegistry) -> ParseJobs:
