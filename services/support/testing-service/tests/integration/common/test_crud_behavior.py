@@ -1,5 +1,6 @@
 import pytest
 import logging
+import uuid
 
 from monstrino_core.domain.errors import DuplicateEntityError, EntityNotFoundError
 from monstrino_core.interfaces import UnitOfWorkInterface
@@ -67,8 +68,10 @@ class BaseCrudRepoTest:
                 result = await repo.get_one_by(**{self.unique_field: "NON_EXISTENT"})
             elif isinstance(self.unique_field_value, int):
                 result = await repo.get_one_by(**{self.unique_field: -99999})
+            elif isinstance(self.unique_field_value, uuid.UUID):
+                result = await repo.get_one_by(**{self.unique_field: uuid.uuid7()})
             else:
-                raise ValueError("unique_field must be str or int for this test")
+                raise ValueError("unique_field must be str, int, or UUID for this test")
 
         assert result is None
 
@@ -81,8 +84,10 @@ class BaseCrudRepoTest:
                     await repo.get_one_by_or_raise(**{self.unique_field: "NON_EXISTENT"})
                 elif isinstance(self.unique_field_value, int):
                     await repo.get_one_by_or_raise(**{self.unique_field: -99999})
+                elif isinstance(self.unique_field_value, uuid.UUID):
+                    await repo.get_one_by_or_raise(**{self.unique_field: uuid.uuid7()})
                 else:
-                    raise ValueError("unique_field must be str or int for this test")
+                    raise ValueError("unique_field must be str, int, or UUID for this test")
 
     @pytest.mark.asyncio
     async def test_count(self, uow: UnitOfWorkInterface[AsyncSession, Repositories], request):
