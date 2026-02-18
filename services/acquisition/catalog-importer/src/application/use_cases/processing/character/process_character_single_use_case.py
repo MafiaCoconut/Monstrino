@@ -1,9 +1,10 @@
 from typing import Any
 import logging
-
+from uuid import UUID
 from icecream import ic
 from monstrino_core.domain.errors import EntityNotFoundError, DuplicateEntityError
-from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.services import TitleFormatter
+from monstrino_core.domain.services.catalog import CharacterTitleFormatter
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_models.dto import Character, ParsedCharacter
 from monstrino_models.enums import EntityName
@@ -40,7 +41,7 @@ class ProcessCharacterSingleUseCase:
     7. Mark parsed character as processed
     8. If any error occurs, mark parsed character as with_errors
     """
-    async def execute(self, parsed_character_id: int):
+    async def execute(self, parsed_character_id: UUID):
         async with self.uow_factory.create() as uow:
             try:
                 # Step 1: Take parsed character and check if character already exists
@@ -49,12 +50,13 @@ class ProcessCharacterSingleUseCase:
                     raise EntityNotFoundError(f"ParsedCharacter with ID {parsed_character_id} not found")
 
                 await self.processing_states_svc.set_processing(uow.repos.parsed_character, parsed_character_id)
-                logger.info(f"Processing ParsedCharacter ID {parsed_character_id}: {p_character.name}")
+                logger.info(f"Processing ParsedCharacter ID {parsed_character_id}: {p_character.title}")
 
                 # Step 2-3: Init character object and format name
                 character = Character(
-                    name=NameFormatter.format_name(p_character.name),
-                    display_name=p_character.name,
+                    code=TitleFormatter.to_code(p_character.title),
+                    title=p_character.title,
+                    slug=TitleFormatter.to_code(p_character.title),
                     description=p_character.description,
                     primary_image=p_character.primary_image,
                 )
@@ -62,15 +64,24 @@ class ProcessCharacterSingleUseCase:
                 # Step 4: Resolve gender
                 await self.gender_resolver_svc.resolve(p_character, character)
 
+
                 # Step 5: Save character to get id
-                existing_character_id = await uow.repos.character.get_id_by(
-                    **{Character.NAME: character.name, Character.GENDER: character.gender}
-                )
+                existing_character_id = await uow.repos.character.get_id_by(**{Character.CODE: character.code})
                 if existing_character_id:
-                    logger.info(f"Character with name {character.display_name} already exists with ID {existing_character_id}. Skipping saving.")
-                    await self.processing_states_svc.set_processed(uow.repos.parsed_character, parsed_character_id)
-                    # TODO In future here should be checked if new record have values that not in existing one and update accordingly
-                    return
+                    exist_cha = await uow.repos.character.get_one_by_id(existing_character_id)
+                    if exist_cha.gender == character.gender:
+                        logger.info(f"Character with title {character.title} already exists with ID {existing_character_id}. Skipping saving.")
+                        await self.processing_states_svc.set_processed(uow.repos.parsed_character, parsed_character_id)
+                        # TODO In future here should be checked if new record have values that not in existing one and update accordingly
+                        return
+
+                    else:
+                        exist_cha.code = f"{exist_cha.gender[0]}-{exist_cha.code}"
+                        character.code = f"{character.gender[0]}-{character.code}"
+
+                        await uow.repos.character.update({Character.ID: exist_cha.id}, {Character.CODE: exist_cha.code})
+
+                character.slug = CharacterTitleFormatter.to_slug(character.title, character.gender)
 
                 character = await uow.repos.character.save(character)
 
@@ -85,7 +96,7 @@ class ProcessCharacterSingleUseCase:
 
                 # Step 7: Mark parsed character as processed
                 await self.processing_states_svc.set_processed(uow.repos.parsed_character, parsed_character_id)
-                logger.info(f"Successfully processed ParsedCharacter ID {parsed_character_id}: {character.name}")
+                logger.info(f"Successfully processed ParsedCharacter ID {parsed_character_id}: {character.title}")
 
             # Step 8: If any error occurs, mark parsed character as with_errors
             except EntityNotFoundError as e:
@@ -98,7 +109,7 @@ class ProcessCharacterSingleUseCase:
                 logger.exception(f"Error processing character ID {parsed_character_id}: {e}")
                 await self._handle_error(parsed_character_id)
 
-    async def _handle_error(self, parsed_character_id: int):
+    async def _handle_error(self, parsed_character_id: UUID):
         async with self.uow_factory.create() as uow:
             await self.processing_states_svc.set_with_errors(uow.repos.parsed_character, parsed_character_id)
 

@@ -17,7 +17,7 @@ class ParentResolverService:
     ):
         parsed_parent_series: ParsedSeries = await uow.repos.parsed_series.get_one_by(id=parsed_series.parent_id)
         if parsed_parent_series:
-            parent_id = await uow.repos.series.get_id_by_display_name(parsed_parent_series.name)
+            parent_id = await uow.repos.series.get_id_by(**{ParsedSeries.TITLE: parsed_parent_series.title})
             if parent_id:
                 series.parent_id = parent_id
                 return

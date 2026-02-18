@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 from icecream import ic
-from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.services import TitleFormatter
 from monstrino_core.shared.enums import ProcessingStates
 from monstrino_models.dto import ParsedPet, Character, Pet
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
@@ -48,7 +48,7 @@ async def test_process_pet_single_success(
         pet = await uow.repos.pet.get_one_by(display_name=parsed_pet.name)
 
         assert pet is not None
-        assert pet.name == NameFormatter.format_name(parsed_pet.name)
+        assert pet.name == TitleFormatter.to_code(parsed_pet.name)
         assert pet.display_name == parsed_pet.name
         assert pet.primary_image == parsed_pet.primary_image
         assert pet.description == parsed_pet.description

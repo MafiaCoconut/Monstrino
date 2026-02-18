@@ -1,5 +1,5 @@
 import pytest
-from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.services import TitleFormatter
 from monstrino_core.domain.value_objects import SeriesRelationTypes
 from monstrino_core.domain.errors import SeriesDataInvalidError
 from monstrino_models.dto import ReleaseSeriesLink
@@ -15,20 +15,24 @@ series_parent = "Great Scarrier Reef"
 
 series_child = "Down Under Ghouls"
 
+
 def series_list_data_single() -> list:
     return [
         series
     ]
+
 
 def series_list_data_parent() -> list:
     return [
         series_parent
     ]
 
+
 def series_list_data_child() -> list:
     return [
         series_child
     ]
+
 
 def series_list_data_parent_and_child() -> list:
     return [
@@ -60,7 +64,6 @@ async def test_series_resolver_svc_single_series(
         assert len(links) == 1
 
 
-
 @pytest.mark.asyncio
 async def test_series_resolver_svc_parent_and_child_series(
         uow_factory: UnitOfWorkFactory[Repositories],
@@ -82,6 +85,7 @@ async def test_series_resolver_svc_parent_and_child_series(
     async with uow_factory.create() as uow:
         links: list[ReleaseSeriesLink] = await uow.repos.release_series_link.get_all()
         assert len(links) == len(release_series)
+
 
 @pytest.mark.asyncio
 async def test_series_resolver_svc_only_child_series(
@@ -169,8 +173,10 @@ async def test_series_resolver_svc_child_then_parent_series(
         assert len(links) == 2
 
         # Дополнительная проверка типов, чтобы подтвердить корректность логики
-        primary_links = [link for link in links if link.relation_type == SeriesRelationTypes.PRIMARY]
-        secondary_links = [link for link in links if link.relation_type == SeriesRelationTypes.SECONDARY]
+        primary_links = [
+            link for link in links if link.relation_type == SeriesRelationTypes.PRIMARY]
+        secondary_links = [
+            link for link in links if link.relation_type == SeriesRelationTypes.SECONDARY]
 
         assert len(primary_links) == 1
         assert len(secondary_links) == 1

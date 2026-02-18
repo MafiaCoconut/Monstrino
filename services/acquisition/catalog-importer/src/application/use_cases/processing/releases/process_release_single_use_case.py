@@ -1,8 +1,10 @@
 from typing import Any
 import logging
+from uuid import UUID
 from icecream import ic
 from monstrino_core.domain.errors import EntityNotFoundError, DuplicateEntityError, SourceNotFoundError
-from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.services import TitleFormatter, TitleFormatter
+from monstrino_core.domain.services.catalog import ReleaseTitleFormatter
 from monstrino_core.domain.value_objects import ReleaseTypeContentType
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_models.dto import ParsedRelease, Release
@@ -16,6 +18,7 @@ from application.services.releases import CharacterResolverService, ExclusiveRes
     ReissueRelationResolverService, ImageProcessingService, ExternalRefResolverService
 
 logger = logging.getLogger(__name__)
+
 
 class ProcessReleaseSingleUseCase:
     def __init__(
@@ -58,11 +61,10 @@ class ProcessReleaseSingleUseCase:
 
         self.external_ref_resolver_svc = external_ref_resolver_svc
 
-
     """
     1.  Fetch a single release by ID
     2.  Create release entity
-    3.  Format name
+    3.  Format title
     4.  Save release
     5.  Resolve characters
     6.  Resolve series
@@ -76,40 +78,49 @@ class ProcessReleaseSingleUseCase:
     14. Set release as processed
     """
 
-    async def execute(self, parsed_release_id: int) -> None:
+    async def execute(self, parsed_release_id: UUID) -> None:
         try:
             async with self.uow_factory.create() as uow:
                 # Step 1: Fetch a single release by ID
-                parsed_release: ParsedRelease = await uow.repos.parsed_release.get_one_by_id(obj_id=parsed_release_id)
+                parsed_release: ParsedRelease = await uow.repos.parsed_release.get_one_by_id(parsed_release_id)
                 if not parsed_release:
-                    raise EntityNotFoundError(f"Entity parsed_release with ID {parsed_release_id} not found")
+                    raise EntityNotFoundError(
+                        f"Entity parsed_release with ID {parsed_release_id} not found")
 
                 await self.processing_states_svc.set_processing(uow.repos.parsed_release, parsed_release_id)
 
-                logger.info(f"Processing ParsedRelease ID {parsed_release_id}: {parsed_release.name}")
+                logger.info(
+                    f"Processing ParsedRelease ID {parsed_release_id}: {parsed_release.title}")
 
                 # ic(parsed_release)
-                # Step 2-3: Create release entity and format name
+                # Step 2-3: Create release entity and format title
                 release = Release(
-                    name=NameFormatter.format_name(parsed_release.name),
-                    display_name=parsed_release.name,
+                    code=TitleFormatter.to_code(parsed_release.title),
+                    title=parsed_release.title,
+                    slug=TitleFormatter.to_code(parsed_release.title),
                     year=parsed_release.year,
                     mpn=parsed_release.mpn,
                     description=parsed_release.description_raw,
                     text_from_box=parsed_release.from_the_box_text_raw
                 )
 
+
                 # Step 4: Save release
                 existing_release_id = await uow.repos.release.get_id_by(
-                    **{Release.NAME: release.name, Release.YEAR: release.year, Release.MPN: release.mpn}
+                    **{Release.TITLE: release.title, Release.YEAR: release.year, Release.MPN: release.mpn}
                 )
+
                 if existing_release_id:
-                    logger.info(f"Release with name {release.display_name} already exists with ID {existing_release_id}. Skipping saving.")
+                    logger.info(
+                        f"Release with title {release.title} already exists with ID {existing_release_id}. Skipping saving.")
                     await self.processing_states_svc.set_processed(uow.repos.parsed_release, parsed_release_id)
                     # TODO In future here should be checked if new record have values that not in existing one and update accordingly
                     return
 
                 release = await uow.repos.release.save(release)
+
+                release.slug = ReleaseTitleFormatter.to_slug(title=release.title, obj_id=release.id)
+
                 ic(release.id)
                 # ic(release)
                 ic('==================================================')
@@ -135,8 +146,10 @@ class ProcessReleaseSingleUseCase:
                     uow=uow,
                     release_id=release.id,
                     type_list=parsed_release.content_type_raw,
-                    character_count=len(parsed_release.characters_raw) if parsed_release.characters_raw is not None else 0,
-                    pet_count=len(parsed_release.pet_names_raw) if parsed_release.pet_names_raw is not None else 0
+                    character_count=len(
+                        parsed_release.characters_raw) if parsed_release.characters_raw is not None else 0,
+                    pet_count=len(
+                        parsed_release.pet_title_raw) if parsed_release.pet_title_raw is not None else 0
                 )
                 ic('==================================================')
                 ic("Resolve pack type")
@@ -144,7 +157,8 @@ class ProcessReleaseSingleUseCase:
                     uow=uow,
                     release_id=release.id,
                     pack_type_list=parsed_release.pack_type_raw,
-                    release_character_count=len(parsed_release.characters_raw) if parsed_release.characters_raw is not None else 0,
+                    release_character_count=len(
+                        parsed_release.characters_raw) if parsed_release.characters_raw is not None else 0,
                 )
                 ic('==================================================')
                 ic("Resolve tier type")
@@ -154,12 +168,13 @@ class ProcessReleaseSingleUseCase:
                         uow=uow,
                         release_id=release.id,
                         tier_type=parsed_release.tier_type_raw,
-                        release_name=release.name,
-                        release_source=source.name,
+                        release_title=release.title,
+                        release_source=source.title,
                         has_deluxe_packaging=False
                     )
                 else:
-                    raise SourceNotFoundError(f"Entity source with ID {parsed_release.source_id} not found")
+                    raise SourceNotFoundError(
+                        f"Entity source with ID {parsed_release.source_id} not found")
                 ic('==================================================')
                 ic("Resolve exclusives")
                 # Step 9: Resolve exclusives
@@ -174,7 +189,7 @@ class ProcessReleaseSingleUseCase:
                 await self.pet_resolver_svc.resolve(
                     uow=uow,
                     release_id=release.id,
-                    pets_list=parsed_release.pet_names_raw
+                    pets_list=parsed_release.pet_title_raw
                 )
                 ic('==================================================')
                 ic("Resolve reissue")
@@ -206,20 +221,23 @@ class ProcessReleaseSingleUseCase:
 
                 # Step 14: Set release as processed
                 await self.processing_states_svc.set_processed(uow.repos.parsed_release, parsed_release_id)
-                logger.info(f"Successfully processed ParsedRelease ID {parsed_release_id}: {release.name}")
-
+                logger.info(
+                    f"Successfully processed ParsedRelease ID {parsed_release_id}: {release.title}")
 
         except EntityNotFoundError as e:
-            logger.error(f"Entity parsed_release with ID {parsed_release_id} not found")
+            logger.error(
+                f"Entity parsed_release with ID {parsed_release_id} not found")
             await self._handle_error(parsed_release_id)
         except DuplicateEntityError as e:
-            logger.error(f"Duplicate entity error for release ID {parsed_release_id}: {e}")
+            logger.error(
+                f"Duplicate entity error for release ID {parsed_release_id}: {e}")
             await self._handle_error(parsed_release_id)
         except Exception as e:
-            logger.exception(f"Error processing parsed_release ID {parsed_release_id}: {e}", )
+            logger.exception(
+                f"Error processing parsed_release ID {parsed_release_id}: {e}", )
             await self._handle_error(parsed_release_id)
 
-    async def _handle_error(self, parsed_release_id: int):
+    async def _handle_error(self, parsed_release_id: UUID):
         async with self.uow_factory.create() as uow:
             ...
             # await self.processing_states_svc.set_with_errors(uow.repos.parsed_release, parsed_release_id)

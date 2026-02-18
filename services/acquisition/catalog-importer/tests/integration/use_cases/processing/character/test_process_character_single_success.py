@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 from icecream import ic
-from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.services import TitleFormatter
 from monstrino_core.shared.enums import ProcessingStates
 from monstrino_models.dto import ParsedCharacter
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
@@ -34,7 +34,7 @@ async def test_process_character_single_success(
     async with uow_factory.create() as uow:
         character = await uow.repos.character.get_one_by(display_name=parsed_character.name)
         assert character is not None
-        assert character.name == NameFormatter.format_name(parsed_character.name)
+        assert character.name == TitleFormatter.to_code(parsed_character.name)
         assert character.display_name == parsed_character.name
         assert character.description == parsed_character.description
         assert character.primary_image == parsed_character.primary_image

@@ -7,7 +7,7 @@ from monstrino_core.domain.errors import (
     ReleaseContentTypeDataInvalidError, ReleaseTypeNotFoundError,
 )
 from monstrino_core.domain.value_objects import ReleaseTypePackCountType, ReleaseTypeContentType, ReleaseTypeTierType
-from monstrino_core.domain.services import NameFormatter, ReleaseTypePackTypeResolver
+from monstrino_core.domain.services import TitleFormatter, ReleaseTypePackTypeResolver
 
 from application.ports import Repositories
 from application.services.releases import ContentTypeResolverService
@@ -84,7 +84,7 @@ async def test_content_single_basic(uow_factory, seed_release_type_list, seed_re
 
     async with uow_factory.create() as uow:
         ids = await get_type_ids(uow)
-        ct_id = await uow.repos.release_type.get_id_by(name=NameFormatter.format_name(ct))
+        ct_id = await uow.repos.release_type.get_id_by(name=TitleFormatter.to_code(ct))
 
         assert ct_id in ids
         assert len(ids) == 1
@@ -107,8 +107,8 @@ async def test_multiple_content_types(uow_factory, seed_release_type_list, seed_
     async with uow_factory.create() as uow:
         ids = await get_type_ids(uow)
 
-        ct1_id = await uow.repos.release_type.get_id_by(name=NameFormatter.format_name(ct_funko()))
-        ct2_id = await uow.repos.release_type.get_id_by(name=NameFormatter.format_name(ct_vinyl()))
+        ct1_id = await uow.repos.release_type.get_id_by(name=TitleFormatter.to_code(ct_funko()))
+        ct2_id = await uow.repos.release_type.get_id_by(name=TitleFormatter.to_code(ct_vinyl()))
 
         assert ct1_id in ids
         assert ct2_id in ids
@@ -253,7 +253,7 @@ async def test_tier_explicit_valid(uow_factory, seed_release_type_list, seed_rel
             uow=uow,
             release_id=1,
             tier_type=ReleaseTypeTierType.COLLECTOR,
-            release_name="Some Doll",
+            release_title="Some Doll",
             release_source="amazon",
             has_deluxe_packaging=False,
         )
@@ -278,7 +278,7 @@ async def test_tier_mattel_creations_auto(uow_factory, seed_release_type_list, s
             uow=uow,
             release_id=1,
             tier_type=None,
-            release_name="Ghoulia",
+            release_title="Ghoulia",
             release_source="mattel-creations",
             has_deluxe_packaging=False,
         )
@@ -303,7 +303,7 @@ async def test_tier_keyword_collector(uow_factory, seed_release_type_list, seed_
             uow=uow,
             release_id=1,
             tier_type=None,
-            release_name="Monster High Skullector",
+            release_title="Monster High Skullector",
             release_source="target",
             has_deluxe_packaging=False,
         )
@@ -328,7 +328,7 @@ async def test_tier_deluxe_flag(uow_factory, seed_release_type_list, seed_releas
             uow=uow,
             release_id=1,
             tier_type=None,
-            release_name="Clawdeen Wolf",
+            release_title="Clawdeen Wolf",
             release_source="amazon",
             has_deluxe_packaging=True,
         )
@@ -353,7 +353,7 @@ async def test_tier_keyword_deluxe(uow_factory, seed_release_type_list, seed_rel
             uow=uow,
             release_id=1,
             tier_type=None,
-            release_name="Holiday Deluxe Edition Doll",
+            release_title="Holiday Deluxe Edition Doll",
             release_source="amazon",
             has_deluxe_packaging=False,
         )
@@ -378,7 +378,7 @@ async def test_tier_default_standard(uow_factory, seed_release_type_list, seed_r
             uow=uow,
             release_id=1,
             tier_type=None,
-            release_name="Regular Monster High Doll",
+            release_title="Regular Monster High Doll",
             release_source="amazon",
             has_deluxe_packaging=False,
         )
@@ -403,7 +403,7 @@ async def test_tier_explicit_invalid_falls_back(uow_factory, seed_release_type_l
             uow=uow,
             release_id=1,
             tier_type="NOT_A_TIER",   # invalid
-            release_name="Some doll",
+            release_title="Some doll",
             release_source="random",
             has_deluxe_packaging=False,
         )
@@ -430,7 +430,7 @@ async def test_tier_duplicate_raises(uow_factory, seed_release_type_list, seed_r
             uow=uow,
             release_id=1,
             tier_type=None,
-            release_name="Standard Doll",
+            release_title="Standard Doll",
             release_source="amazon",
             has_deluxe_packaging=False,
         )
@@ -441,7 +441,7 @@ async def test_tier_duplicate_raises(uow_factory, seed_release_type_list, seed_r
                 uow=uow,
                 release_id=1,
                 tier_type=None,
-                release_name="Standard Doll",
+                release_title="Standard Doll",
                 release_source="amazon",
                 has_deluxe_packaging=False,
             )

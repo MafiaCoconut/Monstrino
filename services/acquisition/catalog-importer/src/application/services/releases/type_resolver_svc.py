@@ -1,11 +1,13 @@
 from typing import Any, Optional
 import logging
+from uuid import UUID
 
 from icecream import ic
 from monstrino_core.domain.errors import ReleaseContentTypeDataInvalidError, ReleaseContentTypeNotFoundError, \
     ReleasePackTypeDataInvalidError, ReleasePackTypeNotFoundError, ReleaseTypeNotFoundError, \
     ReleasePackTypeProvidedButCanNotBeMappedError
-from monstrino_core.domain.services import NameFormatter, ReleaseTypePackTypeResolver, ReleaseTypeTierResolver
+from monstrino_core.domain.services import TitleFormatter
+from monstrino_core.domain.services.catalog import ReleaseTypePackTypeResolver, ReleaseTypeTierResolver
 from monstrino_core.domain.value_objects import ReleaseTypeContentType, ReleaseTypeTierType, \
     ReleaseTypeTierDecision, ReleaseTypePackCountType, ReleaseTypePackType
 from monstrino_core.interfaces import UnitOfWorkInterface
@@ -42,11 +44,11 @@ class TypeResolverService:
 
     """
     @staticmethod
-    async def _set_type(uow: UnitOfWorkInterface[Any, Repositories], release_id: int, type_f: str):
+    async def _set_type(uow: UnitOfWorkInterface[Any, Repositories], release_id: UUID, type_f: str):
         ic(type_f)
-        type_id = await uow.repos.release_type.get_id_by(name=type_f)
+        type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: type_f})
         if not type_id:
-            raise ReleaseTypeNotFoundError(f"Pack type found in parser data, but not found in db with name {type_f}")
+            raise ReleaseTypeNotFoundError(f"Pack type found in parser data, but not found in db with code {type_f}")
         release_type_link = ReleaseTypeLink(
             release_id=release_id,
             type_id=type_id
@@ -58,7 +60,7 @@ class ContentTypeResolverService(TypeResolverService):
     async def resolve(
             self,
             uow: UnitOfWorkInterface[Any, Repositories],
-            release_id: int,
+            release_id: UUID,
             type_list: list[str],
             character_count: int,
             pet_count: int,
@@ -69,7 +71,7 @@ class ContentTypeResolverService(TypeResolverService):
         n_type_list = []
 
         if len(type_list) > 0:
-            normalized_type_list = {NameFormatter.format_name(t) for t in type_list}
+            normalized_type_list = {TitleFormatter.to_code(t) for t in type_list}
             n_type_list = list(normalized_type_list)
 
         if pet_count > 0 and ReleaseTypeContentType.PET_FIGURE not in type_list:
@@ -82,15 +84,15 @@ class ContentTypeResolverService(TypeResolverService):
             n_type_list.pop(n_type_list.index("playsets"))
             n_type_list.append(ReleaseTypeContentType.PLAYSET)
         ic(n_type_list)
-        for type_name in n_type_list:
-            await self._set_type(uow, release_id, type_name)
+        for type_code in n_type_list:
+            await self._set_type(uow, release_id, type_code)
 
 
 class PackTypeResolverService(TypeResolverService):
     async def resolve(
             self,
             uow: UnitOfWorkInterface[Any, Repositories],
-            release_id: int,
+            release_id: UUID,
             pack_type_list: list[str],
             release_character_count: int,
 
@@ -117,11 +119,11 @@ class PackTypeResolverService(TypeResolverService):
                     if pack_f in ReleaseTypePackCountType:
                         is_multipack_count_found = True
 
-        if not await uow.repos.release_type_link.exists_by_release_type_name(ReleaseTypeContentType.PLAYSET):
+        if not await uow.repos.release_type_link.exists_by_release_type_code(ReleaseTypeContentType.PLAYSET):
             if not is_multipack_count_found:
                 await self._set_single_multipack(uow, release_id, release_character_count)
 
-    async def _set_single_multipack(self, uow, release_id: int, release_character_count: int):
+    async def _set_single_multipack(self, uow, release_id: UUID, release_character_count: int):
         if release_character_count > 0:
             mapped = ReleaseTypePackTypeResolver().map_n_pack(release_character_count)
 
@@ -130,7 +132,7 @@ class PackTypeResolverService(TypeResolverService):
             if mapped != ReleaseTypePackCountType.SINGLE_PACK:
                 await self._set_multi_pack(uow, release_id)
 
-    async def _set_multi_pack(self, uow, release_id: int):
+    async def _set_multi_pack(self, uow, release_id: UUID):
         await self._set_type(uow, release_id, ReleaseTypePackCountType.MULTIPACK)
 
 
@@ -138,9 +140,9 @@ class TierTypeResolverService(TypeResolverService):
     async def resolve(
             self,
             uow: UnitOfWorkInterface[Any, Repositories],
-            release_id: int,
+            release_id: UUID,
             tier_type: Optional[str],
-            release_name: str,
+            release_title: str,
             release_source: str,
             has_deluxe_packaging: bool,
 
@@ -149,7 +151,7 @@ class TierTypeResolverService(TypeResolverService):
             tier_type_result = tier_type
         else:
             result = ReleaseTypeTierResolver.resolve(
-                name=release_name, source=release_source, tier_type=tier_type, has_deluxe_packaging=has_deluxe_packaging
+                title=release_title, source=release_source, tier_type=tier_type, has_deluxe_packaging=has_deluxe_packaging
             )
             # logger.info(f"Resolved tier type for release_id={release_id}: {result.tier} (reason: {result.reason})")
             tier_type_result = result.tier

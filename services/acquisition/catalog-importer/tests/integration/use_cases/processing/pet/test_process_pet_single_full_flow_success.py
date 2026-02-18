@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 from icecream import ic
-from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.services import TitleFormatter, TitleFormatter
 from monstrino_core.shared.enums import ProcessingStates
 from monstrino_models.dto import ParsedPet, Character, Pet
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
@@ -19,7 +19,6 @@ async def test_process_pet_single_full_flow_success(
         uow_factory: UnitOfWorkFactory[Repositories],
         seed_character_frankie_stein,
         seed_parsed_pet,
-        seed_image_reference_origin_list,
 ):
     """
     1. Seed pre data
@@ -45,11 +44,11 @@ async def test_process_pet_single_full_flow_success(
 
     # Step 4: Verify pet is saved
     async with uow_factory.create() as uow:
-        pet = await uow.repos.pet.get_one_by(display_name=parsed_pet.name)
+        pet = await uow.repos.pet.get_one_by(title=parsed_pet.title)
 
         assert pet is not None
-        assert pet.name == NameFormatter.format_name(parsed_pet.name)
-        assert pet.display_name == parsed_pet.name
+        assert pet.code == TitleFormatter.to_code(parsed_pet.title)
+        assert pet.title == parsed_pet.title
         assert pet.primary_image == parsed_pet.primary_image
         assert pet.description == parsed_pet.description
 
@@ -58,7 +57,6 @@ async def test_process_pet_single_full_flow_success(
         assert parsed_pet_after is not None
         assert parsed_pet_after.processing_state == ProcessingStates.PROCESSED
 
-        image_list = await uow.repos.image_import_queue.get_all()
-        assert image_list is not None
-        assert len(image_list) == 1
-
+        # image_list = await uow.repos.image_import_queue.get_all()
+        # assert image_list is not None
+        # assert len(image_list) == 1

@@ -1,5 +1,5 @@
 import pytest
-from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.services import TitleFormatter
 from monstrino_core.shared.enums import ProcessingStates
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
@@ -37,14 +37,14 @@ async def test_process_series_batch_success(
     async with uow_factory.create() as uow:
         # 1. Родитель должен сохраниться в series
         parent_series = await uow.repos.series.get_one_by(
-            name=NameFormatter.format_name(parent_parsed.name)
+            name=TitleFormatter.to_code(parent_parsed.name)
         )
         assert parent_series is not None
         assert parent_series.display_name == parent_parsed.name
 
         # 2. Ребёнок должен сохраниться в series
         child_series = await uow.repos.series.get_one_by(
-            name=NameFormatter.format_name(child_parsed.name)
+            name=TitleFormatter.to_code(child_parsed.name)
         )
         assert child_series is not None
         assert child_series.display_name == child_parsed.name

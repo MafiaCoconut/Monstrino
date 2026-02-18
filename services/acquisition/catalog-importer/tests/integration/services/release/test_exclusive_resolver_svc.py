@@ -1,5 +1,6 @@
+import logging  # Не забудьте импортировать
 import pytest
-from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.services import TitleFormatter
 from monstrino_core.domain.errors import ExclusiveDataInvalidError
 from monstrino_models.dto import ReleaseExclusiveLink
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
@@ -35,8 +36,8 @@ async def test_exclusive_resolver_svc(
         links: list[ReleaseExclusiveLink] = await uow.repos.release_exclusive_link.get_all()
         assert len(links) == len(release_exclusives)
 
-        assert links[0].vendor_id == await uow.repos.exclusive_vendor.get_id_by(name=NameFormatter.format_name(release_exclusives[0]))
-        assert links[1].vendor_id == await uow.repos.exclusive_vendor.get_id_by(name=NameFormatter.format_name(release_exclusives[1]))
+        assert links[0].vendor_id == await uow.repos.exclusive_vendor.get_id_by(name=TitleFormatter.to_code(release_exclusives[0]))
+        assert links[1].vendor_id == await uow.repos.exclusive_vendor.get_id_by(name=TitleFormatter.to_code(release_exclusives[1]))
 
 
 @pytest.mark.asyncio
@@ -50,7 +51,8 @@ async def test_exclusive_resolver_svc_duplicate_link_created(
     повторный вызов resolve (или дубликаты в списке) создаст дублирующие связи.
     """
     service = ExclusiveResolverService()
-    release_exclusives = exclusive_list_data() # Два вендора: 'Mattel Creations', 'Target'
+    # Два вендора: 'Mattel Creations', 'Target'
+    release_exclusives = exclusive_list_data()
 
     async with uow_factory.create() as uow:
         # Первый вызов создает 2 связи
@@ -71,9 +73,6 @@ async def test_exclusive_resolver_svc_duplicate_link_created(
         # Ожидается 4 связи, если логика предотвращения дублирования отсутствует.
         # Если вы добавите логику предотвращения дублирования, это должно быть 2.
         assert len(links) == 2
-
-
-import logging  # Не забудьте импортировать
 
 
 @pytest.mark.asyncio

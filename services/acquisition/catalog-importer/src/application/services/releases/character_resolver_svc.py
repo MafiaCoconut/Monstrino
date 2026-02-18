@@ -1,11 +1,12 @@
 from typing import Any
 import logging
 from icecream import ic
+from uuid import UUID
 from monstrino_api.interface.lllm_gateway_interface import LLMGatewayInterface
 from monstrino_core.domain.errors import CharacterDataInvalidError
-from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.services import TitleFormatter, TitleFormatter
 from monstrino_core.interfaces import UnitOfWorkInterface
-from monstrino_models.dto import ReleaseCharacter
+from monstrino_models.dto import ReleaseCharacter, Character, CharacterRole
 from monstrino_core.domain.value_objects import CharacterRoleType
 from monstrino_testing.fixtures import Repositories
 
@@ -27,19 +28,20 @@ class CharacterResolverService:
     async def resolve(
             self,
             uow: UnitOfWorkInterface[Any, Repositories],
-            release_id: int,
-            characters: list # ["Clawdeen Wolf", "Cleo de Nile", "Draculaura", "Frankie Stein", "Toralei Stripe", "Deuce Gorgon"]
+            release_id: UUID,
+            # ["Clawdeen Wolf", "Cleo de Nile", "Draculaura", "Frankie Stein", "Toralei Stripe", "Deuce Gorgon"]
+            characters: list
 
     ) -> None:
 
         if characters:
-            main_role_id = await uow.repos.character_role.get_id_by(name=CharacterRoleType.MAIN)
-            secondary_role_id = await uow.repos.character_role.get_id_by(name=CharacterRoleType.SECONDARY)
+            main_role_id = await uow.repos.character_role.get_id_by(**{CharacterRole.CODE: CharacterRoleType.MAIN})
+            secondary_role_id = await uow.repos.character_role.get_id_by(**{CharacterRole.CODE: CharacterRoleType.SECONDARY})
 
             character_count = 0
 
-            for character_name in characters:
-                character_id = await uow.repos.character.get_id_by(name=NameFormatter.format_name(character_name))
+            for character_title in characters:
+                character_id = await uow.repos.character.get_id_by(**{Character.CODE: TitleFormatter.to_code(character_title)})
 
                 if character_id:
                     character_count += 1
@@ -53,12 +55,13 @@ class CharacterResolverService:
                         character_id=character_id,
                         role_id=role_id,
                         position=character_count,
-                        is_uniq_to_release=True if len(characters) == 1 else False,
+                        is_uniq_to_release=True if len(
+                            characters) == 1 else False,
                     )
                     ic(release_character)
                     await uow.repos.release_character.save(release_character)
                 else:
                     # TODO: нужно добавить логику добавления персонажа в бд если его нет
                     logger.error(
-                        f"Character found in parsed data, but not found in character db: {character_name}"
+                        f"Character found in parsed data, but not found in character db: {character_title}"
                     )

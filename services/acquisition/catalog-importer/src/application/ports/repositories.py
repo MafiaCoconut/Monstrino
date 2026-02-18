@@ -11,12 +11,6 @@ class Repositories:
     character_pet_ownership:  CharacterPetOwnershipRepoInterface
     pet:                 PetRepoInterface
 
-    # Image
-    image_reference_origin: ImageReferenceOriginRepoInterface
-
-    # Importer
-    image_import_queue: ImageImportQueueRepoInterface
-
     # Parse
     parsed_character: ParsedCharacterRepoInterface
     parsed_series:    ParsedSeriesRepoInterface

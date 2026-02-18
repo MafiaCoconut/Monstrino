@@ -1,5 +1,6 @@
 from typing import Any
 import logging
+from uuid import UUID
 
 from icecream import ic
 from monstrino_core.interfaces import UnitOfWorkInterface
@@ -20,13 +21,13 @@ class ImageProcessingService:
             self,
             uow: UnitOfWorkInterface[Any, Repositories],
             image_reference_svc: ImageReferenceService,
-            release_id: int,
+            release_id: UUID,
             primary_image: str,
             other_images_list: list[str],
 
 
     ) -> None:
-
+        # return None
         if primary_image:
             release_primary_image = await uow.repos.release_image.save(
                 ReleaseImage(
@@ -36,13 +37,13 @@ class ImageProcessingService:
                 )
             )
             ic(release_primary_image)
-            await image_reference_svc.set_image_to_process(
-                uow=uow,
-                table=EntityName.RELEASE_IMAGE,
-                field=ReleaseImage.IMAGE_URL,
-                image_link=primary_image,
-                record_id=release_primary_image.id,
-            )
+            # await image_reference_svc.set_image_to_process(
+            #     uow=uow,
+            #     table=EntityName.RELEASE_IMAGE,
+            #     field=ReleaseImage.IMAGE_URL,
+            #     image_link=primary_image,
+            #     record_id=release_primary_image.id,
+            # )
         else:
             logger.warning("No primary image for release ID %s", release_id)
 
@@ -56,12 +57,12 @@ class ImageProcessingService:
                 )
             )
             ic(release_image)
-            await image_reference_svc.set_image_to_process(
-                uow=uow,
-                table=EntityName.RELEASE_IMAGE,
-                field=ReleaseImage.IMAGE_URL,
-                image_link=url,
-                record_id=release_image.id,
-            )
+            # await image_reference_svc.set_image_to_process(
+            #     uow=uow,
+            #     table=EntityName.RELEASE_IMAGE,
+            #     field=ReleaseImage.IMAGE_URL,
+            #     image_link=url,
+            #     record_id=release_image.id,
+            # )
 
 

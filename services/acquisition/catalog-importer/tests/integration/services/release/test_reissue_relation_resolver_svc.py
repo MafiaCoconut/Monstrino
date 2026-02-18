@@ -3,7 +3,7 @@ import logging
 
 from monstrino_core.domain.value_objects.release import ReleaseRelationType
 from monstrino_models.dto import ReleaseRelationLink
-from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.services import TitleFormatter
 from monstrino_core.domain.errors import (
     RelatedReleaseNotFoundError,
     ReleaseRelationTypeNotFoundError
@@ -44,7 +44,7 @@ async def test_reissue_relation_svc_success(
     Test: два reissue есть в БД → создаются 2 связи
     """
     service = ReissueRelationResolverService()
-    formatted_names = [NameFormatter.format_name(x) for x in reissue_list()]
+    formatted_names = [TitleFormatter.to_code(x) for x in reissue_list()]
 
     # Run service
     async with uow_factory.create() as uow:
@@ -125,7 +125,7 @@ async def test_reissue_relation_svc_reissue_not_found(
 
 
 # ---------------------------------------------------------------
-# 4) Проверка: имя форматируется через NameFormatter
+# 4) Проверка: имя форматируется через TitleFormatter
 # ---------------------------------------------------------------
 
 @pytest.mark.asyncio
@@ -140,7 +140,7 @@ async def test_reissue_relation_svc_name_formatter_applied(
     service = ReissueRelationResolverService()
 
     target_name = reissue_1()
-    formatted = NameFormatter.format_name(target_name)
+    formatted = TitleFormatter.to_code(target_name)
 
     async with uow_factory.create() as uow:
         await service.resolve(

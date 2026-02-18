@@ -1,3 +1,4 @@
+from uuid import UUID
 from typing import Protocol, Any
 
 from monstrino_core.interfaces import UnitOfWorkInterface
@@ -10,17 +11,17 @@ class ProcessingStatesService:
     def __init(self, repo):
         self.repo = repo
 
-    async def _set_status(self, repo, parsed_id: int, status: ProcessingStates) -> None:
+    async def _set_status(self, repo, parsed_id: UUID, status: ProcessingStates) -> None:
         await repo.set_processing_state(parsed_id, status)
 
 
-    async def set_processed(self, repo, parsed_id: int) -> None:
+    async def set_processed(self, repo, parsed_id: UUID) -> None:
         await self._set_status(repo, parsed_id, ProcessingStates.PROCESSED)
 
-    async def set_with_errors(self, repo, parsed_id: int) -> None:
+    async def set_with_errors(self, repo, parsed_id: UUID) -> None:
         await self._set_status(repo, parsed_id, ProcessingStates.WITH_ERRORS)
 
-    async def set_processing(self, repo, parsed_id: int) -> None:
+    async def set_processing(self, repo, parsed_id: UUID) -> None:
         await self._set_status(repo, parsed_id, ProcessingStates.PROCESSING)
 
 

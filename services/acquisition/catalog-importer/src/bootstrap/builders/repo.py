@@ -41,26 +41,6 @@ def build_repositories(session: AsyncSession) -> Repositories:
         ),
 
         # ------------------------------------------------------------------
-        # Image
-        # ------------------------------------------------------------------
-        image_reference_origin=repo_factory.create_domain_repo(
-            repo_impl_cls=ImageReferenceOriginRepo,
-            session=session,
-            orm_model=ImageReferenceOriginORM,
-            dto_model=ImageReferenceOrigin,
-        ),
-
-        # ------------------------------------------------------------------
-        # Importer
-        # ------------------------------------------------------------------
-        image_import_queue=repo_factory.create_domain_repo(
-            repo_impl_cls=ImageImportQueueRepo,
-            session=session,
-            orm_model=ImageImportQueueORM,
-            dto_model=ImageImportQueue,
-        ),
-
-        # ------------------------------------------------------------------
         # Parser
         # ------------------------------------------------------------------
         parsed_character=repo_factory.create_domain_repo(

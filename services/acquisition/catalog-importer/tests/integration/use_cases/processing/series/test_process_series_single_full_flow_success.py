@@ -1,6 +1,7 @@
 import pytest
-from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.services import TitleFormatter, TitleFormatter
 from monstrino_core.shared.enums import ProcessingStates
+from monstrino_models.dto import Series
 from monstrino_models.enums import EntityName
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
@@ -13,7 +14,7 @@ from application.use_cases.processing.series import ProcessSeriesSingleUseCase
 @pytest.mark.asyncio
 async def test_process_series_single_full_flow_success(
         uow_factory: UnitOfWorkFactory[Repositories],
-        seed_image_reference_origin_list,
+        # seed_image_reference_origin_list,
         seed_parsed_series_parent_and_child,
         seed_series_parent,
         processing_states_svc_mock,
@@ -42,13 +43,11 @@ async def test_process_series_single_full_flow_success(
     # ---- ASSERT ----
     async with uow_factory.create() as uow:
         # 1. Проверяем, что создан объект Series (child)
-        series_child = await uow.repos.series.get_one_by(
-            name=NameFormatter.format_name(child_parsed.name)
-        )
+        series_child = await uow.repos.series.get_one_by(**{Series.CODE: TitleFormatter.to_code(child_parsed.title)})
         assert series_child is not None
 
         # 2. Проверяем корректное наполнение полей
-        assert series_child.display_name == child_parsed.name
+        assert series_child.title == child_parsed.title
         assert series_child.series_type == child_parsed.series_type
         assert series_child.primary_image == child_parsed.primary_image
 
@@ -62,6 +61,5 @@ async def test_process_series_single_full_flow_success(
         assert parsed_child_after.processing_state == ProcessingStates.PROCESSED
 
         # 5 Проверяем что фото корректно установлено на обработку
-        images = await uow.repos.image_import_queue.get_all()
-        assert len(images) == 1
-
+        # images = await uow.repos.image_import_queue.get_all()
+        # assert len(images) == 1

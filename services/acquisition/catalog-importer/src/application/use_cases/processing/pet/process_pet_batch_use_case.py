@@ -1,6 +1,7 @@
+import asyncio
 import logging
 from typing import Any
-
+from uuid import UUID
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_testing.fixtures import Repositories
 
@@ -25,13 +26,24 @@ class ProcessPetBatchUseCase:
     async def execute(self) -> None:
         logger.info("Starting batch processing of pets")
         async with self.uow_factory.create() as uow:
-            ids: list[int] = await uow.repos.parsed_pet.get_unprocessed_record_ids(self.batch_size)
+            ids: list[UUID] = await uow.repos.parsed_pet.get_unprocessed_record_ids(self.batch_size)
 
         if not ids:
             return
 
-        for pet_id in ids:
-            try:
-                await self.single_uc.execute(pet_id)
-            except Exception as exc:  # noqa: BLE001
-                logger.error("Batch error while processing pet %s: %s", pet_id, exc)
+        batch_size = 10
+        total = len(ids)
+        for i in range(0, total, batch_size):
+            end = min(i + batch_size, total)
+
+            logger.info(f"Parsing batch: {i}-{end}")
+            batch = ids[i:end]
+
+            tasks = [self.single_uc.execute(p) for p in batch]
+            await asyncio.gather(*tasks, return_exceptions=True)
+
+        # for pet_id in ids:
+        #     try:
+        #         await self.single_uc.execute(pet_id)
+        #     except Exception as exc:  # noqa: BLE001
+        #         logger.error("Batch error while processing pet %s: %s", pet_id, exc)

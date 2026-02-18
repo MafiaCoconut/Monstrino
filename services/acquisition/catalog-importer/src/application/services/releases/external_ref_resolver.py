@@ -1,9 +1,10 @@
 from typing import Any
 import logging
+from uuid import UUID
 
 from icecream import ic
 from monstrino_core.domain.errors import ExclusiveDataInvalidError, SourceNotFoundError
-from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.services import TitleFormatter
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ReleaseExclusiveLink, ReleaseExternalReference, Source
 
@@ -12,13 +13,12 @@ from application.ports import Repositories
 logger = logging.getLogger(__name__)
 
 
-
 class ExternalRefResolverService:
     async def resolve(
             self,
             uow: UnitOfWorkInterface[Any, Repositories],
-            release_id: int,
-            source_id: int,
+            release_id: UUID,
+            source_id: UUID,
             external_id: str
     ):
         external_ref = ReleaseExternalReference(

@@ -15,4 +15,4 @@ class GenderResolverService:
         elif gender in ["Manster", "manster"]:
             character.gender = CharacterGender.MANSTER
         else:
-            raise ValueError(f"Character: {character.display_name} has UNKNOWN GENDER: {gender}")
+            raise ValueError(f"Character: {character.title} has UNKNOWN GENDER: {gender}")

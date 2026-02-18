@@ -1,29 +1,32 @@
 from typing import Any
 import logging
+from uuid import UUID
 
 from icecream import ic
 from monstrino_core.domain.errors import SeriesDataInvalidError
-from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.services import TitleFormatter
 from monstrino_core.domain.value_objects import SeriesTypes, SeriesRelationTypes
 from monstrino_core.interfaces import UnitOfWorkInterface
-from monstrino_models.dto import ParsedRelease, ReleaseSeriesLink
+from monstrino_models.dto import ParsedRelease, ReleaseSeriesLink, Series
 
 from application.ports import Repositories
 
 logger = logging.getLogger(__name__)
 
+
 class SeriesResolverService:
     async def resolve(
             self,
             uow: UnitOfWorkInterface[Any, Repositories],
-            release_id: int,
+            release_id: UUID,
             series_list: list[str]
     ) -> None:
         if series_list is None:
-            logger.info(f'No series data to resolve for release_id: {release_id}')
+            logger.info(
+                f'No series data to resolve for release_id: {release_id}')
             return
-        for parsed_series_name in series_list:
-            series = await uow.repos.series.get_one_by(name=NameFormatter.format_name(parsed_series_name))
+        for parsed_series_title in series_list:
+            series = await uow.repos.series.get_one_by(**{Series.CODE: TitleFormatter.to_code(parsed_series_title)})
             if series:
                 if series.series_type == SeriesTypes.PRIMARY:
                     await self._set_series_relation(
@@ -49,7 +52,8 @@ class SeriesResolverService:
                             relation_type=SeriesRelationTypes.SECONDARY
                         )
                     else:
-                        logger.error(f"Parent series not found for secondary series: {parsed_series_name}")
+                        logger.error(
+                            f"Parent series not found for secondary series: {parsed_series_title}")
 
                 else:
                     logger.error(
@@ -57,15 +61,14 @@ class SeriesResolverService:
                     )
             else:
                 logger.error(
-                    f"Series found in parser data, but not found in db with name: {parsed_series_name}",
+                    f"Series found in parser data, but not found in db with title: {parsed_series_title}",
                 )
-
 
     async def _set_series_relation(
             self,
             uow: UnitOfWorkInterface[Any, Repositories],
-            release_id: int,
-            series_id: int,
+            release_id: UUID,
+            series_id: UUID,
             relation_type: SeriesRelationTypes
     ) -> None:
         if not await self._validate_series_exist(uow, release_id, series_id, relation_type):
@@ -80,8 +83,8 @@ class SeriesResolverService:
     async def _validate_series_exist(
             self,
             uow: UnitOfWorkInterface[Any, Repositories],
-            release_id: int,
-            series_id: int,
+            release_id: UUID,
+            series_id: UUID,
             relation_type: SeriesRelationTypes
     ) -> bool:
         return await uow.repos.release_series_link.exists_by(
@@ -89,5 +92,3 @@ class SeriesResolverService:
             series_id=series_id,
             relation_type=relation_type
         )
-
-

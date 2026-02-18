@@ -2,7 +2,7 @@ import pytest
 import logging
 
 from monstrino_core.domain.errors import DuplicateEntityError
-from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.services import TitleFormatter
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
 from application.ports import Repositories
@@ -49,9 +49,9 @@ async def test_pet_resolver_svc(
         # Should match number of input pets
         assert len(links) == len(pets_data())
 
-        # Check pets were resolved from DB via NameFormatter
-        pet1_id = await uow.repos.pet.get_id_by(name=NameFormatter.format_name(pet_1()))
-        pet2_id = await uow.repos.pet.get_id_by(name=NameFormatter.format_name(pet_2()))
+        # Check pets were resolved from DB via TitleFormatter
+        pet1_id = await uow.repos.pet.get_id_by(name=TitleFormatter.to_code(pet_1()))
+        pet2_id = await uow.repos.pet.get_id_by(name=TitleFormatter.to_code(pet_2()))
 
         assert pet1_id in ids
         assert pet2_id in ids
@@ -98,7 +98,7 @@ async def test_pet_resolver_svc_pet_not_found_logs_error(
     service = PetResolverService()
     pets_list = [
         pet_1(),      # exists
-        "UnknownPet", # does NOT exist
+        "UnknownPet",  # does NOT exist
         pet_2()       # exists
     ]
 

@@ -1,6 +1,7 @@
+import asyncio
 import logging
 from typing import Any
-
+from uuid import UUID
 from icecream import ic
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
@@ -27,12 +28,11 @@ class ProcessCharacterBatchUseCase:
     async def execute(self) -> None:
         logger.info("Starting batch processing of characters")
         async with self.uow_factory.create() as uow:
-            ids: list[int] = await uow.repos.parsed_character.get_unprocessed_record_ids(self.batch_size)
+            ids: list[UUID] = await uow.repos.parsed_character.get_unprocessed_record_ids(self.batch_size)
 
         if not ids:
             logger.info("No unprocessed records found")
             return
-
         for char_id in ids:
             try:
                 await self.single_uc.execute(char_id)

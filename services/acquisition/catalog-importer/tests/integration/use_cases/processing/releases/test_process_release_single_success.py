@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import AsyncMock
 
-from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.services import TitleFormatter
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 from monstrino_models.dto import Release, ParsedRelease
 
@@ -12,7 +12,7 @@ from application.use_cases.processing.releases.process_release_single_use_case i
 @pytest.mark.asyncio
 async def test_process_release_single_usecase_success(
         uow_factory: UnitOfWorkFactory[Repositories],
-        seed_parsed_release_default: ParsedRelease # Seed fixture and returned record
+        seed_parsed_release_default: ParsedRelease  # Seed fixture and returned record
 ):
     """
     Check, that:
@@ -69,7 +69,8 @@ async def test_process_release_single_usecase_success(
         assert len(releases) == 1
 
         rel = releases[0]
-        assert rel.name == NameFormatter.format_name(parsed_release.name)  # formatted
+        assert rel.name == TitleFormatter.to_code(
+            parsed_release.name)  # formatted
         assert rel.display_name == parsed_release.name
         assert rel.year == parsed_release.year
         assert rel.mpn == parsed_release.mpn
@@ -100,5 +101,3 @@ async def test_process_release_single_usecase_success(
     assert img_call["primary_image"] == parsed_release.primary_image
     assert img_call["other_images_list"] == parsed_release.images
     assert img_call["image_reference_svc"] is image_reference_svc
-
-

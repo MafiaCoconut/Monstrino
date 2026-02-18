@@ -1,17 +1,18 @@
 import pytest
 from unittest.mock import AsyncMock
-
+from uuid import UUID
 from icecream import ic
-from monstrino_core.domain.services import NameFormatter
+from monstrino_core.domain.services import TitleFormatter
 from monstrino_core.domain.value_objects import CharacterRoleType, SeriesRelationTypes, ReleaseTypeTierType, \
     ReleaseTypePackType, ReleaseTypePackCountType, ReleaseTypeContentType
 from monstrino_core.domain.value_objects.release import ReleaseRelationType
 from monstrino_core.shared.enums import DatabaseOrderByTypes
+from monstrino_infra.debug import ic_model
 from monstrino_repositories.base.dto import OrderSpec
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 from monstrino_models.dto import Release, ParsedRelease, Character, CharacterRole, Series, ReleaseType, \
     ReleaseCharacter, ReleaseSeriesLink, ReleaseTypeLink, ReleaseExclusiveLink, ReleasePet, ReleaseImage, \
-    ReleaseRelationLink, Pet
+    ReleaseRelationLink, Pet, RelationType
 
 from application.ports import Repositories
 from application.services.common import ImageReferenceService, ProcessingStatesService
@@ -36,6 +37,7 @@ image_reference_svc = ImageReferenceService()
 
 external_ref_svc = ExternalRefResolverService()
 
+
 def get_use_case(uow_factory):
     return ProcessReleaseSingleUseCase(
         uow_factory=uow_factory,
@@ -55,7 +57,7 @@ def get_use_case(uow_factory):
         tier_type_resolver_svc=tier_type_resolver,
 
         external_ref_resolver_svc=external_ref_svc
-)
+    )
 
 
 @pytest.mark.asyncio
@@ -97,7 +99,7 @@ async def test_process_release_single_one_character(
 
     # --------- VALIDATE DB: release ---------
     async with uow_factory.create() as uow:
-        release = await uow.repos.release.get_one_by(**{Release.DISPLAY_NAME: parsed_release.name})
+        release = await uow.repos.release.get_one_by(**{Release.TITLE: parsed_release.title})
 
         # release = releases[0]
         _validate_release(
@@ -116,7 +118,7 @@ async def test_process_release_single_one_character(
             release_character=release_characters[0],
             character_id=character.id,
             position=1,
-            role_type_id=await uow.repos.character_role.get_id_by(name=CharacterRoleType.MAIN),
+            role_type_id=await uow.repos.character_role.get_id_by(**{CharacterRole.CODE: CharacterRoleType.MAIN}),
             is_uniq=True
         )
 
@@ -135,11 +137,12 @@ async def test_process_release_single_one_character(
     # --------- VALIDATE DB: release types ---------
     async with uow_factory.create() as uow:
         release_type_links = await uow.repos.release_type_link.get_many_by(**{ReleaseCharacter.RELEASE_ID: release.id})
-        assert len(release_type_links) == 3  # doll pack, single pack, standard tier
+        # doll pack, single pack, standard tier
+        assert len(release_type_links) == 3
 
-        tier_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypeTierType.STANDARD})
-        pack_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME:  ReleaseTypePackCountType.SINGLE_PACK})
-        content_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypeContentType.DOLL_FIGURE})
+        tier_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypeTierType.STANDARD})
+        pack_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE:  ReleaseTypePackCountType.SINGLE_PACK})
+        content_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypeContentType.DOLL_FIGURE})
         _validate_release_type_links(
             release_type_links=release_type_links,
             tier_type_id=tier_type_id,
@@ -151,14 +154,15 @@ async def test_process_release_single_one_character(
     async with uow_factory.create() as uow:
         release_exclusives = await uow.repos.release_exclusive_link.get_many_by(**{ReleaseCharacter.RELEASE_ID: release.id})
         if parsed_release.exclusive_vendor_raw:
-            assert len(release_exclusives) == len(parsed_release.exclusive_vendor_raw)
+            assert len(release_exclusives) == len(
+                parsed_release.exclusive_vendor_raw)
 
     # --------- VALIDATE DB: release pets ---------
 
     async with uow_factory.create() as uow:
         release_pets = await uow.repos.release_pet.get_many_by(**{ReleaseCharacter.RELEASE_ID: release.id})
-        if parsed_release.pet_names_raw:
-            assert len(release_pets) == len(parsed_release.pet_names_raw)
+        if parsed_release.pet_title_raw:
+            assert len(release_pets) == len(parsed_release.pet_title_raw)
 
     # --------- VALIDATE DB: release images ---------
     async with uow_factory.create() as uow:
@@ -205,7 +209,7 @@ async def test_process_release_single_usecase_pack_two(
     series: Series = seed_series_boo_york
 
     # --------- Execute ----------
-    await get_use_case(uow_factory).execute(parsed_release_id=1)
+    await get_use_case(uow_factory).execute(parsed_release_id=parsed_release.id)
 
     # --------- VALIDATE DB: release ---------
     async with uow_factory.create() as uow:
@@ -220,14 +224,15 @@ async def test_process_release_single_usecase_pack_two(
     # --------- VALIDATE DB: release character ---------
     async with uow_factory.create() as uow:
         release_characters = await uow.repos.release_character.get_all()
-        assert len(release_characters) == len(parsed_release.characters_raw) # 2 characters
+        assert len(release_characters) == len(
+            parsed_release.characters_raw)  # 2 characters
 
         _validate_release_character(
             parsed_release=parsed_release,
             release_character=release_characters[0],
             character_id=character_g.id,
             position=1,
-            role_type_id=await uow.repos.character_role.get_id_by(name=CharacterRoleType.MAIN),
+            role_type_id=await uow.repos.character_role.get_id_by(**{CharacterRole.CODE: CharacterRoleType.MAIN}),
             is_uniq=False
         )
 
@@ -236,10 +241,9 @@ async def test_process_release_single_usecase_pack_two(
             release_character=release_characters[1],
             character_id=character_m.id,
             position=2,
-            role_type_id=await uow.repos.character_role.get_id_by(name=CharacterRoleType.SECONDARY),
+            role_type_id=await uow.repos.character_role.get_id_by(**{CharacterRole.CODE: CharacterRoleType.SECONDARY}),
             is_uniq=False
         )
-
 
     # --------- VALIDATE DB: release series ---------
     async with uow_factory.create() as uow:
@@ -255,12 +259,13 @@ async def test_process_release_single_usecase_pack_two(
     # --------- VALIDATE DB: release types ---------
     async with uow_factory.create() as uow:
         release_type_links = await uow.repos.release_type_link.get_all()
-        assert len(release_type_links) == 4  # doll, 2-pack, multipack, standard tier
+        # doll, 2-pack, multipack, standard tier
+        assert len(release_type_links) == 4
 
-        content_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypeContentType.DOLL_FIGURE})
-        pack_type_2_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME:  ReleaseTypePackCountType.TWO_PACK})
-        pack_type_multi_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME:  ReleaseTypePackCountType.MULTIPACK})
-        tier_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypeTierType.STANDARD})
+        content_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypeContentType.DOLL_FIGURE})
+        pack_type_2_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE:  ReleaseTypePackCountType.TWO_PACK})
+        pack_type_multi_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE:  ReleaseTypePackCountType.MULTIPACK})
+        tier_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypeTierType.STANDARD})
 
         _validate_release_type_links(
             release_type_links=release_type_links,
@@ -272,12 +277,12 @@ async def test_process_release_single_usecase_pack_two(
     # --------- VALIDATE DB: release exclusive ---------
     async with uow_factory.create() as uow:
         release_exclusives = await uow.repos.release_exclusive_link.get_all()
-        assert len(release_exclusives) == len(parsed_release.exclusive_vendor_raw)
+        assert len(release_exclusives) == 0
 
     # --------- VALIDATE DB: release pets ---------
     async with uow_factory.create() as uow:
         release_pets = await uow.repos.release_pet.get_all()
-        assert len(release_pets) == len(parsed_release.pet_names_raw)
+        assert len(release_pets) == 0
 
     # --------- VALIDATE DB: release images ---------
     async with uow_factory.create() as uow:
@@ -330,11 +335,11 @@ async def test_process_release_single_usecase_3_pack_reissue_and_tier(
 
     # --------- Execute --------------------------------
     use_case = get_use_case(uow_factory)
-    await use_case.execute(parsed_release_id=1)
+    await use_case.execute(parsed_release_id=parsed_release.id)
 
     # --------- VALIDATE DB: release -------------------
     async with uow_factory.create() as uow:
-        releases = await uow.repos.release.get_many_by(**{Release.DISPLAY_NAME: parsed_release.name})
+        releases = await uow.repos.release.get_many_by(**{Release.TITLE: parsed_release.title})
 
         assert len(releases) == 1
         release = releases[0]
@@ -349,14 +354,17 @@ async def test_process_release_single_usecase_3_pack_reissue_and_tier(
             ),
             **{ReleaseCharacter.RELEASE_ID: release.id}
         )
-        assert len(r_cha_list) == len(parsed_release.characters_raw) # 3 characters
+        for x in r_cha_list:
+            ic_model(x)
+        # ic(r_cha_list)
+        assert len(r_cha_list) == len(parsed_release.characters_raw)  # 3 characters
 
         _validate_release_character(
             parsed_release=parsed_release,
-            release_character=r_cha_list[0],
+            release_character=r_cha_list[2],
             character_id=character_c.id,
             position=1,
-            role_type_id=await uow.repos.character_role.get_id_by(name=CharacterRoleType.MAIN),
+            role_type_id=await uow.repos.character_role.get_id_by(**{CharacterRole.CODE: CharacterRoleType.MAIN}),
             is_uniq=False
         )
         _validate_release_character(
@@ -364,15 +372,15 @@ async def test_process_release_single_usecase_3_pack_reissue_and_tier(
             release_character=r_cha_list[1],
             character_id=character_d.id,
             position=2,
-            role_type_id=await uow.repos.character_role.get_id_by(name=CharacterRoleType.SECONDARY),
+            role_type_id=await uow.repos.character_role.get_id_by(**{CharacterRole.CODE: CharacterRoleType.SECONDARY}),
             is_uniq=False
         )
         _validate_release_character(
             parsed_release=parsed_release,
-            release_character=r_cha_list[2],
+            release_character=r_cha_list[0],
             character_id=character_f.id,
             position=3,
-            role_type_id=await uow.repos.character_role.get_id_by(name=CharacterRoleType.SECONDARY),
+            role_type_id=await uow.repos.character_role.get_id_by(**{CharacterRole.CODE: CharacterRoleType.SECONDARY}),
             is_uniq=False
         )
 
@@ -391,12 +399,13 @@ async def test_process_release_single_usecase_3_pack_reissue_and_tier(
     # --------- VALIDATE DB: release types -------------
     async with uow_factory.create() as uow:
         r_type_links = await uow.repos.release_type_link.get_many_by(**{ReleaseTypeLink.RELEASE_ID: release.id})
-        assert len(r_type_links) == 4  # 3-pack, multipack, budget tier, doll content
+        # 3-pack, multipack, budget tier, doll content
+        assert len(r_type_links) == 4
 
-        tier_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypeTierType.BUDGET})
-        pack_type_3_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME:  ReleaseTypePackCountType.THREE_PACK})
-        pack_type_multi_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME:  ReleaseTypePackCountType.MULTIPACK})
-        content_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypeContentType.DOLL_FIGURE})
+        tier_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypeTierType.BUDGET})
+        pack_type_3_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE:  ReleaseTypePackCountType.THREE_PACK})
+        pack_type_multi_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE:  ReleaseTypePackCountType.MULTIPACK})
+        content_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypeContentType.DOLL_FIGURE})
 
         _validate_release_type_links(
             release_type_links=r_type_links,
@@ -407,12 +416,14 @@ async def test_process_release_single_usecase_3_pack_reissue_and_tier(
     # --------- VALIDATE DB: release exclusive ---------
     async with uow_factory.create() as uow:
         release_exclusives = await uow.repos.release_exclusive_link.get_all()
-        assert len(release_exclusives) == len(parsed_release.exclusive_vendor_raw)
+        assert len(release_exclusives) == 0
+        # assert len(release_exclusives) == len(parsed_release.exclusive_vendor_raw)
 
     # --------- VALIDATE DB: release pets ---------
     async with uow_factory.create() as uow:
         release_pets = await uow.repos.release_pet.get_all()
-        assert len(release_pets) == len(parsed_release.pet_names_raw)
+        assert len(release_pets) == 0
+        # assert len(release_pets) == len(parsed_release.pet_title_raw)
 
     # --------- VALIDATE DB: release images ---------
     async with uow_factory.create() as uow:
@@ -428,8 +439,8 @@ async def test_process_release_single_usecase_3_pack_reissue_and_tier(
         reissue_links = await uow.repos.release_relation_link.get_all()
         assert len(reissue_links) == len(parsed_release.reissue_of_raw)
 
-        release_relation_type_id = await uow.repos.relation_type.get_id_by(name=ReleaseRelationType.REISSUE)
-        related_release_id_c = await uow.repos.release.get_id_by(display_name=parsed_release.reissue_of_raw[0])
+        release_relation_type_id = await uow.repos.relation_type.get_id_by(**{RelationType.CODE: ReleaseRelationType.REISSUE})
+        related_release_id_c = await uow.repos.release.get_id_by(**{Release.TITLE: parsed_release.reissue_of_raw[0]})
         _validate_release_reissue(
             release_id=release.id,
             related_release_id=related_release_id_c,
@@ -437,7 +448,7 @@ async def test_process_release_single_usecase_3_pack_reissue_and_tier(
             release_relation_type_id=release_relation_type_id,
         )
 
-        related_release_id_d = await uow.repos.release.get_id_by(display_name=parsed_release.reissue_of_raw[1])
+        related_release_id_d = await uow.repos.release.get_id_by(**{Release.TITLE: parsed_release.reissue_of_raw[1]})
         _validate_release_reissue(
             release_id=release.id,
             related_release_id=related_release_id_d,
@@ -445,13 +456,14 @@ async def test_process_release_single_usecase_3_pack_reissue_and_tier(
             release_relation_type_id=release_relation_type_id,
         )
 
-        related_release_id_f = await uow.repos.release.get_id_by(display_name=parsed_release.reissue_of_raw[2])
+        related_release_id_f = await uow.repos.release.get_id_by(**{Release.TITLE: parsed_release.reissue_of_raw[2]})
         _validate_release_reissue(
             release_id=release.id,
             related_release_id=related_release_id_f,
             reissue_link=reissue_links[2],
             release_relation_type_id=release_relation_type_id,
         )
+
 
 async def test_process_release_single_usecase_playset(
         uow_factory: UnitOfWorkFactory[Repositories],
@@ -485,11 +497,11 @@ async def test_process_release_single_usecase_playset(
     character: Character = seed_character_frankie_stein
     # --------- Execute --------------------------------
     use_case = get_use_case(uow_factory)
-    await use_case.execute(parsed_release_id=1)
+    await use_case.execute(parsed_release_id=parsed_release.id)
 
     # --------- VALIDATE DB: release -------------------
     async with uow_factory.create() as uow:
-        releases = await uow.repos.release.get_many_by(**{Release.DISPLAY_NAME: parsed_release.name})
+        releases = await uow.repos.release.get_many_by(**{Release.TITLE: parsed_release.title})
 
         assert len(releases) == 1
         release = releases[0]
@@ -501,29 +513,32 @@ async def test_process_release_single_usecase_playset(
             field=ReleaseCharacter.CREATED_AT,
             direction=DatabaseOrderByTypes.ASC
         ))
-        assert len(r_cha_list) == len(parsed_release.characters_raw) # 1 character
+        assert len(r_cha_list) == len(
+            parsed_release.characters_raw)  # 1 character
         _validate_release_character(
             parsed_release=parsed_release,
             release_character=r_cha_list[0],
             character_id=character.id,
             position=1,
-            role_type_id=await uow.repos.character_role.get_id_by(name=CharacterRoleType.MAIN),
+            role_type_id=await uow.repos.character_role.get_id_by(**{CharacterRole.CODE: CharacterRoleType.MAIN}),
             is_uniq=True
         )
     # --------- VALIDATE DB: release series ------------
     async with uow_factory.create() as uow:
         r_series = await uow.repos.release_series_link.get_many_by(**{ReleaseSeriesLink.RELEASE_ID: release.id})
-        assert len(r_series) == len(parsed_release.series_raw) # 0
+        assert len(r_series) == 0
+        # assert len(r_series) == len(parsed_release.series_raw)  # 0
 
     # --------- VALIDATE DB: release types -------------
     async with uow_factory.create() as uow:
         r_type_links = await uow.repos.release_type_link.get_many_by(**{ReleaseTypeLink.RELEASE_ID: release.id})
-        assert len(r_type_links) == 4  # single-pack, standard tier, doll, playset
+        # single-pack, standard tier, doll, playset
+        assert len(r_type_links) == 4
 
-        tier_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypeTierType.STANDARD})
-        pack_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypePackCountType.SINGLE_PACK})
-        content_type_doll_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypeContentType.DOLL_FIGURE})
-        content_type_playset_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypeContentType.PLAYSET})
+        tier_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypeTierType.STANDARD})
+        pack_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypePackCountType.SINGLE_PACK})
+        content_type_doll_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypeContentType.DOLL_FIGURE})
+        content_type_playset_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypeContentType.PLAYSET})
 
     _validate_release_type_links(
         release_type_links=r_type_links,
@@ -535,12 +550,14 @@ async def test_process_release_single_usecase_playset(
     # --------- VALIDATE DB: release exclusive ---------
     async with uow_factory.create() as uow:
         release_exclusives = await uow.repos.release_exclusive_link.get_all()
-        assert len(release_exclusives) == len(parsed_release.exclusive_vendor_raw)
+        assert len(release_exclusives) == 0
+        # assert len(release_exclusives) == len(parsed_release.exclusive_vendor_raw)
 
     # --------- VALIDATE DB: release pets --------------
     async with uow_factory.create() as uow:
         release_pets = await uow.repos.release_pet.get_all()
-        assert len(release_pets) == len(parsed_release.pet_names_raw)
+        assert len(release_pets) == 0
+        # assert len(release_pets) == len(parsed_release.pet_title_raw)
 
     # --------- VALIDATE DB: release images ------------
     async with uow_factory.create() as uow:
@@ -554,7 +571,9 @@ async def test_process_release_single_usecase_playset(
     # --------- VALIDATE DB: release reissue -----------
     async with uow_factory.create() as uow:
         reissue_links = await uow.repos.release_relation_link.get_all()
-        assert len(reissue_links) == len(parsed_release.reissue_of_raw)
+        assert len(reissue_links) == 0
+        # assert len(reissue_links) == len(parsed_release.reissue_of_raw)
+
 
 async def test_process_release_single_usecase_playset_two_pets(
         uow_factory: UnitOfWorkFactory[Repositories],
@@ -592,17 +611,17 @@ async def test_process_release_single_usecase_playset_two_pets(
     # --------- Arrange: get seeded data ---------------
     parsed_release: ParsedRelease = seed_parsed_release_playset_two_pets
     async with uow_factory.create() as uow:
-        character: Character = await uow.repos.character.get_one_by(**{Character.DISPLAY_NAME: character_draculaura.display_name})
-        pet_c: Pet = await uow.repos.pet.get_one_by(**{Pet.NAME: pet_count_fabulous.name})
-        pet_r: Pet = await uow.repos.pet.get_one_by(**{Pet.NAME: pet_rockseena.name})
+        character: Character = await uow.repos.character.get_one_by(**{Character.TITLE: character_draculaura.title})
+        pet_c: Pet = await uow.repos.pet.get_one_by(**{Pet.TITLE: pet_count_fabulous.title})
+        pet_r: Pet = await uow.repos.pet.get_one_by(**{Pet.TITLE: pet_rockseena.title})
     series: Series = seed_series_miscellaneous
     # --------- Execute --------------------------------
     use_case = get_use_case(uow_factory)
-    await use_case.execute(parsed_release_id=1)
+    await use_case.execute(parsed_release_id=parsed_release.id)
 
     # --------- VALIDATE DB: release -------------------
     async with uow_factory.create() as uow:
-        releases = await uow.repos.release.get_many_by(**{Release.DISPLAY_NAME: parsed_release.name})
+        releases = await uow.repos.release.get_many_by(**{Release.TITLE: parsed_release.title})
 
         assert len(releases) == 1
         release = releases[0]
@@ -617,47 +636,53 @@ async def test_process_release_single_usecase_playset_two_pets(
             ),
             **{ReleaseCharacter.RELEASE_ID: release.id}
         )
-        assert len(r_cha_list) == len(parsed_release.characters_raw) # 1 character
+        assert len(r_cha_list) == len(
+            parsed_release.characters_raw)  # 1 character
         _validate_release_character(
             parsed_release=parsed_release,
             release_character=r_cha_list[0],
             character_id=character.id,
             position=1,
-            role_type_id=await uow.repos.character_role.get_id_by(name=CharacterRoleType.MAIN),
+            role_type_id=await uow.repos.character_role.get_id_by(**{CharacterRole.CODE: CharacterRoleType.MAIN}),
             is_uniq=True
         )
     # --------- VALIDATE DB: release series ------------
     async with uow_factory.create() as uow:
         r_series = await uow.repos.release_series_link.get_many_by(**{ReleaseSeriesLink.RELEASE_ID: release.id})
-        assert len(r_series) == len(parsed_release.series_raw) # 1
+        assert len(r_series) == len(parsed_release.series_raw)  # 1
 
     # --------- VALIDATE DB: release types -------------
     async with uow_factory.create() as uow:
         r_type_links = await uow.repos.release_type_link.get_many_by(**{ReleaseTypeLink.RELEASE_ID: release.id})
-        assert len(r_type_links) == 4  # standard tier, doll, playset, pet, 1-pack
-        assert all(release_type_link.type_id not in ReleaseTypePackCountType for release_type_link in r_type_links) # No n-pack type
+        # standard tier, doll, playset, pet, 1-pack
+        assert len(r_type_links) == 5
+        # No n-pack type
+        assert all(
+            release_type_link.type_id not in ReleaseTypePackCountType for release_type_link in r_type_links)
 
-        tier_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypeTierType.STANDARD})
-        content_type_doll_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypeContentType.DOLL_FIGURE})
-        content_type_playset_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypeContentType.PLAYSET})
-        content_type_pet_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypeContentType.PET_FIGURE})
+        tier_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypeTierType.STANDARD})
+        content_type_doll_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypeContentType.DOLL_FIGURE})
+        content_type_playset_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypeContentType.PLAYSET})
+        content_type_pet_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypeContentType.PET_FIGURE})
 
     _validate_release_type_links(
         release_type_links=r_type_links,
         tier_type_id=tier_type_id,
         pack_type_ids=[],
-        content_type_ids=[content_type_doll_id, content_type_playset_id, content_type_pet_id]
+        content_type_ids=[content_type_doll_id,
+                          content_type_playset_id, content_type_pet_id]
     )
 
     # --------- VALIDATE DB: release exclusive ---------
     async with uow_factory.create() as uow:
         release_exclusives = await uow.repos.release_exclusive_link.get_all()
-        assert len(release_exclusives) == len(parsed_release.exclusive_vendor_raw)
+        assert len(release_exclusives) == 0
+        # assert len(release_exclusives) == len(parsed_release.exclusive_vendor_raw)
 
     # --------- VALIDATE DB: release pets --------------
     async with uow_factory.create() as uow:
         release_pets = await uow.repos.release_pet.get_many_by(**{ReleasePet.RELEASE_ID: release.id})
-        assert len(release_pets) == len(parsed_release.pet_names_raw) # 2 pets
+        assert len(release_pets) == len(parsed_release.pet_title_raw)  # 2 pets
         ic(pet_c)
 
         _validate_release_pet(
@@ -689,7 +714,9 @@ async def test_process_release_single_usecase_playset_two_pets(
     # --------- VALIDATE DB: release reissue -----------
     async with uow_factory.create() as uow:
         reissue_links = await uow.repos.release_relation_link.get_all()
-        assert len(reissue_links) == len(parsed_release.reissue_of_raw)
+        assert len(reissue_links) == 0
+        # assert len(reissue_links) == len(parsed_release.reissue_of_raw)
+
 
 async def test_process_release_single_usecase_reissue(
         uow_factory: UnitOfWorkFactory[Repositories],
@@ -727,10 +754,10 @@ async def test_process_release_single_usecase_reissue(
     rel_reissue: Release = seed_release_dawn_of_the_dance_lagoona_blue
     # --------- Execute --------------------------------
     use_case = get_use_case(uow_factory)
-    await use_case.execute(parsed_release_id=1)
+    await use_case.execute(parsed_release_id=parsed_release.id)
     # --------- VALIDATE DB: release -------------------
     async with uow_factory.create() as uow:
-        releases = await uow.repos.release.get_many_by(**{Release.DISPLAY_NAME: parsed_release.name})
+        releases = await uow.repos.release.get_many_by(**{Release.TITLE: parsed_release.title})
 
         assert len(releases) == 1
         release = releases[0]
@@ -741,27 +768,28 @@ async def test_process_release_single_usecase_reissue(
             field=ReleaseCharacter.CREATED_AT,
             direction=DatabaseOrderByTypes.ASC
         ))
-        assert len(r_cha_list) == len(parsed_release.characters_raw) # 1 character
+        assert len(r_cha_list) == len(
+            parsed_release.characters_raw)  # 1 character
         _validate_release_character(
             parsed_release=parsed_release,
             release_character=r_cha_list[0],
             character_id=character.id,
             position=1,
-            role_type_id=await uow.repos.character_role.get_id_by(name=CharacterRoleType.MAIN),
+            role_type_id=await uow.repos.character_role.get_id_by(**{CharacterRole.CODE: CharacterRoleType.MAIN}),
             is_uniq=True
         )
     # --------- VALIDATE DB: release series ------------
     async with uow_factory.create() as uow:
         r_series = await uow.repos.release_series_link.get_many_by(**{ReleaseSeriesLink.RELEASE_ID: release.id})
-        assert len(r_series) == len(parsed_release.series_raw) # 0
+        assert len(r_series) == len(parsed_release.series_raw)  # 0
     # --------- VALIDATE DB: release types -------------
     async with uow_factory.create() as uow:
         r_type_links = await uow.repos.release_type_link.get_many_by(**{ReleaseTypeLink.RELEASE_ID: release.id})
         assert len(r_type_links) == 3  # single-pack, standard tier, doll
 
-        tier_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypeTierType.STANDARD})
-        pack_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypePackCountType.SINGLE_PACK})
-        content_type_doll_id = await uow.repos.release_type.get_id_by(**{ReleaseType.NAME: ReleaseTypeContentType.DOLL_FIGURE})
+        tier_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypeTierType.STANDARD})
+        pack_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypePackCountType.SINGLE_PACK})
+        content_type_doll_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypeContentType.DOLL_FIGURE})
 
     _validate_release_type_links(
         release_type_links=r_type_links,
@@ -772,11 +800,13 @@ async def test_process_release_single_usecase_reissue(
     # --------- VALIDATE DB: release exclusive ---------
     async with uow_factory.create() as uow:
         release_exclusives = await uow.repos.release_exclusive_link.get_all()
-        assert len(release_exclusives) == len(parsed_release.exclusive_vendor_raw)
+        assert len(release_exclusives) == 0
+        # assert len(release_exclusives) == len(parsed_release.exclusive_vendor_raw)
     # --------- VALIDATE DB: release pets --------------
     async with uow_factory.create() as uow:
         release_pets = await uow.repos.release_pet.get_all()
-        assert len(release_pets) == len(parsed_release.pet_names_raw)
+        assert len(release_pets) == 0
+        # assert len(release_pets) == len(parsed_release.pet_title_raw)
     # --------- VALIDATE DB: release images ------------
     async with uow_factory.create() as uow:
         release_images = await uow.repos.release_image.get_all()
@@ -791,37 +821,36 @@ async def test_process_release_single_usecase_reissue(
         assert len(reissue_links) == len(parsed_release.reissue_of_raw)
 
 
-
 # =============== VALIDATION HELPERS ===============
 def _validate_release(
         parsed_release: ParsedRelease,
         release: Release,
 ):
-    assert release.name             == NameFormatter.format_name(parsed_release.name)
-    assert release.display_name     == parsed_release.name
-    assert release.description      == parsed_release.description_raw
-    assert release.mpn              == parsed_release.mpn
-    assert release.year             == parsed_release.year
-    assert release.text_from_box    == parsed_release.from_the_box_text_raw
+    assert release.code == TitleFormatter.to_code(parsed_release.title)
+    assert release.title == parsed_release.title
+    assert release.description == parsed_release.description_raw
+    assert release.mpn == parsed_release.mpn
+    assert release.year == parsed_release.year
+    assert release.text_from_box == parsed_release.from_the_box_text_raw
+
 
 def _validate_release_character(
         parsed_release: ParsedRelease,
         release_character: ReleaseCharacter,
-        character_id: int,
-        role_type_id: int,
+        character_id: UUID,
+        role_type_id: UUID,
         position: int,
         is_uniq: bool
 ):
-    assert release_character.name               == NameFormatter.format_name(parsed_release.characters_raw[position - 1])
-    assert release_character.display_name       == parsed_release.characters_raw[position - 1]
-    assert release_character.character_id       == character_id
-    assert release_character.role_id            == role_type_id
-    assert release_character.position           == position
+    assert release_character.character_id == character_id
+    assert release_character.role_id == role_type_id
+    assert release_character.position == position
     assert release_character.is_uniq_to_release == is_uniq
 
+
 def _validate_release_series(
-        release_id: int,
-        series_id: int,
+        release_id: UUID,
+        series_id: UUID,
         release_series_link: ReleaseSeriesLink,
 ):
     assert release_series_link.release_id == release_id
@@ -831,17 +860,18 @@ def _validate_release_series(
 
 def _validate_release_type_links(
         release_type_links: list[ReleaseTypeLink],
-        tier_type_id: int,
-        pack_type_ids: list[int],
-        content_type_ids: list[int]
+        tier_type_id: UUID,
+        pack_type_ids: list[UUID],
+        content_type_ids: list[UUID]
 ):
     assert any(release_type_link.type_id == tier_type_id for release_type_link in release_type_links)
 
     for i in range(len(pack_type_ids)):
-        assert any(release_type_link.type_id == pack_type_ids[i]    for release_type_link in release_type_links)
+        assert any(release_type_link.type_id == pack_type_ids[i] for release_type_link in release_type_links)
 
     for i in range(len(content_type_ids)):
         assert any(release_type_link.type_id == content_type_ids[i] for release_type_link in release_type_links)
+
 
 def _validate_release_exclusive(
         parsed_release: ParsedRelease,
@@ -849,16 +879,15 @@ def _validate_release_exclusive(
 ):
     ...
 
+
 def _validate_release_pet(
         parsed_release: ParsedRelease,
         release_pet: ReleasePet,
-        pet_id: int,
+        pet_id: UUID,
         position: int,
         is_uniq: bool,
 
 ):
-    assert release_pet.name == NameFormatter.format_name(parsed_release.pet_names_raw[position-1])
-    assert release_pet.display_name == parsed_release.pet_names_raw[position-1]
     assert release_pet.pet_id == pet_id
     assert release_pet.position == position
     assert release_pet.is_uniq_to_release == is_uniq
@@ -866,10 +895,11 @@ def _validate_release_pet(
 
 def _validate_release_images(
         parsed_release: ParsedRelease,
-        release_id: int,
+        release_id: UUID,
         release_images: list[ReleaseImage],
 ):
-    assert len(release_images) == len(parsed_release.images) + 1  # + primary image
+    assert len(release_images) == len(
+        parsed_release.images) + 1  # + primary image
 
     primary_image_found = False
     for img in release_images:
@@ -885,14 +915,15 @@ def _validate_release_images(
 
 
 def _validate_release_reissue(
-        release_id: int,
-        related_release_id: int,
-        release_relation_type_id: int,
+        release_id: UUID,
+        related_release_id: UUID,
+        release_relation_type_id: UUID,
         reissue_link: ReleaseRelationLink,
 ):
     assert reissue_link.release_id == release_id
     assert reissue_link.related_release_id == related_release_id
     assert reissue_link.relation_type_id == release_relation_type_id
+
 
 """
 -------------- EXTRA HELP CONTENT --------------

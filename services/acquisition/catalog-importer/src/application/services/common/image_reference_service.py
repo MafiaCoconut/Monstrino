@@ -1,7 +1,6 @@
 from typing import Any
-
+from uuid import UUID
 from monstrino_core.interfaces import UnitOfWorkInterface
-from monstrino_models.dto import ImageImportQueue
 
 from application.ports import Repositories
 
@@ -13,8 +12,10 @@ class ImageReferenceService:
             table: str,
             field: str,
             image_link: str,
-            record_id: int
+            record_id: UUID
     ):
+        return None
+
         ref_id = await uow.repos.image_reference_origin.get_id_by_table_and_field(table, field)
         if ref_id and image_link:
             await uow.repos.image_import_queue.save(
