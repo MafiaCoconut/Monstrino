@@ -8,10 +8,10 @@ from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfW
 from monstrino_models.dto import Pet, ParsedPet
 from monstrino_models.enums import EntityName
 
-from application.ports import Repositories
-from application.services.common import ImageReferenceService
-from application.services.common.processing_states_svc import ProcessingStatesService
-from application.services.pets import OwnerResolverService
+from app.ports import Repositories
+from app.services.common import ImageReferenceService
+from app.services.common.processing_states_svc import ProcessingStatesService
+from app.services.pets import OwnerResolverService
 
 logger = logging.getLogger(__name__)
 

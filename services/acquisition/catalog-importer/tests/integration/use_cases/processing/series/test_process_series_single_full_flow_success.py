@@ -5,10 +5,10 @@ from monstrino_models.dto import Series
 from monstrino_models.enums import EntityName
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from application.ports import Repositories
-from application.services.common import ProcessingStatesService, ImageReferenceService
-from application.services.series.parent_resolver_svc import ParentResolverService
-from application.use_cases.processing.series import ProcessSeriesSingleUseCase
+from app.ports import Repositories
+from app.services.common import ProcessingStatesService, ImageReferenceService
+from app.services.series.parent_resolver_svc import ParentResolverService
+from app.use_cases.processing.series import ProcessSeriesSingleUseCase
 
 
 @pytest.mark.asyncio

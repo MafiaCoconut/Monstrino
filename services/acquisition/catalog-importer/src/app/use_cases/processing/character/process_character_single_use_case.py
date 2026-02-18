@@ -10,10 +10,10 @@ from monstrino_models.dto import Character, ParsedCharacter
 from monstrino_models.enums import EntityName
 from monstrino_testing.fixtures import uow_factory
 
-from application.ports import Repositories
-from application.services.character import GenderResolverService
-from application.services.common import ImageReferenceService
-from application.services.common.processing_states_svc import ProcessingStatesService
+from app.ports import Repositories
+from app.services.character import GenderResolverService
+from app.services.common import ImageReferenceService
+from app.services.common.processing_states_svc import ProcessingStatesService
 
 logger = logging.getLogger(__name__)
 

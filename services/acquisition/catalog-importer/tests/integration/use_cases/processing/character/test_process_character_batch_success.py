@@ -3,10 +3,10 @@ from monstrino_core.shared.enums import ProcessingStates
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 from monstrino_testing.fixtures import Repositories
 
-from application.services.character import GenderResolverService
-from application.services.common import ProcessingStatesService, ImageReferenceService
-from application.use_cases.processing.character.process_character_single_use_case import ProcessCharacterSingleUseCase
-from application.use_cases.processing.character.process_character_batch_use_case import ProcessCharacterBatchUseCase
+from app.services.character import GenderResolverService
+from app.services.common import ProcessingStatesService, ImageReferenceService
+from app.use_cases.processing.character.process_character_single_use_case import ProcessCharacterSingleUseCase
+from app.use_cases.processing.character.process_character_batch_use_case import ProcessCharacterBatchUseCase
 
 
 @pytest.mark.asyncio

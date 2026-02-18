@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from application.use_cases.processing.series import ProcessSeriesSingleUseCase, ProcessSeriesBatchUseCase
+from app.use_cases.processing.series import ProcessSeriesSingleUseCase, ProcessSeriesBatchUseCase
 
 
 @dataclass

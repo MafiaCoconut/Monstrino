@@ -8,7 +8,7 @@ from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 from monstrino_testing.fixtures import Repositories
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from application.use_cases.processing.series import ProcessSeriesSingleUseCase
+from app.use_cases.processing.series import ProcessSeriesSingleUseCase
 
 
 @pytest.mark.asyncio

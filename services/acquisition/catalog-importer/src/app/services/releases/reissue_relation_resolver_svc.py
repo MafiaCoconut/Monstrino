@@ -9,7 +9,7 @@ from monstrino_core.domain.value_objects.release import ReleaseRelationType
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ParsedRelease, ReleaseRelationLink, RelationType, Release
 
-from application.ports import Repositories
+from app.ports import Repositories
 
 logger = logging.getLogger(__name__)
 

@@ -3,21 +3,21 @@ import pytest
 from monstrino_core.shared.enums import ProcessingStates
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from application.ports import Repositories
-from application.services.common import ImageReferenceService
-from application.use_cases.processing.releases.process_release_single_use_case import ProcessReleaseSingleUseCase
-from application.use_cases.processing.releases.process_release_batch_use_case import (
+from app.ports import Repositories
+from app.services.common import ImageReferenceService
+from app.use_cases.processing.releases.process_release_single_use_case import ProcessReleaseSingleUseCase
+from app.use_cases.processing.releases.process_release_batch_use_case import (
     ProcessReleasesBatchUseCase,
 )
-from application.services.releases.character_resolver_svc import CharacterResolverService
-from application.services.releases.series_resolver_svc import SeriesResolverService
-from application.services.releases.type_resolver_svc import TypeResolverService, ContentTypeResolverService, \
+from app.services.releases.character_resolver_svc import CharacterResolverService
+from app.services.releases.series_resolver_svc import SeriesResolverService
+from app.services.releases.type_resolver_svc import TypeResolverService, ContentTypeResolverService, \
     PackTypeResolverService, TierTypeResolverService
-from application.services.releases.exclusive_resolver_svc import ExclusiveResolverService
-from application.services.releases.reissue_relation_resolver_svc import ReissueRelationResolverService
-from application.services.releases.pet_resolver_svc import PetResolverService
-from application.services.releases.image_processing_svc import ImageProcessingService
-from application.services.common.processing_states_svc import ProcessingStatesService
+from app.services.releases.exclusive_resolver_svc import ExclusiveResolverService
+from app.services.releases.reissue_relation_resolver_svc import ReissueRelationResolverService
+from app.services.releases.pet_resolver_svc import PetResolverService
+from app.services.releases.image_processing_svc import ImageProcessingService
+from app.services.common.processing_states_svc import ProcessingStatesService
 
 
 @pytest.mark.asyncio

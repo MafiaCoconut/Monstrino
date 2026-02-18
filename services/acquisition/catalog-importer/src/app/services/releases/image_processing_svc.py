@@ -7,11 +7,11 @@ from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ParsedRelease, ReleaseRelationLink, ReleaseImage
 from monstrino_models.enums import EntityName
 
-from application.ports import Repositories
+from app.ports import Repositories
 
 from monstrino_models.dto import ParsedRelease, Release
 
-from application.services.common import ImageReferenceService
+from app.services.common import ImageReferenceService
 
 logger = logging.getLogger(__name__)
 

@@ -5,8 +5,8 @@ from monstrino_core.domain.errors import SeriesDataInvalidError
 from monstrino_models.dto import ReleaseSeriesLink
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from application.ports import Repositories
-from application.services.releases import SeriesResolverService
+from app.ports import Repositories
+from app.services.releases import SeriesResolverService
 
 
 series = "Skullector"

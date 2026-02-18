@@ -5,8 +5,8 @@ from monstrino_core.domain.errors import ExclusiveDataInvalidError
 from monstrino_models.dto import ReleaseExclusiveLink
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from application.ports import Repositories
-from application.services.releases import CharacterResolverService, ExclusiveResolverService
+from app.ports import Repositories
+from app.services.releases import CharacterResolverService, ExclusiveResolverService
 
 
 def exclusive_list_data() -> list:

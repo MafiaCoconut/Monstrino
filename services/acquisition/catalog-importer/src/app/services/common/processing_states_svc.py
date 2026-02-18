@@ -4,7 +4,7 @@ from typing import Protocol, Any
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_core.shared.enums import ProcessingStates
 
-from application.ports import Repositories
+from app.ports import Repositories
 
 
 class ProcessingStatesService:

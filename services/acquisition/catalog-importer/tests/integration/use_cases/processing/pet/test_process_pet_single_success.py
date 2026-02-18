@@ -8,8 +8,8 @@ from monstrino_models.dto import ParsedPet, Character, Pet
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 from monstrino_testing.fixtures import parsed_pet
 
-from application.ports import Repositories
-from application.use_cases.processing.pet.process_pet_single_use_case import ProcessPetSingleUseCase
+from app.ports import Repositories
+from app.use_cases.processing.pet.process_pet_single_use_case import ProcessPetSingleUseCase
 
 
 @pytest.mark.asyncio

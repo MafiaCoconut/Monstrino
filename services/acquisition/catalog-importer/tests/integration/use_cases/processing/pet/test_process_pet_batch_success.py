@@ -6,11 +6,11 @@ from monstrino_core.shared.enums import ProcessingStates
 from monstrino_models.dto import ParsedPet, Character, Pet
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from application.ports import Repositories
-from application.services.common import ProcessingStatesService, ImageReferenceService
-from application.services.pets import OwnerResolverService
-from application.use_cases.processing.pet.process_pet_single_use_case import ProcessPetSingleUseCase
-from application.use_cases.processing.pet.process_pet_batch_use_case import ProcessPetBatchUseCase
+from app.ports import Repositories
+from app.services.common import ProcessingStatesService, ImageReferenceService
+from app.services.pets import OwnerResolverService
+from app.use_cases.processing.pet.process_pet_single_use_case import ProcessPetSingleUseCase
+from app.use_cases.processing.pet.process_pet_batch_use_case import ProcessPetBatchUseCase
 
 
 @pytest.mark.asyncio

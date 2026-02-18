@@ -13,7 +13,7 @@ from monstrino_core.domain.value_objects import ReleaseTypeContentType, ReleaseT
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ReleaseTypeLink, ReleaseType
 
-from application.ports import Repositories
+from app.ports import Repositories
 
 logger = logging.getLogger(__name__)
 

@@ -5,8 +5,8 @@ from monstrino_core.domain.services import TitleFormatter
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 from monstrino_models.dto import Release, ParsedRelease
 
-from application.ports import Repositories
-from application.use_cases.processing.releases.process_release_single_use_case import ProcessReleaseSingleUseCase
+from app.ports import Repositories
+from app.use_cases.processing.releases.process_release_single_use_case import ProcessReleaseSingleUseCase
 
 
 @pytest.mark.asyncio

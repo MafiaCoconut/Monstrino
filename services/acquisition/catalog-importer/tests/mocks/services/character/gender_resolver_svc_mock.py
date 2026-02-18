@@ -1,7 +1,7 @@
 import pytest
 from more_itertools.more import side_effect
 from pytest_mock import MockerFixture
-from application.services.character.gender_resolver_svc import GenderResolverService
+from app.services.character.gender_resolver_svc import GenderResolverService
 
 @pytest.fixture
 def gender_resolver_svc_mock(mocker: MockerFixture):

@@ -5,8 +5,8 @@ from monstrino_core.domain.errors import DuplicateEntityError
 from monstrino_core.domain.services import TitleFormatter
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from application.ports import Repositories
-from application.services.releases import PetResolverService
+from app.ports import Repositories
+from app.services.releases import PetResolverService
 
 
 def pet_1() -> str:

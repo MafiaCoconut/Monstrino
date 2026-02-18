@@ -6,9 +6,9 @@ from monstrino_models.dto import ReleaseImage
 from monstrino_models.enums import EntityName
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from application.services.common import ImageReferenceService
-from application.services.releases import ImageProcessingService
-from application.ports import Repositories
+from app.services.common import ImageReferenceService
+from app.services.releases import ImageProcessingService
+from app.ports import Repositories
 
 
 PRIMARY = "https://example.com/primary.png"

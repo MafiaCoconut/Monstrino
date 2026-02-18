@@ -8,8 +8,8 @@ from monstrino_models.dto import ImageReferenceOrigin, Character, ImageImportQue
 from monstrino_models.enums import EntityName
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from application.services.common import ImageReferenceService
-from application.ports import Repositories
+from app.services.common import ImageReferenceService
+from app.ports import Repositories
 
 
 # ---------------------------------------------------------

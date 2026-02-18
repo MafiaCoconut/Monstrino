@@ -11,9 +11,9 @@ from monstrino_models.dto import ParsedRelease, Release
 from monstrino_models.enums import EntityName
 from monstrino_testing.fixtures import Repositories
 
-from application.services.common import ImageReferenceService
-from application.services.common.processing_states_svc import ProcessingStatesService
-from application.services.releases import CharacterResolverService, ExclusiveResolverService, SeriesResolverService, \
+from app.services.common import ImageReferenceService
+from app.services.common.processing_states_svc import ProcessingStatesService
+from app.services.releases import CharacterResolverService, ExclusiveResolverService, SeriesResolverService, \
     ContentTypeResolverService, PackTypeResolverService, TierTypeResolverService, PetResolverService, \
     ReissueRelationResolverService, ImageProcessingService, ExternalRefResolverService
 

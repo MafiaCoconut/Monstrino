@@ -10,8 +10,8 @@ from monstrino_core.domain.errors import (
 )
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from application.services.releases import ReissueRelationResolverService
-from application.ports import Repositories
+from app.services.releases import ReissueRelationResolverService
+from app.ports import Repositories
 
 
 # Helpers

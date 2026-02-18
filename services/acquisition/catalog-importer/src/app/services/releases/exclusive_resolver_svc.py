@@ -8,7 +8,7 @@ from monstrino_core.domain.services import TitleFormatter, TitleFormatter
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ReleaseExclusiveLink, ExclusiveVendor
 
-from application.ports import Repositories
+from app.ports import Repositories
 
 logger = logging.getLogger(__name__)
 

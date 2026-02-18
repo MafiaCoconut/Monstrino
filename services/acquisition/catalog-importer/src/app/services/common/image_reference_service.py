@@ -2,7 +2,7 @@ from typing import Any
 from uuid import UUID
 from monstrino_core.interfaces import UnitOfWorkInterface
 
-from application.ports import Repositories
+from app.ports import Repositories
 
 
 class ImageReferenceService:

@@ -3,8 +3,8 @@ from monstrino_core.domain.errors import DuplicateEntityError
 from monstrino_core.domain.value_objects import CharacterRoleType
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from application.ports import Repositories
-from application.services.releases import CharacterResolverService
+from app.ports import Repositories
+from app.services.releases import CharacterResolverService
 
 def character_1() -> str:
     return "Frankie Stein"

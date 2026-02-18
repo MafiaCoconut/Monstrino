@@ -2,8 +2,8 @@ import pytest
 from monstrino_models.dto import ParsedSeries, Series
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
-from application.ports import Repositories
-from application.services.series.parent_resolver_svc import ParentResolverService
+from app.ports import Repositories
+from app.services.series.parent_resolver_svc import ParentResolverService
 
 
 @pytest.mark.asyncio

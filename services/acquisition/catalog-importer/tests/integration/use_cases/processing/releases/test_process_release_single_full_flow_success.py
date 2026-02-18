@@ -14,12 +14,12 @@ from monstrino_models.dto import Release, ParsedRelease, Character, CharacterRol
     ReleaseCharacter, ReleaseSeriesLink, ReleaseTypeLink, ReleaseExclusiveLink, ReleasePet, ReleaseImage, \
     ReleaseRelationLink, Pet, RelationType
 
-from application.ports import Repositories
-from application.services.common import ImageReferenceService, ProcessingStatesService
-from application.services.releases import CharacterResolverService, SeriesResolverService, ExclusiveResolverService, \
+from app.ports import Repositories
+from app.services.common import ImageReferenceService, ProcessingStatesService
+from app.services.releases import CharacterResolverService, SeriesResolverService, ExclusiveResolverService, \
     PetResolverService, ReissueRelationResolverService, ImageProcessingService, ContentTypeResolverService, \
     PackTypeResolverService, TierTypeResolverService, ExternalRefResolverService
-from application.use_cases.processing.releases.process_release_single_use_case import ProcessReleaseSingleUseCase
+from app.use_cases.processing.releases.process_release_single_use_case import ProcessReleaseSingleUseCase
 
 character_resolver = CharacterResolverService()
 series_resolver = SeriesResolverService()

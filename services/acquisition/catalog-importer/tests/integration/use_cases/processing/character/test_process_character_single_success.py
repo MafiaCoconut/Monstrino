@@ -8,7 +8,7 @@ from monstrino_models.dto import ParsedCharacter
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 from monstrino_testing.fixtures import Repositories
 
-from application.use_cases.processing.character.process_character_single_use_case import ProcessCharacterSingleUseCase
+from app.use_cases.processing.character.process_character_single_use_case import ProcessCharacterSingleUseCase
 
 
 @pytest.mark.asyncio

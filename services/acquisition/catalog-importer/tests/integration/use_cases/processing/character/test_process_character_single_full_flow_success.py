@@ -8,9 +8,9 @@ from monstrino_models.dto import ParsedCharacter
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 from monstrino_testing.fixtures import Repositories
 
-from application.services.character import GenderResolverService
-from application.services.common import ProcessingStatesService, ImageReferenceService
-from application.use_cases.processing.character.process_character_single_use_case import ProcessCharacterSingleUseCase
+from app.services.character import GenderResolverService
+from app.services.common import ProcessingStatesService, ImageReferenceService
+from app.use_cases.processing.character.process_character_single_use_case import ProcessCharacterSingleUseCase
 
 
 @pytest.mark.asyncio

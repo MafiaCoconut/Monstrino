@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 
-from application.services.character import GenderResolverService
-from application.services.common import ImageReferenceService, ProcessingStatesService
-from application.services.pets import OwnerResolverService
-from application.services.releases import SeriesResolverService, PetResolverService, ExclusiveResolverService, \
+from app.services.character import GenderResolverService
+from app.services.common import ImageReferenceService, ProcessingStatesService
+from app.services.pets import OwnerResolverService
+from app.services.releases import SeriesResolverService, PetResolverService, ExclusiveResolverService, \
     CharacterResolverService, ImageProcessingService, ReissueRelationResolverService, ContentTypeResolverService, \
     PackTypeResolverService, TierTypeResolverService, ExternalRefResolverService
-from application.services.series import ParentResolverService
+from app.services.series import ParentResolverService
 
 
 @dataclass(frozen=True)

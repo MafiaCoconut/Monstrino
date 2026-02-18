@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from application.interfaces import LLMGatewayInterface
+from app.interfaces import LLMGatewayInterface
 
 @dataclass
 class Gateways:
