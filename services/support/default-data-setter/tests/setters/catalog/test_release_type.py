@@ -221,8 +221,13 @@ def get_items() -> list:
 async def test_seed_exclusive_vendors(
         uow_factory_without_reset_db: UnitOfWorkFactoryInterface[Any, Repositories]
 ):
+    items = get_items()
     async with uow_factory_without_reset_db.create() as uow:
-        await uow.repos.release_type.save_many(get_items())
-
-        all_items = await uow.repos.release_type.get_all()
-        assert len(all_items) == len(get_items())
+        obj_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: items[0].code})
+        if obj_id is None:
+            await uow.repos.release_type.save_many(items)
+    
+            all_items = await uow.repos.release_type.get_all()
+            assert len(all_items) == len(items)
+        else:
+            print("Release types already seeded. Skipping seeding and test.")

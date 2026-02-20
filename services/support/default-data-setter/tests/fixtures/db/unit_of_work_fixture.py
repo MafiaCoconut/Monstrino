@@ -13,8 +13,8 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 @pytest.fixture(scope="function")
 async def engine():
     eng = create_async_engine(DATABASE_URL, echo=False)
-    # async with eng.begin() as conn:
-    #     await conn.run_sync(Base.metadata.create_all)
+    async with eng.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
     yield eng
     await eng.dispose()
 

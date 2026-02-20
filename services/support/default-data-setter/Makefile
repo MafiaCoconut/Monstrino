@@ -65,18 +65,25 @@ set-catalog-character_role:
 	$(RUN_PYTEST_WITH_LOGS) $(CATALOG_PATH)/test_character_role.py
 
 
+set-catalog: set-catalog-exclusive-vendors set-catalog-release-type set-catalog-relation-type set-catalog-character_role
 
 # ------------ Market ------------
 
 set-market-money-currency:
-	poetry run pytest --log-cli-level=INFO tests/setters/test_money_currency.py -x
+	$(RUN_PYTEST_WITH_LOGS)  $(MARKET_PATH)/test_money_currency.py -x
 
 set-market-geo-countries:
-	poetry run pytest --log-cli-level=INFO tests/setters/test_geo_country.py -x
+	$(RUN_PYTEST_WITH_LOGS)  $(MARKET_PATH)/test_geo_country.py -x
 
+set-market: set-market-money-currency set-market-geo-countries
 # ------------ Ingest ------------
 
 set-ingest-source:
-	poetry run pytest --log-cli-level=INFO tests/setters/test_ingest_source.py -x
+	$(RUN_PYTEST_WITH_LOGS)  $(INGEST_PATH)/test_ingest_source.py -x
 
+set-ingest: set-ingest-source
+
+# ------------ All Setters ------------
+
+make set-all: set-catalog set-market set-ingest
 

@@ -29,8 +29,11 @@ def get_items():
 async def test_seed_character_role(
         uow_factory_without_reset_db: UnitOfWorkFactoryInterface[Any, Repositories]
 ):
+    items = get_items()
     async with uow_factory_without_reset_db.create() as uow:
-        await uow.repos.character_role.save_many(get_items())
-
-        all_items = await uow.repos.character_role.get_all()
-        assert len(all_items) == len(get_items())
+        obj_id = await uow.repos.character_role.get_id_by(**{CharacterRole.CODE: items[0].code})
+        if obj_id is None:
+            await uow.repos.character_role.save_many(items)
+    
+            all_items = await uow.repos.character_role.get_all()
+            assert len(all_items) == len(items)

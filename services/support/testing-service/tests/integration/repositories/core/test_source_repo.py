@@ -2,7 +2,7 @@ import logging
 import pytest
 from monstrino_models.dto import Source
 from integration.common import BaseCrudRepoTest
-from monstrino_testing.fixtures.data.ingest.ids import SOURCE_TYPE_HTML_CODE, SOURCE_TYPE_HTML_ID
+from monstrino_testing.fixtures.base.ids import *
 
 logger = logging.getLogger(__name__)
 
