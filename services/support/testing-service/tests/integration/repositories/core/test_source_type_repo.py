@@ -11,6 +11,7 @@ class TestSourceTypeRepo(BaseCrudRepoTest):
     entity_cls = SourceType
     repo_attr = "source_type"
     sample_create_data = {
+        "code": "sitemap",
         "title": "SITEMAP",
         "description": "XML sitemap files used for structured website crawling.",
         "requires_auth": False,
