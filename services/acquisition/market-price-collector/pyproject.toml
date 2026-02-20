@@ -3,7 +3,7 @@ name = "market-price-collector"
 version = "0.1.0"
 description = "A service for collecting market prices."
 readme = "README.md"
-requires-python = ">=3.14.3"
+requires-python = ">=3.14"
 dependencies = [
     "aiohttp>=3.13.2",
     "aiokafka>=0.12.0",

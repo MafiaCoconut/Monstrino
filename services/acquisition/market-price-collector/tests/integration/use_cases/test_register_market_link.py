@@ -9,9 +9,9 @@ from domain.enums import MarketSources
 
 @pytest.mark.asyncio
 async def test_uk(
-        uow_factory: UnitOfWorkFactory[Repositories],
+        uow_factory_without_reset: UnitOfWorkFactory[Repositories],
         registry: PortsRegistry,
         seed_market_default_values
         ):
-    parser = RegisterReleaseMarketLink(uow_factory, registry)
+    parser = RegisterReleaseMarketLink(uow_factory_without_reset, registry)
     await parser.execute(MarketSources.MATTEL_SHOP)
