@@ -14,6 +14,6 @@ from tests.setters.base.set_table_by_sql import seed_from_sql_file
 async def test_seed_sources(
     uow_factory_without_reset_db: UnitOfWorkFactoryInterface[Any, Repositories]
 ):
-    result = await seed_from_sql_file(uow_factory_without_reset_db, sql_path="tests/data/parsed_pet.sql")
+    result = await seed_from_sql_file(uow_factory_without_reset_db, sql_path="tests/data/parsed_character.sql")
     ic(result)
     

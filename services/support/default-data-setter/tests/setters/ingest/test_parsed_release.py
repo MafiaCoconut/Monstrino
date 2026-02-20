@@ -1,5 +1,4 @@
-
-test_parsed_pet.pyfrom __future__ import annotations
+from __future__ import annotations
 from typing import Any, Callable, Iterable, Mapping, Optional
 
 import pytest
@@ -15,6 +14,6 @@ from tests.setters.base.set_table_by_sql import seed_from_sql_file
 async def test_seed_sources(
     uow_factory_without_reset_db: UnitOfWorkFactoryInterface[Any, Repositories]
 ):
-    result = await seed_from_sql_file(uow_factory_without_reset_db, sql_path="tests/data/parsed_pet.sql")
+    result = await seed_from_sql_file(uow_factory_without_reset_db, sql_path="tests/data/parsed_release.sql")
     ic(result)
     

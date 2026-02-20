@@ -47,6 +47,7 @@ pytest-with-logs:
 RUN_PYTEST_WITH_LOGS = poetry run pytest --log-cli-level=INFO -x
 
 CATALOG_PATH = tests/setters/catalog
+CORE_PATH = tests/setters/core
 INGEST_PATH = tests/setters/ingest
 MARKET_PATH = tests/setters/market
 
@@ -67,21 +68,35 @@ set-catalog-character_role:
 
 set-catalog: set-catalog-exclusive-vendors set-catalog-release-type set-catalog-relation-type set-catalog-character_role
 
+# ------------ Core ------------
+set-core-source:
+	$(RUN_PYTEST_WITH_LOGS)  $(CORE_PATH)/test_source.py
+
+set-core: set-core-source
+
 # ------------ Market ------------
 
 set-market-money-currency:
-	$(RUN_PYTEST_WITH_LOGS)  $(MARKET_PATH)/test_money_currency.py -x
+	$(RUN_PYTEST_WITH_LOGS)  $(MARKET_PATH)/test_money_currency.py
 
 set-market-geo-countries:
-	$(RUN_PYTEST_WITH_LOGS)  $(MARKET_PATH)/test_geo_country.py -x
+	$(RUN_PYTEST_WITH_LOGS)  $(MARKET_PATH)/test_geo_country.py
 
 set-market: set-market-money-currency set-market-geo-countries
 # ------------ Ingest ------------
 
-set-ingest-source:
-	$(RUN_PYTEST_WITH_LOGS)  $(INGEST_PATH)/test_ingest_source.py -x
+set-ingest-parse-pet:
+	$(RUN_PYTEST_WITH_LOGS)  $(INGEST_PATH)/test_parsed_pet.py
 
-set-ingest: set-ingest-source
+set-ingest-parse-character:
+	$(RUN_PYTEST_WITH_LOGS)  $(INGEST_PATH)/test_parsed_character.py
+
+set-ingest-parse-series:
+	$(RUN_PYTEST_WITH_LOGS)  $(INGEST_PATH)/test_parsed_series.py
+
+set-ingest-parse-release:
+	$(RUN_PYTEST_WITH_LOGS)  $(INGEST_PATH)/test_parsed_release.py
+
 
 # ------------ All Setters ------------
 
