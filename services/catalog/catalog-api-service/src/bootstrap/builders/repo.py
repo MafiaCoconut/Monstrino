@@ -2,10 +2,9 @@ from monstrino_repositories.base.factory import MapperFactory, SqlAlchemyRepoFac
 from monstrino_repositories.repositories_impl import *
 from monstrino_models.dto import *
 from monstrino_models.orm import *
-from monstrino_repositories.repositories_impl.release.utils.release_search import ReleaseSearchRepo
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from application.ports import Repositories
+from app.ports import Repositories
 
 mapper_factory = MapperFactory()
 repo_factory = SqlAlchemyRepoFactory(mapper_factory)

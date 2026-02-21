@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class OllamaResponse(BaseModel):
+class OllamaClientResponse(BaseModel):
     model: str
     created_at: str
     response: str

@@ -5,10 +5,10 @@ from monstrino_api.v1.shared.responces import ResponseFactory
 
 from presentation import cors
 from presentation.api.routes import internal_routes as internal_api
-from presentation.api.routes import external_routes as external_api
+from presentation.api.routes import release_endpoints as external_api
 
 rf = ResponseFactory(
-    service="catalog-importer",
+    service="catalog-api-service",
     version="v1"
 )
 def config_cors(app: FastAPI):

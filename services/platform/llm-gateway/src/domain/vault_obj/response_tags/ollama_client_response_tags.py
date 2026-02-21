@@ -18,5 +18,5 @@ class OllamaModel(BaseModel):
 
 
 
-class OllamaResponseTags(BaseModel):
+class OllamaClientResponseTags(BaseModel):
     models: list[OllamaModel]

@@ -7,8 +7,9 @@ from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_models.dto import Release, ReleaseImage, ReleaseCharacter, Character, ReleasePet, ReleaseTypeLink
 
-from src.application.ports import Repositories
-from src.application.queries.get_release_by_id import GetReleaseByIdDTO
+from domain.entities.release import *
+from src.app.ports import Repositories
+from src.app.queries.get_release_by_id import GetReleaseByIdDTO
 from src.domain.entities import *
 
 logger = logging.getLogger(__name__)

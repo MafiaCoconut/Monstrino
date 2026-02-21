@@ -10,9 +10,11 @@ class ReleaseFilters:
     character_ids:      Optional[list[int]] = None
     year_from:          Optional[int]       = None
     year_to:            Optional[int]       = None
+    year:               Optional[int]       = None
     release_type_ids:   Optional[list[int]] = None
     exclusive_ids:      Optional[list[int]] = None
     has_images:         Optional[bool]      = None
     is_reissue:         Optional[bool]      = None
+    mpn:                Optional[str]       = None
     # country_codes:      Optional[list[str]] = None
     # date_from:          Optional[str]       = None

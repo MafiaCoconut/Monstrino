@@ -2,8 +2,10 @@ from typing import Optional, Any
 
 from pydantic import BaseModel
 
+from .base_llm_text_client_request import BaseLLMClientRequest
 
-class OllamaRequest(BaseModel):
+
+class OllamaClientRequest(BaseLLMClientRequest):
     model: str
     prompt: Optional[str] = None
     system: Optional[str] = None
