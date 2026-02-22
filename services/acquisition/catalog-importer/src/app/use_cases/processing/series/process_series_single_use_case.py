@@ -66,13 +66,15 @@ class ProcessSeriesSingleUseCase:
                 if series.series_type == SeriesTypes.SECONDARY:
                     await self.parent_resolver_svc.resolve(uow, parsed_series, series)
 
-                existing_series_id = await uow.repos.series.get_id_by(
-                    **{Series.TITLE: series.title, Series.SERIES_TYPE: series.series_type}
-                )
+                existing_series_id = await uow.repos.series.get_id_by(**{Series.TITLE: series.title})
                 if existing_series_id:
-                    logger.info(
-                        f"Series with title {series.title} already exists with ID {existing_series_id}. Skipping saving.")
+                    exist_series = await uow.repos.series.get_one_by(**{Series.ID: existing_series_id})
+                    if exist_series.series_type == series.series_type:
+                        logger.info(f"Series with title {series.title} already exists with ID {existing_series_id}. Skipping saving.")
+                    else:
+                        logger.warning(f"Series with title {series.title} already exists as secondary, SKIPPING!!!")
                     await self.processing_states_svc.set_processed(uow.repos.parsed_series, parsed_series_id)
+
                     # TODO In future here should be checked if new record have values that not in existing one and update accordingly
                     return
 
@@ -103,5 +105,6 @@ class ProcessSeriesSingleUseCase:
             await self._handle_error(parsed_series_id)
 
     async def _handle_error(self, parsed_series_id: UUID):
-        async with self.uow_factory.create() as uow:
-            await self.processing_states_svc.set_with_errors(uow.repos.parsed_series, parsed_series_id)
+        ...
+        # async with self.uow_factory.create() as uow:
+            # await self.processing_states_svc.set_with_errors(uow.repos.parsed_series, parsed_series_id)

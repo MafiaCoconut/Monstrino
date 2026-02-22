@@ -22,16 +22,18 @@ class ProcessReleasesBatchUseCase:
         self.uow_factory = uow_factory
         self.single_uc = single_uc
         self.batch_size = batch_size
-        self.batch_size = 1
+        self.batch_size = 500
 
     async def execute(self) -> None:
         logger.info("Starting batch processing of releases")
         async with self.uow_factory.create() as uow:
             ids: list[UUID] = await uow.repos.parsed_release.get_unprocessed_record_ids(self.batch_size)
+            # Pre-load sources to reduce DB queries in parallel processing
+            sources = await uow.repos.source.get_many_by()  # Uncomment if needed
         if not ids:
             return
 
-        batch_size = 10
+        batch_size = 10  # Reduced from 10 to avoid DB connection pool exhaustion
         total = len(ids)
         for i in range(0, total, batch_size):
             end = min(i + batch_size, total)
@@ -39,7 +41,7 @@ class ProcessReleasesBatchUseCase:
             logger.info(f"Parsing batch: {i}-{end}")
             batch = ids[i:end]
 
-            tasks = [self.single_uc.execute(p) for p in batch]
+            tasks = [self.single_uc.execute(p, sources) for p in batch]
             await asyncio.gather(*tasks, return_exceptions=True)
 
         # for rel_id in ids:

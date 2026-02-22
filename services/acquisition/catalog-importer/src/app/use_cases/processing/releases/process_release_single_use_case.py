@@ -7,7 +7,7 @@ from monstrino_core.domain.services import TitleFormatter, TitleFormatter
 from monstrino_core.domain.services.catalog import ReleaseTitleFormatter
 from monstrino_core.domain.value_objects import ReleaseTypeContentType
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
-from monstrino_models.dto import ParsedRelease, Release
+from monstrino_models.dto import ParsedRelease, Release, Source
 from monstrino_models.enums import EntityName
 from monstrino_testing.fixtures import Repositories
 
@@ -16,7 +16,7 @@ from app.services.common.processing_states_svc import ProcessingStatesService
 from app.services.releases import CharacterResolverService, ExclusiveResolverService, SeriesResolverService, \
     ContentTypeResolverService, PackTypeResolverService, TierTypeResolverService, PetResolverService, \
     ReissueRelationResolverService, ImageProcessingService, ExternalRefResolverService
-
+from datetime import datetime
 logger = logging.getLogger(__name__)
 
 
@@ -78,7 +78,9 @@ class ProcessReleaseSingleUseCase:
     14. Set release as processed
     """
 
-    async def execute(self, parsed_release_id: UUID) -> None:
+    async def execute(self, parsed_release_id: UUID, sources: list[Source] = None) -> None:
+        start = datetime.now()
+        ic.disable()
         try:
             async with self.uow_factory.create() as uow:
                 # Step 1: Fetch a single release by ID
@@ -104,7 +106,6 @@ class ProcessReleaseSingleUseCase:
                     text_from_box=parsed_release.from_the_box_text_raw
                 )
 
-
                 # Step 4: Save release
                 existing_release_id = await uow.repos.release.get_id_by(
                     **{Release.TITLE: release.title, Release.YEAR: release.year, Release.MPN: release.mpn}
@@ -119,7 +120,9 @@ class ProcessReleaseSingleUseCase:
 
                 release = await uow.repos.release.save(release)
 
-                release.slug = ReleaseTitleFormatter.to_slug(title=release.title, obj_id=release.id)
+                release.slug = ReleaseTitleFormatter.to_slug(
+                    code=release.code, obj_id=release.id)
+                await uow.repos.release.update({Release.ID: release.id}, {Release.SLUG: release.slug})
 
                 ic(release.id)
                 # ic(release)
@@ -162,14 +165,17 @@ class ProcessReleaseSingleUseCase:
                 )
                 ic('==================================================')
                 ic("Resolve tier type")
-                source = await uow.repos.source.get_one_by(id=parsed_release.source_id)
+                if sources is None:
+                    source = await uow.repos.source.get_one_by(id=parsed_release.source_id)
+                else:
+                    source = next((s for s in sources if s.id == parsed_release.source_id), None)
                 if source:
                     await self.tier_type_resolver_svc.resolve(
                         uow=uow,
                         release_id=release.id,
                         tier_type=parsed_release.tier_type_raw,
-                        release_title=release.title,
-                        release_source=source.title,
+                        release_code=release.code,
+                        release_source_code=source.code,
                         has_deluxe_packaging=False
                     )
                 else:
@@ -221,8 +227,7 @@ class ProcessReleaseSingleUseCase:
 
                 # Step 14: Set release as processed
                 await self.processing_states_svc.set_processed(uow.repos.parsed_release, parsed_release_id)
-                logger.info(
-                    f"Successfully processed ParsedRelease ID {parsed_release_id}: {release.title}")
+                logger.info(f"Successfully processed ParsedRelease ID {parsed_release_id}: {release.title} in {(datetime.now() - start).total_seconds()} seconds")
 
         except EntityNotFoundError as e:
             logger.error(

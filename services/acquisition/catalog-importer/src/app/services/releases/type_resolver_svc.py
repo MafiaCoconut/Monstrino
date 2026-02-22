@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any, Optional
 import logging
 from uuid import UUID
@@ -72,6 +73,7 @@ class ContentTypeResolverService(TypeResolverService):
 
         if len(type_list) > 0:
             normalized_type_list = {TitleFormatter.to_code(t) for t in type_list}
+
             n_type_list = list(normalized_type_list)
 
         if pet_count > 0 and ReleaseTypeContentType.PET_FIGURE not in type_list:
@@ -83,6 +85,10 @@ class ContentTypeResolverService(TypeResolverService):
         if "playsets" in n_type_list:
             n_type_list.pop(n_type_list.index("playsets"))
             n_type_list.append(ReleaseTypeContentType.PLAYSET)
+        if "fashion-packs" in n_type_list:
+            n_type_list.pop(n_type_list.index("fashion-packs"))
+            n_type_list.append(ReleaseTypeContentType.FASHION_PACK)
+
         ic(n_type_list)
         for type_code in n_type_list:
             await self._set_type(uow, release_id, type_code)
@@ -142,19 +148,20 @@ class TierTypeResolverService(TypeResolverService):
             uow: UnitOfWorkInterface[Any, Repositories],
             release_id: UUID,
             tier_type: Optional[str],
-            release_title: str,
-            release_source: str,
+            release_code: str,
+            release_source_code: str,
             has_deluxe_packaging: bool,
 
     ):
-        if tier_type and tier_type in {e.value for e in ReleaseTypeTierType}:
+        if not tier_type:
+            tier_type_result = ReleaseTypeTierType.STANDARD
+        elif tier_type and tier_type in {e.value for e in ReleaseTypeTierType}:
             tier_type_result = tier_type
         else:
             result = ReleaseTypeTierResolver.resolve(
-                title=release_title, source=release_source, tier_type=tier_type, has_deluxe_packaging=has_deluxe_packaging
+                release_title=release_code, release_source=release_source_code, tier_type=tier_type, has_deluxe_packaging=has_deluxe_packaging
             )
+
             # logger.info(f"Resolved tier type for release_id={release_id}: {result.tier} (reason: {result.reason})")
             tier_type_result = result.tier
-
         await self._set_type(uow, release_id, tier_type_result)
-

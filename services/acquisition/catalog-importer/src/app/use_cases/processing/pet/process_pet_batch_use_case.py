@@ -17,7 +17,7 @@ class ProcessPetBatchUseCase:
             self,
             uow_factory: UnitOfWorkFactoryInterface[Any , Repositories],
             single_uc: ProcessPetSingleUseCase,
-            batch_size: int = 150
+            batch_size: int = 200
     ) -> None:
         self.uow_factory = uow_factory
         self.single_uc = single_uc

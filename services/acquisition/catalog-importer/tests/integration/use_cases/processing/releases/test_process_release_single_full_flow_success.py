@@ -820,6 +820,111 @@ async def test_process_release_single_usecase_reissue(
         reissue_links = await uow.repos.release_relation_link.get_all()
         assert len(reissue_links) == len(parsed_release.reissue_of_raw)
 
+async def test_process_release_with_character_spec_code(
+        uow_factory: UnitOfWorkFactory[Repositories],
+        seed_character_dracula_g,
+        seed_character_dracula_m,
+        seed_parsed_release_dracula,
+        seed_series_skullector,
+
+        seed_character_role_list,
+        seed_release_type_list,
+        seed_relation_type_list,
+):
+    """
+    Function test processing release with
+    - 1 character
+    - 1 series
+    - 0 exclusive
+    - 0 pet
+    - reissue=True
+    - pack_type=Single-pack
+    - tier_type=standard
+
+    Check that:
+    - release created correctly
+    - release character code is saved correctly, because it will be dracula, but db has g-dracula and m-dracula
+    - release type content is doll-figure
+    - release type pack is single
+    - release type tier is standard
+    - reissue created correcly
+    """
+
+    # --------- Arrange: get seeded data ---------------
+    parsed_release: ParsedRelease = seed_parsed_release_dracula
+    character_dg: Character = seed_character_dracula_g
+    character_dm: Character = seed_character_dracula_m
+    series: Series = seed_series_skullector
+    # --------- Execute --------------------------------
+    use_case = get_use_case(uow_factory)
+    await use_case.execute(parsed_release_id=parsed_release.id)
+    # --------- VALIDATE DB: release -------------------
+    async with uow_factory.create() as uow:
+        releases = await uow.repos.release.get_many_by(**{Release.TITLE: parsed_release.title})
+
+        assert len(releases) == 1
+        release = releases[0]
+        _validate_release(release=release, parsed_release=parsed_release)
+    # --------- VALIDATE DB: release character ---------
+    async with uow_factory.create() as uow:
+        r_cha_list = await uow.repos.release_character.get_all(order_spec=OrderSpec(
+            field=ReleaseCharacter.CREATED_AT,
+            direction=DatabaseOrderByTypes.ASC
+        ))
+        assert len(r_cha_list) == len(
+            parsed_release.characters_raw)  # 1 character
+        _validate_release_character(
+            parsed_release=parsed_release,
+            release_character=r_cha_list[0],
+            character_id=character_dg.id,
+            position=1,
+            role_type_id=await uow.repos.character_role.get_id_by(**{CharacterRole.CODE: CharacterRoleType.MAIN}),
+            is_uniq=True
+        )
+    # --------- VALIDATE DB: release series ------------
+    async with uow_factory.create() as uow:
+        r_series = await uow.repos.release_series_link.get_many_by(**{ReleaseSeriesLink.RELEASE_ID: release.id})
+        assert len(r_series) == len(parsed_release.series_raw)  # 1
+    # --------- VALIDATE DB: release types -------------
+    async with uow_factory.create() as uow:
+        r_type_links = await uow.repos.release_type_link.get_many_by(**{ReleaseTypeLink.RELEASE_ID: release.id})
+        assert len(r_type_links) == 3  # single-pack, standard tier, doll
+
+        tier_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypeTierType.STANDARD})
+        pack_type_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypePackCountType.SINGLE_PACK})
+        content_type_doll_id = await uow.repos.release_type.get_id_by(**{ReleaseType.CODE: ReleaseTypeContentType.DOLL_FIGURE})
+
+    _validate_release_type_links(
+        release_type_links=r_type_links,
+        tier_type_id=tier_type_id,
+        pack_type_ids=[pack_type_id],
+        content_type_ids=[content_type_doll_id]
+    )
+    # --------- VALIDATE DB: release exclusive ---------
+    async with uow_factory.create() as uow:
+        release_exclusives = await uow.repos.release_exclusive_link.get_all()
+        assert len(release_exclusives) == 0
+        # assert len(release_exclusives) == len(parsed_release.exclusive_vendor_raw)
+    # --------- VALIDATE DB: release pets --------------
+    async with uow_factory.create() as uow:
+        release_pets = await uow.repos.release_pet.get_all()
+        assert len(release_pets) == 0
+        # assert len(release_pets) == len(parsed_release.pet_title_raw)
+    # --------- VALIDATE DB: release images ------------
+    async with uow_factory.create() as uow:
+        release_images = await uow.repos.release_image.get_all()
+        _validate_release_images(
+            parsed_release=parsed_release,
+            release_images=release_images,
+            release_id=release.id,
+        )
+    # --------- VALIDATE DB: release reissue -----------
+    async with uow_factory.create() as uow:
+        reissue_links = await uow.repos.release_relation_link.get_all()
+        assert len(reissue_links) == 0
+        # assert len(reissue_links) == len(parsed_release.reissue_of_raw)
+
+
 
 # =============== VALIDATION HELPERS ===============
 def _validate_release(

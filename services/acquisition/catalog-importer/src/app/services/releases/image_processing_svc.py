@@ -47,22 +47,22 @@ class ImageProcessingService:
         else:
             logger.warning("No primary image for release ID %s", release_id)
 
-
-        for url in other_images_list:
-            release_image = await uow.repos.release_image.save(
-                ReleaseImage(
-                    release_id=release_id,
-                    image_url=url,
-                    is_primary=False
+        if other_images_list:
+            for url in other_images_list:
+                release_image = await uow.repos.release_image.save(
+                    ReleaseImage(
+                        release_id=release_id,
+                        image_url=url,
+                        is_primary=False
+                    )
                 )
-            )
-            ic(release_image)
-            # await image_reference_svc.set_image_to_process(
-            #     uow=uow,
-            #     table=EntityName.RELEASE_IMAGE,
-            #     field=ReleaseImage.IMAGE_URL,
-            #     image_link=url,
-            #     record_id=release_image.id,
-            # )
+                ic(release_image)
+                # await image_reference_svc.set_image_to_process(
+                #     uow=uow,
+                #     table=EntityName.RELEASE_IMAGE,
+                #     field=ReleaseImage.IMAGE_URL,
+                #     image_link=url,
+                #     record_id=release_image.id,
+                # )
 
 
