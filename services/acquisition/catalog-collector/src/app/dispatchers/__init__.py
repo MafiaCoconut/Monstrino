@@ -1,5 +1,0 @@
-from .parsing_dispatcher import ParsingDispatcher
-from .parsing_characters_dispatcher import ParsingCharactersDispatcher
-from .parsing_pets_dispatcher import ParsingPetsDispatcher
-from .parsing_releases_dispatcher import ParsingReleasesDispatcher
-from .parsing_series_dispatcher import ParsingSeriesDispatcher

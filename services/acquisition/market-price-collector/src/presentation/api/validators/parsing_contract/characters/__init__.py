@@ -1,2 +1,0 @@
-from .base import CharacterValidator
-from .external_ref import CharacterExternalRefValidator
