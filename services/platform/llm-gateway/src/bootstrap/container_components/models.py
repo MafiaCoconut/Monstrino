@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from application.interfaces import TextOllamaModelInterface, ImageOllamaModelInterface
+from app.interfaces import TextOllamaModelInterface, ImageOllamaModelInterface
 
 @dataclass
 class Models:

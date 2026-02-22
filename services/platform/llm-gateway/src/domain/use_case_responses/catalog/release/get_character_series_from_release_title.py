@@ -9,5 +9,5 @@ class Series(BaseModel):
     subseries_title: Optional[str] = None
     
 class GetCharacterSeriesFromReleaseTitleResponse(BaseModel):
-    characters: Optional[list[str]] = None
-    series: Optional[list[Series]] = None
+    characters: Optional[list[str]] = []
+    series: Optional[list[Series]] = []

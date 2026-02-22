@@ -1,3 +1,4 @@
 from .text_ollama_model_interface import TextOllamaModelInterface
 from .ollama_client_interface import OllamaClientInterface
 from .image_ollama_model_interface import ImageOllamaModelInterface
+from .catalog_api_client_interface import CatalogApiClientInterface

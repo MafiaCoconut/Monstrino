@@ -2,9 +2,8 @@ import pytest
 from datetime import datetime
 import base64
 from icecream import ic
-from application.interfaces.ollama_client_interface import OllamaClientInterface
+from app.interfaces.ollama_client_interface import OllamaClientInterface
 from domain.enum import OllamaModels
-from domain.vault_obj import OllamaRequest
 
 def prompt() -> str:
     return "Analyze image and extract Monster High related data in JSON format."

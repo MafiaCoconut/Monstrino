@@ -1,5 +1,5 @@
 import pytest
-from application.interfaces.ollama_client_interface import OllamaClientInterface
+from app.interfaces.ollama_client_interface import OllamaClientInterface
 
 
 @pytest.mark.asyncio

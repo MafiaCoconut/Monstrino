@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from application.use_cases.ollama import RequestLLMTextUseCase
+from app.use_cases.ollama import RequestLLMTextUseCase
 
 
 # from application.use_cases.processing.series import ProcessSeriesSingleUseCase, ProcessSeriesBatchUseCase

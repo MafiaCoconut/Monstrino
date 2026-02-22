@@ -1,13 +1,13 @@
-from monstrino_api.requests.models import GenerateTextRequest
+from monstrino_api.v1.shared.requests import GenerateTextRequest
 
-from application.use_cases.ollama import RequestLLMTextUseCase
+from app.use_cases.ollama import RequestLLMTextUseCase
 from fastapi import APIRouter, Response, BackgroundTasks, FastAPI, Request
 from fastapi.params import Depends
 
 from fastapi.security import HTTPBearer
 
 # from application.services.processing_service import ProcessingService
-from application.use_cases.auth.verify_token_use_case import VerifyToken
+from app.use_cases.auth.verify_token_use_case import VerifyToken
 from presentation.api.deps import get_request_llm_text_uc
 from presentation.api.responces.default_codes import responses
 from presentation.api.responces.templates import get_success_json_response

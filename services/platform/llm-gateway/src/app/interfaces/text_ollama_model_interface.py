@@ -1,6 +1,5 @@
 from typing import Protocol, Optional, Generic, TypeVar
 from pydantic import BaseModel
-from domain.vault_obj import OllamaRequest
 
 ModelT = TypeVar("ModelT", bound="str")
 

@@ -1,6 +1,6 @@
-from app.container_components import UseCases
-from application.interfaces import TextOllamaModelInterface
-from application.use_cases.ollama import RequestLLMTextUseCase
+from app.interfaces import TextOllamaModelInterface
+from app.use_cases.ollama import RequestLLMTextUseCase
+from bootstrap.container_components import UseCases
 
 
 def build_use_cases(text_model: TextOllamaModelInterface):

@@ -1,10 +1,7 @@
 from typing import Optional
 import logging
 from pydantic import BaseModel
-from application.interfaces import TextOllamaModelInterface
-from application.interfaces.ollama_client_interface import OllamaClientInterface
-from domain.enum import OllamaModels
-from domain.vault_obj import OllamaRequest
+from app.interfaces import TextOllamaModelInterface
 
 logger = logging.getLogger(__name__)
 

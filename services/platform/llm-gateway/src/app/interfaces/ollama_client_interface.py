@@ -1,6 +1,8 @@
 from typing import Protocol
 
-from domain.vault_obj import OllamaRequest
+
+class OllamaRequest:
+    pass
 
 
 class OllamaClientInterface(Protocol):

@@ -1,9 +1,9 @@
 from datetime import datetime
 from icecream import ic
 import pytest
-from application.interfaces.ollama_client_interface import OllamaClientInterface
+from app.interfaces.ollama_client_interface import OllamaClientInterface
 from domain.enum import OllamaModels
-from domain.vault_obj import OllamaRequest
+from domain.vault_obj.requests import OllamaClientRequest
 
 
 def small_prompt():
@@ -79,20 +79,21 @@ If input is invalid JSON or missing required keys, output:
 @pytest.mark.asyncio
 async def test_generate_small_request_small_system_prompt(ollama_client: OllamaClientInterface):
     start_time = datetime.now()
-    await ollama_client.generate(
-        OllamaRequest(
+    result = await ollama_client.generate(
+        OllamaClientRequest(
             model=OllamaModels.PHI3_MINI,
             prompt=small_prompt(),
             system=small_system_prompt(),
         )
     )
     ic(datetime.now()-start_time )
-
+    ic(result)
+    
 @pytest.mark.asyncio
 async def test_generate_small_request_system_prompt(ollama_client: OllamaClientInterface):
     start_time = datetime.now()
     await ollama_client.generate(
-        OllamaRequest(
+        OllamaClientRequest(
             # model=OllamaModels.PHI3_MINI,
             model=OllamaModels.MISTRAL,
             prompt=small_prompt(),
@@ -105,7 +106,7 @@ async def test_generate_small_request_system_prompt(ollama_client: OllamaClientI
 async def test_generate_middle_request_system_prompt(ollama_client: OllamaClientInterface):
     start_time = datetime.now()
     await ollama_client.generate(
-        OllamaRequest(
+        OllamaClientRequest(
             model=OllamaModels.PHI3_MINI,
             prompt=middle_prompt(),
             system=normal_system_prompt(),
@@ -118,7 +119,7 @@ async def test_generate_middle_request_system_prompt(ollama_client: OllamaClient
 async def test_generate_big_request_system_prompt(ollama_client: OllamaClientInterface):
     start_time = datetime.now()
     await ollama_client.generate(
-        OllamaRequest(
+        OllamaClientRequest(
             model=OllamaModels.MISTRAL,
             prompt=big_prompt(),
             system=normal_system_prompt(),
@@ -136,7 +137,7 @@ async def test_generate_big_request_system_prompt(ollama_client: OllamaClientInt
 async def test_generate_custom_request_without_system_prompt(ollama_client: OllamaClientInterface):
     start_time = datetime.now()
     await ollama_client.generate(
-        OllamaRequest(
+        OllamaClientRequest(
             model=OllamaModels.PHI3_MINI,
             # model=OllamaModels.QWEN3_14B,
             prompt="If i send you information about a monster high doll release, which information you could parse from there and give me?",
