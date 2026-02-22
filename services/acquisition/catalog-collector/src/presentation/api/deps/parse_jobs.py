@@ -1,7 +1,7 @@
 from fastapi import Depends
+
+from app.jobs.parse import *
 from bootstrap.container import AppContainer
-from infra.parse_jobs import ParseCharactersJob, ParsePetsJob, ParseSeriesJob, ParseReleasesJob
-from infra.parse_jobs.characters.parse_by_external_id_job import ParseCharacterByExternalIdJob
 from presentation.api.deps.container import get_container
 
 
