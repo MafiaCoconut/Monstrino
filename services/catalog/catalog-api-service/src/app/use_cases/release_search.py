@@ -1,5 +1,6 @@
 from typing import Any, Optional
 import logging
+from uuid import UUID
 
 from docutils.nodes import description
 from icecream import ic
@@ -11,7 +12,7 @@ from monstrino_models.dto import Release, ReleaseSeriesLink
 from monstrino_models.orm import *
 
 from app.queries.release_search import ReleaseSearchDTO
-from domain.models import ReleaseSearchQuery
+from domain.models import ReleaseSearchQuery, IncludeReleaseSpec
 from domain.models.release_search import ReleaseListItem
 from domain.models.release_search.release_filters import ReleaseFilters
 from src.app.ports import Repositories
@@ -91,17 +92,30 @@ class ReleaseSearchUseCase:
             "release_types":            lambda: self._get_release_types(),
         }
 
-        cols = [
-            col_factories[name]().label(name)
-            for name in col_factories
-            if getattr(query_include, name, False)
-        ]
+        if query_include.all:
+            cols = [
+                col_factories[name]().label(name)
+                for name in col_factories
+            ]
+        elif query_include.base_info:
+            include_spec = self._set_include_spec_base_info()
+            cols = [
+                col_factories[name]().label(name)
+                for name in col_factories
+                if getattr(include_spec, name, False)
+            ]
+        else:
+            cols = [
+                col_factories[name]().label(name)
+                for name in col_factories
+                if getattr(query_include, name, False)
+            ]
+
         if not cols:
             cols = [ReleaseORM.id.label("id")]
 
         stmt = select(*cols)
 
-        # Применяем pipeline фильтров
         stmt = self._apply_filters(stmt, query.filters)
         return stmt
 
@@ -185,7 +199,9 @@ class ReleaseSearchUseCase:
     def _apply_release_ids(self, stmt: Select, f: ReleaseFilters) -> Select:
         if not f.release_ids:
             return stmt
-        return stmt.where(ReleaseORM.id.in_(f.release_ids))
+
+        release_ids = [UUID(rid) for rid in f.release_ids]
+        return stmt.where(ReleaseORM.id.in_(release_ids))
 
     def _apply_search(self, stmt: Select, f: ReleaseFilters) -> Select:
         if not f.search:
@@ -289,4 +305,14 @@ class ReleaseSearchUseCase:
         )
 
         return stmt.where(img_exists) if f.has_images else stmt.where(not_(img_exists))
+
+
+    def _set_include_spec_base_info(self) -> IncludeReleaseSpec:
+        return IncludeReleaseSpec(
+            id=True,
+            mpn=True,
+            title=True,
+            code=True,
+            year=True,
+        )
 

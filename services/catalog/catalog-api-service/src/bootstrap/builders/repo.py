@@ -154,13 +154,4 @@ def build_repositories(session: AsyncSession) -> Repositories:
             dto_model=ReleaseTypeLink,
         ),
 
-        # ------------------------------------------------------------------
-        # Release Utils
-        # ------------------------------------------------------------------
-        release_search=repo_factory.create_domain_repo(
-            repo_impl_cls=ReleaseSearchRepo,
-            session=session,
-            orm_model=Release,
-            dto_model=Release,
-        )
     )

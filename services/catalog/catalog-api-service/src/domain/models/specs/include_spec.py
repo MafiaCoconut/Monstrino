@@ -1,7 +1,7 @@
 import dataclasses
 
 @dataclasses.dataclass(frozen=True)
-class IncludeSpec:
+class IncludeReleaseSpec:
     id:             bool = False
     mpn:            bool = False
     title:          bool = False
@@ -19,4 +19,7 @@ class IncludeSpec:
     series:         bool = False
     types:          bool = False
     relations:      bool = False
+
+    # Groups settings
     all:            bool = False
+    base_info:      bool = False
