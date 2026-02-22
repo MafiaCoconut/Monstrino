@@ -170,7 +170,7 @@ def get_sources() -> list[Source]:
             is_enabled=True,
         ),
         Source(
-            code="mattel-shopping",
+            code="mattel-shop",
             title="Mattel Shop",
             source_type_id=TYPE_ECOMMERCE_ID,
             source_tech_type_id=TECH_SHOPIFY_ID,

@@ -40,8 +40,5 @@ class Repositories:
     # release_series_link:            ReleaseSeriesLinkRepoInterface
     # release_exclusive_link:         ReleaseExclusiveLinkRepoInterface
     # release_type_link:              ReleaseTypeLinkRepoInterface
-    #
-    # # Release utils
-    # release_search: ReleaseSearchRepoInterface
-    #
+    #    #
 

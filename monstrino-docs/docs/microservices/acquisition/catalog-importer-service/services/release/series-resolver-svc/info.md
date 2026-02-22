@@ -60,7 +60,7 @@ For each entry:
 Series names are normalized via:
 
 ```python
-NameFormatter.format_name(name)
+TitleFormatter.to_code(name)
 ```
 
 Then the service loads the matching series from DB.

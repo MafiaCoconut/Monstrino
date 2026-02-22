@@ -37,7 +37,7 @@ parsed_release: ParsedRelease = await uow.repos.parsed_release.get_one_by_id(obj
 
 ```python
 release = Release(
-    name=NameFormatter.format_name(parsed_release.name),
+    name=TitleFormatter.to_code(parsed_release.name),
     display_name=parsed_release.name,
     year=parsed_release.year,
     mpn=parsed_release.mpn,

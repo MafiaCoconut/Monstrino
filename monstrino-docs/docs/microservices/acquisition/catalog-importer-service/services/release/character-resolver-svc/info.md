@@ -60,7 +60,7 @@ async def resolve(
 3. **Iterate through characters**  
    For each parsed character:
    - Extract the `text` field.
-   - Normalize with `NameFormatter.format_name()`.
+   - Normalize with `TitleFormatter.to_code()`.
    - Resolve the character in the database by normalized name.
 
 4. **Character found**  

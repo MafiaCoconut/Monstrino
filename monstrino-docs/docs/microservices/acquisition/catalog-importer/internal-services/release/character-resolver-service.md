@@ -22,7 +22,7 @@ The service writes the resulting links into `release_character_link`.
 
 ### Depends on
 
-- `NameFormatter` — normalizes the incoming character name.
+- `TitleFormatter` — normalizes the incoming character name.
 - `UnitOfWorkInterface` — provides access to repositories.
 - `character_role` repository — retrieves role IDs (MAIN / SECONDARY).
 - `character` repository — verifies the existence of characters in the DB.
@@ -63,7 +63,7 @@ async def resolve(
 - `characters` may be an empty list
 - Each element must contain a valid string field
 - Not string element -> CharacterDataInvalidError
-- Names are normalized via [NameFormatter](/docs/architecture/domain/services/name-formatter.md)
+- Names are normalized via [TitleFormatter](/docs/architecture/domain/services/name-formatter.md)
 
 ## Execution Flow
 
@@ -76,7 +76,7 @@ Retrieves IDs for `CharacterRole.MAIN` and `CharacterRole.SECONDARY`
 3. **Iterate through characters**  
 
 4. **Normalize name**  
-        Normalize name with `NameFormatter.format_name()`
+        Normalize name with `TitleFormatter.to_code()`
 
 5. **Find character ID**  
         Get `character_id` from DB by `name` field

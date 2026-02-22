@@ -29,7 +29,7 @@ and comparable canonical form.
 ## Public Interface
 
 ```python
-class NameFormatter:
+class TitleFormatter:
     @staticmethod
     def format_name(name: str) -> str:
         ...
@@ -65,7 +65,7 @@ Accented characters are decomposed into base + marks.
 import re
 import unicodedata
 
-class NameFormatter:
+class TitleFormatter:
     @staticmethod
     def format_name(name: str) -> str:
         value = name.lower()
@@ -82,16 +82,16 @@ class NameFormatter:
 ## Examples
 
 ```python
-NameFormatter.format_name("Draculaura")
+TitleFormatter.to_code("Draculaura")
 # "draculaura"
 
-NameFormatter.format_name("Élissabat (Reissue 2024)")
+TitleFormatter.to_code("Élissabat (Reissue 2024)")
 # "elissabat-reissue-2024"
 
-NameFormatter.format_name(" Lagoona   Blue  !! ")
+TitleFormatter.to_code(" Lagoona   Blue  !! ")
 # "lagoona-blue"
 
-NameFormatter.format_name("💖Cleo de Nile💖")
+TitleFormatter.to_code("💖Cleo de Nile💖")
 # "cleo-de-nile"
 ```
 
@@ -106,7 +106,7 @@ NameFormatter.format_name("💖Cleo de Nile💖")
 - For indexing and search  
 
 :::tip
-Use NameFormatter in **every ingestion pipeline** before persisting data.
+Use TitleFormatter in **every ingestion pipeline** before persisting data.
 :::
 
 ---

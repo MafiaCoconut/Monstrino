@@ -18,7 +18,7 @@ It normalizes vendor names, resolves existing vendors in the database, prevents 
 ## Responsibilities
 
 - Validate parsed exclusive vendor data.
-- Normalize input with `NameFormatter`.
+- Normalize input with `TitleFormatter`.
 - Resolve vendor IDs from the `exclusive_vendor` repository.
 - Prevent duplicate vendor-to-release links.
 - Create `ReleaseExclusiveLink` entries when appropriate.
@@ -60,7 +60,7 @@ If missing → `ExclusiveDataInvalidError` is raised immediately.
 Vendor names are normalized using:
 
 ```python
-NameFormatter.format_name(name)
+TitleFormatter.to_code(name)
 ```
 
 The normalized name is looked up via:

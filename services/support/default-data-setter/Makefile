@@ -82,7 +82,10 @@ set-market-money-currency:
 set-market-geo-countries:
 	$(RUN_PYTEST_WITH_LOGS)  $(MARKET_PATH)/test_geo_country.py
 
-set-market: set-market-money-currency set-market-geo-countries
+set-market-market-source-country:
+	$(RUN_PYTEST_WITH_LOGS)  $(MARKET_PATH)/test_market_source_country.py
+
+set-market: set-market-money-currency set-market-geo-countries set-market-market-source-country
 # ------------ Ingest ------------
 
 set-ingest-parse-pet:

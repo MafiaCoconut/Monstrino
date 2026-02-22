@@ -15,7 +15,7 @@ def event_loop():
 
 
 pytest_plugins = [
-    # "monstrino_testing.fixtures",
+    "monstrino_testing.fixtures",
     "tests.fixtures",
 ]
 

@@ -10,6 +10,7 @@ GeoCountry
 def get_items():
     return [
         # Europe
+        GeoCountry(code="GB", title="Great Britain", display_code="GB"),
         GeoCountry(code="DE", title="Germany", display_code="DE"),
         GeoCountry(code="FR", title="France", display_code="FR"),
         GeoCountry(code="IT", title="Italy", display_code="IT"),

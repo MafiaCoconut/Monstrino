@@ -52,7 +52,7 @@ def get_items():
             image_url="https://example.com/images/kmart_exclusive.jpg",
         ),
         ExclusiveVendor(
-            code="kohls",
+            code="kohl-s",
             title="Kohl's",
             description="Exclusive release available at Kohl's.",
             image_url="https://example.com/images/kohls_exclusive.jpg",
@@ -70,7 +70,7 @@ def get_items():
             image_url="https://example.com/images/mattel_shop_exclusive.jpg",
         ),
         ExclusiveVendor(
-            code="sams-club",
+            code="sam-s-club",
             title="Sam's Club",
             description="Exclusive release available at Sam's Club.",
             image_url="https://example.com/images/sams_club_exclusive.jpg",

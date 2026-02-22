@@ -179,8 +179,8 @@ def release_type_packaging_list() -> list[ReleaseType]:
             category=ReleaseTypeCategory.PACKAGING,
         ),
         ReleaseType(
-            code="multipack",
-            title="Multipack",
+            code="multi-pack",
+            title="Multi-pack",
             category=ReleaseTypeCategory.PACKAGING,
         ),
         ReleaseType(
@@ -230,4 +230,5 @@ async def test_seed_exclusive_vendors(
             all_items = await uow.repos.release_type.get_all()
             assert len(all_items) == len(items)
         else:
+            print("Release types already seeded. Skipping seeding and test.")
             print("Release types already seeded. Skipping seeding and test.")
