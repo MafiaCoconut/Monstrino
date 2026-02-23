@@ -177,3 +177,4 @@ jwt-public.pem
 packages/*
 pyproject.dev.toml
 */monstrino-acquisition
+monstrino-ui/
