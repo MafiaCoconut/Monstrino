@@ -1,0 +1,11 @@
+{
+  "label": "Failure & Scaling",
+  "position": 4,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Failure & Scaling",
+    "description": "Known failures, scaling limits, and recovery lessons."
+  }
+}

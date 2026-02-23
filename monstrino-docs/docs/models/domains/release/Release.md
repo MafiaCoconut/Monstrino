@@ -364,16 +364,16 @@
 [//]: # (# 📚 Related Documentation)
 
 [//]: # ()
-[//]: # (- **Character Model** → `/docs/models/character`)
+[//]: # (- **Character Model** → `docs/models/character`)
 
-[//]: # (- **Series Model** → `/docs/models/series`)
+[//]: # (- **Series Model** → `docs/models/series`)
 
-[//]: # (- **Images Model** → `/docs/models/images`)
+[//]: # (- **Images Model** → `docs/models/images`)
 
-[//]: # (- **Enums** → `/docs/models/enums`)
+[//]: # (- **Enums** → `docs/models/enums`)
 
-[//]: # (- **Parser Pipeline** → `/docs/pipelines/parsing-pipeline`)
+[//]: # (- **Parser Pipeline** → `docs/pipelines/parsing-pipeline`)
 
-[//]: # (- **Importer Flow** → `/docs/pipelines/importing-flow`)
+[//]: # (- **Importer Flow** → `docs/pipelines/importing-flow`)
 
-[//]: # (- **Resolver Service** → `/docs/services/resolver`)
+[//]: # (- **Resolver Service** → `docs/services/resolver`)
