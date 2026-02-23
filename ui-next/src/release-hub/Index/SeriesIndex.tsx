@@ -14,10 +14,10 @@ import TrendingUpIconMui from "@mui/icons-material/TrendingUp";
 import { useParams } from "@/shared/router";
 import type { Series } from "../entities/series";
 import { seriesIndexMock, seriesIndexByNumericId } from "@/data/real-data/seriesIndexMock";
-import { ReleaseCardMinimal } from "../components/release-cards";
-import { CharacterCard } from "../components/character-card";
-import { ReleaseBreadcrumb } from "../components/breadcrumb/Breadcrumb";
-import { Badge, Card, CardContent, Progress, Separator } from "../components/ui";
+import { ReleaseCardMinimal } from "@cards/release-card";
+import { CharacterCard } from "@cards/character-card";
+import { ReleaseBreadcrumb } from "@/widgets/navigation/breadcrumb";
+import { Badge, Card, CardContent, Progress, Separator } from "@/shared/ui/release-hub";
 
 // ============================================================
 // DESIGN TOKENS — Monstrino Dark Archive Theme (Inlined)

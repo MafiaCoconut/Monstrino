@@ -19,7 +19,7 @@ export function buildCatalogMetadata(
     robots: hasQuery
       ? {
           index: false,
-          follow: false,
+          follow: true,
         }
       : {
           index: true,

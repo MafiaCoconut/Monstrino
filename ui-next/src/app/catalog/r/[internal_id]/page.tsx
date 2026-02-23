@@ -3,13 +3,13 @@ import { notFound } from 'next/navigation';
 import ReleasePage from '@/release-hub/Index/ReleaseIndex';
 import { fetchRelease } from '@/shared/api/releaseHub.server';
 import { getReleaseSeo } from '@/shared/seo/releaseHub';
-import { SeoHeader } from '@/shared/seo/SeoHeader';
-import { DetailSeoContent, type DetailSeoLink } from '@/shared/seo/DetailSeoContent';
+import { ProductStructuredData } from '@/shared/seo/StructuredData';
+import type { DetailSeoLink } from '@/shared/seo/DetailSeoContent';
 import { DetailDataHydrator } from '@/shared/data/DetailDataHydrator';
 import { releaseIndexMock } from '@/data/real-data/releaseIndexMock';
 import { characterMock } from '@/data/real-data/characterMock';
 import { seriesMock } from '@/data/real-data/seriesMock';
-export const revalidate = 21600;
+export const revalidate = 43200;
 
 const normalizeName = (value?: string | null) => value?.trim().toLowerCase() ?? '';
 
@@ -91,7 +91,7 @@ export default async function Page({ params }: PageProps) {
   ].filter(Boolean) as string[];
 
   const summaryText = summaryParts.length > 0 ? `${summaryParts.join(' ')}.` : null;
-  const mainText =
+  const description =
     apiRecord?.subtitle ||
     releaseFallback?.subtitle ||
     summaryText ||
@@ -100,8 +100,12 @@ export default async function Page({ params }: PageProps) {
 
   return (
     <>
-      <SeoHeader title={seo.title} description={seo.description} />
-      <DetailSeoContent body={mainText} links={links} />
+      <ProductStructuredData
+        name={seo.title}
+        description={description}
+        url={seo.canonical}
+        relatedLinks={links}
+      />
       <DetailDataHydrator type="release" id={internal_id} initialData={apiData} />
       <ReleasePage />
     </>

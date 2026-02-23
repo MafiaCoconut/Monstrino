@@ -4,7 +4,7 @@ import { Box, Chip, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import { Link as RouterLink } from "@/shared/router";
 import { mergeSx } from "@/shared/ui/mergeSx";
-import type { Pet } from "../../entities";
+import type { Pet } from "@/release-hub/entities";
 
 interface PetCardCatalogProps {
   pet: Pet;

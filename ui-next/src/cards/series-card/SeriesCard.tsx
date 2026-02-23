@@ -10,7 +10,7 @@ import {
 import type { SxProps, Theme } from "@mui/material/styles";
 import { Link as RouterLink } from "@/shared/router";
 import { mergeSx } from "@/shared/ui/mergeSx";
-import type { SeriesSummary } from "../../entities";
+import type { SeriesSummary } from "@/release-hub/entities";
 
 interface SeriesCardProps extends SeriesSummary {
   description?: string;

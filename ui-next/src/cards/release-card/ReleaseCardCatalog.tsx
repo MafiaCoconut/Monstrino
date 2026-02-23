@@ -5,7 +5,7 @@ import { Link as RouterLink } from '@/shared/router';
 import { Box, Typography, Chip } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material/styles';
 import { mergeSx } from '@/shared/ui/mergeSx';
-import { type Release } from '../../entities';
+import { type Release } from '@/release-hub/entities';
 
 interface ReleaseCardCatalogProps {
   release: Release;

@@ -11,11 +11,11 @@ import {
   Divider,
 } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
-import { ReleaseBreadcrumb } from '../components/breadcrumb';
-import { PetCardSimple } from '../components/pet-card';
-import { ReleaseCardMinimal } from '../components/release-cards';
-import { CharacterCard } from '../components/character-card';
-import { SurfaceCard, SectionTitle } from '../components/ui';
+import { ReleaseBreadcrumb } from '@/widgets/navigation/breadcrumb';
+import { PetCardSimple } from '@cards/pet-card';
+import { ReleaseCardMinimal } from '@cards/release-card';
+import { CharacterCard } from '@cards/character-card';
+import { SurfaceCard, SectionTitle } from '@/shared/ui/release-hub';
 import { characterIndexMockById } from '@/data/real-data/CharacterIndexMock';
 import type { CharacterId, CharacterSummary, HexColor } from '../entities';
 import type { CharacterIndexData } from '../entities/character-index';
@@ -317,7 +317,7 @@ const CharacterIndex = () => {
           }}
         >
           <Box sx={{ order: { xs: 2, sm: 2, md: 1, lg: 1 } }}>
-            <Typography sx={{ fontWeight: 800, fontSize: { xs: '2rem', md: '2.8rem' } }}>
+            <Typography component="h1" sx={{ fontWeight: 800, fontSize: { xs: '2rem', md: '2.8rem' } }}>
               {data.name}
             </Typography>
             <Typography sx={{ color: 'text.secondary', mt: 1, fontSize: '1rem' }}>{data.tagline}</Typography>

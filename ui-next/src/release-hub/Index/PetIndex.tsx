@@ -9,11 +9,11 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import type { Pet } from "../entities/pet";
 import { petIndexMock, petIndexByNumericId } from "@/data/real-data/petIndexMock";
 import { releaseIndexMock } from "@/data/real-data/releaseIndexMock";
-import { ReleaseCardMinimal } from "../components/release-cards";
-import { PetOwnerCard } from "../components/PetOwnerCard";
-import { ReleaseBreadcrumb } from "../components/breadcrumb";
-import { StyledLink } from "../components/StyledLink";
-import { Badge, SurfaceCard, SectionTitle } from "../components/ui";
+import { ReleaseCardMinimal } from "@cards/release-card";
+import { PetOwnerCard } from "@cards/pet-owner-card";
+import { ReleaseBreadcrumb } from "@/widgets/navigation/breadcrumb";
+import { StyledLink } from "@/widgets/navigation/styled-link";
+import { Badge, SurfaceCard, SectionTitle } from "@/shared/ui/release-hub";
 
 // ==================== DESIGN TOKENS ====================
 const tokens = {

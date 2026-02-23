@@ -40,10 +40,10 @@ import type {
   SeriesId,
   SeriesSummary,
 } from "./entities";
-import { ReleaseCardSpotlight } from "./components/release-cards";
-import { CharacterCard } from "./components/character-card";
-import { SeriesCard } from "./components/series-card";
-import { PetCard } from "./components/pet-card";
+import { ReleaseCardSpotlight } from "@cards/release-card";
+import { CharacterCard } from "@cards/character-card";
+import { SeriesCard } from "@cards/series-card";
+import { PetCard } from "@cards/pet-card";
 
 // ============================================
 // DATA FROM real-data INDEX MOCKS
@@ -161,7 +161,7 @@ export const HeroSection = () => {
           content: '""',
           position: "absolute",
           inset: 0,
-          backgroundImage: `url(${heroBanner})`,
+          backgroundImage: `url(${heroBanner.src})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           filter: "brightness(0.4)",

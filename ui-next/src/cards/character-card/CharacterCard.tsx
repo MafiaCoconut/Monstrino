@@ -11,7 +11,7 @@ import {
 import type { SxProps, Theme } from "@mui/material/styles";
 import { Link as RouterLink } from "@/shared/router";
 import { mergeSx } from "@/shared/ui/mergeSx";
-import type { CharacterSummary } from "../../entities";
+import type { CharacterSummary } from "@/release-hub/entities";
 
 const PLACEHOLDER_IMAGE = "/placeholder.svg";
 

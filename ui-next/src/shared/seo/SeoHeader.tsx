@@ -1,12 +1,20 @@
+const seoHiddenStyle = {
+  position: 'absolute' as const,
+  width: '1px',
+  height: '1px',
+  padding: 0,
+  margin: '-1px',
+  overflow: 'hidden',
+  clip: 'rect(0, 0, 0, 0)',
+  whiteSpace: 'nowrap' as const,
+  border: 0,
+};
+
 export function SeoHeader({ title, description }: { title: string; description?: string }) {
   return (
-    <section style={{ padding: '2.5rem 1.5rem 1rem' }}>
-      <h1 style={{ margin: 0, fontSize: '2.25rem', fontWeight: 800 }}>{title}</h1>
-      {description && (
-        <p style={{ marginTop: '0.75rem', maxWidth: 720, color: 'rgba(255,255,255,0.72)' }}>
-          {description}
-        </p>
-      )}
+    <section style={seoHiddenStyle}>
+      <h1>{title}</h1>
+      {description && <p>{description}</p>}
     </section>
   );
 }

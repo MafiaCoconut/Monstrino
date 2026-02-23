@@ -13,7 +13,7 @@ import type { SxProps, Theme } from "@mui/material/styles";
 import { Link as RouterLink } from "@/shared/router";
 import PetsIcon from "@mui/icons-material/Pets";
 import { mergeSx } from "@/shared/ui/mergeSx";
-import type { PetSummary } from "../../entities";
+import type { PetSummary } from "@/release-hub/entities";
 
 const PLACEHOLDER_IMAGE = "/placeholder.svg";
 

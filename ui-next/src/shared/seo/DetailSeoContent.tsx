@@ -8,6 +8,18 @@ type DetailSeoContentProps = {
   links?: DetailSeoLink[];
 };
 
+const seoHiddenStyle = {
+  position: 'absolute' as const,
+  width: '1px',
+  height: '1px',
+  padding: 0,
+  margin: '-1px',
+  overflow: 'hidden',
+  clip: 'rect(0, 0, 0, 0)',
+  whiteSpace: 'nowrap' as const,
+  border: 0,
+};
+
 export function DetailSeoContent({ body, links }: DetailSeoContentProps) {
   const trimmedBody = body?.trim();
   const hasLinks = Boolean(links && links.length > 0);
@@ -17,49 +29,15 @@ export function DetailSeoContent({ body, links }: DetailSeoContentProps) {
   }
 
   return (
-    <section style={{ padding: '0 1.5rem 2rem' }}>
-      {trimmedBody && (
-        <p
-          style={{
-            margin: 0,
-            maxWidth: 760,
-            color: 'rgba(255,255,255,0.78)',
-            fontSize: '1rem',
-            lineHeight: 1.6,
-          }}
-        >
-          {trimmedBody}
-        </p>
-      )}
+    <section style={seoHiddenStyle}>
+      {trimmedBody && <p>{trimmedBody}</p>}
       {hasLinks && (
-        <nav
-          aria-label="Related links"
-          style={{ marginTop: trimmedBody ? '0.9rem' : 0 }}
-        >
-          <span
-            style={{
-              display: 'block',
-              fontSize: '0.75rem',
-              textTransform: 'uppercase',
-              letterSpacing: '0.16em',
-              color: 'rgba(255,255,255,0.5)',
-              marginBottom: '0.4rem',
-            }}
-          >
-            Related
-          </span>
-          <ul style={{ margin: 0, paddingLeft: '1.1rem' }}>
+        <nav aria-label="Related links">
+          <span>Related</span>
+          <ul>
             {links!.map((link) => (
-              <li key={link.href} style={{ marginBottom: '0.35rem' }}>
-                <a
-                  href={link.href}
-                  style={{
-                    color: '#8B5CF6',
-                    textDecoration: 'none',
-                  }}
-                >
-                  {link.label}
-                </a>
+              <li key={link.href}>
+                <a href={link.href}>{link.label}</a>
               </li>
             ))}
           </ul>

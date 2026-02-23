@@ -5,7 +5,7 @@ import { Link as RouterLink } from '@/shared/router';
 import { Box, Typography, Chip } from '@mui/material';
 import type { SxProps, Theme } from '@mui/material/styles';
 import { mergeSx } from '@/shared/ui/mergeSx';
-import type { CharacterIndexRelease } from '../../entities/character-index';
+import type { CharacterIndexRelease } from '@/release-hub/entities/character-index';
 
 // Gothic theme colors matching CharacterIndex
 const cssVariables = {

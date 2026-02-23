@@ -9,6 +9,8 @@ const buildPaths = (type: string, id: string) => {
       return [`/catalog/s/${id}`, `/s/${id}`];
     case 'character':
       return [`/catalog/c/${id}`];
+    case 'pet':
+      return [`/catalog/p/${id}`];
     default:
       return [];
   }

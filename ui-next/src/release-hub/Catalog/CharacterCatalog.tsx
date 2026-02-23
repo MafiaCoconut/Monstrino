@@ -39,7 +39,7 @@ import {
   CatalogResultsToolbar,
   FilterSection,
   type CatalogSortOption,
-} from '../components/catalog';
+} from '@/widgets/catalog';
 
 // ============================================
 // DATA TRANSFORMATION (mock -> character models)

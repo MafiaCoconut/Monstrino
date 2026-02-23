@@ -15,7 +15,7 @@ import type { SxProps, Theme } from '@mui/material/styles';
 import { mergeSx } from '@/shared/ui/mergeSx';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-import type { ReleaseSummary } from '../../entities';
+import type { ReleaseSummary } from '@/release-hub/entities';
 
 const PLACEHOLDER_IMAGE = '/placeholder.svg';
 

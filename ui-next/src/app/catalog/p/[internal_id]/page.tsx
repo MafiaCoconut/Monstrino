@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import PetPage from '@/release-hub/Index/PetIndex';
-import { SeoHeader } from '@/shared/seo/SeoHeader';
+import { ProductStructuredData } from '@/shared/seo/StructuredData';
 import { getSiteUrl } from '@/shared/seo/siteUrl';
 import { petIndexByNumericId } from '@/data/real-data/petIndexMock';
 
+export const revalidate = 43200;
 
 type PageProps = {
   params: { internal_id: string } | Promise<{ internal_id: string }>;
@@ -31,9 +32,13 @@ export default async function Page({ params }: PageProps) {
     notFound();
   }
 
+  const title = pet?.name ?? `Pet ${internal_id}`;
+  const description = pet?.description ?? `Pet profile for ${title}.`;
+  const url = `${getSiteUrl()}/catalog/p/${internal_id}`;
+
   return (
     <>
-      <SeoHeader title={pet?.name ?? `Pet ${internal_id}`} description={pet?.description ?? undefined} />
+      <ProductStructuredData name={title} description={description} url={url} />
       <PetPage />
     </>
   );

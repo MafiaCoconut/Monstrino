@@ -3,11 +3,11 @@ import { notFound } from 'next/navigation';
 import CharacterPage from '@/release-hub/Index/CharacterIndex';
 import { fetchCharacter } from '@/shared/api/releaseHub.server';
 import { getCharacterSeo } from '@/shared/seo/releaseHub';
-import { SeoHeader } from '@/shared/seo/SeoHeader';
-import { DetailSeoContent, type DetailSeoLink } from '@/shared/seo/DetailSeoContent';
+import { CharacterStructuredData } from '@/shared/seo/StructuredData';
+import type { DetailSeoLink } from '@/shared/seo/DetailSeoContent';
 import { DetailDataHydrator } from '@/shared/data/DetailDataHydrator';
 import { characterIndexMockById } from '@/data/real-data/CharacterIndexMock';
-export const revalidate = 21600;
+export const revalidate = 43200;
 
 type PageProps = {
   params: { internal_id: string } | Promise<{ internal_id: string }>;
@@ -38,7 +38,7 @@ export default async function Page({ params }: PageProps) {
   const seo = getCharacterSeo(apiData, internal_id);
   const characterFallback = fallback ?? null;
   const apiRecord = apiData as any;
-  const mainText =
+  const description =
     apiRecord?.description ||
     characterFallback?.officialDescription ||
     characterFallback?.biography ||
@@ -58,8 +58,12 @@ export default async function Page({ params }: PageProps) {
 
   return (
     <>
-      <SeoHeader title={seo.title} description={seo.description} />
-      <DetailSeoContent body={mainText} links={links} />
+      <CharacterStructuredData
+        name={seo.title}
+        description={description}
+        url={seo.canonical}
+        relatedLinks={links}
+      />
       <DetailDataHydrator type="character" id={internal_id} initialData={apiData} />
       <CharacterPage />
     </>

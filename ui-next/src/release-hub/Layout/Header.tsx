@@ -14,7 +14,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Link, useLocation, useNavigate } from "@/shared/router";
 import { Box, IconButton, TextField, Typography, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { useState } from "react";
-import WordmarkGradient from "../components/WordmarkGradient";
+import WordmarkGradient from "@/widgets/layout/wordmark-gradient";
 
 const colors = {
   background: "#0d0d0f",

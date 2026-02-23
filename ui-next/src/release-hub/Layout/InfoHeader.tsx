@@ -3,7 +3,7 @@
 import { AppBar, Box, Button, Container, Divider, Drawer, IconButton, List, ListItemButton, ListItemText, Toolbar } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Link as RouterLink, useLocation } from "@/shared/router";
-import WordmarkGradient from "../components/WordmarkGradient";
+import WordmarkGradient from "@/widgets/layout/wordmark-gradient";
 import { useState } from "react";
 
 const navLinks = [

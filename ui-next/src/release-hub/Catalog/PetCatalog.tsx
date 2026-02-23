@@ -17,7 +17,7 @@ import { characterPetOwnershipMock } from '@/data/real-data/characterPetOwnershi
 import { petMock } from '@/data/real-data/petMock';
 import { releaseCharacterMock } from '@/data/real-data/releaseCharacterMock';
 import { useElementHeight } from './useElementHeight';
-import { PetCardCatalog } from '../components/pet-card';
+import { PetCardCatalog } from '@cards/pet-card';
 import { releaseMock } from '@/data/real-data/releaseMock';
 import { GENERATIONS, type Generation, type Pet, type PetId } from '../entities';
 import {
@@ -30,7 +30,7 @@ import {
   CatalogResultsToolbar,
   FilterSection,
   type CatalogSortOption,
-} from '../components/catalog';
+} from '@/widgets/catalog';
 
 // ============================================
 // DATA TRANSFORMATION (mock -> pet models)

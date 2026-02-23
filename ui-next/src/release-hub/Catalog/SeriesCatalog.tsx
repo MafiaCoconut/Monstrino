@@ -17,7 +17,7 @@ import { releaseImageMock } from '@/data/real-data/releaseImageMock';
 import { releaseMock } from '@/data/real-data/releaseMock';
 import { releaseSeriesLinkMock } from '@/data/real-data/releaseSeriesLinkMock';
 import { seriesMock } from '@/data/real-data/seriesMock';
-import { SeriesCard } from '../components/series-card';
+import { SeriesCard } from '@cards/series-card';
 import {
   GENERATIONS,
   SERIES_TYPES,
@@ -37,7 +37,7 @@ import {
   CatalogResultsToolbar,
   FilterSection,
   type CatalogSortOption,
-} from '../components/catalog';
+} from '@/widgets/catalog';
 
 
 // ============================================

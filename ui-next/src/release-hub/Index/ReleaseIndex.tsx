@@ -40,10 +40,10 @@ import type { Release } from '../entities/release';
 import type { CharacterId, CharacterSummary, HexColor } from '../entities';
 import { releaseIndexMock } from '@/data/real-data/releaseIndexMock';
 import { characterIndexMockById } from '@/data/real-data/CharacterIndexMock';
-import { ReleaseBreadcrumb } from '../components/breadcrumb';
-import { CharacterCard } from '../components/character-card';
-import { PetCardSimple } from '../components/pet-card';
-import { MarketOffers, MarketOverview, type MarketCountry, type MarketOffer } from '../components/market';
+import { ReleaseBreadcrumb } from '@/widgets/navigation/breadcrumb';
+import { CharacterCard } from '@cards/character-card';
+import { PetCardSimple } from '@cards/pet-card';
+import { MarketOffers, MarketOverview, type MarketCountry, type MarketOffer } from '@/widgets/market';
 
 // Color palette
 const colors = {
@@ -174,6 +174,7 @@ const ReleasePage = () => {
   const HeroSection = () => (
   <Box sx={{ pt: { xs: 1, md: 2 }, pb: 0 }}>
     <Typography
+      component="h1"
       sx={{
         fontSize: { xs: 24, sm: 32, md: 42 },
         fontWeight: 700,

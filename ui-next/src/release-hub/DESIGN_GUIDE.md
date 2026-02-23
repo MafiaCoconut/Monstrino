@@ -1,7 +1,7 @@
 # Release Hub Design Guide
 
 This is a single-page guide derived from the current Release Hub pages and components.
-Primary sources include `CharacterIndex.tsx`, `SeriesIndex.tsx`, `PetIndex.tsx`, `ReleaseIndex.tsx`, `ReleaseCatalog.tsx`, and the card components in `components/`.
+Primary sources include `CharacterIndex.tsx`, `SeriesIndex.tsx`, `PetIndex.tsx`, `ReleaseIndex.tsx`, `ReleaseCatalog.tsx`, and reusable UI blocks in `src/cards`, `src/widgets`, and `src/shared/ui/release-hub`.
 
 ## 1) Theme Summary
 
@@ -227,4 +227,3 @@ const pageStyle = {
 - Prefer consistent tokens over ad-hoc values.
 - Keep imagery on white surfaces to maintain product clarity.
 - Limit accent colors per view to 1 to 2 primary accents plus neutrals.
-

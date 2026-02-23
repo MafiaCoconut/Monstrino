@@ -3,11 +3,11 @@ import { notFound } from 'next/navigation';
 import SeriesPage from '@/release-hub/Index/SeriesIndex';
 import { fetchSeries } from '@/shared/api/releaseHub.server';
 import { getSeriesSeo } from '@/shared/seo/releaseHub';
-import { SeoHeader } from '@/shared/seo/SeoHeader';
-import { DetailSeoContent, type DetailSeoLink } from '@/shared/seo/DetailSeoContent';
+import { SeriesStructuredData } from '@/shared/seo/StructuredData';
+import type { DetailSeoLink } from '@/shared/seo/DetailSeoContent';
 import { DetailDataHydrator } from '@/shared/data/DetailDataHydrator';
 import { seriesIndexByNumericId } from '@/data/real-data/seriesIndexMock';
-export const revalidate = 21600;
+export const revalidate = 43200;
 
 type PageProps = {
   params: { id: string } | Promise<{ id: string }>;
@@ -38,7 +38,7 @@ export default async function Page({ params }: PageProps) {
   const seo = getSeriesSeo(apiData, id);
   const seriesFallback = fallback ?? null;
   const apiRecord = apiData as any;
-  const mainText =
+  const description =
     apiRecord?.description ||
     seriesFallback?.description ||
     seriesFallback?.concept ||
@@ -59,8 +59,12 @@ export default async function Page({ params }: PageProps) {
 
   return (
     <>
-      <SeoHeader title={seo.title} description={seo.description} />
-      <DetailSeoContent body={mainText} links={links} />
+      <SeriesStructuredData
+        name={seo.title}
+        description={description}
+        url={seo.canonical}
+        relatedLinks={links}
+      />
       <DetailDataHydrator type="series" id={id} initialData={apiData} />
       <SeriesPage />
     </>

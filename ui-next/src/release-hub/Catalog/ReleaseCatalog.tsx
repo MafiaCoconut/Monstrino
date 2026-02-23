@@ -32,7 +32,7 @@ import {
   type ReleaseTag,
   type ReleaseType,
 } from '../entities';
-import ReleaseCardCatalog from '../components/release-cards/ReleaseCardCatalog';
+import ReleaseCardCatalog from '@cards/release-card/ReleaseCardCatalog';
 import {
   CatalogFiltersDrawer,
   CatalogFiltersShell,
@@ -43,7 +43,7 @@ import {
   CatalogResultsToolbar,
   FilterSection,
   type CatalogSortOption,
-} from '../components/catalog';
+} from '@/widgets/catalog';
 
 // ============================================
 // DATA TRANSFORMATION (mock -> release models)
