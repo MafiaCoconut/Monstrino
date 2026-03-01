@@ -38,11 +38,11 @@ dependencies = [
     "monstrino-core",
     "monstrino-models",
     "monstrino-repositories",
-#    "monstrino-testing",
+    #    "monstrino-testing",
     "monstrino-api",
-#    "monstrino-infra",
+    #    "monstrino-infra",
     "monstrino-contracts",
-
+    "pillow>=12.1.1",
 ]
 
 

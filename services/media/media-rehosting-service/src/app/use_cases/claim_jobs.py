@@ -2,7 +2,7 @@ from typing import Any
 
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 
-from src.application.ports import Repositories
+from src.app.ports import Repositories
 
 
 class ClaimJobsUseCase:
