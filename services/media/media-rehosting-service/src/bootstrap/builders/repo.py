@@ -4,7 +4,7 @@ from monstrino_models.dto import *
 from monstrino_models.orm import *
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from application.ports import Repositories
+from app.ports import Repositories
 
 mapper_factory = MapperFactory()
 repo_factory = SqlAlchemyRepoFactory(mapper_factory)
@@ -18,140 +18,60 @@ def build_repositories(session: AsyncSession) -> Repositories:
 
     return Repositories(
 
-        # ------------------------------------------------------------------
-        # Characters
-        # ------------------------------------------------------------------
-        character=repo_factory.create_domain_repo(
-            repo_impl_cls=CharacterRepo,
+        geo_country=repo_factory.create_domain_repo(
+            repo_impl_cls=GeoCountryRepo,
             session=session,
-            orm_model=CharacterORM,
-            dto_model=Character,
+            orm_model=GeoCountryORM,
+            dto_model=GeoCountry,
         ),
-        character_pet_ownership=repo_factory.create_domain_repo(
-            repo_impl_cls=CharacterPetOwnershipRepo,
+        source_type=repo_factory.create_domain_repo(
+            repo_impl_cls=SourceTypeRepo,
             session=session,
-            orm_model=CharacterPetOwnershipORM,
-            dto_model=CharacterPetOwnership,
+            orm_model=SourceTypeORM,
+            dto_model=SourceType,
         ),
-        pet=repo_factory.create_domain_repo(
-            repo_impl_cls=PetRepo,
+        source_tech_type=repo_factory.create_domain_repo(
+            repo_impl_cls=SourceTechTypeRepo,
             session=session,
-            orm_model=PetORM,
-            dto_model=Pet,
+            orm_model=SourceTechTypeORM,
+            dto_model=SourceTechType,
         ),
-
-
-        # ------------------------------------------------------------------
-        # Release
-        # ------------------------------------------------------------------
-        character_role=repo_factory.create_domain_repo(
-            repo_impl_cls=CharacterRoleRepo,
+        source=repo_factory.create_domain_repo(
+            repo_impl_cls=SourceRepo,
             session=session,
-            orm_model=CharacterRoleORM,
-            dto_model=CharacterRole,
+            orm_model=SourceORM,
+            dto_model=Source,
         ),
-        exclusive_vendor=repo_factory.create_domain_repo(
-            repo_impl_cls=ExclusiveVendorRepo,
+        source_country=repo_factory.create_domain_repo(
+            repo_impl_cls=SourceCountryRepo,
             session=session,
-            orm_model=ExclusiveVendorORM,
-            dto_model=ExclusiveVendor,
-        ),
-        relation_type=repo_factory.create_domain_repo(
-            repo_impl_cls=RelationTypeRepo,
-            session=session,
-            orm_model=RelationTypeORM,
-            dto_model=RelationType,
-        ),
-        release=repo_factory.create_domain_repo(
-            repo_impl_cls=ReleaseRepo,
-            session=session,
-            orm_model=ReleaseORM,
-            dto_model=Release,
-        ),
-        release_external_reference=repo_factory.create_domain_repo(
-            repo_impl_cls=ReleaseExternalReferenceRepo,
-            session=session,
-            orm_model=ReleaseExternalReferenceORM,
-            dto_model=ReleaseExternalReference
-        ),
-        release_type=repo_factory.create_domain_repo(
-            repo_impl_cls=ReleaseTypeRepo,
-            session=session,
-            orm_model=ReleaseTypeORM,
-            dto_model=ReleaseType,
-        ),
-        series=repo_factory.create_domain_repo(
-            repo_impl_cls=SeriesRepo,
-            session=session,
-            orm_model=SeriesORM,
-            dto_model=Series,
+            orm_model=SourceCountryORM,
+            dto_model=SourceCountry,
         ),
 
-        # ------------------------------------------------------------------
-        # Release Items
-        # ------------------------------------------------------------------
-
-        release_character=repo_factory.create_domain_repo(
-            repo_impl_cls=ReleaseCharacterRepo,
+        media_asset=repo_factory.create_domain_repo(
+            repo_impl_cls=MediaAssetRepo,
             session=session,
-            orm_model=ReleaseCharacterORM,
-            dto_model=ReleaseCharacter,
-        ),
-        release_pet=repo_factory.create_domain_repo(
-            repo_impl_cls=ReleasePetRepo,
-            session=session,
-            orm_model=ReleasePetORM,
-            dto_model=ReleasePet,
+            orm_model=MediaAssetORM,
+            dto_model=MediaAsset,
         ),
 
-        # ------------------------------------------------------------------
-        # Release Images
-        # ------------------------------------------------------------------
-        release_image=repo_factory.create_domain_repo(
-            repo_impl_cls=ReleaseImageRepo,
+        media_asset_variant=repo_factory.create_domain_repo(
+            repo_impl_cls=MediaAssetVariantRepo,
             session=session,
-            orm_model=ReleaseImageORM,
-            dto_model=ReleaseImage,
+            orm_model=MediaAssetVariantORM,
+            dto_model=MediaAssetVariant,
         ),
-        release_character_image=repo_factory.create_domain_repo(
-            repo_impl_cls=ReleaseCharacterImageRepo,
+        media_attachment=repo_factory.create_domain_repo(
+            repo_impl_cls=MediaAttachmentRepo,
             session=session,
-            orm_model=ReleaseCharacterImageORM,
-            dto_model=ReleaseCharacterImage,
+            orm_model=MediaAttachmentORM,
+            dto_model=MediaAttachment,
         ),
-        release_pet_image=repo_factory.create_domain_repo(
-            repo_impl_cls=ReleasePetImageRepo,
+        media_ingestion_job=repo_factory.create_domain_repo(
+            repo_impl_cls=MediaIngestionJobRepo,
             session=session,
-            orm_model=ReleasePetImageORM,
-            dto_model=ReleasePetImage,
+            orm_model=MediaIngestionJobORM,
+            dto_model=MediaIngestionJob,
         ),
-
-        # ------------------------------------------------------------------
-        # Release Links
-        # ------------------------------------------------------------------
-        release_relation_link=repo_factory.create_domain_repo(
-            repo_impl_cls=ReleaseRelationLinkRepo,
-            session=session,
-            orm_model=ReleaseRelationLinkORM,
-            dto_model=ReleaseRelationLink,
-        ),
-        release_series_link=repo_factory.create_domain_repo(
-            repo_impl_cls=ReleaseSeriesLinkRepo,
-            session=session,
-            orm_model=ReleaseSeriesLinkORM,
-            dto_model=ReleaseSeriesLink,
-        ),
-        release_exclusive_link=repo_factory.create_domain_repo(
-            repo_impl_cls=ReleaseExclusiveLinkRepo,
-            session=session,
-            orm_model=ReleaseExclusiveLinkORM,
-            dto_model=ReleaseExclusiveLink,
-        ),
-        release_type_link=repo_factory.create_domain_repo(
-            repo_impl_cls=ReleaseTypeLinkRepo,
-            session=session,
-            orm_model=ReleaseTypeLinkORM,
-            dto_model=ReleaseTypeLink,
-        ),
-
     )

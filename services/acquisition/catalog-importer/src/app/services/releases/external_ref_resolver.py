@@ -18,12 +18,12 @@ class ExternalRefResolverService:
             self,
             uow: UnitOfWorkInterface[Any, Repositories],
             release_id: UUID,
-            source_id: UUID,
+            source_country_id: UUID,
             external_id: str
     ):
         external_ref = ReleaseExternalReference(
             release_id=release_id,
-            source_id=source_id,
+            source_country_id=source_country_id,
             external_id=external_id
         )
         ic(external_ref)

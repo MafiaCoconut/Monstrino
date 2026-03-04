@@ -6,6 +6,13 @@ from monstrino_repositories.repositories_interfaces import *
 @dataclass
 class Repositories:
 
+    geo_country: GeoCountryRepoInterface
+    source: SourceRepoInterface
+    source_type: SourceTypeRepoInterface
+    source_tech_type: SourceTechTypeRepoInterface
+    source_country: SourceCountryRepoInterface
+
+
     # Characters
     character:           CharacterRepoInterface
     character_pet_ownership:  CharacterPetOwnershipRepoInterface
@@ -16,8 +23,6 @@ class Repositories:
     parsed_series:    ParsedSeriesRepoInterface
     parsed_pet:       ParsedPetRepoInterface
     parsed_release:   ParsedReleaseRepoInterface
-    source:           SourceRepoInterface
-    source_type:      SourceTypeRepoInterface
 
     # Release
     character_role:             CharacterRoleRepoInterface
@@ -44,8 +49,4 @@ class Repositories:
     release_type_link:              ReleaseTypeLinkRepoInterface
 
 
-
-    # Users
-    users: AuthUserRepoInterface
-    refresh_token: RefreshTokenRepoInterface
 

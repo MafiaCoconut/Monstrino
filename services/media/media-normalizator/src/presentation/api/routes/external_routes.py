@@ -10,10 +10,10 @@ from monstrino_api.v1.shared.responces import ResponseFactory
 from monstrino_contracts.v1.domains.catalog.release_catalog_service.contracts import ReleaseSearchRequest, \
     GetReleaseByIdRequest
 
-from application.use_cases import ReleaseSearchUseCase
+from app.use_cases import ReleaseSearchUseCase
 from presentation.api.deps import get_use_case_get_release_by_id, get_use_case_release_search
 from presentation.api.mappers import GetByReleaseIdMapper, ReleaseSearchMapper
-from src.application.use_cases.get_release_by_id import GetReleaseByIdUseCase
+from src.app.use_cases.get_release_by_id import GetReleaseByIdUseCase
 
 logger = logging.getLogger(__name__)
 

@@ -1,6 +1,6 @@
 from monstrino_contracts.v1.domains.catalog.release_catalog_service.contracts import GetReleaseByIdRequest
 
-from application.queries.get_release_by_id import GetReleaseByIdDTO
+from app.queries.get_release_by_id import GetReleaseByIdDTO
 
 
 class GetByReleaseIdMapper:
@@ -12,4 +12,3 @@ class GetByReleaseIdMapper:
             # fields=data.fields,
             context=data.context
         )
-

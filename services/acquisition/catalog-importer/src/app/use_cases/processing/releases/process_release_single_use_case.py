@@ -7,7 +7,7 @@ from monstrino_core.domain.services import TitleFormatter, TitleFormatter
 from monstrino_core.domain.services.catalog import ReleaseTitleFormatter
 from monstrino_core.domain.value_objects import ReleaseTypeContentType
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
-from monstrino_models.dto import ParsedRelease, Release, Source
+from monstrino_models.dto import ParsedRelease, Release, Source, SourceCountry
 from monstrino_models.enums import EntityName
 from monstrino_testing.fixtures import Repositories
 
@@ -86,15 +86,12 @@ class ProcessReleaseSingleUseCase:
                 # Step 1: Fetch a single release by ID
                 parsed_release: ParsedRelease = await uow.repos.parsed_release.get_one_by_id(parsed_release_id)
                 if not parsed_release:
-                    raise EntityNotFoundError(
-                        f"Entity parsed_release with ID {parsed_release_id} not found")
+                    raise EntityNotFoundError(f"Entity parsed_release with ID {parsed_release_id} not found")
 
                 await self.processing_states_svc.set_processing(uow.repos.parsed_release, parsed_release_id)
 
-                logger.info(
-                    f"Processing ParsedRelease ID {parsed_release_id}: {parsed_release.title}")
+                logger.info(f"Processing ParsedRelease ID {parsed_release_id}: {parsed_release.title}")
 
-                # ic(parsed_release)
                 # Step 2-3: Create release entity and format title
                 release = Release(
                     code=TitleFormatter.to_code(parsed_release.title),
@@ -112,16 +109,14 @@ class ProcessReleaseSingleUseCase:
                 )
 
                 if existing_release_id:
-                    logger.info(
-                        f"Release with title {release.title} already exists with ID {existing_release_id}. Skipping saving.")
+                    logger.info(f"Release with title {release.title} already exists with ID {existing_release_id}. Skipping saving.")
                     await self.processing_states_svc.set_processed(uow.repos.parsed_release, parsed_release_id)
                     # TODO In future here should be checked if new record have values that not in existing one and update accordingly
                     return
 
                 release = await uow.repos.release.save(release)
 
-                release.slug = ReleaseTitleFormatter.to_slug(
-                    code=release.code, obj_id=release.id)
+                release.slug = ReleaseTitleFormatter.to_slug(code=release.code, obj_id=release.id)
                 await uow.repos.release.update({Release.ID: release.id}, {Release.SLUG: release.slug})
 
                 ic(release.id)
@@ -166,21 +161,21 @@ class ProcessReleaseSingleUseCase:
                 ic('==================================================')
                 ic("Resolve tier type")
                 if sources is None:
-                    source = await uow.repos.source.get_one_by(id=parsed_release.source_id)
+                    source = await uow.repos.source.get_one_by(id=parsed_release.source_country_id)
                 else:
-                    source = next((s for s in sources if s.id == parsed_release.source_id), None)
+                    source = next((s for s in sources if s.id == parsed_release.source_country_id), None)
                 if source:
                     await self.tier_type_resolver_svc.resolve(
                         uow=uow,
                         release_id=release.id,
                         tier_type=parsed_release.tier_type_raw,
                         release_code=release.code,
-                        release_source_code=source.code,
+                        release_source_code=source.country_code,
                         has_deluxe_packaging=False
                     )
                 else:
                     raise SourceNotFoundError(
-                        f"Entity source with ID {parsed_release.source_id} not found")
+                        f"Entity source with ID {parsed_release.source_country_id} not found")
                 ic('==================================================')
                 ic("Resolve exclusives")
                 # Step 9: Resolve exclusives
@@ -221,7 +216,7 @@ class ProcessReleaseSingleUseCase:
                 await self.external_ref_resolver_svc.resolve(
                     uow=uow,
                     release_id=release.id,
-                    source_id=parsed_release.source_id,
+                    source_country_id=parsed_release.source_country_id,
                     external_id=parsed_release.external_id
                 )
 

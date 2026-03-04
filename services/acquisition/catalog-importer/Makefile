@@ -54,13 +54,13 @@ LOCAL_DEPS := \
 
 # =========== Commands ===========
 run:
-	DB_MODE=test \
- 	PYTHONPATH=src \
-	uv run --no-sync uvicorn src.main:app --reload --reload-exclude "*.log" --port 8009 --log-config src/infra/logging/logging_config.json
-
-run-with-local-bd:
 	DB_MODE=local PYTHONPATH=src \
 	uv run --no-sync uvicorn src.main:app --reload --reload-exclude "*.log" --port 8009 --log-config src/infra/logging/logging_config.json
+
+run-with-test-db:
+	DB_MODE=test PYTHONPATH=src \
+	uv run --no-sync uvicorn src.main:app --reload --reload-exclude "*.log" --port 8009 --log-config src/infra/logging/logging_config.json
+
 
 pytest:
 	poetry run pytest -q --disable-warnings --tb=short

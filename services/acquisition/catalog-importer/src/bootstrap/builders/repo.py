@@ -41,7 +41,7 @@ def build_repositories(session: AsyncSession) -> Repositories:
         ),
 
         # ------------------------------------------------------------------
-        # Parser
+        # Ingest
         # ------------------------------------------------------------------
         parsed_character=repo_factory.create_domain_repo(
             repo_impl_cls=ParsedCharacterRepo,
@@ -67,22 +67,10 @@ def build_repositories(session: AsyncSession) -> Repositories:
             orm_model=ParsedReleaseORM,
             dto_model=ParsedRelease,
         ),
-        source=repo_factory.create_domain_repo(
-            repo_impl_cls=SourceRepo,
-            session=session,
-            orm_model=SourceORM,
-            dto_model=Source,
-        ),
-        source_type=repo_factory.create_domain_repo(
-            repo_impl_cls=SourceTypeRepo,
-            session=session,
-            orm_model=SourceTypeORM,
-            dto_model=SourceType,
-        ),
 
         # ------------------------------------------------------------------
         # Release
-        # ------------------------------------------------------------------
+        # -----------------------------------------------------------------
         character_role=repo_factory.create_domain_repo(
             repo_impl_cls=CharacterRoleRepo,
             session=session,
@@ -192,20 +180,38 @@ def build_repositories(session: AsyncSession) -> Repositories:
             orm_model=ReleaseTypeLinkORM,
             dto_model=ReleaseTypeLink,
         ),
-
         # ------------------------------------------------------------------
-        # Users / Auth
+        # Core
         # ------------------------------------------------------------------
-        users=repo_factory.create_domain_repo(
-            repo_impl_cls=AuthUserRepo,
+        geo_country=repo_factory.create_domain_repo(
+            repo_impl_cls=GeoCountryRepo,
             session=session,
-            orm_model=AuthUserORM,
-            dto_model=AuthUser,
+            orm_model=GeoCountryORM,
+            dto_model=GeoCountry,
         ),
-        refresh_token=repo_factory.create_domain_repo(
-            repo_impl_cls=RefreshTokenRepo,
+        source_type=repo_factory.create_domain_repo(
+            repo_impl_cls=SourceTypeRepo,
             session=session,
-            orm_model=RefreshTokenORM,
-            dto_model=RefreshToken,
+            orm_model=SourceTypeORM,
+            dto_model=SourceType,
+        ),
+        source_tech_type=repo_factory.create_domain_repo(
+            repo_impl_cls=SourceTechTypeRepo,
+            session=session,
+            orm_model=SourceTechTypeORM,
+            dto_model=SourceTechType,
+        ),
+        source=repo_factory.create_domain_repo(
+            repo_impl_cls=SourceRepo,
+            session=session,
+            orm_model=SourceORM,
+            dto_model=Source,
+        ),
+
+        source_country=repo_factory.create_domain_repo(
+            repo_impl_cls=SourceCountryRepo,
+            session=session,
+            orm_model=SourceCountryORM,
+            dto_model=SourceCountry,
         ),
     )

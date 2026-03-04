@@ -1,8 +1,8 @@
 from monstrino_contracts.v1.domains.catalog.release_catalog_service.contracts import GetReleaseByIdRequest
 from monstrino_contracts.v1.domains.catalog.release_catalog_service.contracts.release_search import ReleaseSearchRequest
 
-from application.queries.get_release_by_id import GetReleaseByIdDTO
-from application.queries.release_search import ReleaseSearchDTO
+from app.queries.get_release_by_id import GetReleaseByIdDTO
+from app.queries.release_search import ReleaseSearchDTO
 
 
 class ReleaseSearchMapper:
@@ -13,4 +13,3 @@ class ReleaseSearchMapper:
             output=data.output,
             context=data.context,
         )
-

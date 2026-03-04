@@ -22,14 +22,14 @@ class ProcessReleasesBatchUseCase:
         self.uow_factory = uow_factory
         self.single_uc = single_uc
         self.batch_size = batch_size
-        self.batch_size = 500
+        self.batch_size = 1
 
     async def execute(self) -> None:
         logger.info("Starting batch processing of releases")
         async with self.uow_factory.create() as uow:
             ids: list[UUID] = await uow.repos.parsed_release.get_unprocessed_record_ids(self.batch_size)
             # Pre-load sources to reduce DB queries in parallel processing
-            sources = await uow.repos.source.get_many_by()  # Uncomment if needed
+            sources = await uow.repos.source.get_all()  # Uncomment if needed
         if not ids:
             return
 
