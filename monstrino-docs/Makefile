@@ -252,7 +252,7 @@ push-service: build
 
 
 deploy-docs: use-tc-m70q-context push-service
-	kubectl apply -f $(K8S_PROD_FOLDER)/deployment.yaml -n $(NAMESPACE_DOCS)
-	kubectl apply -f $(K8S_PROD_FOLDER)/service.yaml    -n $(NAMESPACE_DOCS)
+	kubectl apply -f $(K8S_FOLDER)/deployment.yaml -n $(NAMESPACE_DOCS)
+	kubectl apply -f $(K8S_FOLDER)/service.yaml    -n $(NAMESPACE_DOCS)
 	kubectl set image deployment/$(SERVICE_NAME) -n $(NAMESPACE_DOCS) $(SERVICE_NAME)=$(SERVICE_TAG_IMAGE_NAME)
 
