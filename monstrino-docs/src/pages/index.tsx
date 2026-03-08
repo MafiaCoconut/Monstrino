@@ -7,6 +7,7 @@ import HomepageFeatures from '@site/src/components/HomepageFeatures';
 import Heading from '@theme/Heading';
 import React from 'react';
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import ImageLightbox from '@site/src/components/ImageLightbox';
 import styles from './index.module.css';
 
 
@@ -92,7 +93,7 @@ export default function Home(): JSX.Element {
               <span className={styles.statLabel}>Microservices</span>
             </div>
             <div className={styles.statCard}>
-              <span className={styles.statNumber}>6</span>
+              <span className={styles.statNumber}>7</span>
               <span className={styles.statLabel}>Shared Packages</span>
             </div>
             <div className={styles.statCard}>
@@ -103,6 +104,10 @@ export default function Home(): JSX.Element {
               <span className={styles.statNumber}>AI</span>
               <span className={styles.statLabel}>LLM Enrichment</span>
             </div>
+            <div className={styles.statCard}>
+              <span className={styles.statNumber}>30+</span>
+              <span className={styles.statLabel}>Tables</span>
+            </div>
           </div>
         </section>
 
@@ -111,8 +116,8 @@ export default function Home(): JSX.Element {
           <h2 className={styles.sectionTitle}>Monstrino Architecture</h2>
 
           <div className={styles.archDiagram}>
-            <img
-              src={useBaseUrl("img/architecture/system-context-diagram.jpg")}
+            <ImageLightbox
+              src={useBaseUrl("/img/architecture/docs-homepage-diagram.jpg")}
               alt="Monstrino Architecture Diagram"
               className={styles.archImage}
             />
