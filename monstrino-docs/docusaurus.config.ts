@@ -101,6 +101,7 @@ const config: Config = {
       // respectPrefersColorScheme: true,
     },
     navbar: {
+      hideOnScroll: false,
       style: 'dark',
       title: 'Monstrino Docs',
       logo: {

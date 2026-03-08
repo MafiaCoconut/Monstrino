@@ -115,6 +115,17 @@ input,
 }
 
 
+/* ===== Sticky navbar ===== */
+.navbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 200 !important;
+}
+
+.navbar.navbar--fixed-top {
+  position: sticky !important;
+}
+
 .footer {
   background: #0d0d0f;
   border-top: 1px solid rgba(255,44,168,0.15);

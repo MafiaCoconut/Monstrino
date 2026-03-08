@@ -20,18 +20,42 @@ architecture**.
 
 # Table of Contents
 
--   [Overview](#overview)
--   [Key Features](#key-features)
--   [Architecture](#architecture)
--   [Domains](#domains)
--   [Services](#services)
--   [Technology Stack](#technology-stack)
--   [Repository Structure](#repository-structure)
--   [Development Environment](#development-environment)
--   [Running the Platform](#running-the-platform)
--   [Documentation](#documentation)
--   [Design Principles](#design-principles)
--   [Roadmap](#roadmap)
+- [Monstrino](#monstrino)
+- [Table of Contents](#table-of-contents)
+- [Overview](#overview)
+- [Key Features](#key-features)
+  - [Automated Catalog Generation](#automated-catalog-generation)
+  - [Media Ingestion Pipeline](#media-ingestion-pipeline)
+  - [Market Price Tracking](#market-price-tracking)
+  - [AI Data Enrichment](#ai-data-enrichment)
+- [Architecture](#architecture)
+- [Domains](#domains)
+  - [Catalog](#catalog)
+  - [Media](#media)
+  - [Market](#market)
+  - [AI](#ai)
+- [Services](#services)
+  - [Catalog Services](#catalog-services)
+  - [Media Services](#media-services)
+  - [Market Services](#market-services)
+  - [AI Services](#ai-services)
+- [Technology Stack](#technology-stack)
+  - [Backend](#backend)
+  - [Infrastructure](#infrastructure)
+  - [Storage](#storage)
+  - [AI](#ai-1)
+  - [Observability](#observability)
+- [Development Environment](#development-environment)
+- [Running the Platform](#running-the-platform)
+  - [Requirements](#requirements)
+- [Documentation](#documentation)
+- [Design Principles](#design-principles)
+    - [Automation First](#automation-first)
+    - [Source Independence](#source-independence)
+    - [Event‑Driven Pipelines](#eventdriven-pipelines)
+    - [Scalability](#scalability)
+- [Roadmap](#roadmap)
+- [Project Status](#project-status)
 
 ---
 
@@ -254,28 +278,6 @@ AI services perform:
 
 ---
 
-# Repository Structure
-
-``` text
-monstrino/
-
-docs/                → documentation
-services/            → microservices
-libs/                → shared libraries
-
-    monstrino-core
-    monstrino-models
-    monstrino-contracts
-    monstrino-repositories
-    monstrino-infra
-
-deploy/              → kubernetes manifests
-dev-notes/           → development notes
-adr/                 → architecture decisions
-```
-
----
-
 # Development Environment
 
 The platform runs in Kubernetes.
@@ -297,17 +299,8 @@ Each environment runs in a separate namespace.
 -   Docker
 -   Kubernetes
 -   Make
--   Python 3.11+
+-   Python 3.14+
 
-## Typical Workflow
-
-``` bash
-make build
-make push
-make deploy
-```
-
----
 
 # Documentation
 
@@ -315,7 +308,6 @@ Documentation lives in:
 
 - `docs/`
 - `dev-notes/`
-- `adr/`
 
 Documentation includes:
 
