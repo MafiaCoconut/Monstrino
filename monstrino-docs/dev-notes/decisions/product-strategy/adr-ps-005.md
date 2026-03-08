@@ -59,5 +59,3 @@ Get images working first to make the catalog visually useful, then add price tra
 ### Negative
 
 - Price data will not be available at initial launch.
-
-## Related Decisions
