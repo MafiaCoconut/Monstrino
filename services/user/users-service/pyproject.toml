@@ -3,7 +3,7 @@ name = "users-service"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "MafiaCoconut",email = "alex.kach.2000@gmail.com"}
+    {name = "MafiaCoconut"}
 ]
 readme = "README.md"
 requires-python = ">=3.14"

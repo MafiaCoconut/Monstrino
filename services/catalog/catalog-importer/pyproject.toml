@@ -4,7 +4,7 @@ version = "0.1.1"
 description = ""
 readme = "README.md"
 requires-python = ">=3.14"
-authors = [{name = "MafiaCoconut",email = "alex.kach.2000@gmail.com"}]
+authors = [{name = "MafiaCoconut"}]
 
 dependencies = [
     "alembic>=1.17.2",
