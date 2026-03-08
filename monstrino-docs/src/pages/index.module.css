@@ -239,28 +239,6 @@
 }
 
 
-table {
-  border-collapse: separate !important;
-  border-spacing: 0 8px !important;
-}
-
-thead th {
-  background: rgba(255, 44, 168, 0.12);
-  color: white;
-  font-weight: 700;
-}
-
-tbody tr {
-  background: rgba(20,20,26,0.65);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,44,168,0.1);
-}
-
-tbody td {
-  padding: 12px 16px;
-}
-
-
 .alert {
   border-radius: 14px;
   backdrop-filter: blur(12px);

@@ -5,9 +5,9 @@ from uuid import UUID
 from monstrino_api.interface.lllm_gateway_interface import LLMGatewayInterface
 from monstrino_core.domain.errors import CharacterDataInvalidError, DuplicateEntityError, ReleaseCharacterIsNotExist, EntityNotFoundError
 from monstrino_core.domain.services import TitleFormatter, TitleFormatter
+from monstrino_core.domain.value_objects.catalog import CharacterRoleType
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ReleaseCharacter, Character, CharacterRole, Pet
-from monstrino_core.domain.value_objects import CharacterRoleType
 from monstrino_testing.fixtures import Repositories
 
 logger = logging.getLogger(__name__)

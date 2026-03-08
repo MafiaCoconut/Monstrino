@@ -5,7 +5,7 @@ from uuid import UUID
 from icecream import ic
 from monstrino_core.domain.errors import SeriesDataInvalidError
 from monstrino_core.domain.services import TitleFormatter
-from monstrino_core.domain.value_objects import SeriesTypes, SeriesRelationTypes
+from monstrino_core.domain.value_objects.catalog import SeriesTypes, SeriesRelationTypes
 from monstrino_core.interfaces import UnitOfWorkInterface
 from monstrino_models.dto import ParsedRelease, ReleaseSeriesLink, Series
 

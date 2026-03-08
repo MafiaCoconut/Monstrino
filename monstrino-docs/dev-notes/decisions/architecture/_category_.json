@@ -1,11 +1,11 @@
 {
-  "label": "Architecture Decisions",
-  "position": 1,
+  "label": "Architecture",
+  "position": 3,
   "collapsible": true,
   "collapsed": true,
   "link": {
     "type": "generated-index",
     "title": "Architecture Decisions",
-    "description": "Architectural decisions and formal records."
+    "description": "Core architectural decisions governing system structure, boundaries, persistence patterns, and service organization."
   }
 }

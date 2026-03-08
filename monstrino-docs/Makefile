@@ -180,6 +180,7 @@ update: ## Update dependencies (package manager specific)
 
 .PHONY: reset
 reset: clean-all install ## Full reset (clean-all + install)
+
 # ======== Include Makefiles ==========
 include ../Makefiles/common.mk
 include $(ROOT_DIR)/Makefiles/monstrino-packages.mk
@@ -198,6 +199,10 @@ SERVICE_NAME := monstrino-docs
 SERVICE_IMAGE_NAME := $(REGISTRY)/monstrino/monstrino-docs
 GIT_SHA1 := $(shell git rev-parse --short=10 --verify HEAD)
 SERVICE_TAG_IMAGE_NAME := $(SERVICE_IMAGE_NAME):$(GIT_SHA1)
+
+# ========== Local tests ==========
+
+run: dev
 
 # ==================== Deployment ====================
 KUBERNETES_FOLDER := $(ROOT_DIR)/monstrino-configurations/kubernetes

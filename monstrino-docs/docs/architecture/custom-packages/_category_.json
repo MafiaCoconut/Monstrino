@@ -1,0 +1,13 @@
+{
+  "label": "Custom Packages",
+  "position": 10,
+  "collapsed": true,
+  "collapsible": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Custom Packages Overview",
+    "description": "Guidelines for creating and maintaining custom packages within the Monstrino ecosystem, including structure, best practices, and integration points.",
+    "slug": "/architecture/custom-packages"
+
+  }
+}

@@ -5,7 +5,7 @@ from uuid import UUID
 from docutils.nodes import description
 from icecream import ic
 from monstrino_core.application.pagination import Page
-from monstrino_core.domain.value_objects.release import ReleaseRelationType
+from monstrino_core.domain.value_objects.catalog.release import ReleaseRelationType
 
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_models.dto import Release, ReleaseSeriesLink

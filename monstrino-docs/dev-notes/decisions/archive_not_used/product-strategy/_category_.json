@@ -1,0 +1,11 @@
+{
+  "label": "Product Strategy",
+  "position": 5,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Product Strategy Decisions",
+    "description": "Decisions defining product scope, target domain, MVP priorities, and monetization approach."
+  }
+}

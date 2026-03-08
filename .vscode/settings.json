@@ -8,5 +8,8 @@
             "folderPath": "Monstrino/monstrino-configurations/kubernetes/.prod/postgresql/momental-backup.yaml/",
             "color": "foldercolorizer.color_006699"
         }
+    ],
+    "cSpell.words": [
+        "Pydantic"
     ]
 }

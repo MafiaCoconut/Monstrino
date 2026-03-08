@@ -1,0 +1,490 @@
+MONSTRINO — COMPLETE ADR LIST
+
+ADR-01
+Title: Focus the product domain on Monster High instead of LEGO or Funko
+
+Context:
+Изначально проект планировался как каталог LEGO. После анализа конкурентов стало ясно:
+- LEGO каталоги уже существуют в большом количестве
+- Funko POP каталоги также сильно насыщены
+- Monster High сайты в основном поддерживаются вручную
+
+Decision:
+Сфокусировать продукт на Monster High ecosystem.
+
+Consequences:
++ менее конкурентная ниша
++ автоматизация данных имеет ценность
++ более уникальный продукт
+
+
+ADR-02
+Title: Make automated data acquisition the core product capability
+
+Context:
+Большинство сайтов каталогов обновляются вручную.
+
+Decision:
+Monstrino должен автоматически:
+- находить новые релизы
+- собирать данные
+- генерировать страницы
+
+Consequences:
++ высокая масштабируемость
++ минимальный ручной труд
+- сложная архитектура ingestion
+
+
+ADR-03
+Title: Prioritize release archive over user features for MVP
+
+Context:
+Ранее начали разрабатываться:
+- JWT auth
+- пользовательские коллекции
+- user pages
+
+Но без каталога эти функции бесполезны.
+
+Decision:
+Первый релиз Monstrino должен включать только архив релизов.
+
+Consequences:
++ быстрый MVP
++ фокус на core functionality
+
+
+ADR-04
+Title: Separate ingestion data from canonical catalog data
+
+Context:
+Данные источников могут:
+- содержать ошибки
+- иметь разный формат
+- быть неполными
+
+Decision:
+Использовать две зоны данных:
+
+parsed tables
+parsed_releases
+parsed_series
+parsed_characters
+parsed_pets
+
+canonical tables
+releases
+series
+characters
+pets
+
+Парсер пишет только в parsed tables.
+catalog-importer переносит данные в canonical tables.
+
+Consequences:
++ безопасная обработка данных
++ возможность повторного импорта
+
+
+ADR-05
+Title: Use database processing_state for ingestion workflows
+
+Context:
+Kafka pipeline создавал сложности:
+- ошибки блокируют очередь
+- сложно отслеживать ошибки
+
+Decision:
+Использовать поле состояния записи:
+
+processing_state
+init
+processing
+processed
+error
+
+Consequences:
++ простой retry
++ удобная диагностика
+
+
+ADR-06
+Title: Use external_id as main ingestion identifier
+
+Context:
+URL может:
+- изменяться
+- содержать параметры
+
+Decision:
+Использовать идентификатор:
+
+source + external_id
+
+Consequences:
++ стабильный идентификатор
++ удобный reparse
+
+
+ADR-07
+Title: Enforce idempotency using source + external_id
+
+Context:
+Повторный парсинг может создать дубликаты.
+
+Decision:
+Уникальность:
+
+source + external_id
+
+Consequences:
++ предотвращение дублей
+
+
+ADR-08
+Title: Design parsed models for heterogeneous source data
+
+Context:
+Первый ParsedRelease был рассчитан на один источник.
+
+Decision:
+Parsed модели должны быть гибкими.
+
+Consequences:
++ легче добавлять источники
+- сложнее импорт логика
+
+
+ADR-09
+Title: Store parsed content as replayable JSON
+
+Context:
+Схема БД часто меняется.
+
+Decision:
+Сохранять parsed данные в JSON.
+
+Использование:
+- replay
+- backfill
+- manual edit
+
+
+ADR-10
+Title: Rehost external images into Monstrino storage
+
+Context:
+Использование внешних изображений ненадежно.
+
+Decision:
+Все изображения должны:
+1. скачиваться
+2. сохраняться в S3
+3. иметь новый URL
+
+Consequences:
++ стабильность изображений
+
+
+ADR-11
+Title: Introduce shared packages for cross-service code
+
+Context:
+Многие сервисы используют одинаковые классы.
+
+Decision:
+Создать пакеты:
+
+monstrino-models
+monstrino-repositories
+monstrino-core
+monstrino-testing
+monstrino-infra
+
+Consequences:
++ меньше дублирования
++ единая точка правды
+
+
+ADR-12
+Title: Restrict ORM usage to repositories
+
+Context:
+ORM объекты не должны попадать в application logic.
+
+Decision:
+ORM можно использовать только внутри repositories.
+
+Consequences:
++ чистая архитектура
+
+
+ADR-13
+Title: Introduce UnitOfWork and BaseRepo persistence architecture
+
+Context:
+Ранее каждая операция создавала новую сессию.
+
+Decision:
+Использовать:
+
+UnitOfWork
+BaseRepo
+CrudRepo
+
+Consequences:
++ стандартизация persistence
+
+
+ADR-14
+Title: Organize services by domain capabilities
+
+Context:
+Количество сервисов выросло.
+
+Decision:
+Использовать структуру:
+
+services
+acquisition
+catalog
+media
+platform
+support
+ui
+
+
+ADR-15
+Title: Introduce Contracts → Command → Dispatcher API architecture
+
+Context:
+API не должен напрямую вызывать бизнес-логику.
+
+Decision:
+
+HTTP Request
+Contract
+Mapper
+Command
+Dispatcher
+UseCase
+
+Consequences:
++ clean architecture
+
+
+ADR-16
+Title: Isolate LLM processing behind llm-gateway
+
+Context:
+Некоторые данные сложно парсить правилами.
+
+Decision:
+Создать сервис:
+
+llm-gateway
+
+Он обращается к Ollama.
+
+
+ADR-17
+Title: Structure database by domain schemas
+
+Context:
+Количество таблиц выросло.
+
+Decision:
+Разделить БД на схемы:
+
+catalog
+ingest
+media
+core
+
+
+ADR-18
+Title: Deploy Monstrino on single-node k3s cluster
+
+Context:
+Проект работает в homelab.
+
+Decision:
+Использовать:
+
+k3s
+
+и namespaces:
+
+test
+prod
+
+
+ADR-19
+Title: Publish homelab services through Cloudflared
+
+Context:
+Нельзя открывать сервер напрямую.
+
+Decision:
+Использовать:
+
+Cloudflare Tunnel
+
+
+ADR-20
+Title: Use S3-compatible object storage
+
+Context:
+Storage должен быть переносимым.
+
+Decision:
+Использовать S3 API.
+
+Локально:
+
+MinIO
+
+
+ADR-21
+Title: Split media rehosting pipeline into subscriber and processor
+
+Context:
+Media сервис стал слишком большим.
+
+Decision:
+Разделить:
+
+media-rehosting-subscriber
+media-rehosting-processor
+
+
+ADR-22
+Title: Centralize source parsers in monstrino-infra
+
+Context:
+Разные сервисы используют один и тот же источник.
+
+Decision:
+Парсеры должны жить в:
+
+monstrino-infra
+
+
+ADR-23
+Title: Use LLM-assisted normalization for release data
+
+Context:
+Названия релизов не имеют стабильной структуры.
+
+Decision:
+Использовать LLM для:
+- извлечения информации
+- нормализации данных
+
+
+ADR-24
+Title: Use official Mattel Shopify sources for MSRP prices
+
+Context:
+Mattel сайты построены на Shopify.
+
+Decision:
+Использовать их как основной источник MSRP.
+
+
+ADR-25
+Title: Defer affiliate monetization
+
+Context:
+Affiliate links изменяют позиционирование проекта.
+
+Decision:
+Отложить affiliate модель.
+
+
+ADR-26
+Title: Prioritize image pipeline over price collection for MVP
+
+Context:
+Изображения важнее для MVP.
+
+Decision:
+Приоритет разработки:
+
+1 каталог
+2 изображения
+3 цены
+
+
+ADR-27
+Title: Migrate frontend from Vite to Next.js
+
+Context:
+Google search требует HTML страниц.
+
+Decision:
+Перейти на:
+
+Next.js
+
+для SSR / ISR / SEO.
+
+
+ADR-28
+Title: Separate frontend into dedicated repository
+
+Context:
+Frontend стал отдельным проектом.
+
+Decision:
+Создать repo:
+
+monstrino-ui
+
+
+ADR-29
+Title: Introduce media ingestion jobs
+
+Context:
+Скачивание изображений тяжелая операция.
+
+Decision:
+Создать таблицу:
+
+media_ingest_job
+
+которая запускает processing pipeline.
+
+
+ADR-30
+Title: Add release external reference system
+
+Context:
+Один релиз может иметь много ссылок на источники.
+
+Decision:
+Добавить таблицу:
+
+release_external_reference
+
+
+ADR-31
+Title: Introduce character variant concept
+
+Context:
+Некоторые персонажи имеют разные версии.
+
+Example:
+Wednesday
+- Addams Family movie
+- Wednesday TV series
+
+Decision:
+Создать:
+
+Character
+CharacterVariant
+
+Consequences:
++ поддержка разных франшиз

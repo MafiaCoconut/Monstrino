@@ -1,5 +1,6 @@
 ---
 title: Introduction
+sidebar_position: 1
 description: > 
     A high-level overview of the Monstrino ecosystem: models, services, pipelines, and UI architecture.
 ---
@@ -28,39 +29,17 @@ This documentation will guide you through all layers of the system.
 
 Three essential entry points into the Monstrino ecosystem:
 
-<DocCard title="1. Explore Core Models">
+<DocCard title="1. Explore the Architecture" href={useBaseUrl('docs/architecture/architecture-overview')}>
+  High-level structure, data flow, domain boundaries, and ecosystem overview.
+</DocCard>
+
+<DocCard title="2. Explore Core Models">
   Learn the main domain models: Release, Character, Series, Image.
 </DocCard>
 
-<DocCard title="2. Understand the Services">
+<DocCard title="3. Understand the Services">
   Importer, Parser, Image Service, Sandbox — how they cooperate and transform data.
 </DocCard>
-
-<DocCard title="3. Learn the UI Architecture (FSD)">
-  Feature-Sliced Design for scalable modular frontend development.
-</DocCard>
-
----
-
-# 🧬 Core Concepts
-
-## **Entities**  
-Pure domain data structures.  
-No mutations, no routing logic, no side effects — only read-only UI and GET queries.
-
-## **Features**  
-Actions, mutations, validation, side-effects.  
-Examples: `release-resolve`, `character-merge`, `series-link`.
-
-## **Widgets**  
-Compositions of entities + features.  
-Responsible for section-level state and navigation.
-
-## **Pages**  
-Thin route components.  
-Assemble widgets, define layout, no business logic.
-
-_(This structure follows the Feature-Sliced Design rules.)_
 
 ---
 

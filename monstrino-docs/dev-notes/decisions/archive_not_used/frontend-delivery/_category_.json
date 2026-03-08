@@ -1,0 +1,11 @@
+{
+  "label": "Frontend & Delivery",
+  "position": 6,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Frontend & Delivery Architecture Decisions",
+    "description": "Decisions governing the frontend technology stack, rendering strategy, and repository topology for the user-facing application."
+  }
+}

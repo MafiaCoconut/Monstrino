@@ -5,7 +5,6 @@ from icecream import ic
 from monstrino_core.domain.errors import EntityNotFoundError, DuplicateEntityError, SourceNotFoundError
 from monstrino_core.domain.services import TitleFormatter, TitleFormatter
 from monstrino_core.domain.services.catalog import ReleaseTitleFormatter
-from monstrino_core.domain.value_objects import ReleaseTypeContentType
 from monstrino_core.interfaces.uow.unit_of_work_factory_interface import UnitOfWorkFactoryInterface
 from monstrino_models.dto import ParsedRelease, Release, Source, SourceCountry
 from monstrino_models.enums import EntityName

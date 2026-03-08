@@ -1,0 +1,12 @@
+{
+  "label": "Principles",
+  "position": 7,
+  "collapsed": true,
+  "collapsible": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Principles",
+    "description": "The core principles that guide the design and development of Monstrino, ensuring a consistent and effective approach to building data-driven applications.",
+    "slug": "/principles"
+  }
+}

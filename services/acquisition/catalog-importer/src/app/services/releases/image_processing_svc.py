@@ -27,6 +27,7 @@ class ImageProcessingService:
 
 
     ) -> None:
+        # Эта часть в будущем будет удалена, когда media ingestion pipeline будет доделан
         # return None
         if primary_image:
             release_primary_image = await uow.repos.release_image.save(

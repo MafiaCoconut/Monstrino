@@ -1,0 +1,11 @@
+{
+  "label": "Domain Model",
+  "position": 4,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Domain Model Decisions",
+    "description": "Decisions governing database schema structure, domain entity design, and catalog data modeling."
+  }
+}

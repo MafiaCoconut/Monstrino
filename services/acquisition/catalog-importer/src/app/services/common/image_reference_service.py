@@ -14,6 +14,11 @@ class ImageReferenceService:
             image_link: str,
             record_id: UUID
     ):
+
+        # Тут с точки зрения pipeline должно быть добавление изображение по каждому изображению в Kafka Event Bus, для дальнейшей обработки через media ingestion pipeline
+        # Мы передаем в kafka release_id, image_url,
+
+        # На данный момент сделан return None как заглушака, это можно не упоминать
         return None
 
         ref_id = await uow.repos.image_reference_origin.get_id_by_table_and_field(table, field)

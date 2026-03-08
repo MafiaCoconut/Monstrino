@@ -27,7 +27,7 @@ export default function Home(): JSX.Element {
           </p>
 
           <div className={styles.buttons}>
-            <Link className={styles.primaryButton} to={useBaseUrl("docs/intro")}>
+            <Link className={styles.primaryButton} to={useBaseUrl("introduction")}>
               Get Started
             </Link>
             <Link className={styles.secondaryButton} to={useBaseUrl("docs/api")}>

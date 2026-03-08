@@ -1,0 +1,11 @@
+{
+  "label": "Media Pipeline",
+  "position": 3,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "Media Pipeline Decisions",
+    "description": "Decisions governing how external media assets are discovered, downloaded, stored, and served through Monstrino-controlled infrastructure."
+  }
+}

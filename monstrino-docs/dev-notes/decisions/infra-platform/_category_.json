@@ -1,11 +1,11 @@
 {
-  "label": "Infra & Platform Decisions",
-  "position": 1,
+  "label": "Infra & Platform",
+  "position": 7,
   "collapsible": true,
   "collapsed": true,
   "link": {
     "type": "generated-index",
-    "title": "Infra & Platform Decisions",
-    "description": "Architectural decisions and formal records."
+    "title": "Infrastructure & Platform Decisions",
+    "description": "Decisions covering deployment, hosting, storage, and platform infrastructure for Monstrino in a homelab environment."
   }
 }

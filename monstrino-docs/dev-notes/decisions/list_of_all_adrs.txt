@@ -1,0 +1,402 @@
+# Monstrino ADR Catalog
+
+This document collects the proposed Architecture Decision Records (ADRs) for Monstrino, grouped by category. It is intended as a planning and indexing file before splitting the content into separate ADR files.
+
+---
+
+## Architecture
+
+### ADR-A-001 — Separate ingest from canonical catalog through parsed tables and importer
+
+**Decision:** External source parsers must not write directly into canonical catalog tables. Parsed data is first stored in `parsed_*` tables, then transformed and imported into normalized catalog tables by a dedicated importer service.
+
+**Context:** Source data is inconsistent, incomplete, and may change shape between providers. Writing directly into the production catalog would couple source formats to internal storage and make refactoring dangerous.
+
+**Why this matters:** This decision creates a hard boundary between raw external data and business-ready canonical entities. It improves auditability, replayability, safety, and long-term maintainability.
+
+**Primary impact:** `catalog-collector`, `catalog-importer`, parsed schema design, process use cases, validation rules, replay workflows.
+
+---
+
+### ADR-A-002 — Use database `processing_state` as the core ingestion workflow mechanism
+
+**Decision:** Ingestion and processing workflows must be orchestrated through status fields in database records, such as `init`, `processing`, `processed`, and `error`, instead of relying only on queue ordering semantics.
+
+**Context:** A pure message-driven flow was considered, but blocking behavior, error visibility, and manual intervention needs made it unsuitable as the main operational model for early Monstrino pipelines.
+
+**Why this matters:** The database state model allows controlled retries, visibility into partial failures, separation of broken records from valid data, and more explicit operational debugging.
+
+**Primary impact:** collector/importer jobs, schedulers, recovery flows, ops visibility, pipeline reliability.
+
+---
+
+### ADR-A-003 — Adopt shared packages for cross-service models, repositories, core logic, testing, and infra
+
+**Decision:** Shared code used by multiple services must be moved into versioned internal packages such as `monstrino-models`, `monstrino-repositories`, `monstrino-core`, `monstrino-testing`, and `monstrino-infra`.
+
+**Context:** Repeating ORM classes, DTOs, repository interfaces, helpers, fixtures, and infrastructure code across services created duplication and made changes expensive and error-prone.
+
+**Why this matters:** This establishes single points of truth, reduces duplicated maintenance, enables versioned reuse across services, and supports independent service evolution within a shared architecture.
+
+**Primary impact:** all microservices, packaging strategy, development workflow, dependency management.
+
+---
+
+### ADR-A-004 — Restrict ORM usage to repository layer and use DTOs elsewhere
+
+**Decision:** SQLAlchemy ORM entities may only be used inside repository implementations. Application, domain, and orchestration logic must use DTOs, commands, and domain data structures instead.
+
+**Context:** Allowing ORM objects to spread through the codebase would couple business logic to persistence concerns and make migrations and testing harder.
+
+**Why this matters:** This preserves clean architecture boundaries, prevents leaking persistence behavior into application logic, and keeps business code more stable.
+
+**Primary impact:** repository implementations, application layer contracts, testing conventions, code review rules.
+
+---
+
+### ADR-A-005 — Standardize persistence with Unit of Work, BaseRepo, and CrudRepo
+
+**Decision:** All database access must follow a unified persistence stack based on Unit of Work, a low-level generic `BaseRepo`, and higher-level reusable `CrudRepo` abstractions.
+
+**Context:** Earlier versions used inconsistent session patterns and duplicated common repository methods such as save, exists, get-one, and get-many.
+
+**Why this matters:** This decision standardizes transaction management, rollback behavior, and reusable CRUD behavior across the system while reducing boilerplate.
+
+**Primary impact:** every repository, every database use case, transaction handling, test strategy.
+
+---
+
+### ADR-A-006 — Organize services by domain capability
+
+**Decision:** Services must be grouped by high-level capability areas such as `acquisition`, `catalog`, `media`, `platform`, `support`, and `ui` instead of keeping all services flat under one folder.
+
+**Context:** As the number of services grew, flat structure stopped scaling and made navigation, onboarding, and ownership less clear.
+
+**Why this matters:** This makes the repo easier to understand, improves discoverability, and aligns service structure with system capabilities.
+
+**Primary impact:** repo layout, documentation, service discovery, architecture diagrams.
+
+---
+
+### ADR-A-007 — Use Contracts → Mapper → Command → Dispatcher → UseCase as API boundary
+
+**Decision:** External HTTP contracts must be mapped into internal commands through dedicated mappers, then dispatched to use cases through an application boundary. Infrastructure DTOs must not be used directly as application-layer inputs.
+
+**Context:** Direct use of API request objects inside business logic would mix transport concerns with application logic and reduce evolvability.
+
+**Why this matters:** This preserves clean boundaries and supports stable APIs, internal refactoring, and clearer orchestration logic.
+
+**Primary impact:** API services, request/response design, command handling, dispatcher implementation.
+
+---
+
+### ADR-A-008 — Isolate LLM processing behind `llm-gateway`
+
+**Decision:** All LLM-related processing must go through a dedicated gateway service that communicates with local model infrastructure such as Ollama.
+
+**Context:** LLM use cases appeared useful for interpreting inconsistent release data, but embedding model-specific logic directly into collectors or importers would create tight coupling.
+
+**Why this matters:** This keeps LLM concerns isolated, allows model swapping, and prevents core ingestion services from depending on model runtime details.
+
+**Primary impact:** collector/importer enrichment, future AI features, deployment of model-serving components.
+
+---
+
+### ADR-A-009 — Structure database by domain schemas
+
+**Decision:** Database tables must be grouped into separate schemas such as `ingest`, `catalog`, `media`, and `core`, with shared reference data moved into the core domain where appropriate.
+
+**Context:** As the model became more detailed, flat or weakly separated table organization made ownership and schema evolution harder.
+
+**Why this matters:** This improves separation of concerns, schema clarity, and future service/domain boundaries.
+
+**Primary impact:** database organization, repository packages, migration strategy, docs.
+
+---
+
+## Data Ingestion
+
+### ADR-DI-001 — Design parsed models for heterogeneous source data
+
+**Decision:** Parsed tables, especially parsed release structures, must be designed to accept flexible and source-diverse data rather than being optimized around a single provider format.
+
+**Context:** Early parsed models matched one source too closely and had to be redesigned when additional sources exposed differences in structure and completeness.
+
+**Why this matters:** This prevents repeated schema churn caused by source-specific assumptions and enables broader ingestion coverage.
+
+**Primary impact:** parsed DTOs, fixtures, parser outputs, import logic.
+
+---
+
+### ADR-DI-002 — Use external references as primary ingestion identifiers
+
+**Decision:** Source objects must be identified and processed through stable external identifiers and references rather than temporary URLs or page links.
+
+**Context:** URLs may change, be duplicated, or contain transport-specific details that are weaker than a real external identity.
+
+**Why this matters:** This improves idempotency, replay workflows, API targeting, and consistency across sources.
+
+**Primary impact:** parser APIs, selector logic, storage keys, deduplication.
+
+---
+
+### ADR-DI-003 — Enforce idempotency with `source + external_id`
+
+**Decision:** Ingested records must be treated as unique by the combination of source and external identifier, and duplicate creation must be blocked before persistence.
+
+**Context:** The same entity may be re-fetched many times, and duplicate parsed records would pollute downstream processing.
+
+**Why this matters:** This is the core invariant for safe repeated ingestion and retry behavior.
+
+**Primary impact:** collectors, parsed repositories, uniqueness constraints, duplicate checks.
+
+---
+
+### ADR-DI-004 — Store parsed content as replayable JSON references
+
+**Decision:** Parsed external content should be exportable and restorable in JSON/reference form so that data can be replayed, backed up, corrected manually, and re-imported without hitting external sites again.
+
+**Context:** Re-scraping sources repeatedly is fragile and can be unsafe or operationally inconvenient while schemas are evolving.
+
+**Why this matters:** This makes ingestion resilient during active schema development and supports fast reprocessing.
+
+**Primary impact:** backfill workflow, local testing, content review, parser output storage.
+
+---
+
+### ADR-DI-005 — Centralize source parsers in `monstrino-infra`
+
+**Decision:** Parsers for source platforms such as Mattel/Shopify-based stores must live in shared infrastructure code and expose reusable functions to multiple services.
+
+**Context:** The same source may be used both for collecting catalog data and for collecting price data. Duplicating parser logic across services would create maintenance drift.
+
+**Why this matters:** One parser implementation can support multiple products and workflows with consistent behavior.
+
+**Primary impact:** collectors, package boundaries, parser reuse strategy.
+
+---
+
+### ADR-DI-006 — Use LLM-assisted normalization for unstructured release data
+
+**Decision:** For source data that cannot be reliably normalized with deterministic rules alone, Monstrino may use LLM-assisted classification and extraction through `llm-gateway`.
+
+**Context:** Release names and related source content are inconsistent enough that hardcoded rule trees alone become brittle and hard to scale.
+
+**Why this matters:** This enables broader automation and reduces manual heuristics for messy real-world source content.
+
+**Primary impact:** enrichment pipeline, resolver services, future validation flows.
+
+---
+
+### ADR-DI-007 — Process external media through staged ingestion jobs
+
+**Decision:** Media acquisition must follow a two-step workflow: first create a `media_ingest_job`, then have a dedicated processor download, persist, and register canonical media assets and attachments.
+
+**Context:** Image downloading and storage are heavier and riskier operations than collecting lightweight metadata.
+
+**Why this matters:** This separates discovery from heavy processing and improves robustness, retries, and observability.
+
+**Primary impact:** media ingestion pipeline, storage integration, asset metadata lifecycle.
+
+---
+
+## Infra / Platform
+
+### ADR-IP-001 — Deploy on single-node k3s with environment separation by namespaces
+
+**Decision:** Monstrino must initially run on a single-node `k3s` cluster in the homelab, with test and production environments separated by Kubernetes namespaces.
+
+**Context:** The available hosting environment is one server, and a lightweight Kubernetes distribution is appropriate at this stage.
+
+**Why this matters:** This provides a practical platform baseline with deployment consistency while keeping infrastructure complexity controlled.
+
+**Primary impact:** deployment model, manifests, DNS, cluster operations.
+
+---
+
+### ADR-IP-002 — Publish homelab services through Cloudflared
+
+**Decision:** Public access to Monstrino environments must be exposed through Cloudflared/Cloudflare tunneling rather than direct raw exposure of services.
+
+**Context:** The project is self-hosted in a homelab and needs a safer external access model.
+
+**Why this matters:** This improves exposure control and reduces direct surface area on the origin environment.
+
+**Primary impact:** ingress design, domain routing, external security posture.
+
+---
+
+### ADR-IP-003 — Rehost external images into owned object storage
+
+**Decision:** Images from external sources must not be served directly from third-party URLs in the final product. They should be copied into Monstrino-managed object storage and referenced through Monstrino-controlled URLs.
+
+**Context:** External image URLs are unstable, operationally risky, and not suitable as a long-term product dependency.
+
+**Why this matters:** This improves reliability, delivery control, and long-term consistency for the catalog.
+
+**Primary impact:** media pipeline, storage, URL design, frontend rendering.
+
+---
+
+### ADR-IP-004 — Use S3-compatible object storage across environments
+
+**Decision:** Monstrino must standardize on S3-compatible storage interfaces across environments, using MinIO in current environments and preserving the option to use production-grade compatible storage later.
+
+**Context:** Local and future production storage providers differ, but the application should not depend on provider-specific APIs.
+
+**Why this matters:** This allows storage backend substitution without redesigning the media pipeline.
+
+**Primary impact:** media services, infra config, environment portability.
+
+---
+
+### ADR-IP-005 — Split media rehosting into subscriber and processor services
+
+**Decision:** Media rehosting must be split into two services: one subscriber that listens for events and creates ingest jobs, and one processor that performs downloading, storage, and canonical asset creation.
+
+**Context:** The original combined service grew beyond one clear responsibility.
+
+**Why this matters:** This creates clearer operational roles, better scaling paths, and cleaner separation of lightweight ingestion from heavy media processing.
+
+**Primary impact:** media architecture, Kafka integration, deployment topology.
+
+---
+
+### ADR-IP-006 — Standardize Python tooling on `uv`
+
+**Decision:** Python package and environment management across Monstrino services should standardize on `uv` instead of Poetry.
+
+**Context:** Tooling consistency became important as the number of services and packages increased.
+
+**Why this matters:** This reduces tool fragmentation and gives one consistent setup path for local development and CI.
+
+**Primary impact:** developer workflow, docs, service templates, CI scripts.
+
+---
+
+### ADR-IP-007 — Adopt Docusaurus for engineering documentation
+
+**Decision:** Architecture, dev-notes, pipeline descriptions, and internal technical documentation must be maintained as docs-as-code in Docusaurus.
+
+**Context:** The system grew enough that documentation needed its own organized platform.
+
+**Why this matters:** This creates a scalable documentation system for architecture, operations, and onboarding.
+
+**Primary impact:** documentation workflow, repo structure, developer onboarding.
+
+---
+
+## Product Strategy
+
+### ADR-PS-001 — Focus Monstrino on Monster High rather than LEGO or Funko
+
+**Decision:** Monstrino will target the Monster High ecosystem instead of broader or more saturated categories such as LEGO or Funko POP.
+
+**Context:** Competitive analysis showed stronger saturation in other collectible domains and a more interesting automation gap in Monster High release data.
+
+**Why this matters:** This defines the product niche and the core domain model.
+
+**Primary impact:** source selection, catalog structure, branding, roadmap.
+
+---
+
+### ADR-PS-002 — Prioritize release archive over user and social features for MVP
+
+**Decision:** The first official Monstrino release must focus on a complete and working release archive. User collections, social functionality, and related account-centered features are deferred until after the archive is shipped.
+
+**Context:** Auth and user functionality were started early, but they slowed down the path to a meaningful first product.
+
+**Why this matters:** This keeps the MVP focused on the product’s core value and reduces release delay.
+
+**Primary impact:** roadmap, service priority, frontend scope, API scope.
+
+---
+
+### ADR-PS-003 — Make automated data acquisition the core product capability
+
+**Decision:** Monstrino must be built around automatic data collection, normalization, and page generation rather than manual editorial entry as the primary model.
+
+**Context:** Existing competitors rely heavily on manual updates, creating delays and labor cost.
+
+**Why this matters:** This is the main product differentiator and one of the strongest reasons the project exists.
+
+**Primary impact:** architecture, infra, roadmap, competitive positioning.
+
+---
+
+### ADR-PS-004 — Defer affiliate monetization to preserve non-commercial positioning
+
+**Decision:** Affiliate-link-driven price collection must not be part of the current product stage because it would shift the project away from its intended non-commercial positioning.
+
+**Context:** Affiliate programs such as Awin were explored but created strategic and positioning conflicts.
+
+**Why this matters:** This protects current product identity and avoids premature monetization-driven design.
+
+**Primary impact:** price strategy, legal pages, roadmap, partnership decisions.
+
+---
+
+### ADR-PS-005 — Prioritize catalog completeness and image pipeline above price collection for MVP
+
+**Decision:** For the MVP, image availability and canonical release pages take precedence over broad MSRP and secondary-market pricing coverage.
+
+**Context:** Price history is valuable, but official price sources remain available and less urgent than core catalog completeness and media quality.
+
+**Why this matters:** This helps allocate engineering effort to the capabilities most needed for the first useful product.
+
+**Primary impact:** sprint priorities, service sequencing, collector roadmap.
+
+---
+
+### ADR-PS-006 — Use official Mattel / Shopify-derived sources as primary MSRP sources
+
+**Decision:** Official Mattel online properties, especially Shopify-structured sources, should be treated as the primary source for official MSRP collection.
+
+**Context:** These sources are easier to parse, more trustworthy, and provide strong structured product data for recent years.
+
+**Why this matters:** This gives Monstrino a high-quality foundation for official price data without depending on weaker unofficial sources.
+
+**Primary impact:** market-price-collector strategy, source trust model, parser roadmap.
+
+---
+
+## Frontend / Delivery Architecture
+
+### ADR-FD-001 — Migrate frontend from Vite SPA to Next.js for SEO and server-side rendering
+
+**Decision:** The product frontend must move from a Vite-based client-rendered SPA approach to Next.js with support for SEO-friendly rendering strategies such as SSR, ISR, or prerendering.
+
+**Context:** Search indexing for release pages requires server-rendered or pre-rendered HTML, which the current setup does not provide adequately.
+
+**Why this matters:** Without this change, the public archive would be much weaker in discoverability and search reach.
+
+**Primary impact:** frontend stack, deployment model, route rendering strategy, SEO architecture.
+
+---
+
+### ADR-FD-002 — Separate frontend into dedicated `monstrino-ui` repository
+
+**Decision:** The frontend should live in its own dedicated repository when team structure and workflow justify separate ownership.
+
+**Context:** UI development started to become more substantial, and collaboration with a possible frontend developer made dedicated isolation attractive.
+
+**Why this matters:** This can improve ownership clarity and collaboration, though it should only be treated as a full ADR if the separation is considered long-term.
+
+**Primary impact:** repo topology, CI/CD, team boundaries, issue tracking.
+
+---
+
+## Suggested First ADRs to Actually Write
+
+If the goal is to create the most important ADRs first, start with these:
+
+1. Separate ingest from canonical catalog through parsed tables and importer
+2. Use database `processing_state` as the core ingestion workflow mechanism
+3. Adopt shared packages for cross-service code
+4. Restrict ORM usage to repository layer and use DTOs elsewhere
+5. Standardize persistence with Unit of Work, BaseRepo, and CrudRepo
+6. Deploy on single-node k3s with environment separation by namespaces
+7. Rehost external images into owned object storage
+8. Focus Monstrino on Monster High rather than LEGO or Funko
+9. Prioritize release archive over user and social features for MVP
+10. Migrate frontend from Vite SPA to Next.js for SEO and server-side rendering

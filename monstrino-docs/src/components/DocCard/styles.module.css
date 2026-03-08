@@ -12,3 +12,11 @@
 .card p {
   color: #ccc;
 }
+.cardLink {
+  transition: border-color 0.2s, transform 0.2s;
+  cursor: pointer;
+}
+.cardLink:hover {
+  border-color: rgba(255,44,168,0.7);
+  transform: translateY(-2px);
+}

@@ -28,6 +28,16 @@
   --ifm-footer-background-color: #111114;
   --ifm-code-font-size: 95%;
   --ifm-font-family-base: 'Inter', sans-serif;
+
+  /* Table */
+  --ifm-table-background: rgba(20, 20, 26, 0.65);
+  --ifm-table-stripe-background: rgba(255, 44, 168, 0.08);
+  --ifm-table-border-color: rgba(255, 255, 255, 0.12);
+  --ifm-table-border-width: 1px;
+  --ifm-table-cell-padding: 0.6rem 0.9rem;
+  --ifm-table-head-background: rgba(255, 44, 168, 0.14);
+  --ifm-table-head-color: #ffffff;
+  --ifm-table-head-font-weight: 700;
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
@@ -108,6 +118,38 @@ input,
 .footer {
   background: #0d0d0f;
   border-top: 1px solid rgba(255,44,168,0.15);
+}
+
+/* Mobile sidebar width (hamburger menu) */
+:root {
+  --ifm-navbar-sidebar-width: 42vw;
+}
+
+/* Show "Docs" and "Dev Notes" buttons at all screen sizes >= 300px */
+@media (min-width: 300px) {
+  .navbar__item {
+    display: block !important;
+  }
+
+  .navbar__items {
+    display: flex !important;
+    flex-wrap: wrap;
+  }
+}
+
+/* Desktop: hide hamburger (sidebar is always visible in layout) */
+@media (min-width: 997px) {
+  .navbar__toggle {
+    display: none !important;
+  }
+}
+
+/* Mobile / tablet: keep hamburger visible so the docs sidebar can be opened */
+@media (min-width: 300px) and (max-width: 996px) {
+  .navbar__toggle {
+    display: flex !important;
+    order: -1; /* place it before the nav links */
+  }
 }
 
 .monstrino-hover {

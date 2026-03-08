@@ -35,6 +35,6 @@ class ProcessNewImageUseCase:
             asset = await uow.repos.media_asset.get_one_by_id(asset_id)
             if asset is None:
                 logger.error(f"Media asset not found for ID: {asset_id}")
-            
+
             ic_model(asset)
 
