@@ -1,6 +1,6 @@
 ---
 title: LLM Enrichment Walkthrough
-sidebar_position: 3
+sidebar_position: 4
 ---
 
 # LLM Enrichment Walkthrough
@@ -422,6 +422,5 @@ This page works together with the following documentation:
 
 - `docs/ai-features/ai-strategy.md`
 - `docs/ai-features/ai-orchestrator.md`
-- `docs/ai-features/llm-enrichment-pipeline.md`
 
 If those pages explain the architectural design, this page explains how that design behaves on a real example.

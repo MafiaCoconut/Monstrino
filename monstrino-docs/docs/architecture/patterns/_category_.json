@@ -4,9 +4,7 @@
   "collapsed": true,
   "collapsible": true,
   "link": {
-    "type": "generated-index",
-    "title": "Architecture Patterns",
-    "description": "Architectural patterns used across the Monstrino platform: Clean Architecture, Repository Pattern, Unit of Work, Dependency Inversion, and Layered Architecture.",
-    "slug": "/architecture/patterns"
+    "type": "doc",
+    "id": "architecture/patterns/overview"
   }
 }

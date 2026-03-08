@@ -96,7 +96,7 @@ Internal services are not intended for direct public access. They communicate wi
 
 ```mermaid
 flowchart LR
-    CatalogEnrichter[catalog-data-enrichter] --> CatalogApiService[catalog-api-service]
+    CatalogEnricher[catalog-data-enricher] --> CatalogApiService[catalog-api-service]
     %% PublicAPI[public-api-service] --> InternalAPI1[catalog-api-service]
     %% PublicAPI --> InternalAPI2[media-api-service]
     %% InternalAPI1 --> InternalWorker1[catalog-importer]

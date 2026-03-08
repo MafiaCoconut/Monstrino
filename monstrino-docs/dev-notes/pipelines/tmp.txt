@@ -1,0 +1,1203 @@
+---
+id: pipelines-overview
+title: Pipelines Overview
+sidebar_label: Overview
+description: Overview of pipeline patterns, responsibilities, and operational model used in Monstrino.
+---
+
+# Pipelines Overview
+
+## Purpose
+
+This note describes how pipelines are used across Monstrino to ingest, normalize, enrich, validate, and persist data. It is intentionally focused on engineering working notes rather than end-user documentation.
+
+A pipeline in Monstrino is a multi-step background processing flow that starts from an external signal or internal scheduled trigger and ends with one of the following outcomes:
+
+- a new raw item is discovered and stored,
+- an existing item is enriched or normalized,
+- media is downloaded and re-hosted,
+- market data is refreshed,
+- a downstream service receives a structured event or command.
+
+## Core pipeline principles
+
+### 1. Pipelines are asynchronous by default
+
+Most heavy or repeatable work should not happen inside synchronous request-response paths. Pipelines run in the background and are usually initiated by one of these mechanisms:
+
+- scheduler-based polling,
+- event consumption from Kafka,
+- internal service-to-service command dispatch,
+- staged processing over records stored in the database.
+
+### 2. Discovery and processing are separated
+
+A pipeline should not mix “find new work” and “fully process work” in one opaque step.
+
+Typical separation:
+
+- **discovery stage** finds new external items or new internal work,
+- **job creation stage** persists a processing unit,
+- **processor stage** takes queued jobs and performs heavier work,
+- **finalizer stage** stores results and updates state.
+
+This separation makes retries, observability, and partial recovery much easier.
+
+### 3. Database state is part of orchestration
+
+For Monstrino, orchestration is not only event-driven. Processing state stored in the database is also a first-class control mechanism.
+
+Examples of state-driven execution:
+
+- `init`
+- `processing`
+- `processed`
+- `failed`
+- `retry_pending`
+
+Schedulers and processors use these states to identify the next batch of work.
+
+### 4. Idempotency matters
+
+Pipelines must assume that the same source item may be observed more than once.
+
+Each pipeline should have a stable deduplication strategy based on one or more of:
+
+- source-specific external ID,
+- canonical URL,
+- content hash,
+- source + entity-type + entity-key,
+- deterministic relation key.
+
+### 5. Raw external data and normalized platform data must stay separated
+
+A pipeline may first store raw or semi-structured source data and only later map it into normalized Monstrino entities. This helps with:
+
+- traceability,
+- replayability,
+- safer parser evolution,
+- lower coupling between collectors and core catalog models.
+
+## Common pipeline stages
+
+Not every pipeline uses every stage, but this is the general pattern.
+
+### Stage 1. Trigger
+
+The pipeline starts from a trigger:
+
+- cron/scheduler tick,
+- Kafka message,
+- internal event,
+- administrative reprocess action.
+
+### Stage 2. Discovery
+
+The system detects a new candidate item or existing stale item.
+
+Examples:
+
+- a source page contains a newly published release link,
+- a market source has updated price data,
+- a media record appears in a topic,
+- an unprocessed ingestion row exists in a staging table.
+
+### Stage 3. Job creation
+
+The system stores a dedicated processing job row. This is important because it decouples source discovery from heavy work execution.
+
+Typical job metadata:
+
+- job ID,
+- source type,
+- source reference,
+- target entity type,
+- payload snapshot or pointer,
+- processing state,
+- retry counter,
+- timestamps,
+- correlation ID.
+
+### Stage 4. Processing
+
+A processor service fetches pending jobs and performs the actual work.
+
+Examples:
+
+- download HTML or JSON,
+- parse structured product data,
+- download external image bytes,
+- call AI enrichment service,
+- persist normalized records.
+
+### Stage 5. Persistence
+
+Results are stored in one or more zones:
+
+- ingest/raw zone,
+- normalized catalog zone,
+- media zone,
+- market zone,
+- event outbox.
+
+### Stage 6. State transition
+
+The job is marked with the next processing state.
+
+Examples:
+
+- `processed`
+- `failed`
+- `needs_review`
+- `awaiting_next_stage`
+
+## Pipeline categories in Monstrino
+
+At the current stage, pipelines can be grouped into the following categories.
+
+### Catalog ingestion pipelines
+
+Responsible for finding, collecting, and structuring catalog-related information:
+
+- release pages,
+- source metadata,
+- source-specific product identifiers,
+- semi-structured descriptive data,
+- relations such as character, series, type, or exclusivity.
+
+### Media ingestion pipelines
+
+Responsible for image-oriented processing:
+
+- receiving references to external media,
+- creating media ingestion jobs,
+- downloading files,
+- validating file metadata,
+- re-hosting files to internal object storage,
+- linking hosted media to release or entity records.
+
+### Market pipelines
+
+Responsible for market-facing data collection:
+
+- detecting new source-market entries,
+- collecting secondary market prices,
+- refreshing current listing state,
+- storing historical and regional price signals.
+
+### AI-assisted enrichment pipelines
+
+Responsible for controlled enrichment or verification using LLM or multimodal models:
+
+- extracting structured facts from semi-structured text,
+- validating parsed fields,
+- proposing entity links,
+- generating intermediate command responses for orchestrated workflows.
+
+## Operational expectations
+
+Every production-grade pipeline should define the following.
+
+### Input contract
+
+What exactly enters the pipeline?
+
+Examples:
+
+- source URL,
+- parsed source payload,
+- Kafka message,
+- job table row,
+- image URL and metadata.
+
+### Output contract
+
+What exactly is guaranteed on success?
+
+Examples:
+
+- new job row,
+- normalized entity write,
+- stored media asset,
+- market price snapshot,
+- emitted internal event.
+
+### Failure strategy
+
+The pipeline should explicitly define:
+
+- retryable failures,
+- terminal failures,
+- poison item handling,
+- dead-letter or review state,
+- logging expectations.
+
+### Observability
+
+Each pipeline should expose enough operational visibility to answer:
+
+- what entered the pipeline,
+- what stage it reached,
+- what failed,
+- what was retried,
+- how long processing took,
+- which source or entity was affected.
+
+## Recommended note structure for individual pipeline files
+
+Each specific pipeline note should generally describe:
+
+1. purpose,
+2. trigger,
+3. stages,
+4. main services or components,
+5. storage interactions,
+6. state model,
+7. retries and failures,
+8. future evolution.
+
+## Scope note
+
+This overview is intentionally stable and high-level. Detailed implementation notes belong to individual pipeline files.
+
+--------------------------------
+
+---
+id: catalog-ingestion-pipeline
+title: Catalog Ingestion Pipeline
+sidebar_label: Catalog Ingestion
+description: Working notes for the catalog ingestion pipeline responsible for discovering and processing external release data.
+---
+
+# Catalog Ingestion Pipeline
+
+## Purpose
+
+The catalog ingestion pipeline is responsible for discovering external catalog items, collecting source data, and preparing it for normalized Monstrino catalog storage.
+
+Its main goal is to reduce manual work needed to create or update release pages by turning external source data into structured internal records.
+
+## Main responsibilities
+
+The pipeline is expected to cover the following kinds of work:
+
+- discover new release links from supported sources,
+- fetch source pages or source APIs,
+- extract raw structured and semi-structured fields,
+- persist raw or parsed source payloads,
+- prepare data for downstream enrichment,
+- support later mapping into normalized release, series, character, and related entities.
+
+## Why this pipeline exists
+
+Monstrino is designed around automated catalog growth. Because sources differ significantly in quality and structure, the platform should not depend on a single synchronous parser. Instead, the ingestion flow should preserve raw evidence and support staged parsing and enrichment.
+
+## High-level flow
+
+### 1. Source scanning
+
+A collector or scheduler-driven service checks known catalog sources for new or changed entries.
+
+Examples of source behavior:
+
+- listing pages with product cards,
+- product detail pages,
+- source APIs,
+- structured product feeds,
+- source-specific JSON embedded in HTML.
+
+### 2. Candidate identification
+
+The collector identifies candidate release items using source-specific keys such as:
+
+- canonical URL,
+- source release slug,
+- external item identifier,
+- model number or MPN,
+- source platform item ID.
+
+### 3. Raw item persistence
+
+Before heavy normalization, the system stores raw discovery information in an ingest-oriented structure.
+
+Typical persisted fields:
+
+- source name,
+- source type,
+- source URL,
+- external ID,
+- raw payload snapshot,
+- fetch time,
+- hash or fingerprint,
+- current processing state.
+
+### 4. Parsing and field extraction
+
+A parser extracts initial fields such as:
+
+- title,
+- MPN,
+- GTIN,
+- source description,
+- release type,
+- vendor or exclusive info,
+- image URLs,
+- possible series names,
+- possible characters.
+
+At this stage, ambiguity is allowed. The point is to capture candidate structured values without pretending they are already canonical.
+
+### 5. Enrichment and validation
+
+Optional enrichment steps may run after the initial parsing stage.
+
+Examples:
+
+- AI-assisted validation of extracted fields,
+- title cleanup,
+- separation of release name vs series name,
+- candidate mapping for characters or pets,
+- support for subtype and release classification.
+
+### 6. Normalization handoff
+
+Once enough data is available, the pipeline prepares a normalized representation for downstream services or import use cases.
+
+## Likely service roles
+
+The exact service split may evolve, but the pipeline naturally maps to roles like these:
+
+- **source collector** — discovers new items,
+- **parser/enricher** — extracts and improves structured values,
+- **catalog importer** — persists normalized domain records,
+- **LLM gateway** — performs controlled AI validation or enrichment,
+- **job scheduler** — triggers periodic work.
+
+## Storage zones
+
+The pipeline should keep a clear separation between storage layers.
+
+### Ingest zone
+
+Used for:
+
+- raw external payloads,
+- parsed but source-shaped data,
+- processing job states,
+- traceability metadata.
+
+### Core catalog zone
+
+Used for:
+
+- normalized releases,
+- canonical series,
+- canonical characters,
+- normalized relations,
+- stable internal identifiers.
+
+### Event or outbox zone
+
+Used when ingestion results should notify downstream processors.
+
+## Processing state model
+
+A practical state model for catalog ingestion might look like this:
+
+- `init` — item discovered but not yet processed,
+- `fetched` — source payload downloaded,
+- `parsed` — initial fields extracted,
+- `enriched` — optional enrichment completed,
+- `imported` — normalized write completed,
+- `failed` — terminal failure,
+- `retry_pending` — temporary failure waiting for retry,
+- `needs_review` — ambiguity too high for automatic import.
+
+## Idempotency strategy
+
+The pipeline should avoid duplicate release creation by relying on stable source references.
+
+Recommended keys include:
+
+- `source + external_id`,
+- `source + canonical_url`,
+- deterministic content fingerprints,
+- relation-level deduplication for images and linked entities.
+
+## Failure cases
+
+Typical failures:
+
+- source page changed structure,
+- transport timeout,
+- malformed JSON or HTML,
+- duplicate source records,
+- ambiguous entity mapping,
+- downstream write constraint violation.
+
+Recommended handling:
+
+- retry transient network failures,
+- isolate parser failures per source,
+- preserve raw payload for debugging,
+- avoid losing the candidate item even when normalization fails.
+
+## Observability expectations
+
+Useful logging and metrics should allow developers to answer:
+
+- which source produced the item,
+- which external identifier was processed,
+- what stage failed,
+- whether the item was already known,
+- which normalized entities were created or updated.
+
+## Future evolution
+
+Likely future improvements:
+
+- stronger source-specific adapters,
+- better diffing between source versions,
+- confidence scoring for extracted fields,
+- explicit review queues for ambiguous mappings,
+- richer AI-assisted validation with deterministic fallbacks.
+
+--------------------------------
+
+---
+id: media-rehosting-pipeline
+title: Media Rehosting Pipeline
+sidebar_label: Media Rehosting
+description: Working notes for the pipeline that downloads external media and re-hosts it into Monstrino-managed storage.
+---
+
+# Media Rehosting Pipeline
+
+## Purpose
+
+The media rehosting pipeline is responsible for taking externally referenced media files, turning them into internal ingestion jobs, downloading the original file, validating the result, and re-hosting the media into Monstrino-managed object storage.
+
+This pipeline exists to make media delivery more stable, controllable, and decoupled from third-party source availability.
+
+## Current conceptual stages
+
+Based on the current design discussions, the pipeline contains at least two explicit stages:
+
+1. **media-rehosting-subscriber**
+2. **media-rehosting-processor**
+
+## Stage 1: media-rehosting-subscriber
+
+### Responsibility
+
+This service subscribes to a Kafka topic and listens for events related to new external images.
+
+### Main action
+
+When a relevant event is received, the subscriber creates a `MediaIngestionJob` record and stores it in the corresponding table.
+
+### Why this stage exists
+
+This stage isolates event intake from file download and storage work.
+
+Benefits:
+
+- lightweight topic consumer,
+- durable queueing via database job record,
+- easier retries,
+- lower risk of losing work during processor outages.
+
+### Expected input
+
+A Kafka message containing enough metadata to identify the external media target.
+
+Typical fields may include:
+
+- source URL,
+- related entity type,
+- related entity ID,
+- source name,
+- source record reference,
+- correlation ID,
+- media kind.
+
+### Expected output
+
+A persisted `MediaIngestionJob` with initial processing state.
+
+## Stage 2: media-rehosting-processor
+
+### Responsibility
+
+This service is scheduler-driven and executes the actual ingestion work.
+
+### Main action
+
+On a schedule, the processor invokes `IngestExternalMediaUseCase`.
+
+That use case:
+
+- loads newly created `MediaIngestionJob` rows using `processing_state = init`,
+- downloads the target file through an internal `Downloader` component,
+- validates the download result,
+- persists media storage records,
+- uploads or re-hosts the file into internal storage,
+- updates job state.
+
+## Download step
+
+The internal downloader fetches the file from the external URL and returns a structured object.
+
+A representative shape discussed earlier is:
+
+```python
+class DownloadedFile:
+    content: bytes
+```
+
+In practice, the returned object should likely contain more metadata, such as:
+
+- content bytes,
+- content type,
+- file extension,
+- status code,
+- original filename if available,
+- content length,
+- response headers,
+- checksum if computed.
+
+## Suggested full processing flow
+
+### 1. Select pending jobs
+
+The processor queries all `MediaIngestionJob` records with a state such as `init`.
+
+### 2. Mark as processing
+
+Before heavy work starts, the job should transition to `processing` to avoid duplicate parallel handling.
+
+### 3. Download external file
+
+The processor uses `Downloader` to fetch the file bytes and metadata.
+
+### 4. Validate file
+
+Checks may include:
+
+- response success,
+- file not empty,
+- acceptable content type,
+- acceptable size limits,
+- image decodability,
+- optional MIME consistency.
+
+### 5. Compute technical metadata
+
+Suggested metadata to derive:
+
+- SHA-256 hash,
+- width,
+- height,
+- format,
+- file size,
+- normalized extension.
+
+### 6. Upload into managed storage
+
+The file is uploaded into Monstrino-controlled object storage such as MinIO or another selected environment-specific provider.
+
+### 7. Persist media records
+
+The processor creates or updates media-related tables that describe:
+
+- storage location,
+- public or internal URL,
+- provider,
+- storage key,
+- hash,
+- dimensions,
+- relation to release or source object.
+
+### 8. Update job state
+
+The job transitions to one of the terminal or next-stage states.
+
+## Processing states
+
+Recommended states for `MediaIngestionJob`:
+
+- `init`
+- `processing`
+- `processed`
+- `failed`
+- `retry_pending`
+- `invalid_media`
+
+## Why rehosting matters
+
+Rehosting solves several important engineering problems:
+
+- external source image URLs may disappear,
+- source hotlinking may be unreliable,
+- internal delivery should be under platform control,
+- technical metadata should be computed once and reused,
+- moderation and future variant generation require internal ownership of the media path.
+
+## Storage concerns
+
+The pipeline should store enough metadata to support future media operations.
+
+Suggested metadata fields:
+
+- provider,
+- bucket,
+- storage key,
+- original source URL,
+- content hash,
+- width,
+- height,
+- mime type,
+- file size,
+- created timestamps,
+- visibility state,
+- moderation state.
+
+## Failure cases
+
+Typical failures include:
+
+- network timeout,
+- forbidden source response,
+- invalid image bytes,
+- unsupported content type,
+- duplicate storage conflict,
+- upload failure,
+- database write failure.
+
+Recommended handling:
+
+- retry transient transport failures,
+- mark unrecoverable media as terminal failure,
+- preserve original source URL for debugging,
+- avoid deleting failed job history.
+
+## Future evolution
+
+Natural future improvements:
+
+- image normalization variants,
+- background removal or enhancement,
+- duplicate detection by content hash,
+- moderation pipeline integration,
+- multiple storage backends by environment,
+- automatic thumbnail generation.
+
+--------------------------------
+
+---
+id: market-release-discovery-pipeline
+title: Market Release Discovery Pipeline
+sidebar_label: Market Release Discovery
+description: Working notes for the pipeline that detects new release listings on market-related sources.
+---
+
+# Market Release Discovery Pipeline
+
+## Purpose
+
+The market release discovery pipeline is responsible for scanning market-oriented sources and identifying newly observed release entries. Its role is not to collect detailed price history immediately, but first to register that a source now exposes a release listing relevant to Monstrino.
+
+This pipeline is especially useful when the platform launch is still in progress and historical market data needs to start accumulating as early as possible.
+
+## Main responsibilities
+
+- periodically scan market sources,
+- detect newly observed listing pages or product references,
+- persist the fact that a given source now contains a given release,
+- avoid duplicate registration of the same source-release relationship,
+- provide input for downstream price collection.
+
+## Core idea
+
+This pipeline answers the question:
+
+**“Has this source published or exposed a listing for this release?”**
+
+It is intentionally different from the price collection pipeline, which answers:
+
+**“What is the current or recent price state of this already-known listing?”**
+
+## Typical trigger
+
+A scheduler periodically starts the discovery flow for each configured market source.
+
+Examples:
+
+- every hour,
+- several times per day,
+- source-specific cadence depending on rate limits and volatility.
+
+## High-level flow
+
+### 1. Load source configuration
+
+The pipeline loads the set of market sources that support discovery.
+
+Configuration may include:
+
+- source base URL,
+- discovery path,
+- pagination rules,
+- source type,
+- rate limit settings,
+- selector or parser strategy.
+
+### 2. Fetch source pages or source API
+
+The collector downloads the relevant listing data.
+
+### 3. Extract candidate market entries
+
+For each discovered candidate, the pipeline extracts source-facing identifiers such as:
+
+- listing URL,
+- external item ID,
+- source product title,
+- optional price hint,
+- optional release reference hint,
+- observed timestamp.
+
+### 4. Match or associate with release identity
+
+The pipeline attempts to associate the candidate listing with a Monstrino release or at least with a pending release reference.
+
+Matching may rely on:
+
+- known source identifiers,
+- MPN,
+- GTIN,
+- canonical title heuristics,
+- AI-assisted candidate support,
+- manually reviewed source mappings.
+
+### 5. Persist source-release discovery record
+
+If the entry is new, the pipeline stores a durable relationship indicating that the source contains that release.
+
+### 6. Mark for downstream price collection
+
+Discovered entries become input for the separate price refresh pipeline.
+
+## Suggested persisted data
+
+A discovery record should ideally capture:
+
+- market source,
+- source listing URL,
+- source external item ID,
+- related internal release ID or unresolved reference,
+- first seen timestamp,
+- last seen timestamp,
+- processing status,
+- deduplication key,
+- optional source payload snapshot.
+
+## State model
+
+Possible states:
+
+- `init`
+- `matched`
+- `unresolved`
+- `active`
+- `hidden`
+- `failed`
+
+The exact state vocabulary can evolve, but the main point is to distinguish successfully associated releases from unresolved or inactive entries.
+
+## Why this pipeline should be separate
+
+Separating discovery from price refresh provides cleaner design.
+
+Benefits:
+
+- lower coupling,
+- simpler retries,
+- easier source onboarding,
+- better historical coverage,
+- ability to track first-seen dates independently from current price snapshots.
+
+## Failure cases
+
+Typical failures:
+
+- source layout changes,
+- parsing failure,
+- duplicate listing identity,
+- release match ambiguity,
+- temporary source outage.
+
+Recommended handling:
+
+- preserve unresolved entries,
+- retry fetch failures,
+- avoid blocking the full pipeline because one item could not be matched,
+- log source-specific parser errors with enough context.
+
+## Future evolution
+
+Potential improvements:
+
+- explicit review queue for unresolved listings,
+- confidence-based release association,
+- source-specific adapters,
+- batch diffing to detect removed entries,
+- event emission to notify downstream market processors.
+
+--------------------------------
+
+---
+id: market-price-collection-pipeline
+title: Market Price Collection Pipeline
+sidebar_label: Market Price Collection
+description: Working notes for the pipeline that periodically refreshes price information for known market listings.
+---
+
+# Market Price Collection Pipeline
+
+## Purpose
+
+The market price collection pipeline is responsible for revisiting already-known market listings and collecting current pricing information on a recurring basis.
+
+Its job is to build a growing market dataset over time, including current observations and potentially later historical trends.
+
+## Main responsibilities
+
+- iterate over known source release listings,
+- fetch fresh market state from each source,
+- extract current price-related data,
+- persist price snapshots,
+- track source availability and listing freshness.
+
+## Relationship to discovery pipeline
+
+This pipeline only works well when the system already knows which source listing belongs to which release. That mapping is expected to come from the market release discovery pipeline.
+
+In simple terms:
+
+- **discovery pipeline** creates the source listing universe,
+- **price collection pipeline** revisits that universe repeatedly.
+
+## Typical trigger
+
+A scheduler runs periodically and processes known active source-release links.
+
+Frequency may depend on:
+
+- source volatility,
+- rate limits,
+- business importance,
+- listing count,
+- infrastructure budget.
+
+## High-level flow
+
+### 1. Select known active market entries
+
+The processor loads records representing source listings that should be refreshed.
+
+Selection filters may include:
+
+- active state,
+- last checked older than threshold,
+- source enabled,
+- retry window expired.
+
+### 2. Fetch listing data
+
+The pipeline retrieves the current source page or API payload for the market listing.
+
+### 3. Parse price data
+
+The parser extracts current market information such as:
+
+- current price,
+- original price if shown,
+- currency,
+- listing availability,
+- sale status,
+- item condition if relevant,
+- seller or marketplace metadata,
+- observed timestamp.
+
+### 4. Persist snapshot
+
+Instead of overwriting the last known value only, the pipeline should preferably store immutable or append-only price observations.
+
+This enables:
+
+- historical charts,
+- trend analysis,
+- price volatility tracking,
+- source comparison.
+
+### 5. Update source listing metadata
+
+The system may also update non-price source facts such as:
+
+- last seen timestamp,
+- listing status,
+- parse success flag,
+- source health signal.
+
+## Suggested persisted data
+
+A price snapshot should ideally contain:
+
+- release ID,
+- market source,
+- source listing reference,
+- observed price amount,
+- currency,
+- observed at timestamp,
+- condition if applicable,
+- availability state,
+- raw payload reference or hash,
+- parser version if needed.
+
+## State and retry handling
+
+The pipeline should distinguish between:
+
+- transient source fetch failures,
+- listing permanently removed,
+- source throttling,
+- parser drift,
+- no price currently displayed.
+
+Possible operational statuses:
+
+- `active`
+- `temporarily_unavailable`
+- `removed`
+- `parse_failed`
+- `retry_pending`
+
+## Why early collection matters
+
+Because Monstrino may go public later than the start of development, waiting to collect prices until UI launch would waste historical data. Starting collection early gives the platform a stronger dataset from day one.
+
+## Failure cases
+
+Typical failures:
+
+- source rate limit reached,
+- anti-bot response,
+- HTML shape drift,
+- currency parsing failure,
+- duplicate snapshot insertion,
+- stale listing reference.
+
+Recommended handling:
+
+- retry transient fetch errors,
+- mark persistent parser issues for review,
+- keep old snapshots intact,
+- avoid collapsing all failures into one generic state.
+
+## Future evolution
+
+Likely future improvements:
+
+- source-specific price normalization,
+- region-aware MSRP comparison,
+- secondary market analytics,
+- moving averages and volatility metrics,
+- source trust weighting,
+- event-driven price change notifications.
+
+--------------------------------
+
+---
+id: pipeline-patterns
+title: Pipeline Patterns and Conventions
+sidebar_label: Patterns and Conventions
+description: Cross-cutting implementation and operational patterns recommended for Monstrino pipelines.
+---
+
+# Pipeline Patterns and Conventions
+
+## Purpose
+
+This note captures recurring implementation patterns that should be reused across Monstrino pipelines. The goal is to keep background processing predictable, maintainable, and operationally understandable.
+
+## 1. Prefer explicit job records over hidden background work
+
+When a pipeline performs meaningful multi-step work, store a job entity in the database rather than keeping all state only in memory.
+
+Benefits:
+
+- retries are easier,
+- processing history is visible,
+- operators can inspect pending work,
+- schedulers and workers stay decoupled.
+
+## 2. Keep triggers lightweight
+
+Subscribers, schedulers, and controllers should not contain heavy transformation logic.
+
+Recommended split:
+
+- trigger component discovers or receives work,
+- use case coordinates processing,
+- infrastructure adapters perform I/O,
+- repositories persist state.
+
+## 3. Model processing state explicitly
+
+A pipeline without visible state becomes hard to debug.
+
+Each job-like workflow should expose a clear lifecycle, for example:
+
+- `init`
+- `processing`
+- `processed`
+- `failed`
+- `retry_pending`
+
+Additional domain-specific states are allowed if they improve clarity.
+
+## 4. Use small, composable internal components
+
+Useful internal components often include:
+
+- downloader,
+- parser,
+- mapper,
+- validator,
+- uploader,
+- deduplicator,
+- command dispatcher.
+
+This keeps use cases testable and avoids giant service classes.
+
+## 5. Treat external data as untrusted
+
+Every pipeline dealing with third-party sources should validate:
+
+- presence of required fields,
+- transport success,
+- content type,
+- data format,
+- business plausibility.
+
+Never assume that a source stays stable.
+
+## 6. Preserve raw evidence when feasible
+
+When parsing external data, it is often worth storing either:
+
+- raw payload,
+- payload hash,
+- source snapshot reference,
+- source URL and fetch timestamp.
+
+This is critical for debugging parser regressions.
+
+## 7. Design for idempotency from the beginning
+
+A pipeline should be safe to rerun on the same input.
+
+Useful idempotency anchors:
+
+- external source ID,
+- canonical URL,
+- content hash,
+- deterministic relation key,
+- source + entity identity composite key.
+
+## 8. Separate source-shaped data from canonical domain data
+
+Do not force raw source values directly into canonical entities too early.
+
+Preferred progression:
+
+1. raw source payload,
+2. parsed source-shaped representation,
+3. enriched candidate representation,
+4. canonical normalized write.
+
+## 9. Distinguish retryable failures from terminal failures
+
+A strong pipeline should not place every failure into the same bucket.
+
+Examples of retryable failures:
+
+- timeout,
+- temporary 5xx,
+- storage unavailable,
+- queue lag.
+
+Examples of terminal failures:
+
+- unsupported content type,
+- malformed source identity,
+- impossible required-field absence,
+- business rule violation that will not change on retry.
+
+## 10. Emit enough logging context
+
+Every meaningful pipeline log should ideally include enough fields to reconstruct what happened.
+
+Helpful context fields:
+
+- pipeline name,
+- job ID,
+- source name,
+- external ID,
+- release ID if known,
+- correlation ID,
+- processing stage,
+- retry count.
+
+## 11. Prefer append-only historical facts where analytics matter
+
+For price data and similar time-series style information, append-only snapshots are better than destructive overwrite.
+
+Use overwrite only for operational state where history is not the primary asset.
+
+## 12. Build with source adapters in mind
+
+Even when only one source exists today, pipeline code should be structured so source-specific logic can move into adapters later.
+
+Typical source-specific concerns:
+
+- selectors,
+- pagination,
+- content extraction,
+- source IDs,
+- anti-bot or rate-limit handling,
+- title cleanup rules.
+
+## 13. Keep docs stable and implementation details localized
+
+High-level pipeline notes should remain stable. Source-specific volatility should be documented close to the source adapter or implementation note, not copied everywhere.
+
+## 14. Suggested checklist for any new pipeline
+
+Before adding a new pipeline, answer these questions:
+
+- What is the trigger?
+- What is the exact unit of work?
+- Where is the job state stored?
+- What are the idempotency keys?
+- What is the success output?
+- What is retryable?
+- What is terminal?
+- What metrics and logs are required?
+- What raw evidence should be preserved?
+- Which future downstream pipelines may depend on this output?
+
+## Final note
+
+A good pipeline is not only code that works once. It is code that can be rerun safely, inspected easily, and evolved without losing track of what happened.

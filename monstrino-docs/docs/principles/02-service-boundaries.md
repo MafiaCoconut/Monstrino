@@ -84,7 +84,7 @@ Primary services:
 
 - `catalog-collector`
 - `catalog-importer`
-- `catalog-data-enrichter`
+- `catalog-data-enricher`
 
 Responsibility:
 

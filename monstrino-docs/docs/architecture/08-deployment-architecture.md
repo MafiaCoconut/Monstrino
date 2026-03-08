@@ -1,6 +1,6 @@
 ---
 title: Deployment Architecture
-sidebar_position: 8
+sidebar_position: 7
 description: Deployment architecture of Monstrino across environments, Kubernetes infrastructure, and external service integration.
 ---
 

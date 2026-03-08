@@ -1,0 +1,10 @@
+{
+  "label": "AI Layer",
+  "position": 4,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "doc",
+    "id": "ai-orchestrator-architecture"
+  }
+}

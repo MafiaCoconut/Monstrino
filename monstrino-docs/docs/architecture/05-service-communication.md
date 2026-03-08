@@ -1,6 +1,6 @@
 ---
 title: Service Communication
-sidebar_position: 5
+sidebar_position: 4
 description: How services in Monstrino communicate using HTTP APIs, events, and shared contracts.
 ---
 

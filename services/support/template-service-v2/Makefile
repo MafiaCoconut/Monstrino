@@ -1,5 +1,5 @@
 # =========================================
-# ‖  Monstrino Importer Service Makefile  ‖
+# ‖  Monstrino Template Service Makefile  ‖
 # =========================================
 DOTENV := .env
 SHELL := /bin/bash
@@ -26,16 +26,16 @@ NAMESPACE_PROD := "monstrino-prod"
 REGISTRY := registry.monstrino.com
 SERVER_PLATFORM := --platform linux/amd64
 
-SERVICE_IMAGE_NAME := $(REGISTRY)/monstrino/monstrino-catalog-importer
+SERVICE_IMAGE_NAME := $(REGISTRY)/monstrino/monstrino-template-service
 GIT_SHA1 := $(shell git rev-parse --short=10 --verify HEAD)
 SERVICE_TAG_IMAGE_NAME := $(SERVICE_IMAGE_NAME):$(GIT_SHA1)
 
 KUBERNETES_FOLDER := $(ROOT_DIR)/monstrino-configurations/kubernetes/
-K8S_TEST_FOLDER := $(KUBERNETES_FOLDER).test/services/acquisition/catalog-importer
-K8S_PROD_FOLDER := $(KUBERNETES_FOLDER).prod/services/acquisition/catalog-importer
+K8S_TEST_FOLDER := $(KUBERNETES_FOLDER).test/services/acquisition/template-service
+K8S_PROD_FOLDER := $(KUBERNETES_FOLDER).prod/services/acquisition/template-service
 
 # ========== Service Name ==========
-SERVICE_NAME := catalog-importer-service
+SERVICE_NAME := template-service
 
 
 # ========== Monstrino Packages ==========
@@ -87,15 +87,15 @@ push-service: build
 # --------------------- Deploy section --------------------
 
 
-deploy-catalog-importer-test: use-tc-m70q-context push-service
+deploy-template-service-test: use-tc-m70q-context push-service
 	kubectl apply -f $(K8S_TEST_FOLDER)/deployment.yaml -n $(NAMESPACE_TEST)
 	kubectl apply -f $(K8S_TEST_FOLDER)/service.yaml    -n $(NAMESPACE_TEST)
-	kubectl set image deployment/monstrino-catalog-importer -n $(NAMESPACE_TEST) monstrino-catalog-importer=$(SERVICE_TAG_IMAGE_NAME)
+	kubectl set image deployment/monstrino-template-service -n $(NAMESPACE_TEST) monstrino-template-service=$(SERVICE_TAG_IMAGE_NAME)
 
-deploy-catalog-importer-prod: use-tc-m70q-context push-service
+deploy-template-service-prod: use-tc-m70q-context push-service
 	kubectl apply -f $(K8S_PROD_FOLDER)/deployment.yaml -n $(NAMESPACE_PROD)
 	kubectl apply -f $(K8S_PROD_FOLDER)/service.yaml    -n $(NAMESPACE_PROD)
-	kubectl set image deployment/monstrino-catalog-importer -n $(NAMESPACE_PROD) monstrino-catalog-importer=$(SERVICE_TAG_IMAGE_NAME)
+	kubectl set image deployment/monstrino-template-service -n $(NAMESPACE_PROD) monstrino-template-service=$(SERVICE_TAG_IMAGE_NAME)
 
 
 

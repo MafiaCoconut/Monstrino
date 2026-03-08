@@ -4,9 +4,7 @@
   "collapsed": true,
   "collapsible": true,
   "link": {
-    "type": "generated-index",
-    "title": "Data Ingestion",
-    "description": "End-to-end data flow pipelines: catalog ingestion, market price collection, and media processing.",
-    "slug": "/pipelines/data-ingestion"
+    "type": "doc",
+    "id": "pipelines/data-ingestion/overview"
   }
 }

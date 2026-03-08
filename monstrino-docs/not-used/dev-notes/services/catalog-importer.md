@@ -161,11 +161,9 @@ Guaranteed invariants:
 
 ## Operational Notes
 
-:::note
 The service is designed for **operational transparency**.
 
 Operators can:
 - inspect unprocessed parsed records directly,
 - trigger processing jobs manually,
 - re-run failed jobs after corrective actions.
-:::

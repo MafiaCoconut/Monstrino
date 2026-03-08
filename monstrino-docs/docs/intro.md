@@ -1,93 +1,87 @@
 ---
 title: Introduction
 sidebar_position: 1
-description: > 
-    A high-level overview of the Monstrino ecosystem: models, services, pipelines, and UI architecture.
+description: Overview of the Monstrino platform — architecture, AI features, custom packages, patterns, pipelines, and principles.
 ---
 
 import DocCard from '@site/src/components/DocCard/DocCard';
-import useBaseUrl from '@docusaurus/useBaseUrl';
 
-# 👋 Welcome to **Monstrino Documentation**
+# Monstrino Documentation
 
-Monstrino is a modular, scalable ecosystem designed to structure, understand, and process complex collectible-oriented data.
+Monstrino is a data platform for Monster High collectors. It aggregates release, character, pet, media, and pricing information from multiple external sources, normalizes that data into a structured domain model, and exposes it through a single public API.
 
-It includes:
-
-- 📦 **Releases** — items, variants, editions, reissues  
-- 🎭 **Characters** — individuals, variants, roles  
-- 🏛 **Series & Subseries** — hierarchical collection metadata  
-- 🖼 **Images** — primary/secondary assets and processing pipelines  
-- ⚙ **Services** — parsing, importing, sandboxing, enrichment  
-- 🎨 **Frontend UI (FSD)** — clean, modular, feature-oriented React architecture  
-
-This documentation will guide you through all layers of the system.
+The system is built as a service-oriented architecture with explicit responsibility boundaries, designed for long-term maintainability and incremental evolution on self-hosted infrastructure.
 
 ---
 
-# 🚀 Quick Start
+## Platform Scope
 
-Three essential entry points into the Monstrino ecosystem:
+| Domain | Responsibility |
+|---|---|
+| **Catalog** | Structured releases, characters, pets, series, and their relationships |
+| **Acquisition** | Automated data collection from official retailers and community sources |
+| **AI Enrichment** | LLM-assisted attribute inference via the `ai-orchestrator` service |
+| **Media** | Image rehosting, storage, normalization, and variant generation |
+| **Market** | MSRP tracking and pricing observations over time |
+| **APIs** | Internal domain APIs aggregated behind a single public entry point |
 
-<DocCard title="1. Explore the Architecture" href={useBaseUrl('docs/architecture/architecture-overview')}>
-  High-level structure, data flow, domain boundaries, and ecosystem overview.
+---
+
+## Start Here
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem', marginBottom: '2rem'}}>
+
+<DocCard title="Architecture Overview" href="/docs/architecture/architecture-overview/">
+  System purpose, design priorities, high-level data flow, and service map.
 </DocCard>
 
-<DocCard title="2. Explore Core Models">
-  Learn the main domain models: Release, Character, Series, Image.
+<DocCard title="AI Features" href="/docs/ai-features/ai-strategy/">
+  How Monstrino uses LLMs for catalog enrichment — strategy, orchestration, and a real walkthrough.
 </DocCard>
 
-<DocCard title="3. Understand the Services">
-  Importer, Parser, Image Service, Sandbox — how they cooperate and transform data.
+<DocCard title="Custom Packages" href="/docs/architecture/custom-packages/overview/">
+  The 7 internal Python packages — architectural layers, responsibilities, and dependency rules.
 </DocCard>
 
----
+<DocCard title="Architecture Patterns" href="/docs/architecture/patterns/overview/">
+  Clean Architecture, Unit of Work, dependency inversion, service and repository structure.
+</DocCard>
 
-# 🧩 Architecture Overview
+<DocCard title="Catalog Ingestion Pipeline" href="/docs/pipelines/data-ingestion/catalog-ingestion-pipeline/">
+  Staged pipeline: collection → parsing → enrichment → import.
+</DocCard>
 
-<img
-  src={useBaseUrl('img/architecture/monstrino-architecture.svg')}
-  alt="Monstrino Architecture"
-  style={{borderRadius: '12px', marginTop: '1rem'}}
-/>
+<DocCard title="Design Principles" href="/docs/principles/design-principles/">
+  Core engineering principles that guide service design and platform evolution.
+</DocCard>
 
-The architecture is built around:
-
-- A **strict domain model**
-- A **repository and Unit-of-Work pattern**
-- Modular **microservices and pipelines**
-- A **feature-sliced frontend UI**
+</div>
 
 ---
 
-# 📚 Documentation Structure
+## Documentation Sections
 
-This documentation is divided into the following sections:
+### Architecture
 
-### **Architecture**
-High-level structure, data flow, and ecosystem overview.
+C4-style system documentation covering system context, container architecture, storage design, service communication, security boundaries, scalability strategy, deployment model, and observability.
 
-### **Models**
-Releases, Characters, Series, Images — schemas, relations, ORM.
+Two embedded subsections:
 
-### **Services**
-Importer, Parser, Image Service, Sandbox — processing flows.
+- **Custom Packages** — the 7 internal Python packages (`monstrino-core` through `monstrino-testing`) with full dependency graph, structure, and responsibility breakdown
+- **Architecture Patterns** — Clean Architecture, Unit of Work, dependency rules, service and repository structure with real code examples
 
-### **Pipelines**
-Normalization, enrichment, linking, image pipelines.
+### AI Features
 
-### **UI (FSD)**
-Entities → Features → Widgets → Pages (React + Vite).
+How Monstrino integrates LLMs without losing operational control:
 
-### **API**
-Endpoints, contracts, usage examples.
+- AI strategy and where AI is and is not used
+- `ai-orchestrator` service — scenario-based execution, multi-step command loop, model abstraction
+- Step-by-step enrichment walkthrough using a real release payload with full JSON examples
 
-### **Guides**
-Practical workflows and tutorials.
+### Pipelines
 
----
+End-to-end ingestion architecture, catalog ingestion stages (collection → parsing → enrichment → import), and the media ingestion and normalization flow.
 
-# 🖤 Welcome to the Monsterverse
+### Principles
 
-Monstrino is a living, evolving knowledge system.  
-Let’s explore it together.  
+Design principles, service boundary rules, data ownership model, and API design conventions applied consistently across the platform.

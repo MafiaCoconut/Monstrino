@@ -321,9 +321,6 @@
 - `docs/architecture/09-observability.md`
 - `docs/pipelines/data-ingestion/catalog-ingestion-pipeline.md` (355 строк)
 - `docs/pipelines/data-ingestion/media-ingestion-pipeline.md`
-- `dev-notes/architecture/microservices.md`
-- `dev-notes/trade-offs/tradeoffs.md`
-- `dev-notes/failures/failures.md`
 - `dev-notes/decisions/decisions.md` (индекс ADR)
 - ADR-001, ADR-002, ADR-003, ADR-011 (полные, детальные)
 - package-monstrino-core.md, package-monstrino-repositories.md, package-monstrino-testing.md, package-monstrino-api.md

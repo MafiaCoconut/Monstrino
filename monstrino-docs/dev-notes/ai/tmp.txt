@@ -1,0 +1,194 @@
+---
+id: ai-orchestrator-architecture
+title: AI Orchestrator Architecture
+sidebar_label: AI Orchestrator Architecture
+sidebar_position: 1
+---
+
+# AI Orchestrator Architecture
+
+
+## Purpose
+
+The `ai-orchestrator` service provides a centralized interface for all AI operations in the Monstrino platform.
+
+Instead of allowing multiple services to communicate directly with local models, the gateway acts as a unified abstraction layer.
+
+## Responsibilities
+
+- Execute text and multimodal prompts
+- Manage model configuration
+- Provide a stable API for internal services
+- Route requests to local models (via Ollama)
+
+## Architecture
+
+Typical flow:
+
+Service → AI Orchestrator → Ollama → Model → Response
+
+## Advantages
+
+- Centralized model management
+- Easier upgrades and model switching
+- Consistent request format
+
+
+--------------------------------
+---
+id: ollama-client-design
+title: Ollama Client Design
+sidebar_label: Ollama Client Design
+sidebar_position: 2
+---
+
+# Ollama Client Design
+
+
+## Overview
+
+Monstrino communicates with local models using the Ollama HTTP API.
+
+A dedicated `OllamaClient` abstraction encapsulates communication with the following endpoints:
+
+- `/api/generate`
+- `/api/chat`
+- `/api/tags`
+
+## Design Goals
+
+- Reusable client component
+- Configurable generation options
+- Isolation from infrastructure details
+
+## Example Options
+
+Typical inference options:
+
+- context window
+- temperature
+- batch size
+- thread count
+
+These parameters are configured centrally in the client implementation.
+
+
+--------------------------------
+---
+id: ai-command-schema
+title: AI Command Execution Schema
+sidebar_label: AI Command Execution Schema
+sidebar_position: 3
+---
+
+# AI Command Execution Schema
+
+
+## Motivation
+
+AI responses may trigger internal actions in the system.  
+Instead of returning plain text, the model returns a structured response describing the requested operation.
+
+## Structure
+
+Example response:
+
+```
+{
+  "command": "extract_entities",
+  "params": {
+    "text": "..."
+  },
+  "is_final": false
+}
+```
+
+## Fields
+
+- `command` — operation to execute
+- `params` — parameters required for execution
+- `is_final` — indicates if the response is the final result
+
+## Benefits
+
+- Allows AI-driven orchestration
+- Enables multi-step reasoning pipelines
+- Provides a universal command interface
+
+
+--------------------------------
+---
+id: ai-data-enrichment
+title: AI Data Enrichment Strategy
+sidebar_label: AI Data Enrichment Strategy
+sidebar_position: 4
+---
+
+# AI Data Enrichment Strategy
+
+
+## Problem
+
+External sources often contain incomplete or inconsistent information about releases.
+
+Examples:
+
+- missing character names
+- inconsistent series names
+- unstructured descriptions
+
+## Solution
+
+AI models assist in:
+
+- entity extraction
+- description cleanup
+- validation of parsed data
+
+## Pipeline Integration
+
+AI enrichment occurs after raw parsing but before final persistence.
+
+Pipeline stage:
+
+Parser → AI Enrichment → Validation → Storage
+
+
+--------------------------------
+---
+id: model-selection
+title: Model Selection Strategy
+sidebar_label: Model Selection Strategy
+sidebar_position: 5
+---
+
+# Model Selection Strategy
+
+
+## Requirements
+
+The Monstrino AI layer must support:
+
+- text analysis
+- structured extraction
+- image understanding
+
+## Model Types
+
+Typical models used:
+
+Text models
+- instruction-tuned LLMs
+
+Vision models
+- multimodal models capable of analyzing images
+
+## Local Execution
+
+Models are executed locally using Ollama in the homelab environment.
+
+Reasons:
+
+- privacy
+- cost control
+- full infrastructure ownership

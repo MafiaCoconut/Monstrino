@@ -4,8 +4,7 @@
   "collapsible": true,
   "collapsed": true,
   "link": {
-    "type": "generated-index",
-    "title": "Decisions (ADR)",
-    "description": "Architectural decisions and formal records."
+    "type": "doc",
+    "id": "architecture-decisions"
   }
 }

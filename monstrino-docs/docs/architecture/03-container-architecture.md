@@ -86,8 +86,8 @@ Processing services transform collected data into the domain model.
 | Service | Responsibility |
 |------|------|
 | catalog-importer | converts parsed releases into normalized domain entities |
-| catalog-data-enrichter | enriches parsed data using inference |
-| llm-gateway | provides unified access to LLM inference |
+| catalog-data-enricher | enriches parsed data using inference |
+| ai-orchestrator | provides unified access to LLM inference |
 
 These services implement the **core transformation pipeline**.
 

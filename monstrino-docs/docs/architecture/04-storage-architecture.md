@@ -1,6 +1,6 @@
 ---
 title: Storage Architecture
-sidebar_position: 4
+sidebar_position: 5
 description: PostgreSQL, S3, Kafka, and Redis storage systems powering Monstrino.
 ---
 

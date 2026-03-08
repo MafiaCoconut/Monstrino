@@ -4,8 +4,7 @@
   "collapsible": true,
   "collapsed": true,
   "link": {
-    "type": "generated-index",
-    "title": "Architecture",
-    "description": "High-level architectural overviews and diagrams."
+    "type": "doc",
+    "id": "system-context"
   }
 }

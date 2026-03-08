@@ -35,10 +35,6 @@ This staged architecture improves reliability and allows partial reprocessing if
 
 ---
 
-## High-Level Pipeline Flow
-
----
-
 ## Stage 1 — Source Collection
 
 The first stage of the catalog ingestion pipeline is responsible for discovering new releases for a specific external source and collecting detailed parsed data for releases that have not yet been processed.
@@ -144,21 +140,21 @@ The enrichment stage is executed as follows:
 
 Examples include:
 
-- `ReleaseCharacterEnrichterUseCase`
-- `ReleasePetEnrichterUseCase`
-- `ReleaseSeriesEnrichterUseCase`
-- `ReleaseContentTypeEnrichterUseCase`
-- `ReleasePackTypeEnrichterUseCase`
-- `ReleaseTierTypeEnrichterUseCase`
+- `ReleaseCharacterEnricherUseCase`
+- `ReleasePetEnricherUseCase`
+- `ReleaseSeriesEnricherUseCase`
+- `ReleaseContentTypeEnricherUseCase`
+- `ReleasePackTypeEnricherUseCase`
+- `ReleaseTierTypeEnricherUseCase`
 
-6. Attribute-specific enrichment use cases call the shared `llm-gateway-api-client` from the `monstrino-infra` package.
-7. This client sends a request to the `llm-gateway` service using the scenario appropriate for the target field.
+6. Attribute-specific enrichment use cases call the shared `ai-orchestrator-api-client` from the `monstrino-infra` package.
+7. This client sends a request to the `ai-orchestrator` service using the scenario appropriate for the target field.
 
     For example:
 
     - `ReleaseCharactersEnrichment` for characters
 
-8. The `llm-gateway` returns inferred values for the requested attribute.
+8. The `ai-orchestrator` returns inferred values for the requested attribute.
 9. After each successful enrichment step, the updated data is persisted to the database.
 10. Once all supported enrichment steps have been completed, the record is marked as `ready-to-import`.
 

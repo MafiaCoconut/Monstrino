@@ -4,9 +4,7 @@
   "collapsed": true,
   "collapsible": true,
   "link": {
-    "type": "generated-index",
-    "title": "AI Features",
-    "description": "How Monstrino uses AI as an assistive intelligence layer to improve data quality, enrich content, and power advanced user-facing features.",
-    "slug": "/ai-features"
+    "type": "doc",
+    "id": "ai-features/overview"
   }
 }

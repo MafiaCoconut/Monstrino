@@ -1,0 +1,177 @@
+---
+id: system-context
+sidebar_label: System Context
+sidebar_position: 1
+title: System Context
+---
+
+# System Context
+
+## Overview
+
+Monstrino is a data platform focused on collecting, processing, and
+presenting information about collectible releases.
+
+The system interacts with:
+
+-   external websites providing catalog data
+-   market platforms providing price data
+-   internal AI services for data enrichment
+-   frontend applications consuming catalog APIs
+
+## External Actors
+
+External sources include:
+
+-   collector websites
+-   retailer pages
+-   community databases
+
+These sources provide the raw data that Monstrino ingests and processes.
+
+## System Role
+
+Monstrino acts as:
+
+-   a data aggregation platform
+-   a data normalization pipeline
+-   a catalog API for applications
+
+## --------------------------------
+
+id: container-architecture title: Container Architecture sidebar_label:
+Container Architecture sidebar_position: 2 ---
+
+# Container Architecture
+
+## Overview
+
+The platform follows a container-based architecture where each service
+runs independently.
+
+Services are packaged as Docker containers and deployed inside
+Kubernetes.
+
+## Key Containers
+
+Typical service containers include:
+
+-   catalog ingestion services
+-   media ingestion services
+-   market data collectors
+-   API services
+-   AI services
+
+## Deployment Pattern
+
+Each container is deployed using:
+
+Deployment → Pod → Container
+
+This allows scaling and independent lifecycle management.
+
+## --------------------------------
+
+id: service-boundaries title: Service Boundaries sidebar_label: Service
+Boundaries sidebar_position: 3 ---
+
+# Service Boundaries
+
+## Principle
+
+Each service is responsible for a clearly defined domain.
+
+The architecture separates concerns across several domains:
+
+-   catalog data
+-   media processing
+-   market data
+-   AI processing
+
+## Domain Ownership
+
+Each service owns:
+
+-   its data
+-   its processing logic
+-   its API surface
+
+Services do not directly manipulate each other's databases.
+
+## --------------------------------
+
+id: data-flow-ingestion title: Data Flow: Ingestion sidebar_label: Data
+Flow: Ingestion sidebar_position: 4 ---
+
+# Data Flow: Ingestion
+
+## Ingestion Overview
+
+The ingestion pipeline collects information from external sources.
+
+Typical stages include:
+
+1.  discovery of new content
+2.  parsing of raw data
+3.  AI enrichment
+4.  validation
+5.  storage
+
+## Characteristics
+
+The ingestion pipeline is:
+
+-   asynchronous
+-   multi-stage
+-   fault tolerant
+
+## --------------------------------
+
+id: data-flow-ui title: Data Flow: UI Access sidebar_label: Data Flow:
+UI Access sidebar_position: 5 ---
+
+# Data Flow: UI Access
+
+## Overview
+
+Frontend applications do not communicate directly with all backend
+services.
+
+Instead, they interact through a centralized API layer.
+
+## Flow
+
+UI → API Gateway → Backend Services → Database
+
+## Benefits
+
+-   simplified frontend architecture
+-   centralized authentication
+-   response aggregation
+
+## --------------------------------
+
+id: api-gateway-architecture title: API Gateway Architecture
+sidebar_label: API Gateway Architecture sidebar_position: 6 ---
+
+# API Gateway Architecture
+
+## Purpose
+
+The API gateway acts as the entry point for external clients.
+
+It handles:
+
+-   authentication
+-   routing
+-   response aggregation
+
+## Architecture
+
+Client → API Gateway → Internal Services
+
+## Advantages
+
+-   hides internal architecture
+-   simplifies client interactions
+-   allows internal services to evolve independently

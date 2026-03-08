@@ -1,6 +1,6 @@
 ---
 title: Scalability Strategy
-sidebar_position: 6
+sidebar_position: 8
 description: Architectural strategy for scaling data volume, pipelines, media processing, and API workloads in Monstrino.
 ---
 
@@ -110,7 +110,7 @@ The expected evolution path is:
 1. extend `ReleaseParseContentRef` with a new nullable field
 2. update the mapping logic from parsed source data into structured table data
 3. extend downstream processing in:
-   - `catalog-data-enrichter`
+   - `catalog-data-enricher`
    - `catalog-importer`
 
 This design allows new structured attributes to be introduced incrementally while preserving compatibility with older records and sources.

@@ -2,6 +2,7 @@
 id: intro
 title: Dev Notes
 sidebar_label: Dev Notes
+sidebar_position: 0
 ---
 
 :::info Engineering Context

@@ -116,8 +116,8 @@ flowchart TD
     end
 
     subgraph Processing[Processing]
-        CDE[catalog-data-enrichter planned]
-        LLM[llm-gateway in progress]
+        CDE[catalog-data-enricher planned]
+        LLM[ai-orchestrator in progress]
         CI[catalog-importer]
     end
 
@@ -189,8 +189,8 @@ flowchart TD
 
 ### Enrichment and Processing
 
-- `catalog-data-enrichter` — **Planned**. Enriches parsed records, including LLM-assisted attribute refinement.
-- `llm-gateway` — **In Progress**. Internal gateway for LLM-backed enrichment tasks.
+- `catalog-data-enricher` — **Planned**. Enriches parsed records, including LLM-assisted attribute refinement.
+- `ai-orchestrator` — **In Progress**. Internal gateway for LLM-backed enrichment tasks.
 - `catalog-importer` — **Ready**. Converts parsed records into normalized domain entities and resolves relations.
 
 ### Media
@@ -249,7 +249,7 @@ Additional supporting models are used for enrichment, exclusivity, external refe
 ### Pipeline summary
 
 1. **Acquisition** — `catalog-collector` collects external source data, parses it into structured intermediate representations, and stores the parsed result in ingest-related storage.
-2. **Optional enrichment** — planned enrichment components can refine selected parsed attributes through `llm-gateway` and write improved values back.
+2. **Optional enrichment** — planned enrichment components can refine selected parsed attributes through `ai-orchestrator` and write improved values back.
 3. **Domain import** — `catalog-importer` reads parsed records, resolves relations, and writes normalized domain entities into the catalog model.
 4. **Media handoff** — media-related work can be emitted for downstream handling. Kafka is planned as the transport for transient media processing events.
 5. **Media rehosting and attachment** — `media-rehosting-service` stores original images in object storage and creates corresponding media asset and attachment records.
@@ -431,7 +431,7 @@ The current architecture is designed to support future additions without radical
 
 - second-hand market data ingestion
 - full activation of Kafka-based event flow where appropriate
-- completion of the enrichment pipeline through `catalog-data-enrichter` and `llm-gateway`
+- completion of the enrichment pipeline through `catalog-data-enricher` and `ai-orchestrator`
 - completion of the media subsystem, including media delivery APIs
 - implementation of `market-api-service`
 - possible separation of test and production into different Kubernetes clusters

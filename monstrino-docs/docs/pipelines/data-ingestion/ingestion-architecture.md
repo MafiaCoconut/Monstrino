@@ -52,7 +52,7 @@ Main stages:
    Raw content is converted into structured parsed records and stored in the `ingest` schema.
 
 3. **Enrichment (optional)**  
-   `catalog-data-enrichter` may improve parsed attributes using heuristics or LLM inference.
+   `catalog-data-enricher` may improve parsed attributes using heuristics or LLM inference.
 
 4. **Import**  
    `catalog-importer` converts parsed records into canonical domain entities such as:

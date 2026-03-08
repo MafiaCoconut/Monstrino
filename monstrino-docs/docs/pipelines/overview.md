@@ -19,7 +19,7 @@ At a high level, the system currently operates these main pipelines:
 |--------|--------|
 | **Catalog Ingestion Pipeline** | Collects and normalizes product catalog information such as releases, characters, pets, and series |
 | **Media Ingestion Pipeline** | Downloads, deduplicates, stores, and normalizes images associated with catalog entities |
-| **Market Ingestion Pipeline** | Collects and normalizes products msrp and daily prices |
+<!-- | **Market Ingestion Pipeline** | Collects and normalizes products msrp and daily prices | -->
 
 ---
 

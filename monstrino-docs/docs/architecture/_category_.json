@@ -4,9 +4,7 @@
   "collapsed": true,
   "collapsible": true,
   "link": {
-    "type": "generated-index",
-    "title": "Architecture Overview",
-    "description": "High-level structure of the Monstrino ecosystem: domain model, data flow, repositories, UoW, deployment.",
-    "slug": "/architecture"
+    "type": "doc",
+    "id": "architecture/overview"
   }
 }

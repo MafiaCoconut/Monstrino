@@ -98,7 +98,7 @@ Other domains frequently rely on catalog identifiers but must obtain them throug
 Owned by:
 
 - `catalog-collector`
-- `catalog-data-enrichter`
+- `catalog-data-enricher`
 - `catalog-importer`
 
 The ingest domain stores intermediate ingestion data collected from external sources.

@@ -4,9 +4,7 @@
   "collapsed": true,
   "collapsible": true,
   "link": {
-    "type": "generated-index",
-    "title": "Pipelines & Data Flows",
-    "description": "End-to-end data pipelines: parsing, importing, linking, enrichment and image processing.",
-    "slug": "/pipelines"
+    "type": "doc",
+    "id": "pipelines/overview"
   }
 }
