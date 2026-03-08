@@ -4,6 +4,7 @@ title: "ADR-DI-005: Parsed Models for Heterogeneous Sources"
 sidebar_label: "DI-005: Heterogeneous Parsed Models"
 sidebar_position: 5
 tags: [data-ingestion, parsed-models, heterogeneous, sources]
+description: "Designs parsed models to accommodate heterogeneous data from multiple external sources with differing schemas, missing fields, and alternative taxonomies."
 ---
 
 # ADR-DI-005 — Design Parsed Models for Heterogeneous Source Data
@@ -11,8 +12,8 @@ tags: [data-ingestion, parsed-models, heterogeneous, sources]
 | Field      | Value                                                              |
 | ---------- | ------------------------------------------------------------------ |
 | **Status** | Accepted                                                           |
-| **Date**   | 2025-05-15                                                         |
-| **Author** | @monstrino-team                                                    |
+| **Date**   | 30-01-2026                                                         |
+| **Author** | @Aleks                                                    |
 | **Tags**   | `#data-ingestion` `#parsed-models` `#heterogeneous` `#sources`    |
 
 ## Context

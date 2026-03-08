@@ -1,0 +1,12 @@
+{
+  "label": "AI & External Sources",
+  "position": 6,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "AI & External Sources Decisions",
+    "description": "Decisions covering LLM-assisted processing, normalization, and external data source selection strategies.",
+    "slug": "/dev-notes/decisions/ai-external-sources"
+  }
+}

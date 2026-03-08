@@ -4,6 +4,7 @@ title: "ADR-DM-002: Release External Reference System"
 sidebar_label: "DM-002: Release External References"
 sidebar_position: 2
 tags: [domain-model, releases, external-references, sources]
+description: "Adds an external reference system to canonical releases to track and verify release data from multiple independent external sources."
 ---
 
 # ADR-DM-002 — Add Release External Reference System
@@ -11,8 +12,8 @@ tags: [domain-model, releases, external-references, sources]
 | Field      | Value                                                             |
 | ---------- | ----------------------------------------------------------------- |
 | **Status** | Accepted                                                          |
-| **Date**   | 2025-07-10                                                        |
-| **Author** | @monstrino-team                                                   |
+| **Date**   | 20-11-2025                                                        |
+| **Author** | @Aleks                                                   |
 | **Tags**   | `#domain-model` `#releases` `#external-references` `#sources`    |
 
 ## Context

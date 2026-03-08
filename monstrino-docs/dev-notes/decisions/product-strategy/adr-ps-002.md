@@ -4,6 +4,7 @@ title: "ADR-PS-002: Automated Data Acquisition as Core"
 sidebar_label: "PS-002: Automated Acquisition"
 sidebar_position: 2
 tags: [product-strategy, acquisition, automation, ingestion]
+description: "Makes automated data acquisition the core product capability, replacing the manual update model used by existing competing catalog sites."
 ---
 
 # ADR-PS-002 — Make Automated Data Acquisition the Core Product Capability
@@ -11,8 +12,8 @@ tags: [product-strategy, acquisition, automation, ingestion]
 | Field      | Value                                                      |
 | ---------- | ---------------------------------------------------------- |
 | **Status** | Accepted                                                   |
-| **Date**   | 2025-05-01                                                 |
-| **Author** | @monstrino-team                                            |
+| **Date**   | 01-05-2025                                                 |
+| **Author** | @Aleks                                            |
 | **Tags**   | `#product-strategy` `#acquisition` `#automation`          |
 
 ## Context

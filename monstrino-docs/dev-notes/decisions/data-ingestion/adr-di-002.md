@@ -4,6 +4,7 @@ title: "ADR-DI-002: DB Processing State for Ingestion Workflows"
 sidebar_label: "DI-002: Processing State"
 sidebar_position: 2
 tags: [data-ingestion, processing-state, workflow, retry]
+description: "Uses a database-tracked processing_state column to manage ingestion workflow state, replacing a previous Kafka-based orchestration approach."
 ---
 
 # ADR-DI-002 — Use Database `processing_state` for Ingestion Workflows
@@ -11,8 +12,8 @@ tags: [data-ingestion, processing-state, workflow, retry]
 | Field      | Value                                                         |
 | ---------- | ------------------------------------------------------------- |
 | **Status** | Accepted                                                      |
-| **Date**   | 2025-05-10                                                    |
-| **Author** | @monstrino-team                                               |
+| **Date**   | 13-09-2025                                                    |
+| **Author** | @Aleks                                               |
 | **Tags**   | `#data-ingestion` `#processing-state` `#workflow` `#retry`   |
 
 ## Context

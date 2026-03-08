@@ -4,6 +4,7 @@ title: "ADR-MP-003: Split Media Pipeline into Subscriber and Processor"
 sidebar_label: "MP-003: Subscriber/Processor Split"
 sidebar_position: 3
 tags: [media-pipeline, services, subscriber, processor, decomposition]
+description: "Splits media rehosting into a subscriber service that detects new images and a processor that downloads and stores them, separating event detection from I/O."
 ---
 
 # ADR-MP-003 — Split Media Rehosting Pipeline into Subscriber and Processor
@@ -11,8 +12,8 @@ tags: [media-pipeline, services, subscriber, processor, decomposition]
 | Field      | Value                                                                  |
 | ---------- | ---------------------------------------------------------------------- |
 | **Status** | Accepted                                                               |
-| **Date**   | 2025-07-01                                                             |
-| **Author** | @monstrino-team                                                        |
+| **Date**   | 13-01-2026                                                             |
+| **Author** | @Aleks                                                        |
 | **Tags**   | `#media-pipeline` `#services` `#subscriber` `#processor` `#decomposition` |
 
 ## Context

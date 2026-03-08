@@ -4,6 +4,7 @@ title: "ADR-DI-001: Separate Ingestion from Canonical Catalog"
 sidebar_label: "DI-001: Parsed Tables Boundary"
 sidebar_position: 1
 tags: [data-ingestion, catalog, parsed-tables, boundary]
+description: "Separates raw ingestion data into parsed tables, decoupling external source formats from the canonical catalog schema to allow safe re-ingestion."
 ---
 
 # ADR-DI-001 — Separate Ingestion Data from Canonical Catalog Data
@@ -11,8 +12,8 @@ tags: [data-ingestion, catalog, parsed-tables, boundary]
 | Field      | Value                                                          |
 | ---------- | -------------------------------------------------------------- |
 | **Status** | Accepted                                                       |
-| **Date**   | 2025-05-10                                                     |
-| **Author** | @monstrino-team                                                |
+| **Date**   | 10-09-2025                                                     |
+| **Author** | @Aleks                                                |
 | **Tags**   | `#data-ingestion` `#catalog` `#parsed-tables` `#boundary`     |
 
 ## Context

@@ -6,6 +6,7 @@
   "link": {
     "type": "generated-index",
     "title": "Data Ingestion",
-    "description": "End-to-end data flow pipelines: catalog ingestion, market price collection, and media processing."
+    "description": "End-to-end data flow pipelines: catalog ingestion, market price collection, and media processing.",
+    "slug": "/pipelines/data-ingestion"
   }
 }

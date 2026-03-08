@@ -1,0 +1,199 @@
+/*
+ * DocCard — swizzled theme component styles
+ *
+ * Uses project-level Infima CSS variables wherever possible so the card
+ * automatically inherits any future theming changes.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Card container                                                      */
+/* ------------------------------------------------------------------ */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  /* full-height so cards in the same grid row align at the bottom */
+  height: 100%;
+
+  padding: 1.4rem 1.5rem 2.5rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 44, 168, 0.14);
+  background: rgba(20, 20, 26, 0.85);
+  backdrop-filter: blur(10px);
+
+  /* Remove default Link underline / color */
+  text-decoration: none !important;
+  color: inherit !important;
+
+  position: relative;
+  overflow: hidden;
+
+  transition:
+    border-color 0.22s ease,
+    transform    0.22s ease,
+    box-shadow   0.22s ease;
+}
+
+/* Accent gradient bar along the top edge */
+.card::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #ff2ca8 0%, transparent 100%);
+  opacity: 0.55;
+  transition: opacity 0.22s ease;
+}
+
+.categoryCard::before {
+  background: linear-gradient(90deg, #ff2ca8 0%, #8c3bff 100%);
+  opacity: 0.65;
+}
+
+.docCard::before {
+  background: linear-gradient(90deg, #8c3bff 0%, transparent 80%);
+  opacity: 0.45;
+}
+
+/* Hover state */
+.card:hover {
+  border-color: rgba(255, 44, 168, 0.45);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(255, 44, 168, 0.1);
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+/* Focus visible — keyboard accessibility */
+.card:focus-visible {
+  outline: 2px solid rgba(255, 44, 168, 0.75);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Header row (type tag + badge)                                       */
+/* ------------------------------------------------------------------ */
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.typeTag {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(255, 44, 168, 0.8);
+  padding: 2px 8px;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 44, 168, 0.22);
+  line-height: 1.6;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.countBadge {
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 100px;
+  padding: 2px 9px;
+  line-height: 1.6;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Title                                                               */
+/* ------------------------------------------------------------------ */
+
+.cardTitle {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: #ffffff !important;
+  margin: 0 !important;
+  line-height: 1.35 !important;
+
+  /* Clamp to 2 lines */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------------ */
+/* Description                                                         */
+/* ------------------------------------------------------------------ */
+
+.cardDescription {
+  font-size: 0.8rem !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  margin: 0 !important;
+  line-height: 1.55 !important;
+  flex: 1;
+
+  /* Clamp to 3 lines */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardDescriptionEmpty {
+  color: rgba(255, 255, 255, 0.2) !important;
+  font-style: italic;
+}
+
+/* ------------------------------------------------------------------ */
+/* Footer arrow                                                        */
+/* ------------------------------------------------------------------ */
+
+.cardFooter {
+  position: absolute;
+  inset-block-end: 1rem;
+  inset-inline-end: 1.25rem;
+}
+
+.arrow {
+  display: inline-block;
+  font-size: 0.9rem;
+  color: rgba(255, 44, 168, 0.45);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.card:hover .arrow {
+  transform: translateX(4px) translateY(-2px);
+  color: #ff2ca8;
+}
+
+/* ------------------------------------------------------------------ */
+/* Responsive                                                          */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 768px) {
+  .card {
+    padding: 1.1rem 1.2rem 2.2rem;
+  }
+
+  .cardTitle {
+    font-size: 0.93rem !important;
+  }
+
+  .cardDescription {
+    font-size: 0.77rem !important;
+  }
+}

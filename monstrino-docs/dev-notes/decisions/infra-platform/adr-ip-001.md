@@ -4,6 +4,7 @@ title: "ADR-IP-001: Deploy on Single-Node k3s Cluster"
 sidebar_label: "IP-001: k3s Deployment"
 sidebar_position: 1
 tags: [infra, k3s, kubernetes, homelab, deployment]
+description: "Deploys Monstrino on a single-node k3s cluster to provide Kubernetes-compatible orchestration in a homelab environment without full cluster overhead."
 ---
 
 # ADR-IP-001 — Deploy Monstrino on Single-Node k3s Cluster
@@ -11,8 +12,8 @@ tags: [infra, k3s, kubernetes, homelab, deployment]
 | Field      | Value                                                       |
 | ---------- | ----------------------------------------------------------- |
 | **Status** | Accepted                                                    |
-| **Date**   | 2025-06-10                                                  |
-| **Author** | @monstrino-team                                             |
+| **Date**   | 10-09-2025                                                  |
+| **Author** | @Aleks                                             |
 | **Tags**   | `#infra` `#k3s` `#kubernetes` `#homelab` `#deployment`     |
 
 ## Context

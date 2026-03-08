@@ -4,6 +4,7 @@ title: "ADR-PS-005: Image Pipeline Before Price Collection"
 sidebar_label: "PS-005: Images Before Prices"
 sidebar_position: 5
 tags: [product-strategy, mvp, images, prices, priority]
+description: "Prioritizes building the image pipeline before price collection to unblock catalog visual completeness and improve user-facing quality sooner."
 ---
 
 # ADR-PS-005 — Prioritize Image Pipeline Over Price Collection for MVP
@@ -11,8 +12,8 @@ tags: [product-strategy, mvp, images, prices, priority]
 | Field      | Value                                                        |
 | ---------- | ------------------------------------------------------------ |
 | **Status** | Accepted                                                     |
-| **Date**   | 2025-06-01                                                   |
-| **Author** | @monstrino-team                                              |
+| **Date**   | 13-02-2025                                                   |
+| **Author** | @Aleks                                              |
 | **Tags**   | `#product-strategy` `#mvp` `#images` `#prices` `#priority`  |
 
 ## Context

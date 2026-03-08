@@ -4,6 +4,7 @@ title: "ADR-PS-003: Release Archive First for MVP"
 sidebar_label: "PS-003: Release Archive MVP"
 sidebar_position: 3
 tags: [product-strategy, mvp, scope, releases]
+description: "Focuses the MVP scope on the release archive first, deferring user-facing social features to validate the catalog foundation before expanding."
 ---
 
 # ADR-PS-003 — Prioritize Release Archive Over User Features for MVP
@@ -11,8 +12,8 @@ tags: [product-strategy, mvp, scope, releases]
 | Field      | Value                                                   |
 | ---------- | ------------------------------------------------------- |
 | **Status** | Accepted                                                |
-| **Date**   | 2025-05-15                                              |
-| **Author** | @monstrino-team                                         |
+| **Date**   | 15-09-2025                                              |
+| **Author** | @Aleks                                         |
 | **Tags**   | `#product-strategy` `#mvp` `#scope` `#releases`        |
 
 ## Context

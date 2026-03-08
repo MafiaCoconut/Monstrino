@@ -4,6 +4,7 @@ title: "ADR-FD-002: Frontend in a Dedicated Repository"
 sidebar_label: "FD-002: Separate Frontend Repo"
 sidebar_position: 2
 tags: [frontend, repository, monorepo, separation]
+description: "Moves the frontend into a dedicated separate repository to isolate its build pipeline, tooling, and CI configuration from the backend monorepo."
 ---
 
 # ADR-FD-002 — Separate Frontend into a Dedicated Repository
@@ -11,8 +12,8 @@ tags: [frontend, repository, monorepo, separation]
 | Field      | Value                                                        |
 | ---------- | ------------------------------------------------------------ |
 | **Status** | Accepted                                                     |
-| **Date**   | 2025-07-01                                                   |
-| **Author** | @monstrino-team                                              |
+| **Date**   | 21-02-2026                                                   |
+| **Author** | @Aleks                                              |
 | **Tags**   | `#frontend` `#repository` `#separation`                     |
 
 ## Context

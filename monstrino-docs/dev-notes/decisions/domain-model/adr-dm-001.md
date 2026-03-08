@@ -4,6 +4,7 @@ title: "ADR-DM-001: Structure Database by Domain Schemas"
 sidebar_label: "DM-001: Domain DB Schemas"
 sidebar_position: 1
 tags: [domain-model, database, schemas, organization]
+description: "Structures the PostgreSQL database into domain-scoped schemas to reduce namespace pollution and clarify which tables belong to which part of the system."
 ---
 
 # ADR-DM-001 — Structure Database by Domain Schemas
@@ -11,8 +12,8 @@ tags: [domain-model, database, schemas, organization]
 | Field      | Value                                                        |
 | ---------- | ------------------------------------------------------------ |
 | **Status** | Accepted                                                     |
-| **Date**   | 2025-07-01                                                   |
-| **Author** | @monstrino-team                                              |
+| **Date**   | 18-10-2025                                                   |
+| **Author** | @Aleks                                              |
 | **Tags**   | `#domain-model` `#database` `#schemas` `#organization`      |
 
 ## Context

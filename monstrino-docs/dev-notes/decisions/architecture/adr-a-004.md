@@ -4,6 +4,7 @@ title: "ADR-A-004: Organize Services by Domain Capabilities"
 sidebar_label: "A-004: Domain-Based Service Layout"
 sidebar_position: 4
 tags: [architecture, services, domain, structure]
+description: "Organizes microservices into domain-based subdirectories to clarify ownership, improve navigation, and make architectural intent explicit."
 ---
 
 # ADR-A-004 — Organize Services by Domain Capabilities
@@ -11,8 +12,8 @@ tags: [architecture, services, domain, structure]
 | Field      | Value                                                          |
 | ---------- | -------------------------------------------------------------- |
 | **Status** | Accepted                                                       |
-| **Date**   | 2025-06-10                                                     |
-| **Author** | @monstrino-team                                                |
+| **Date**   | 15-11-2025                                                     |
+| **Author** | @Aleks                                                |
 | **Tags**   | `#architecture` `#services` `#domain` `#structure`            |
 
 ## Context

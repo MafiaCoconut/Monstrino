@@ -4,6 +4,7 @@ title: "ADR-DI-004: Idempotency via source + external_id"
 sidebar_label: "DI-004: Idempotency"
 sidebar_position: 4
 tags: [data-ingestion, idempotency, deduplication, external-id]
+description: "Enforces idempotency in the ingestion pipeline using a compound unique constraint on source + external_id to prevent duplicate records across repeated runs."
 ---
 
 # ADR-DI-004 — Enforce Idempotency Using `source` + `external_id`
@@ -11,8 +12,8 @@ tags: [data-ingestion, idempotency, deduplication, external-id]
 | Field      | Value                                                            |
 | ---------- | ---------------------------------------------------------------- |
 | **Status** | Accepted                                                         |
-| **Date**   | 2025-05-12                                                       |
-| **Author** | @monstrino-team                                                  |
+| **Date**   | 14-10-2025                                                       |
+| **Author** | @Aleks                                                  |
 | **Tags**   | `#data-ingestion` `#idempotency` `#deduplication` `#external-id` |
 
 ## Context

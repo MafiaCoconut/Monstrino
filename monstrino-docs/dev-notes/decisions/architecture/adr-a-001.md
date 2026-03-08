@@ -4,6 +4,7 @@ title: "ADR-A-001: Shared Packages for Cross-Service Code"
 sidebar_label: "A-001: Shared Packages"
 sidebar_position: 1
 tags: [architecture, packages, shared-code, monorepo]
+description: "Introduces shared Python packages across microservices to eliminate code duplication and establish a monorepo-style shared library foundation."
 ---
 
 # ADR-A-001 — Introduce Shared Packages for Cross-Service Code
@@ -11,8 +12,8 @@ tags: [architecture, packages, shared-code, monorepo]
 | Field      | Value                                                        |
 | ---------- | ------------------------------------------------------------ |
 | **Status** | Accepted                                                     |
-| **Date**   | 2025-06-01                                                   |
-| **Author** | @monstrino-team                                              |
+| **Date**   | 01-10-2025                                                   |
+| **Author** | @Aleks                                              |
 | **Tags**   | `#architecture` `#packages` `#shared-code` `#monorepo`      |
 
 ## Context

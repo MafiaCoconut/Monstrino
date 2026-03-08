@@ -4,6 +4,7 @@ title: "ADR-DI-006: Parsed Content as Replayable JSON"
 sidebar_label: "DI-006: Replayable JSON"
 sidebar_position: 6
 tags: [data-ingestion, json, replayability, raw-payload]
+description: "Stores the full raw parsed payload as replayable JSON alongside structured columns to prevent data loss across schema migrations."
 ---
 
 # ADR-DI-006 — Store Parsed Content as Replayable JSON
@@ -11,8 +12,8 @@ tags: [data-ingestion, json, replayability, raw-payload]
 | Field      | Value                                                         |
 | ---------- | ------------------------------------------------------------- |
 | **Status** | Accepted                                                      |
-| **Date**   | 2025-05-15                                                    |
-| **Author** | @monstrino-team                                               |
+| **Date**   | 18-02-2026                                                    |
+| **Author** | @Aleks                                               |
 | **Tags**   | `#data-ingestion` `#json` `#replayability` `#raw-payload`    |
 
 ## Context

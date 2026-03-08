@@ -1,0 +1,41 @@
+/*
+ * DocCardList — swizzled theme component styles
+ *
+ * Responsive CSS grid that auto-fills columns based on available space.
+ * No media queries are needed for the core layout thanks to auto-fill + minmax.
+ */
+
+.grid {
+  display: grid;
+
+  /*
+   * auto-fill: create as many columns as fit.
+   * min(100%, 300px): each column is at most 300 px wide; on narrow screens
+   * a single column fills the full width.
+   */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 1rem;
+
+  /* Reset any inherited list / row styles */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gridItem {
+  /* Let the card inside stretch to fill the grid cell */
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* prevent grid blowout */
+}
+
+/* ------------------------------------------------------------------ */
+/* Tight layout for narrow containers (e.g. doc page sidebar embeds)  */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}

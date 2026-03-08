@@ -4,6 +4,7 @@ title: "ADR-A-005: Contracts → Command → Dispatcher API"
 sidebar_label: "A-005: Contracts/Command/Dispatcher"
 sidebar_position: 5
 tags: [architecture, api, contracts, dispatcher, clean-architecture]
+description: "Establishes a Contracts → Command → Dispatcher API pattern to decouple HTTP concerns from application logic and enable clean, testable handlers."
 ---
 
 # ADR-A-005 — Introduce Contracts → Command → Dispatcher API Architecture
@@ -11,8 +12,8 @@ tags: [architecture, api, contracts, dispatcher, clean-architecture]
 | Field      | Value                                                                 |
 | ---------- | --------------------------------------------------------------------- |
 | **Status** | Accepted                                                              |
-| **Date**   | 2025-06-15                                                            |
-| **Author** | @monstrino-team                                                       |
+| **Date**   | 10-12-2025                                                            |
+| **Author** | @Aleks                                                       |
 | **Tags**   | `#architecture` `#api` `#contracts` `#dispatcher` `#clean-architecture` |
 
 ## Context

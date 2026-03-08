@@ -4,6 +4,7 @@ title: "ADR-MP-004: Media Ingestion Jobs Table"
 sidebar_label: "MP-004: Media Ingestion Jobs"
 sidebar_position: 4
 tags: [media-pipeline, jobs, database, async-processing]
+description: "Introduces a media ingestion jobs table to queue, track, and retry asynchronous image download and storage operations."
 ---
 
 # ADR-MP-004 — Introduce Media Ingestion Jobs
@@ -11,8 +12,8 @@ tags: [media-pipeline, jobs, database, async-processing]
 | Field      | Value                                                           |
 | ---------- | --------------------------------------------------------------- |
 | **Status** | Accepted                                                        |
-| **Date**   | 2025-07-01                                                      |
-| **Author** | @monstrino-team                                                 |
+| **Date**   | 15-01-2026                                                      |
+| **Author** | @Aleks                                                 |
 | **Tags**   | `#media-pipeline` `#jobs` `#database` `#async-processing`      |
 
 ## Context

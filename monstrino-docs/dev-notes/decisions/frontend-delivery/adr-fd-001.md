@@ -4,6 +4,7 @@ title: "ADR-FD-001: Migrate Frontend from Vite to Next.js"
 sidebar_label: "FD-001: Next.js Migration"
 sidebar_position: 1
 tags: [frontend, nextjs, vite, seo, ssr]
+description: "Migrates the frontend from a Vite SPA to Next.js to enable server-side rendering and incremental static regeneration for SEO-critical catalog pages."
 ---
 
 # ADR-FD-001 — Migrate Frontend from Vite to Next.js
@@ -11,8 +12,8 @@ tags: [frontend, nextjs, vite, seo, ssr]
 | Field      | Value                                                    |
 | ---------- | -------------------------------------------------------- |
 | **Status** | Accepted                                                 |
-| **Date**   | 2025-07-01                                               |
-| **Author** | @monstrino-team                                          |
+| **Date**   | 03-02-2026                                               |
+| **Author** | @Aleks                                          |
 | **Tags**   | `#frontend` `#nextjs` `#vite` `#seo` `#ssr`             |
 
 ## Context

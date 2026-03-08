@@ -4,6 +4,7 @@ title: "ADR-DM-003: Character Variant Concept"
 sidebar_label: "DM-003: Character Variants"
 sidebar_position: 3
 tags: [domain-model, characters, variants, catalog]
+description: "Introduces a character variant concept to represent the same character appearing across multiple distinct franchise contexts within the Monster High universe."
 ---
 
 # ADR-DM-003 — Introduce Character Variant Concept
@@ -11,8 +12,8 @@ tags: [domain-model, characters, variants, catalog]
 | Field      | Value                                                     |
 | ---------- | --------------------------------------------------------- |
 | **Status** | Accepted                                                  |
-| **Date**   | 2025-07-15                                                |
-| **Author** | @monstrino-team                                           |
+| **Date**   | 03-04-2026                                                |
+| **Author** | @Aleks                                           |
 | **Tags**   | `#domain-model` `#characters` `#variants` `#catalog`     |
 
 ## Context

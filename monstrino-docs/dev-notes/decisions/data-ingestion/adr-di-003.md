@@ -4,6 +4,7 @@ title: "ADR-DI-003: external_id as Main Ingestion Identifier"
 sidebar_label: "DI-003: external_id Identifier"
 sidebar_position: 3
 tags: [data-ingestion, external-id, identifier, source]
+description: "Adopts external_id as the stable primary identifier for ingested records, replacing fragile URL-based keys that are source-specific and mutable."
 ---
 
 # ADR-DI-003 — Use `external_id` as Main Ingestion Identifier
@@ -11,8 +12,8 @@ tags: [data-ingestion, external-id, identifier, source]
 | Field      | Value                                                     |
 | ---------- | --------------------------------------------------------- |
 | **Status** | Accepted                                                  |
-| **Date**   | 2025-05-12                                                |
-| **Author** | @monstrino-team                                           |
+| **Date**   | 08-10-2025                                                |
+| **Author** | @Aleks                                           |
 | **Tags**   | `#data-ingestion` `#external-id` `#identifier` `#source` |
 
 ## Context

@@ -4,6 +4,7 @@ title: "ADR-A-002: Restrict ORM Usage to Repositories"
 sidebar_label: "A-002: ORM in Repositories Only"
 sidebar_position: 2
 tags: [architecture, orm, repositories, clean-architecture]
+description: "Restricts SQLAlchemy ORM usage exclusively to the repository layer to prevent session state leakage and enforce clean architecture boundaries."
 ---
 
 # ADR-A-002 — Restrict ORM Usage to Repositories
@@ -11,8 +12,8 @@ tags: [architecture, orm, repositories, clean-architecture]
 | Field      | Value                                                             |
 | ---------- | ----------------------------------------------------------------- |
 | **Status** | Accepted                                                          |
-| **Date**   | 2025-06-01                                                        |
-| **Author** | @monstrino-team                                                   |
+| **Date**   | 17-10-2025                                                        |
+| **Author** | @Aleks                                                   |
 | **Tags**   | `#architecture` `#orm` `#repositories` `#clean-architecture`     |
 
 ## Context

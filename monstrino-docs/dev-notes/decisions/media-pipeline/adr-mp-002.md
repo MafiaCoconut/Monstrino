@@ -4,6 +4,7 @@ title: "ADR-MP-002: S3-Compatible Object Storage"
 sidebar_label: "MP-002: S3-Compatible Storage"
 sidebar_position: 2
 tags: [media-pipeline, storage, s3, minio, portability]
+description: "Uses S3-compatible object storage (MinIO in homelab) to enable portable image storage that can migrate to managed cloud providers without code changes."
 ---
 
 # ADR-MP-002 — Use S3-Compatible Object Storage
@@ -11,8 +12,8 @@ tags: [media-pipeline, storage, s3, minio, portability]
 | Field      | Value                                                        |
 | ---------- | ------------------------------------------------------------ |
 | **Status** | Accepted                                                     |
-| **Date**   | 2025-06-15                                                   |
-| **Author** | @monstrino-team                                              |
+| **Date**   | 10-01-2026                                                   |
+| **Author** | @Aleks                                              |
 | **Tags**   | `#media-pipeline` `#storage` `#s3` `#minio` `#portability`  |
 
 ## Context

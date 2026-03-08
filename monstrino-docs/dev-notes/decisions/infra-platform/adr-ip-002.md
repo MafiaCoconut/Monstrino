@@ -4,6 +4,7 @@ title: "ADR-IP-002: Publish Services Through Cloudflared"
 sidebar_label: "IP-002: Cloudflare Tunnel"
 sidebar_position: 2
 tags: [infra, cloudflare, tunnel, networking, homelab]
+description: "Exposes homelab services to the internet via Cloudflare Tunnel, bypassing CGNAT and eliminating the need for a public static IP address."
 ---
 
 # ADR-IP-002 — Publish Homelab Services Through Cloudflared
@@ -11,8 +12,8 @@ tags: [infra, cloudflare, tunnel, networking, homelab]
 | Field      | Value                                                          |
 | ---------- | -------------------------------------------------------------- |
 | **Status** | Accepted                                                       |
-| **Date**   | 2025-06-10                                                     |
-| **Author** | @monstrino-team                                                |
+| **Date**   | 12-09-2025                                                     |
+| **Author** | @Aleks                                                |
 | **Tags**   | `#infra` `#cloudflare` `#tunnel` `#networking` `#homelab`     |
 
 ## Context

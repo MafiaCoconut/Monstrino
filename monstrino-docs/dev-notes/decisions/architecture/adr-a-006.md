@@ -4,6 +4,7 @@ title: "ADR-A-006: Centralize Source Parsers in monstrino-infra"
 sidebar_label: "A-006: Parsers in monstrino-infra"
 sidebar_position: 6
 tags: [architecture, parsers, monstrino-infra, shared-packages]
+description: "Centralizes all external source parsers inside the monstrino-infra shared package to eliminate duplication and ensure consistent parsing across services."
 ---
 
 # ADR-A-006 — Centralize Source Parsers in `monstrino-infra`
@@ -11,8 +12,8 @@ tags: [architecture, parsers, monstrino-infra, shared-packages]
 | Field      | Value                                                              |
 | ---------- | ------------------------------------------------------------------ |
 | **Status** | Accepted                                                           |
-| **Date**   | 2025-06-20                                                         |
-| **Author** | @monstrino-team                                                    |
+| **Date**   | 13-02-2026                                                         |
+| **Author** | @Aleks                                                    |
 | **Tags**   | `#architecture` `#parsers` `#monstrino-infra` `#shared-packages`  |
 
 ## Context

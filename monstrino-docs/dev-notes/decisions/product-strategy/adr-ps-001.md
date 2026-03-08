@@ -4,6 +4,7 @@ title: "ADR-PS-001: Focus on Monster High"
 sidebar_label: "PS-001: Monster High Focus"
 sidebar_position: 1
 tags: [product-strategy, domain, niche, monster-high]
+description: "Narrows the product domain to Monster High collectibles, rejecting broader markets to enable deep, high-quality catalog coverage in a well-defined niche."
 ---
 
 # ADR-PS-001 — Focus the Product Domain on Monster High Instead of LEGO or Funko
@@ -11,8 +12,8 @@ tags: [product-strategy, domain, niche, monster-high]
 | Field      | Value                                                      |
 | ---------- | ---------------------------------------------------------- |
 | **Status** | Accepted                                                   |
-| **Date**   | 2025-05-01                                                 |
-| **Author** | @monstrino-team                                            |
+| **Date**   | 01-05-2025                                                 |
+| **Author** | @Aleks                                            |
 | **Tags**   | `#product-strategy` `#domain` `#niche` `#monster-high`    |
 
 ## Context

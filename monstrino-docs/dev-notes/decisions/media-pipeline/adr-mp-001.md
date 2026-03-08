@@ -4,6 +4,7 @@ title: "ADR-MP-001: Rehost External Images into Monstrino Storage"
 sidebar_label: "MP-001: Image Rehosting"
 sidebar_position: 1
 tags: [media-pipeline, images, rehosting, s3, storage]
+description: "Rehosts all external product images into Monstrino-controlled storage to eliminate broken links, ensure availability, and own image delivery."
 ---
 
 # ADR-MP-001 — Rehost External Images into Monstrino Storage
@@ -11,8 +12,8 @@ tags: [media-pipeline, images, rehosting, s3, storage]
 | Field      | Value                                                         |
 | ---------- | ------------------------------------------------------------- |
 | **Status** | Accepted                                                      |
-| **Date**   | 2025-06-15                                                    |
-| **Author** | @monstrino-team                                               |
+| **Date**   | 8-01-2026                                                    |
+| **Author** | @Aleks                                               |
 | **Tags**   | `#media-pipeline` `#images` `#rehosting` `#s3` `#storage`    |
 
 ## Context

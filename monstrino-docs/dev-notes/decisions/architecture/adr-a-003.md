@@ -4,6 +4,7 @@ title: "ADR-A-003: UnitOfWork and BaseRepo Persistence"
 sidebar_label: "A-003: UnitOfWork & BaseRepo"
 sidebar_position: 3
 tags: [architecture, persistence, unit-of-work, repository-pattern]
+description: "Defines a UnitOfWork and BaseRepository pattern to manage database session lifecycle consistently across all services."
 ---
 
 # ADR-A-003 — Introduce UnitOfWork and BaseRepo Persistence Architecture
@@ -11,8 +12,8 @@ tags: [architecture, persistence, unit-of-work, repository-pattern]
 | Field      | Value                                                                   |
 | ---------- | ----------------------------------------------------------------------- |
 | **Status** | Accepted                                                                |
-| **Date**   | 2025-06-01                                                              |
-| **Author** | @monstrino-team                                                         |
+| **Date**   | 30-10-2025                                                              |
+| **Author** | @Aleks                                                         |
 | **Tags**   | `#architecture` `#persistence` `#unit-of-work` `#repository-pattern`   |
 
 ## Context

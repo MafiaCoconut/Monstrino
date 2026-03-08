@@ -4,6 +4,7 @@ title: "ADR-PS-004: Defer Affiliate Monetization"
 sidebar_label: "PS-004: Defer Affiliate"
 sidebar_position: 4
 tags: [product-strategy, monetization, affiliate]
+description: "Defers affiliate monetization links to avoid conflicting interests between product integrity and revenue generation during the MVP phase."
 ---
 
 # ADR-PS-004 — Defer Affiliate Monetization
@@ -11,8 +12,8 @@ tags: [product-strategy, monetization, affiliate]
 | Field      | Value                                                   |
 | ---------- | ------------------------------------------------------- |
 | **Status** | Accepted                                                |
-| **Date**   | 2025-06-01                                              |
-| **Author** | @monstrino-team                                         |
+| **Date**   | 20-01-2026                                              |
+| **Author** | @Aleks                                         |
 | **Tags**   | `#product-strategy` `#monetization` `#affiliate`       |
 
 ## Context
