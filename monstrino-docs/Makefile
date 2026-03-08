@@ -191,6 +191,7 @@ include $(ROOT_DIR)/Makefiles/pytest.mk
 NAMESPACE := ""
 NAMESPACE_TEST := "monstrino-test"
 NAMESPACE_PROD := "monstrino-prod"
+NAMESPACE_DOCS := "monstrino-docs"
 
 REGISTRY := registry.monstrino.com
 SERVER_PLATFORM := --platform linux/amd64
@@ -208,6 +209,7 @@ run: dev
 KUBERNETES_FOLDER := $(ROOT_DIR)/monstrino-configurations/kubernetes
 K8S_TEST_FOLDER := $(KUBERNETES_FOLDER)/.test/monstrino-docs
 K8S_PROD_FOLDER := $(KUBERNETES_FOLDER)/.prod/monstrino-docs
+K8S_FOLDER := $(KUBERNETES_FOLDER)/monstrino-docs
 
 # ------------------ Context selection ------------------
 use-tc-m70q-context:
@@ -215,31 +217,42 @@ use-tc-m70q-context:
 
 # --------------------- Build section --------------------
 
-build-test:
-	DOCKER_BUILDKIT=1 docker build --build-arg SITE_ENV=test --ssh default $(SERVER_PLATFORM) -t $(SERVICE_TAG_IMAGE_NAME) .
+# build-test:
+# 	DOCKER_BUILDKIT=1 docker build --build-arg SITE_ENV=test --ssh default $(SERVER_PLATFORM) -t $(SERVICE_TAG_IMAGE_NAME) .
 
-build-prod:
-	DOCKER_BUILDKIT=1 docker build --build-arg SITE_ENV=prod --ssh default $(SERVER_PLATFORM) -t $(SERVICE_TAG_IMAGE_NAME) .
+# build-prod:
+# 	DOCKER_BUILDKIT=1 docker build --build-arg SITE_ENV=prod --ssh default $(SERVER_PLATFORM) -t $(SERVICE_TAG_IMAGE_NAME) .
 
-push-service-test: build-test
-	@echo "$$REG_PASS" | docker login $(REGISTRY) -u "$$REG_USER" --password-stdin
-	docker push $(SERVICE_TAG_IMAGE_NAME)
+build:
+	DOCKER_BUILDKIT=1 docker build --ssh default $(SERVER_PLATFORM) -t $(SERVICE_TAG_IMAGE_NAME) .
 
-push-service-prod: build-prod
+# push-service-test: build-test
+# 	@echo "$$REG_PASS" | docker login $(REGISTRY) -u "$$REG_USER" --password-stdin
+# 	docker push $(SERVICE_TAG_IMAGE_NAME)
+
+# push-service-prod: build-prod
+# 	@echo "$$REG_PASS" | docker login $(REGISTRY) -u "$$REG_USER" --password-stdin
+# 	docker push $(SERVICE_TAG_IMAGE_NAME)
+
+push-service: build
 	@echo "$$REG_PASS" | docker login $(REGISTRY) -u "$$REG_USER" --password-stdin
 	docker push $(SERVICE_TAG_IMAGE_NAME)
 
 # --------------------- Deploy section --------------------
 
-deploy-test: use-tc-m70q-context push-service-test
-	kubectl apply -f $(K8S_TEST_FOLDER)/deployment.yaml -n $(NAMESPACE_TEST)
-	kubectl apply -f $(K8S_TEST_FOLDER)/service.yaml    -n $(NAMESPACE_TEST)
-	kubectl set image deployment/$(SERVICE_NAME) -n $(NAMESPACE_TEST) $(SERVICE_NAME)=$(SERVICE_TAG_IMAGE_NAME)
+# deploy-test: use-tc-m70q-context push-service-test
+# 	kubectl apply -f $(K8S_TEST_FOLDER)/deployment.yaml -n $(NAMESPACE_TEST)
+# 	kubectl apply -f $(K8S_TEST_FOLDER)/service.yaml    -n $(NAMESPACE_TEST)
+# 	kubectl set image deployment/$(SERVICE_NAME) -n $(NAMESPACE_TEST) $(SERVICE_NAME)=$(SERVICE_TAG_IMAGE_NAME)
 
-deploy-prod: use-tc-m70q-context push-service-prod
-	kubectl apply -f $(K8S_PROD_FOLDER)/deployment.yaml -n $(NAMESPACE_PROD)
-	kubectl apply -f $(K8S_PROD_FOLDER)/service.yaml    -n $(NAMESPACE_PROD)
-	kubectl set image deployment/$(SERVICE_NAME) -n $(NAMESPACE_PROD) $(SERVICE_NAME)=$(SERVICE_TAG_IMAGE_NAME)
+# deploy-prod: use-tc-m70q-context push-service-prod
+# 	kubectl apply -f $(K8S_PROD_FOLDER)/deployment.yaml -n $(NAMESPACE_PROD)
+# 	kubectl apply -f $(K8S_PROD_FOLDER)/service.yaml    -n $(NAMESPACE_PROD)
+# 	kubectl set image deployment/$(SERVICE_NAME) -n $(NAMESPACE_PROD) $(SERVICE_NAME)=$(SERVICE_TAG_IMAGE_NAME)
 
 
+deploy-docs: use-tc-m70q-context push-service
+	kubectl apply -f $(K8S_PROD_FOLDER)/deployment.yaml -n $(NAMESPACE_DOCS)
+	kubectl apply -f $(K8S_PROD_FOLDER)/service.yaml    -n $(NAMESPACE_DOCS)
+	kubectl set image deployment/$(SERVICE_NAME) -n $(NAMESPACE_DOCS) $(SERVICE_NAME)=$(SERVICE_TAG_IMAGE_NAME)
 

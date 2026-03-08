@@ -61,7 +61,3 @@ Get images working first to make the catalog visually useful, then add price tra
 - Price data will not be available at initial launch.
 
 ## Related Decisions
-
-- [ADR-PS-003](./adr-ps-003.md) — Release archive MVP priority
-- [ADR-MP-001](../media-pipeline/adr-mp-001.md) — Image rehosting into Monstrino storage
-- [ADR-LS-003](../llm-sources/adr-ls-003.md) — Mattel Shopify as MSRP source

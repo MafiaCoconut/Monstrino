@@ -51,8 +51,4 @@ All source parsers live in the `monstrino-infra` shared package and are consumed
 ### Negative
 
 - `monstrino-infra` must be updated and re-released when parsers change, requiring coordinated service upgrades.
-
-## Related Decisions
-
-- [ADR-A-001](./adr-a-001.md) — Shared packages organization
-- [ADR-LS-003](../llm-sources/adr-ls-003.md) — Mattel Shopify as MSRP source
+- 

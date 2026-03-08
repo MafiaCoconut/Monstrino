@@ -5,10 +5,10 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const SITE_ENV = process.env.SITE_ENV ?? 'prod';
 
-const SITE_URL =
-  SITE_ENV === 'test'
-    ? 'https://testing.monstrino.com'
-    : 'https://monstrino.com';
+const SITE_URL = 'https://documentation.monstrino.com'
+  // SITE_ENV === 'test'
+  //   ? 'https://testing.monstrino.com'
+  //   : 'https://monstrino.com';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 const config: Config = {
