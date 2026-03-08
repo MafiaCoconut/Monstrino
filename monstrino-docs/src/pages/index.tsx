@@ -30,7 +30,7 @@ export default function Home(): JSX.Element {
             <Link className={styles.primaryButton} to={useBaseUrl("introduction")}>
               Get Started
             </Link>
-            <Link className={styles.secondaryButton} to={useBaseUrl("docs/api")}>
+            <Link className={styles.secondaryButton} to={useBaseUrl("docs/intro")}>
               API Reference
             </Link>
             <Link className={styles.secondaryButton} to={useBaseUrl("dev-notes/intro")}>
@@ -43,7 +43,7 @@ export default function Home(): JSX.Element {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Quick Links</h2>
           <div className={styles.quickLinks}>
-            <Link className={styles.quickLinkItem} to={useBaseUrl("docs/models/overview")}>
+            <Link className={styles.quickLinkItem} to={useBaseUrl("docs/architecture/architecture-overview")}>
               📦 Releases & Models
             </Link>
             <Link className={styles.quickLinkItem} to={useBaseUrl("docs/architecture")}>
