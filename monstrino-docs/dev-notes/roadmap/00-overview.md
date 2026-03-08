@@ -42,5 +42,7 @@ The platform has reached a stable foundation across its core functions:
 
 ## Section Contents
 
-- [Short-Term Roadmap](/dev-notes/roadmap/short-term/) — near-term architectural focus areas and active decision pressures
-- [Long-Term Roadmap](/dev-notes/roadmap/long-term/) — long-horizon intentions, strategic direction, and open architectural risks
+- [Platform Architecture Evolution](./platform-evolution) — current architectural state, mid-term goals, and long-term direction
+- [Data Collection Strategy](./data-collection-strategy) — continuous data collection approach and pipeline relationship
+- [AI Integration Roadmap](./ai-roadmap) — phased plan for AI capability expansion
+- [Scaling Strategy](./scaling-strategy) — infrastructure scaling plan and reliability improvements

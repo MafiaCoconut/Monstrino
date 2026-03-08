@@ -12,7 +12,7 @@ description: "Restricts SQLAlchemy ORM usage exclusively to the repository layer
 | Field      | Value                                                             |
 | ---------- | ----------------------------------------------------------------- |
 | **Status** | Accepted                                                          |
-| **Date**   | 17-10-2025                                                        |
+| **Date**   | 2025-10-17                                                        |
 | **Author** | @Aleks                                                   |
 | **Tags**   | `#architecture` `#orm` `#repositories` `#clean-architecture`     |
 

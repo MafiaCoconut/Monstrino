@@ -12,7 +12,7 @@ description: "Separates raw ingestion data into parsed tables, decoupling extern
 | Field      | Value                                                          |
 | ---------- | -------------------------------------------------------------- |
 | **Status** | Accepted                                                       |
-| **Date**   | 10-09-2025                                                     |
+| **Date**   | 2025-09-10                                                     |
 | **Author** | @Aleks                                                |
 | **Tags**   | `#data-ingestion` `#catalog` `#parsed-tables` `#boundary`     |
 

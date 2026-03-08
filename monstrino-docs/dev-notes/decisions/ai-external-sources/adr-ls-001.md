@@ -12,7 +12,7 @@ description: "Isolates all LLM processing behind a dedicated llm-gateway service
 | Field      | Value                                                        |
 | ---------- | ------------------------------------------------------------ |
 | **Status** | Accepted                                                     |
-| **Date**   | 25-11-2025                                                   |
+| **Date**   | 2025-11-25                                                   |
 | **Author** | @Aleks                                              |
 | **Tags**   | `#llm` `#gateway` `#ollama` `#normalization` `#isolation`   |
 

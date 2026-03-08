@@ -1,385 +1,368 @@
-
-<div align="left">
-
-<h1>Monstrino</h1>
-
-<p>Distributed data platform for collecting, processing and serving structured <strong>Monster High</strong> release data.</p>
+# Monstrino
 
 [![Python](https://img.shields.io/badge/Python-blue?logo=python&logoColor=white)](https://www.python.org/) [![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/) [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71F00?logo=sqlalchemy&logoColor=white)](https://www.sqlalchemy.org/) [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/) [![MinIO](https://img.shields.io/badge/MinIO-C72E49?logo=minio&logoColor=white)](https://min.io/) [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![Next.js](https://img.shields.io/badge/Next.js-000000?logo=nextdotjs&logoColor=white)](https://nextjs.org/) [![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black)](https://react.dev/) [![MUI](https://img.shields.io/badge/MUI-007FFF?logo=mui&logoColor=white)](https://mui.com/) [![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)](https://www.docker.com/) [![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?logo=kubernetes&logoColor=white)](https://kubernetes.io/) [![Stackit](https://img.shields.io/badge/STACKIT-009DE0?logo=stackit&logoColor=white)](https://www.stackit.de/)
 
 [![wakatime](https://wakatime.com/badge/user/48c32c80-1ac5-49d5-a08c-e802fc739940/project/dcae8000-f0fa-471f-81d7-ddc589dbf188.svg)](https://wakatime.com/badge/user/48c32c80-1ac5-49d5-a08c-e802fc739940/project/dcae8000-f0fa-471f-81d7-ddc589dbf188)
 
-</div>
+🌐 [Official Website](https://monstrino.com) · 📖 [Documentation](https://documentation.monstrino.com)
+
+**Monstrino** is an automated collector platform for the **Monster High
+universe**.
+
+The system continuously discovers, parses, enriches, and stores
+structured data about Monster High releases from multiple sources.
+
+Its goal is to create the **most complete structured catalog of Monster
+High releases** while demonstrating **production‑grade backend
+architecture**.
 
 ---
 
-## Table of Contents
+# Table of Contents
 
-- [Table of Contents](#table-of-contents)
-- [Overview](#overview)
-- [Architecture](#architecture)
-  - [Data Flow](#data-flow)
-- [Features](#features)
-- [Core Services](#core-services)
-  - [Catalog Services](#catalog-services)
-  - [Media Services](#media-services)
-  - [Market Services](#market-services)
-  - [AI Services](#ai-services)
-  - [API Layer](#api-layer)
-- [Data Platform](#data-platform)
-  - [Database Layout](#database-layout)
-- [Media Pipeline](#media-pipeline)
-- [Technology Stack](#technology-stack)
-- [Infrastructure](#infrastructure)
-- [Development Principles](#development-principles)
-- [Repository Structure](#repository-structure)
-- [Example API](#example-api)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Local Setup](#local-setup)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
+-   [Overview](#overview)
+-   [Key Features](#key-features)
+-   [Architecture](#architecture)
+-   [Domains](#domains)
+-   [Services](#services)
+-   [Technology Stack](#technology-stack)
+-   [Repository Structure](#repository-structure)
+-   [Development Environment](#development-environment)
+-   [Running the Platform](#running-the-platform)
+-   [Documentation](#documentation)
+-   [Design Principles](#design-principles)
+-   [Roadmap](#roadmap)
 
 ---
 
-## Overview
+# Overview
 
-> [!NOTE]
-> Monstrino is a distributed data platform designed to collect, normalize and serve structured data about Monster High releases.
+The collector ecosystem has several problems:
 
-The platform aggregates product data from multiple external sources, processes media assets, enriches metadata using LLM services and exposes a unified API for applications.
+| Problem | Description |
+| --- | --- |
+| Fragmented information | Release data is scattered across many websites |
+| Unstable images | Images disappear when original sites change |
+| Price volatility | Market prices constantly change |
+| Manual cataloging | Collectors maintain catalogs manually |
 
-The goal is to provide a **high‑quality canonical dataset** for collectors, applications and analytical tools.
+Monstrino solves this by building a **fully automated ingestion
+platform**.
 
 ---
 
-## Architecture
+# Key Features
 
-> [!IMPORTANT]
-> Only `public-api-service` is exposed externally.  
-> All other services are internal to the cluster.
+## Automated Catalog Generation
 
-Monstrino follows a **microservice architecture** with clear service boundaries and domain‑driven design.
+The platform automatically collects:
 
-Key characteristics:
+-   releases
+-   characters
+-   pets
+-   series
+-   release metadata
+-   descriptions
+-   images
 
-- Service-to-service communication via REST APIs
-- API Gateway for external access
-- Internal routing rules for protected services
-- Event-driven capabilities (Kafka planned)
-- Distributed ingestion pipeline
-- Media processing pipeline
+Sources include collector websites, stores, and other public resources.
 
-### Data Flow
+---
 
-```
-External Sources
-       │
-       ▼
-Catalog Collector
-       │
-       ▼
-Catalog Importer
-       │
-       ▼
-Data Processing / LLM Enrichment
-       │
-       ▼
-Core Data Services
-       │
-       ▼
-Public API Service
-       │
-       ▼
-UI Applications
+## Media Ingestion Pipeline
+
+External images are automatically processed:
+
+```mermaid
+flowchart LR
+    discover --> download --> normalize --> rehost --> store
 ```
 
----
+Benefits:
 
-## Features
-
-- Distributed data ingestion
-- Canonical release database
-- Media processing pipeline
-- AI assisted metadata enrichment
-- Microservice architecture
-- Kubernetes native deployment
-- API driven service communication
+-   permanent image storage
+-   consistent media formats
+-   metadata extraction
 
 ---
 
-## Core Services
+## Market Price Tracking
 
-### Catalog Services
+Monstrino tracks:
 
-| Service | Description | Status |
-|---|---|---|
-| `catalog-collector` | Scrapes product data from external websites | Active |
-| `catalog-importer` | Processes raw collected data and prepares it for ingestion | Active |
-| `release-catalog-service` | Maintains canonical release data | Active |
+-   MSRP (original retail price)
+-   secondary market prices
+-   regional pricing
 
-### Media Services
-
-| Service | Description | Status |
-|---|---|---|
-| `media-normalizator` | Image processing pipeline (resize, compression, formats) | Active |
-| `media-rehosting-service` | Rehosts media assets to object storage | Active |
-
-### Market Services
-
-| Service | Description | Status |
-|---|---|---|
-| `market-price-collector` | Collects pricing data from marketplaces | Active |
-
-### AI Services
-
-| Service | Description | Status |
-|---|---|---|
-| `llm-gateway` | Gateway service for LLM-based enrichment | Planned |
-
-### API Layer
-
-| Service | Description | Status |
-|---|---|---|
-| `public-api-service` | External gateway used by UI clients | Active |
+Collectors can observe **price evolution over time**.
 
 ---
 
-## Data Platform
+## AI Data Enrichment
 
-Monstrino uses **PostgreSQL** with several schemas separating different pipelines.
+AI models are used for:
 
-### Database Layout
-
-| Schema | Purpose |
-|------|------|
-| core | Canonical domain data |
-| catalog | Structured catalog data |
-| ingest | Raw ingestion pipeline |
-| media | Media assets and variants |
-| market | Marketplace price data |
-
-This separation allows independent data pipelines while maintaining a clean domain model.
+-   extracting structured data
+-   classifying releases
+-   detecting characters and pets
+-   validating parsed data
 
 ---
 
-## Media Pipeline
+# Architecture
 
-Media assets go through several processing stages:
+Monstrino follows a **microservice architecture**.
 
-1. Media ingestion
-2. Image normalization
-3. Variant generation
-4. Storage in object storage
-5. Attachment to domain entities
+```mermaid
+flowchart TD
+    Sources --> Market_Collectors[Market Collectors]
+    Market_Collectors --> Catalog_Pipelines[Catalog Pipelines]
+    Catalog_Pipelines --> AI_Enrichment[AI Enrichment]
+    AI_Enrichment --> Catalog_Storage[Catalog Storage]
+    Catalog_Storage --> API_Gateway[API Gateway]
+    API_Gateway --> UI
+```
 
-Supported processing:
+Key architectural patterns:
 
-- Image resizing
-- Format conversion
-- Quality optimization
-- Variant generation
-- Metadata extraction
+-   Domain Driven Design
+-   Event-driven pipelines
+-   Clean Architecture
+-   Service isolation
+
+---
+
+# Domains
+
+## Catalog
+
+Stores canonical catalog entities:
+
+-   releases
+-   characters
+-   pets
+-   series
+
+Relationships between them are normalized.
 
 ---
 
-## Technology Stack
+## Media
 
-| Category | Technology |
-|---|---|
-| Backend | Python 3.12 / FastAPI |
-| Data | PostgreSQL 16 |
-| Messaging | Kafka *(planned)* |
-| Infrastructure | Kubernetes |
-| Storage | S3-compatible object storage |
-| Containers | Docker |
-| API Contracts | OpenAPI / Pydantic |
-| Package Management | Poetry |
-| Build | GNU Make |
+Responsible for:
+
+-   downloading images
+-   metadata extraction
+-   normalization
+-   object storage hosting
 
 ---
+
+## Market
+
+Tracks:
+
+-   newly discovered releases
+-   secondary market prices
+-   price history
+
+---
+
+## AI
+
+AI services perform:
+
+-   text processing
+-   enrichment
+-   classification
+-   validation
+
+---
+
+# Services
+
+## Catalog Services
+
+| Service | Responsibility |
+| --- | --- |
+| catalog-importer | Imports parsed catalog data |
+| catalog-data-enricher | Enhances catalog records |
+| release-catalog-service | Public release catalog API |
+
+---
+
+## Media Services
+
+| Service | Responsibility |
+| --- | --- |
+| media-rehosting-subscriber | Receives media ingestion events |
+| media-rehosting-processor | Processes ingestion jobs |
+| media-normalizator | Normalizes images |
+| media-rehosting-service | Hosts media assets |
+
+---
+
+## Market Services
+
+| Service | Responsibility |
+| --- | --- |
+| market-release-discovery | Detects new releases |
+| market-price-collector | Collects market prices |
+
+---
+
+## AI Services
+
+| Service | Responsibility |
+| --- | --- |
+| llm-gateway | Gateway to LLM models |
+| ai-orchestrator | Coordinates AI workflows |
+
+---
+
+# Technology Stack
+
+## Backend
+
+-   Python
+-   FastAPI
+-   SQLAlchemy
+-   PostgreSQL
 
 ## Infrastructure
 
-Monstrino is designed to run on **Kubernetes**.
+-   Kubernetes
+-   Docker
+-   Kafka
+-   Traefik
 
-```
-UI
- │
- ▼
-Public API Service
- │
- ├── Catalog Services
- ├── Media Services
- ├── Market Services
- └── LLM Services
-```
+## Storage
 
-All internal services are accessible only inside the cluster.
+-   PostgreSQL
+-   MinIO / S3
 
----
+## AI
 
-## Development Principles
+-   Ollama
+-   LLM models
+-   Vision models
 
-The project follows several engineering principles:
+## Observability
 
-- Domain Driven Design (DDD)
-- Microservice architecture
-- Strong API contracts
-- Event-driven communication
-- Idempotent processing pipelines
-- Schema separation for data pipelines
+-   Prometheus
+-   Grafana
 
 ---
 
-## Repository Structure
+# Repository Structure
 
-```
+``` text
 monstrino/
-│
-├── services/                   # Independently deployable microservices
-│   ├── acquisition/            # Data acquisition services
-│   ├── catalog/                # Catalog pipeline services
-│   ├── media/                  # Media processing services
-│   ├── market/                 # Market data services
-│   ├── auth/                   # Authentication service
-│   ├── platform/               # Platform utilities
-│   └── user/                   # User management service
-│
-├── packages/                   # Shared internal Python packages
-│   ├── monstrino-api/          # Shared API utilities
-│   ├── monstrino-contracts/    # Pydantic contracts / schemas
-│   ├── monstrino-core/         # Core domain logic
-│   ├── monstrino-infra/        # Infrastructure helpers
-│   ├── monstrino-models/       # Database models
-│   ├── monstrino-repositories/ # Repository layer
-│   └── monstrino-testing/      # Shared test utilities
-│
-├── monstrino-configurations/   # Infrastructure configuration
-│   ├── db/                     # SQL migration scripts
-│   └── kubernetes/             # Kubernetes manifests
-│
-├── broker/                     # Message broker setup
-│   └── docker/
-│
-├── monstrino-docs/             # Docusaurus documentation site
-├── monstrino-ui/               # Frontend application
-├── Makefiles/                  # Shared Makefile targets
-└── README.md
+
+docs/                → documentation
+services/            → microservices
+libs/                → shared libraries
+
+    monstrino-core
+    monstrino-models
+    monstrino-contracts
+    monstrino-repositories
+    monstrino-infra
+
+deploy/              → kubernetes manifests
+dev-notes/           → development notes
+adr/                 → architecture decisions
 ```
 
 ---
 
-## Example API
+# Development Environment
 
-Example request:
+The platform runs in Kubernetes.
 
-```
-GET /releases/{release_slug}
-```
+| Environment | Purpose |
+| --- | --- |
+| local | development |
+| test | integration testing |
+| prod | production |
 
-Example response:
+Each environment runs in a separate namespace.
 
-```json
-{
-  "name": "Draculaura Creepover Party",
-  "year": 2022,
-  "series": "Creepover Party"
-}
+---
+
+# Running the Platform
+
+## Requirements
+
+-   Docker
+-   Kubernetes
+-   Make
+-   Python 3.11+
+
+## Typical Workflow
+
+``` bash
+make build
+make push
+make deploy
 ```
 
 ---
 
-## Getting Started
+# Documentation
 
-### Prerequisites
+Documentation lives in:
 
-| Tool | Minimum Version | Notes |
-|---|---|---|
-| Python | 3.12 | Required for all services |
-| Poetry | 1.8+ | Dependency management |
-| Docker | 24+ | Container runtime |
-| Docker Compose | v2 | Local orchestration |
-| Make | 4.0+ | Build automation |
-| PostgreSQL | 16 | Can be run via Docker |
+- `docs/`
+- `dev-notes/`
+- `adr/`
 
-### Local Setup
+Documentation includes:
 
-**1. Clone the repository**
-
-```bash
-git clone https://github.com/your-org/monstrino.git
-cd monstrino
-```
-
-**2. Start infrastructure dependencies**
-
-```bash
-# Start PostgreSQL and broker
-docker compose -f broker/docker/docker-compose.yaml up -d
-```
-
-**3. Apply database migrations**
-
-```bash
-# Run SQL scripts against your PostgreSQL instance
-psql -U postgres -d monstrino -f monstrino-configurations/db/init.sql
-```
-
-**4. Install and run a service**
-
-```bash
-cd services/catalog/catalog-api-service
-make install
-make run
-```
-
-**5. (Optional) Build documentation locally**
-
-```bash
-cd monstrino-docs
-make run
-```
-
-> [!TIP]
-> Each service has its own `Makefile` with `install`, `run`, `test` and `lint` targets. Run `make help` inside any service directory to see all available commands.
+-   architecture diagrams
+-   pipelines
+-   service documentation
+-   design decisions
 
 ---
 
-## Roadmap
+# Design Principles
 
-- [x] Distributed catalog ingestion pipeline
-- [x] Media processing and rehosting pipeline
-- [x] Market price collection
-- [x] PostgreSQL schema separation per domain
-- [x] OpenAPI contracts
-- [ ] Kafka event streaming between services
-- [ ] LLM gateway for metadata enrichment
-- [ ] Automated media segmentation
-- [ ] Advanced price analytics dashboard
-- [ ] Public developer API portal
+### Automation First
 
----
+All catalog data should be collected automatically.
 
-## Contributing
+### Source Independence
 
-Contributions are welcome. Please follow these steps:
+Different sources are normalized into a canonical schema.
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Commit your changes: `git commit -m 'feat: add my feature'`
-4. Push the branch: `git push origin feature/my-feature`
-5. Open a Pull Request
+### Event‑Driven Pipelines
 
-Please make sure all tests pass before submitting a PR:
+Pipelines operate asynchronously.
 
-```bash
-make test
-```
+### Scalability
+
+Services scale horizontally.
 
 ---
 
-## License
+# Roadmap
 
-Distributed under the **MIT License**. See [LICENSE](LICENSE) for details.
+Planned improvements:
+
+-   full catalog coverage
+-   price history analytics
+-   public developer API
+-   advanced search
+-   collector tools
+
+---
+
+# Project Status
+
+🚧 Active development.
+
+The project serves both as:
+
+-   a collector platform
+-   an advanced backend architecture project

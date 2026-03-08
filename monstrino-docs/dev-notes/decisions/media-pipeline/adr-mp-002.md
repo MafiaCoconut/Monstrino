@@ -12,7 +12,7 @@ description: "Uses S3-compatible object storage (MinIO in homelab) to enable por
 | Field      | Value                                                        |
 | ---------- | ------------------------------------------------------------ |
 | **Status** | Accepted                                                     |
-| **Date**   | 10-01-2026                                                   |
+| **Date**   | 2026-01-10                                                   |
 | **Author** | @Aleks                                              |
 | **Tags**   | `#media-pipeline` `#storage` `#s3` `#minio` `#portability`  |
 

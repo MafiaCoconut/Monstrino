@@ -12,7 +12,7 @@ description: "Organizes microservices into domain-based subdirectories to clarif
 | Field      | Value                                                          |
 | ---------- | -------------------------------------------------------------- |
 | **Status** | Accepted                                                       |
-| **Date**   | 15-11-2025                                                     |
+| **Date**   | 2025-11-15                                                     |
 | **Author** | @Aleks                                                |
 | **Tags**   | `#architecture` `#services` `#domain` `#structure`            |
 

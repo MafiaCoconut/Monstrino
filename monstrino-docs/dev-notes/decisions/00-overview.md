@@ -146,7 +146,7 @@ These decisions define how product images are acquired, stored, and served.
 
 These decisions define how LLMs and official external sources are used for data enrichment.
 
-- **[ADR-LS-001 — Isolate LLM Processing Behind llm-gateway](../ai-external-sources/adr-ls-001)**  
+- **[ADR-LS-001 — Isolate LLM Processing Behind ai-orchestrator](../ai-external-sources/adr-ls-001)**  
   Routes all LLM calls through a single internal gateway service to centralize model configuration.
 
 - **[ADR-LS-002 — LLM-Assisted Normalization for Release Data](../ai-external-sources/adr-ls-002)**  

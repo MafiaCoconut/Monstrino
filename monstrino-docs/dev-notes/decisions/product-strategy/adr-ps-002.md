@@ -12,7 +12,7 @@ description: "Makes automated data acquisition the core product capability, repl
 | Field      | Value                                                      |
 | ---------- | ---------------------------------------------------------- |
 | **Status** | Accepted                                                   |
-| **Date**   | 01-05-2025                                                 |
+| **Date**   | 2025-05-01                                                 |
 | **Author** | @Aleks                                            |
 | **Tags**   | `#product-strategy` `#acquisition` `#automation`          |
 

@@ -12,7 +12,7 @@ description: "Stores the full raw parsed payload as replayable JSON alongside st
 | Field      | Value                                                         |
 | ---------- | ------------------------------------------------------------- |
 | **Status** | Accepted                                                      |
-| **Date**   | 18-02-2026                                                    |
+| **Date**   | 2026-02-18                                                    |
 | **Author** | @Aleks                                               |
 | **Tags**   | `#data-ingestion` `#json` `#replayability` `#raw-payload`    |
 

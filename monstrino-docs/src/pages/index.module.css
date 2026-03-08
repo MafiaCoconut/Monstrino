@@ -80,6 +80,20 @@
 
 /* ---------------------------------- */
 /* QUICK LINKS */
+.quickLinksGroup {
+  margin-bottom: 2rem;
+}
+
+.quickLinksLabel {
+  color: #999;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+  text-align: center;
+  font-weight: 600;
+}
+
 .quickLinks {
   display: flex;
   justify-content: center;
@@ -104,28 +118,45 @@
 }
 
 /* ---------------------------------- */
-/* ECOSYSTEM MAP */
-.ecosystem {
+/* PROJECT STATS */
+.statsRow {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
   justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
-.ecoItem {
-  width: 250px;
-  padding: 1.5rem;
+.statCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  width: 160px;
+  padding: 1.5rem 1rem;
   background: rgba(25, 25, 32, 0.65);
   border-radius: 16px;
-  border: 1px solid rgba(255, 44, 168, 0.18);
+  border: 1px solid rgba(140, 59, 255, 0.25);
   backdrop-filter: blur(10px);
-  text-align: center;
   transition: 0.25s ease;
 }
 
-.ecoItem:hover {
+.statCard:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 20px rgba(255, 44, 168, 0.25);
+  box-shadow: 0 10px 20px rgba(140, 59, 255, 0.2);
+}
+
+.statNumber {
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ff2ca8, #8c3bff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.statLabel {
+  color: #bbb;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 /* ---------------------------------- */

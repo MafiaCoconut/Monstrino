@@ -12,7 +12,7 @@ description: "Exposes homelab services to the internet via Cloudflare Tunnel, by
 | Field      | Value                                                          |
 | ---------- | -------------------------------------------------------------- |
 | **Status** | Accepted                                                       |
-| **Date**   | 12-09-2025                                                     |
+| **Date**   | 2025-09-12                                                     |
 | **Author** | @Aleks                                                |
 | **Tags**   | `#infra` `#cloudflare` `#tunnel` `#networking` `#homelab`     |
 

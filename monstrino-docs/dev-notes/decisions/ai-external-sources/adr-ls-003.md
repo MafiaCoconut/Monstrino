@@ -12,7 +12,7 @@ description: "Uses official Mattel Shopify stores as the primary authoritative s
 | Field      | Value                                                          |
 | ---------- | -------------------------------------------------------------- |
 | **Status** | Accepted                                                       |
-| **Date**   | 01-28-2026                                                     |
+| **Date**   | 2026-01-28                                                     |
 | **Author** | @Aleks                                                |
 | **Tags**   | `#external-sources` `#mattel` `#shopify` `#msrp` `#prices`    |
 

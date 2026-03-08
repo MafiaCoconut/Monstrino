@@ -12,7 +12,7 @@ description: "Deploys Monstrino on a single-node k3s cluster to provide Kubernet
 | Field      | Value                                                       |
 | ---------- | ----------------------------------------------------------- |
 | **Status** | Accepted                                                    |
-| **Date**   | 10-09-2025                                                  |
+| **Date**   | 2025-09-10                                                  |
 | **Author** | @Aleks                                             |
 | **Tags**   | `#infra` `#k3s` `#kubernetes` `#homelab` `#deployment`     |
 

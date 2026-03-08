@@ -12,7 +12,7 @@ description: "Centralizes all external source parsers inside the monstrino-infra
 | Field      | Value                                                              |
 | ---------- | ------------------------------------------------------------------ |
 | **Status** | Accepted                                                           |
-| **Date**   | 13-02-2026                                                         |
+| **Date**   | 2026-02-13                                                         |
 | **Author** | @Aleks                                                    |
 | **Tags**   | `#architecture` `#parsers` `#monstrino-infra` `#shared-packages`  |
 

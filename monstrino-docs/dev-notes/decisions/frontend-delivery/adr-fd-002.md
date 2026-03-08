@@ -12,7 +12,7 @@ description: "Moves the frontend into a dedicated separate repository to isolate
 | Field      | Value                                                        |
 | ---------- | ------------------------------------------------------------ |
 | **Status** | Accepted                                                     |
-| **Date**   | 21-02-2026                                                   |
+| **Date**   | 2026-02-21                                                   |
 | **Author** | @Aleks                                              |
 | **Tags**   | `#frontend` `#repository` `#separation`                     |
 

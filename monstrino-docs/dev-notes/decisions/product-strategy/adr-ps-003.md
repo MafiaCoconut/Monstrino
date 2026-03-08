@@ -12,7 +12,7 @@ description: "Focuses the MVP scope on the release archive first, deferring user
 | Field      | Value                                                   |
 | ---------- | ------------------------------------------------------- |
 | **Status** | Accepted                                                |
-| **Date**   | 15-09-2025                                              |
+| **Date**   | 2025-09-15                                              |
 | **Author** | @Aleks                                         |
 | **Tags**   | `#product-strategy` `#mvp` `#scope` `#releases`        |
 

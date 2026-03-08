@@ -59,44 +59,6 @@ ADR answer the question:
 
 ---
 
-### Service Reality
-Documents how **individual services behave in practice**.
-
-They describe:
-- responsibility and boundaries,
-- runtime behavior,
-- guarantees and non-guarantees,
-- failure modes.
-
-Service Reality answers the question:  
-**“What can the system safely assume about this service?”**
-
----
-
-### Package Reality
-Documents shared packages that introduce **behavior, constraints, or blast radius**.
-
-They explain:
-- what the package owns,
-- how it is intended to be used,
-- what it deliberately does not provide.
-
-Package Reality answers the question:  
-**“What contract does this package impose on its users?”**
-
----
-
-### Trade-offs, Failures, Reflection
-Documents that capture **engineering judgment over time**:
-
-- simplifications and omissions,
-- known risks and failure scenarios,
-- design reconsiderations after experience.
-
-These sections exist to preserve **engineering context**, not to assign blame.
-
----
-
 ## Design Principles Reflected Here
 
 Across all documents, the following principles apply:

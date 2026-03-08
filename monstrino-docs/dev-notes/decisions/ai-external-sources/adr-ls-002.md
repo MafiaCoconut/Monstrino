@@ -12,7 +12,7 @@ description: "Applies LLM-assisted normalization via llm-gateway to extract stru
 | Field      | Value                                                         |
 | ---------- | ------------------------------------------------------------- |
 | **Status** | Accepted                                                      |
-| **Date**   | 26-11-2025                                                    |
+| **Date**   | 2025-11-26                                                    |
 | **Author** | @Aleks                                               |
 | **Tags**   | `#llm` `#normalization` `#release-data` `#parsing`           |
 

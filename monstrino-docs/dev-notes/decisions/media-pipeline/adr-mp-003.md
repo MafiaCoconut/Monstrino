@@ -12,7 +12,7 @@ description: "Splits media rehosting into a subscriber service that detects new 
 | Field      | Value                                                                  |
 | ---------- | ---------------------------------------------------------------------- |
 | **Status** | Accepted                                                               |
-| **Date**   | 13-01-2026                                                             |
+| **Date**   | 2026-01-13                                                             |
 | **Author** | @Aleks                                                        |
 | **Tags**   | `#media-pipeline` `#services` `#subscriber` `#processor` `#decomposition` |
 

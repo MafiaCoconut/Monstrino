@@ -12,7 +12,7 @@ description: "Establishes a Contracts → Command → Dispatcher API pattern to 
 | Field      | Value                                                                 |
 | ---------- | --------------------------------------------------------------------- |
 | **Status** | Accepted                                                              |
-| **Date**   | 10-12-2025                                                            |
+| **Date**   | 2025-12-10                                                            |
 | **Author** | @Aleks                                                       |
 | **Tags**   | `#architecture` `#api` `#contracts` `#dispatcher` `#clean-architecture` |
 

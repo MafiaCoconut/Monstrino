@@ -12,7 +12,7 @@ description: "Introduces a media ingestion jobs table to queue, track, and retry
 | Field      | Value                                                           |
 | ---------- | --------------------------------------------------------------- |
 | **Status** | Accepted                                                        |
-| **Date**   | 15-01-2026                                                      |
+| **Date**   | 2026-01-15                                                      |
 | **Author** | @Aleks                                                 |
 | **Tags**   | `#media-pipeline` `#jobs` `#database` `#async-processing`      |
 

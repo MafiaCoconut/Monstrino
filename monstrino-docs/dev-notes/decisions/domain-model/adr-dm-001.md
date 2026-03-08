@@ -12,7 +12,7 @@ description: "Structures the PostgreSQL database into domain-scoped schemas to r
 | Field      | Value                                                        |
 | ---------- | ------------------------------------------------------------ |
 | **Status** | Accepted                                                     |
-| **Date**   | 18-10-2025                                                   |
+| **Date**   | 2025-10-18                                                   |
 | **Author** | @Aleks                                              |
 | **Tags**   | `#domain-model` `#database` `#schemas` `#organization`      |
 

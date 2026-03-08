@@ -12,7 +12,7 @@ description: "Adopts external_id as the stable primary identifier for ingested r
 | Field      | Value                                                     |
 | ---------- | --------------------------------------------------------- |
 | **Status** | Accepted                                                  |
-| **Date**   | 08-10-2025                                                |
+| **Date**   | 2025-10-08                                                |
 | **Author** | @Aleks                                           |
 | **Tags**   | `#data-ingestion` `#external-id` `#identifier` `#source` |
 

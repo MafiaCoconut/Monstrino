@@ -12,7 +12,7 @@ description: "Rehosts all external product images into Monstrino-controlled stor
 | Field      | Value                                                         |
 | ---------- | ------------------------------------------------------------- |
 | **Status** | Accepted                                                      |
-| **Date**   | 8-01-2026                                                    |
+| **Date**   | 2026-01-08                                                    |
 | **Author** | @Aleks                                               |
 | **Tags**   | `#media-pipeline` `#images` `#rehosting` `#s3` `#storage`    |
 

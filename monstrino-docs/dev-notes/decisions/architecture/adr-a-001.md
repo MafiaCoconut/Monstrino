@@ -12,7 +12,7 @@ description: "Introduces shared Python packages across microservices to eliminat
 | Field      | Value                                                        |
 | ---------- | ------------------------------------------------------------ |
 | **Status** | Accepted                                                     |
-| **Date**   | 01-10-2025                                                   |
+| **Date**   | 2025-10-01                                                   |
 | **Author** | @Aleks                                              |
 | **Tags**   | `#architecture` `#packages` `#shared-code` `#monorepo`      |
 

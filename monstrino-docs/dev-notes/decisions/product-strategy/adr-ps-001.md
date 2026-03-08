@@ -12,7 +12,7 @@ description: "Narrows the product domain to Monster High collectibles, rejecting
 | Field      | Value                                                      |
 | ---------- | ---------------------------------------------------------- |
 | **Status** | Accepted                                                   |
-| **Date**   | 01-05-2025                                                 |
+| **Date**   | 2025-05-01                                                 |
 | **Author** | @Aleks                                            |
 | **Tags**   | `#product-strategy` `#domain` `#niche` `#monster-high`    |
 

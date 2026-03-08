@@ -12,7 +12,7 @@ description: "Migrates the frontend from a Vite SPA to Next.js to enable server-
 | Field      | Value                                                    |
 | ---------- | -------------------------------------------------------- |
 | **Status** | Accepted                                                 |
-| **Date**   | 03-02-2026                                               |
+| **Date**   | 2026-02-03                                               |
 | **Author** | @Aleks                                          |
 | **Tags**   | `#frontend` `#nextjs` `#vite` `#seo` `#ssr`             |
 

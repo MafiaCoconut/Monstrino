@@ -12,7 +12,7 @@ description: "Prioritizes building the image pipeline before price collection to
 | Field      | Value                                                        |
 | ---------- | ------------------------------------------------------------ |
 | **Status** | Accepted                                                     |
-| **Date**   | 13-02-2025                                                   |
+| **Date**   | 2025-02-13                                                   |
 | **Author** | @Aleks                                              |
 | **Tags**   | `#product-strategy` `#mvp` `#images` `#prices` `#priority`  |
 

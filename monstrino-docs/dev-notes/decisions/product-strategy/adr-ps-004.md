@@ -12,7 +12,7 @@ description: "Defers affiliate monetization links to avoid conflicting interests
 | Field      | Value                                                   |
 | ---------- | ------------------------------------------------------- |
 | **Status** | Accepted                                                |
-| **Date**   | 20-01-2026                                              |
+| **Date**   | 2026-01-20                                              |
 | **Author** | @Aleks                                         |
 | **Tags**   | `#product-strategy` `#monetization` `#affiliate`       |
 

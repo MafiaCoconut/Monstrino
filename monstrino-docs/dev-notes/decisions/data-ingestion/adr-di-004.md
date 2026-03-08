@@ -12,7 +12,7 @@ description: "Enforces idempotency in the ingestion pipeline using a compound un
 | Field      | Value                                                            |
 | ---------- | ---------------------------------------------------------------- |
 | **Status** | Accepted                                                         |
-| **Date**   | 14-10-2025                                                       |
+| **Date**   | 2025-10-14                                                       |
 | **Author** | @Aleks                                                  |
 | **Tags**   | `#data-ingestion` `#idempotency` `#deduplication` `#external-id` |
 

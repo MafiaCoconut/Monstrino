@@ -11,5 +11,8 @@
     ],
     "cSpell.words": [
         "Pydantic"
-    ]
+    ],
+    "chat.tools.terminal.autoApprove": {
+        "npx docusaurus": true
+    }
 }

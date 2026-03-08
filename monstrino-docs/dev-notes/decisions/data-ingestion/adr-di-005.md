@@ -12,7 +12,7 @@ description: "Designs parsed models to accommodate heterogeneous data from multi
 | Field      | Value                                                              |
 | ---------- | ------------------------------------------------------------------ |
 | **Status** | Accepted                                                           |
-| **Date**   | 30-01-2026                                                         |
+| **Date**   | 2026-01-30                                                         |
 | **Author** | @Aleks                                                    |
 | **Tags**   | `#data-ingestion` `#parsed-models` `#heterogeneous` `#sources`    |
 

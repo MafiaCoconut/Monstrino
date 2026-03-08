@@ -30,11 +30,8 @@ export default function Home(): JSX.Element {
             <Link className={styles.primaryButton} to={useBaseUrl("introduction")}>
               Get Started
             </Link>
-            <Link className={styles.secondaryButton} to={useBaseUrl("docs/intro")}>
-              API Reference
-            </Link>
-            <Link className={styles.secondaryButton} to={useBaseUrl("dev-notes/intro")}>
-              Dev Notes
+            <Link className={styles.secondaryButton} to={useBaseUrl("docs/ai-features/overview")}>
+              AI Features
             </Link>
           </div>
         </section>
@@ -42,53 +39,69 @@ export default function Home(): JSX.Element {
         {/* QUICK LINKS */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Quick Links</h2>
-          <div className={styles.quickLinks}>
-            <Link className={styles.quickLinkItem} to={useBaseUrl("docs/architecture/architecture-overview")}>
-              📦 Releases & Models
-            </Link>
-            <Link className={styles.quickLinkItem} to={useBaseUrl("docs/architecture")}>
-              🏗 Architecture
-            </Link>
-            {/* <Link className={styles.quickLinkItem} to={useBaseUrl("docs/services/overview")}>
-              ⚙ Services
-            </Link> */}
-            {/* <Link className={styles.quickLinkItem} to={useBaseUrl("docs/parser")}>
-              🛠 Parsing System
-            </Link> */}
-            {/* <Link className={styles.quickLinkItem} to={useBaseUrl("docs/importer")}>
-              🔁 Import Pipelines
-            </Link> */}
+
+          <div className={styles.quickLinksGroup}>
+            <h3 className={styles.quickLinksLabel}>Documentation</h3>
+            <div className={styles.quickLinks}>
+              <Link className={styles.quickLinkItem} to={useBaseUrl("docs/architecture/overview")}>
+                🏗 Architecture
+              </Link>
+              <Link className={styles.quickLinkItem} to={useBaseUrl("docs/ai-features/overview")}>
+                🤖 AI Features
+              </Link>
+              <Link className={styles.quickLinkItem} to={useBaseUrl("docs/pipelines/overview")}>
+                🔄 Pipelines
+              </Link>
+              <Link className={styles.quickLinkItem} to={useBaseUrl("docs/principles/overview")}>
+                📐 Design Principles
+              </Link>
+            </div>
+          </div>
+
+          <div className={styles.quickLinksGroup}>
+            <h3 className={styles.quickLinksLabel}>Dev Notes</h3>
+            <div className={styles.quickLinks}>
+              <Link className={styles.quickLinkItem} to={useBaseUrl("dev-notes/architecture/system-context")}>
+                🗺 System Context
+              </Link>
+              <Link className={styles.quickLinkItem} to={useBaseUrl("dev-notes/ai/ai-orchestrator-architecture")}>
+                🧠 AI Orchestrator
+              </Link>
+              <Link className={styles.quickLinkItem} to={useBaseUrl("dev-notes/pipelines/pipelines-overview")}>
+                ⚙ Pipeline Patterns
+              </Link>
+              <Link className={styles.quickLinkItem} to={useBaseUrl("dev-notes/infrastructure/environment-strategy")}>
+                🌍 Infrastructure
+              </Link>
+              <Link className={styles.quickLinkItem} to={useBaseUrl("dev-notes/decisions/architecture-decisions")}>
+                📝 ADRs
+              </Link>
+              <Link className={styles.quickLinkItem} to={useBaseUrl("dev-notes/roadmap/overview")}>
+                🗓 Roadmap
+              </Link>
+            </div>
           </div>
         </section>
 
-        {/* ECOSYSTEM MAP */}
+        {/* STATUS OVERVIEW */}
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Ecosystem Map</h2>
-
-          <div className={styles.ecosystem}>
-            <div className={`${styles.ecoItem} ${styles.fadeUp}`}>
-              <h3>Core Domain</h3>
-              <p>DTOs, Enums, Core logic, Shared Types.</p>
+          <h2 className={styles.sectionTitle}>Project at a Glance</h2>
+          <div className={styles.statsRow}>
+            <div className={styles.statCard}>
+              <span className={styles.statNumber}>9</span>
+              <span className={styles.statLabel}>Microservices</span>
             </div>
-
-            <div className={`${styles.ecoItem} ${styles.fadeUp}`}>
-              <h3>Repositories</h3>
-              <p>ORM, database structure, Unit-of-Work integration.</p>
+            <div className={styles.statCard}>
+              <span className={styles.statNumber}>6</span>
+              <span className={styles.statLabel}>Shared Packages</span>
             </div>
-
-            <div className={`${styles.ecoItem} ${styles.fadeUp}`}>
-              <h3>Microservices</h3>
-              <p>Parser, Importer, Image Service, Sandbox Service.</p>
+            <div className={styles.statCard}>
+              <span className={styles.statNumber}>5+</span>
+              <span className={styles.statLabel}>Data Pipelines</span>
             </div>
-
-            <div className={`${styles.ecoItem} ${styles.fadeUp}`}>
-              <h3>Frontend</h3>
-              <p>Monstrino UI, Components, Icons & Theming.</p>
-            </div>
-
-            <div className={`${styles.ecoItem} ${styles.fadeUp}`}>
-              <h3>Pipelines</h3>
-              <p>Event flow, processing logic, orchestration.</p>
+            <div className={styles.statCard}>
+              <span className={styles.statNumber}>AI</span>
+              <span className={styles.statLabel}>LLM Enrichment</span>
             </div>
           </div>
         </section>
@@ -99,7 +112,7 @@ export default function Home(): JSX.Element {
 
           <div className={styles.archDiagram}>
             <img
-              src={useBaseUrl("img/architecture/monstrino-architecture.svg")}
+              src={useBaseUrl("img/architecture/system-context-diagram.jpg")}
               alt="Monstrino Architecture Diagram"
               className={styles.archImage}
             />

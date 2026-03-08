@@ -12,7 +12,7 @@ description: "Uses a database-tracked processing_state column to manage ingestio
 | Field      | Value                                                         |
 | ---------- | ------------------------------------------------------------- |
 | **Status** | Accepted                                                      |
-| **Date**   | 13-09-2025                                                    |
+| **Date**   | 2025-09-13                                                    |
 | **Author** | @Aleks                                               |
 | **Tags**   | `#data-ingestion` `#processing-state` `#workflow` `#retry`   |
 

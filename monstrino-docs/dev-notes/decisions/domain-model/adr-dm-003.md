@@ -12,7 +12,7 @@ description: "Introduces a character variant concept to represent the same chara
 | Field      | Value                                                     |
 | ---------- | --------------------------------------------------------- |
 | **Status** | Accepted                                                  |
-| **Date**   | 03-04-2026                                                |
+| **Date**   | 2026-04-03                                                |
 | **Author** | @Aleks                                           |
 | **Tags**   | `#domain-model` `#characters` `#variants` `#catalog`     |
 

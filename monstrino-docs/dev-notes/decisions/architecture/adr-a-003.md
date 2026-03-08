@@ -12,7 +12,7 @@ description: "Defines a UnitOfWork and BaseRepository pattern to manage database
 | Field      | Value                                                                   |
 | ---------- | ----------------------------------------------------------------------- |
 | **Status** | Accepted                                                                |
-| **Date**   | 30-10-2025                                                              |
+| **Date**   | 2025-10-30                                                              |
 | **Author** | @Aleks                                                         |
 | **Tags**   | `#architecture` `#persistence` `#unit-of-work` `#repository-pattern`   |
 

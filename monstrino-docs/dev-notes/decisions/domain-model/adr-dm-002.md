@@ -12,7 +12,7 @@ description: "Adds an external reference system to canonical releases to track a
 | Field      | Value                                                             |
 | ---------- | ----------------------------------------------------------------- |
 | **Status** | Accepted                                                          |
-| **Date**   | 20-11-2025                                                        |
+| **Date**   | 2025-11-20                                                        |
 | **Author** | @Aleks                                                   |
 | **Tags**   | `#domain-model` `#releases` `#external-references` `#sources`    |
 
