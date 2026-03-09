@@ -213,9 +213,9 @@ This ensures that the majority of the platform is not directly exposed to the in
 
 External traffic enters the platform through two layers.
 
-1. Cloudflare Tunnel — used to expose services from the homelab environment securely to the internet.
+1. Cloudflare Tunnel - used to expose services from the homelab environment securely to the internet.
 
-2. Traefik — used inside the Kubernetes cluster as the ingress controller responsible for routing requests to the appropriate services.
+2. Traefik - used inside the Kubernetes cluster as the ingress controller responsible for routing requests to the appropriate services.
 
 ```mermaid
 flowchart TD

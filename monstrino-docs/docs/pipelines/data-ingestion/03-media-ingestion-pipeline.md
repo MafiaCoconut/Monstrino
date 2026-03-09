@@ -41,7 +41,13 @@ At a high level, the pipeline consists of three stages:
 
 ---
 
-## Stage 1 — Media Rehosting Subscriber
+## High-Level Media Ingestion Flow
+
+![](/img/pipelines/media-ingastion-pipeline.jpg)
+
+---
+
+## Stage 1 - Media Rehosting Subscriber
 
 ### Purpose
 
@@ -66,7 +72,7 @@ A persisted `MediaIngestionJob` ready for downstream processing.
 
 ---
 
-## Stage 2 — Media Rehosting Processor
+## Stage 2 - Media Rehosting Processor
 
 ### Purpose
 
@@ -122,7 +128,7 @@ This allows the platform to retrieve images for specific entities such as releas
 
 ---
 
-## Stage 3 — Media Normalization
+## Stage 3 - Media Normalization
 
 ### Purpose
 
@@ -178,9 +184,9 @@ Media processing is separated from catalog ingestion so that heavy image operati
 
 The pipeline distinguishes between:
 
-- `MediaAsset` — canonical stored image
-- `MediaAttachment` — ownership mapping
-- `MediaAssetVariant` — derived representations
+- `MediaAsset` - canonical stored image
+- `MediaAttachment` - ownership mapping
+- `MediaAssetVariant` - derived representations
 
 ### Content Deduplication
 

@@ -16,28 +16,41 @@
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 } */
- :root {
-  --ifm-color-primary: #ff2ca8;          /* ваш фирменный розовый */
-  --ifm-color-primary-dark: #e02594;
-  --ifm-color-primary-darker: #c41f83;
-  --ifm-color-primary-light: #ff4ab6;
-  --ifm-color-primary-lighter: #ff74ca;
-  --ifm-background-color: #0d0d0f;       /* глубокий тёмный фон */
-  --ifm-navbar-background-color: #111114;
-  --ifm-card-background-color: #16161a;
+/* ===== Light theme (default) ===== */
+:root {
+  --ifm-color-primary: #c91d86;          /* darker pink for light bg contrast */
+  --ifm-color-primary-dark: #b01874;
+  --ifm-color-primary-darker: #9a1565;
+  --ifm-color-primary-darkest: #801154;
+  --ifm-color-primary-light: #e02594;
+  --ifm-color-primary-lighter: #f03da3;
+  --ifm-color-primary-lightest: #ff2ca8;
+  --ifm-background-color: #ffffff;
+  --ifm-navbar-background-color: #ffffff;
+  --ifm-card-background-color: #f5f5f8;
   --ifm-footer-background-color: #111114;
   --ifm-code-font-size: 95%;
   --ifm-font-family-base: 'Inter', sans-serif;
+  --docusaurus-highlighted-code-line-bg: rgba(201, 29, 134, 0.1);
 
   /* Table */
-  --ifm-table-background: rgba(20, 20, 26, 0.65);
-  --ifm-table-stripe-background: rgba(255, 44, 168, 0.08);
-  --ifm-table-border-color: rgba(255, 255, 255, 0.12);
+  --ifm-table-background: #ffffff;
+  --ifm-table-stripe-background: rgba(201, 29, 134, 0.05);
+  --ifm-table-border-color: rgba(0, 0, 0, 0.12);
   --ifm-table-border-width: 1px;
   --ifm-table-cell-padding: 0.6rem 0.9rem;
-  --ifm-table-head-background: rgba(255, 44, 168, 0.14);
-  --ifm-table-head-color: #ffffff;
+  --ifm-table-head-background: rgba(201, 29, 134, 0.1);
+  --ifm-table-head-color: #111114;
   --ifm-table-head-font-weight: 700;
+
+  /* Page-specific theme variables */
+  --monstrino-heading-color: #111114;
+  --monstrino-text-muted: #555;
+  --monstrino-text-subtle: #777;
+  --monstrino-card-bg: rgba(235, 235, 245, 0.85);
+  --monstrino-stat-card-bg: rgba(230, 230, 242, 0.9);
+  --monstrino-quick-link-bg: rgba(235, 235, 245, 0.85);
+  --monstrino-navbar-glass-bg: rgba(255, 255, 255, 0.85);
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
@@ -52,6 +65,7 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 } */
 
+/* ===== Dark theme ===== */
 [data-theme='dark'] {
   --ifm-color-primary: #ff2ca8;
   --ifm-color-primary-dark: #e02594;
@@ -60,8 +74,27 @@
   --ifm-color-primary-light: #ff4ab6;
   --ifm-color-primary-lighter: #ff74ca;
   --ifm-color-primary-lightest: #ff9edf;
-
+  --ifm-background-color: #0d0d0f;
+  --ifm-navbar-background-color: #111114;
+  --ifm-card-background-color: #16161a;
+  --ifm-footer-background-color: #0d0d0f;
   --docusaurus-highlighted-code-line-bg: rgba(255, 44, 168, 0.08);
+
+  /* Table */
+  --ifm-table-background: rgba(20, 20, 26, 0.65);
+  --ifm-table-stripe-background: rgba(255, 44, 168, 0.08);
+  --ifm-table-border-color: rgba(255, 255, 255, 0.12);
+  --ifm-table-head-background: rgba(255, 44, 168, 0.14);
+  --ifm-table-head-color: #ffffff;
+
+  /* Page-specific theme variables */
+  --monstrino-heading-color: #ffffff;
+  --monstrino-text-muted: #bbb;
+  --monstrino-text-subtle: #999;
+  --monstrino-card-bg: rgba(20, 20, 28, 0.7);
+  --monstrino-stat-card-bg: rgba(25, 25, 32, 0.65);
+  --monstrino-quick-link-bg: rgba(30, 30, 35, 0.75);
+  --monstrino-navbar-glass-bg: rgba(17, 17, 20, 0.8);
 }
 
 
@@ -106,7 +139,7 @@ input,
 
 .card {
   border: 1px solid rgba(255,44,168,0.12);
-  background-color: #16161a;
+  background-color: var(--ifm-card-background-color);
 }
 
 .theme-code-block {
@@ -133,7 +166,7 @@ input,
 }
 
 .footer {
-  background: #0d0d0f;
+  background: var(--ifm-footer-background-color);
   border-top: 1px solid rgba(255,44,168,0.15);
 }
 
@@ -142,8 +175,20 @@ input,
   --ifm-navbar-sidebar-width: 42vw;
 }
 
-/* Show "Docs" and "Dev Notes" buttons at all screen sizes >= 300px */
-@media (min-width: 300px) {
+/* Hide "Docs" and "Dev Notes" nav buttons on very small screens (< 500px) */
+/* They are still accessible via the hamburger sidebar menu */
+@media (max-width: 499px) {
+  .navbar__item {
+    display: none !important;
+  }
+  /* Keep the brand/logo visible */
+  .navbar__brand {
+    display: flex !important;
+  }
+}
+
+/* Show nav buttons at >= 500px */
+@media (min-width: 500px) {
   .navbar__item {
     display: block !important;
   }
@@ -161,8 +206,8 @@ input,
   }
 }
 
-/* Mobile / tablet: keep hamburger visible so the docs sidebar can be opened */
-@media (min-width: 300px) and (max-width: 996px) {
+/* Mobile / tablet (< 997px): keep hamburger visible so the docs sidebar can be opened */
+@media (max-width: 996px) {
   .navbar__toggle {
     display: flex !important;
     order: -1; /* place it before the nav links */

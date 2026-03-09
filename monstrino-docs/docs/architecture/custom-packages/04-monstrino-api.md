@@ -1,6 +1,6 @@
 ---
 title: monstrino-api
-description: Shared HTTP API layer — middleware, exception handlers, ResponseFactory, and the unified response envelope used by every service.
+description: Shared HTTP API layer - middleware, exception handlers, ResponseFactory, and the unified response envelope used by every service.
 sidebar_label: monstrino-api
 sidebar_position: 4
 ---
@@ -22,7 +22,7 @@ It standardizes how services expose APIs: exception handling, response serializa
 | `pydantic` |
 | `aiobreaker` |
 
-No internal Monstrino packages are depended upon — this package is independently deployable.
+No internal Monstrino packages are depended upon - this package is independently deployable.
 
 ## Actual Structure
 
@@ -33,7 +33,7 @@ monstrino_api/
     ├── shared/
     │   ├── errors/         # ApiError, NotFoundError, contract_mapper
     │   ├── exceptions/     # Exception hierarchy + register_exception_handlers()
-    │   ├── middleware/     # RequestContextMiddleware — X-Request-Id / X-Correlation-Id
+    │   ├── middleware/     # RequestContextMiddleware - X-Request-Id / X-Correlation-Id
     │   ├── requests/       # Request models (e.g. GenerateText)
     │   ├── responses/      # ResponseFactory + response envelope models
     │   └── validation/     # Pydantic validation helpers
@@ -72,7 +72,7 @@ Provides a unified `rf.err(...)` method to produce standardized JSON error envel
 
 ### Unified Response Structure
 
-Because every service uses `ResponseFactory` from this package, **all Monstrino services always return the same response envelope** — regardless of which service handles the request.
+Because every service uses `ResponseFactory` from this package, **all Monstrino services always return the same response envelope** - regardless of which service handles the request.
 
 The envelope has a fixed outer shape:
 
@@ -82,7 +82,7 @@ The envelope has a fixed outer shape:
 | `request_id` | Auto-generated or forwarded from `X-Request-Id` header |
 | `correlation_id` | Auto-generated or forwarded from `X-Correlation-Id` header |
 | `trace_id` | Optional trace identifier |
-| `data` | Payload — defined per-service via `monstrino-contracts` models |
+| `data` | Payload - defined per-service via `monstrino-contracts` models |
 | `error` | Error details when `status = "error"`, otherwise `null` |
 | `meta` | Service name, API version, timestamp |
 
@@ -132,7 +132,7 @@ The envelope has a fixed outer shape:
 }
 ```
 
-The `data` field is the only part that varies between services — each service fills it with its own response model defined in **`monstrino-contracts`**. The rest of the envelope is always identical.
+The `data` field is the only part that varies between services - each service fills it with its own response model defined in **`monstrino-contracts`**. The rest of the envelope is always identical.
 
 ## Architectural Role
 

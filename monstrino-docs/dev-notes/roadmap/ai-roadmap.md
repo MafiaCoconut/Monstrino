@@ -20,11 +20,11 @@ AI integration in Monstrino is developed in phases, each building on validated c
 
 The guiding principle:
 
-> AI assists the pipeline — it does **not replace deterministic validation**. Every AI output must pass through a validation step before it reaches canonical storage.
+> AI assists the pipeline - it does **not replace deterministic validation**. Every AI output must pass through a validation step before it reaches canonical storage.
 
 ---
 
-## Phase 1 — Basic AI Assistance
+## Phase 1 - Basic AI Assistance
 
 **Status: operational**
 
@@ -40,7 +40,7 @@ Initial AI integration focuses on improving the quality of text-based catalog da
 
 ---
 
-## Phase 2 — Advanced Extraction
+## Phase 2 - Advanced Extraction
 
 **Status: planned**
 
@@ -53,12 +53,12 @@ Future models will extend AI assistance to more complex extraction tasks.
 | **Improved unstructured description parsing** | extract structured data from complex, multi-field free-text descriptions |
 
 :::note
-Phase 2 requires vision model integration. The current `ai-orchestrator` architecture already supports multimodal models — this phase is about applying that capability to specific extraction tasks.
+Phase 2 requires vision model integration. The current `ai-orchestrator` architecture already supports multimodal models - this phase is about applying that capability to specific extraction tasks.
 :::
 
 ---
 
-## Phase 3 — Intelligent Automation
+## Phase 3 - Intelligent Automation
 
 **Status: long-term direction**
 
@@ -82,12 +82,12 @@ Across all phases, one constraint applies:
 
 > **AI outputs must be deterministically verifiable before writing to canonical storage.**
 
-This means each AI-assisted stage must have a corresponding validation step that can reject or flag implausible outputs — regardless of what the model returned.
+This means each AI-assisted stage must have a corresponding validation step that can reject or flag implausible outputs - regardless of what the model returned.
 
 ---
 
 ## Related Documents
 
-- [AI Orchestrator Architecture](../ai/ai-orchestrator-architecture) — the service executing AI requests,
-- [AI Data Enrichment Strategy](../ai/ai-data-enrichment) — how enrichment is integrated into the ingestion pipeline,
-- [Model Selection Strategy](../ai/model-selection) — which models support these phases.
+- [AI Orchestrator Architecture](../ai/ai-orchestrator-architecture) - the service executing AI requests,
+- [AI Data Enrichment Strategy](../ai/ai-data-enrichment) - how enrichment is integrated into the ingestion pipeline,
+- [Model Selection Strategy](../ai/model-selection) - which models support these phases.

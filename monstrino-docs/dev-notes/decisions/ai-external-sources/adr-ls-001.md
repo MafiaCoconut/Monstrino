@@ -7,7 +7,7 @@ tags: [llm, gateway, ollama, normalization, isolation]
 description: "Isolates all LLM processing behind a dedicated llm-gateway service to centralize model configuration and prevent LLM dependencies from spreading across services."
 ---
 
-# ADR-LS-001 — Isolate AI Processing Behind `llm-gateway`
+# ADR-LS-001 - Isolate AI Processing Behind `llm-gateway`
 
 | Field      | Value                                                        |
 | ---------- | ------------------------------------------------------------ |
@@ -59,4 +59,4 @@ A single gateway service exposes a simple internal API for LLM-powered operation
 
 ## Related Decisions
 
-- [ADR-LS-002](./adr-ls-002.md) — LLM-assisted normalization for release data
+- [ADR-LS-002](./adr-ls-002.md) - LLM-assisted normalization for release data

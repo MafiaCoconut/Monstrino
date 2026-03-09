@@ -7,7 +7,7 @@ tags: [data-ingestion, processing-state, workflow, retry]
 description: "Uses a database-tracked processing_state column to manage ingestion workflow state, replacing a previous Kafka-based orchestration approach."
 ---
 
-# ADR-DI-002 — Use Database `processing_state` for Ingestion Workflows
+# ADR-DI-002 - Use Database `processing_state` for Ingestion Workflows
 
 | Field      | Value                                                         |
 | ---------- | ------------------------------------------------------------- |
@@ -44,10 +44,10 @@ Each record in parsed tables has a `processing_state` column that is updated as 
 
 > Ingestion workflows are orchestrated through a **`processing_state` field** on database records with the following states:
 >
-> - `init` — record created, not yet processed
-> - `processing` — currently being processed
-> - `processed` — successfully imported
-> - `error` — failed, requires intervention or retry
+> - `init` - record created, not yet processed
+> - `processing` - currently being processed
+> - `processed` - successfully imported
+> - `error` - failed, requires intervention or retry
 
 ## Consequences
 
@@ -64,5 +64,5 @@ Each record in parsed tables has a `processing_state` column that is updated as 
 
 ## Related Decisions
 
-- [ADR-DI-001](./adr-di-001.md) — Parsed tables ingestion boundary
-- [ADR-DI-004](./adr-di-004.md) — Idempotency enforcement
+- [ADR-DI-001](./adr-di-001.md) - Parsed tables ingestion boundary
+- [ADR-DI-004](./adr-di-004.md) - Idempotency enforcement

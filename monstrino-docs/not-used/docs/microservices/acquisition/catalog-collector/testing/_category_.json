@@ -6,7 +6,7 @@
   "className": "monstrino-subcategory",
   "link": {
     "type": "generated-index",
-    "title": "catalog-collector — Testing",
+    "title": "catalog-collector - Testing",
     "description": "Testing strategy, fixtures and test scenarios of the catalog-collector microservice.",
     "slug": "/acquisition/microservices/catalog-collector/testing"
   }

@@ -65,16 +65,16 @@ This becomes important when:
 
 ## Advantages
 
-- **Centralized model management** — configuration, versioning, and prompt templates in one place,
-- **Easier upgrades and model switching** — consumers call the same API regardless of which model is behind it,
-- **Consistent request format** — internal services use a stable command-based schema,
-- **Isolation** — model infrastructure concerns do not leak into catalog, market, or media services.
+- **Centralized model management** - configuration, versioning, and prompt templates in one place,
+- **Easier upgrades and model switching** - consumers call the same API regardless of which model is behind it,
+- **Consistent request format** - internal services use a stable command-based schema,
+- **Isolation** - model infrastructure concerns do not leak into catalog, market, or media services.
 
 ---
 
 ## Related Documents
 
-- [Ollama Client Design](./ollama-client-design) — how the service communicates with Ollama,
-- [AI Command Execution Schema](./ai-command-schema) — structured response format used by this service,
-- [AI Data Enrichment Strategy](./ai-data-enrichment) — where this service fits in the ingestion pipeline,
-- [Model Selection Strategy](./model-selection) — which models are used and why.
+- [Ollama Client Design](./ollama-client-design) - how the service communicates with Ollama,
+- [AI Command Execution Schema](./ai-command-schema) - structured response format used by this service,
+- [AI Data Enrichment Strategy](./ai-data-enrichment) - where this service fits in the ingestion pipeline,
+- [Model Selection Strategy](./model-selection) - which models are used and why.

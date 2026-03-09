@@ -54,10 +54,10 @@ Not every service contains every auxiliary folder, but the overall structure rem
 
 The most important directories are:
 
-- `src/` — production code
-- `tests/` — automated tests
-- `logs/` — local service logs
-- `data/` or similar working folders — local development data and debugging artifacts
+- `src/` - production code
+- `tests/` - automated tests
+- `logs/` - local service logs
+- `data/` or similar working folders - local development data and debugging artifacts
 
 ---
 
@@ -405,9 +405,9 @@ Some services also contain additional local folders or files under `src/`, depen
 
 Examples from existing Monstrino services include:
 
-- `logs/` — local log files during development
-- `data/` — local input or debug data
-- `test.py` / `test.json` — temporary local service-level testing artifacts
+- `logs/` - local log files during development
+- `data/` - local input or debug data
+- `test.py` / `test.json` - temporary local service-level testing artifacts
 
 These files may exist during development, but they are not part of the core architectural layers.
 

@@ -76,6 +76,6 @@ When one domain needs data from another, the preferred patterns are:
 
 ## Related Documents
 
-- [System Context](./system-context) — the overall role of the platform,
-- [Container Architecture](./container-architecture) — how services are packaged,
-- [Data Flow: Ingestion](./data-flow-ingestion) — how domain boundaries manifest in the ingestion pipeline.
+- [System Context](./system-context) - the overall role of the platform,
+- [Container Architecture](./container-architecture) - how services are packaged,
+- [Data Flow: Ingestion](./data-flow-ingestion) - how domain boundaries manifest in the ingestion pipeline.

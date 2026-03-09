@@ -7,7 +7,7 @@ tags: [infra, k3s, kubernetes, homelab, deployment]
 description: "Deploys Monstrino on a single-node k3s cluster to provide Kubernetes-compatible orchestration in a homelab environment without full cluster overhead."
 ---
 
-# ADR-IP-001 — Deploy Monstrino on Single-Node k3s Cluster
+# ADR-IP-001 - Deploy Monstrino on Single-Node k3s Cluster
 
 | Field      | Value                                                       |
 | ---------- | ----------------------------------------------------------- |
@@ -43,7 +43,7 @@ Run a full Kubernetes cluster.
 
 ### Option 3: k3s (Lightweight Kubernetes) ✅
 
-Run k3s — a lightweight Kubernetes distribution optimized for resource-constrained environments.
+Run k3s - a lightweight Kubernetes distribution optimized for resource-constrained environments.
 
 - **Pros:** Kubernetes-compatible API, low resource footprint, supports namespaces, scales to multi-node if needed, uses standard Kubernetes tooling.
 - **Cons:** Some Kubernetes features are simplified or removed; not stock Kubernetes.
@@ -52,8 +52,8 @@ Run k3s — a lightweight Kubernetes distribution optimized for resource-constra
 
 > Monstrino is deployed on a **single-node k3s cluster** with two namespaces:
 >
-> - **`test`** — staging/testing environment
-> - **`prod`** — production environment
+> - **`test`** - staging/testing environment
+> - **`prod`** - production environment
 
 ## Consequences
 
@@ -70,5 +70,5 @@ Run k3s — a lightweight Kubernetes distribution optimized for resource-constra
 
 ## Related Decisions
 
-- [ADR-IP-002](./adr-ip-002.md) — Cloudflared for external access
-- [ADR-MP-002](../media-pipeline/adr-mp-002.md) — S3-compatible storage
+- [ADR-IP-002](./adr-ip-002.md) - Cloudflared for external access
+- [ADR-MP-002](../media-pipeline/adr-mp-002.md) - S3-compatible storage

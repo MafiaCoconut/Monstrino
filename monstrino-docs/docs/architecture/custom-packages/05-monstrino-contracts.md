@@ -1,6 +1,6 @@
 ---
 title: monstrino-contracts
-description: Versioned inter-service data exchange contracts — request/response schemas, command models, and cross-service DTOs under the v1/ namespace.
+description: Versioned inter-service data exchange contracts - request/response schemas, command models, and cross-service DTOs under the v1/ namespace.
 sidebar_label: monstrino-contracts
 sidebar_position: 5
 ---
@@ -112,7 +112,7 @@ class ReleaseSearchRequest(BaseModel):
 
 ### Versioning Convention
 
-All contracts are namespaced under `v1/` — future breaking changes will introduce `v2/` without removing `v1/`.
+All contracts are namespaced under `v1/` - future breaking changes will introduce `v2/` without removing `v1/`.
 
 ### Templates
 

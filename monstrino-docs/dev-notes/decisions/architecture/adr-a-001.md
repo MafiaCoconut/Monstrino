@@ -7,7 +7,7 @@ tags: [architecture, packages, shared-code, monorepo]
 description: "Introduces shared Python packages across microservices to eliminate code duplication and establish a monorepo-style shared library foundation."
 ---
 
-# ADR-A-001 — Introduce Shared Packages for Cross-Service Code
+# ADR-A-001 - Introduce Shared Packages for Cross-Service Code
 
 | Field      | Value                                                        |
 | ---------- | ------------------------------------------------------------ |
@@ -47,11 +47,11 @@ Extract shared code into versioned internal packages consumed by all services.
 
 > Shared code is extracted into internal packages:
 >
-> - `monstrino-models` — ORM and domain models
-> - `monstrino-repositories` — repository interfaces and base implementations
-> - `monstrino-core` — application-layer utilities
-> - `monstrino-testing` — shared test fixtures and factories
-> - `monstrino-infra` — infrastructure clients (DB, S3, HTTP, parsers)
+> - `monstrino-models` - ORM and domain models
+> - `monstrino-repositories` - repository interfaces and base implementations
+> - `monstrino-core` - application-layer utilities
+> - `monstrino-testing` - shared test fixtures and factories
+> - `monstrino-infra` - infrastructure clients (DB, S3, HTTP, parsers)
 
 ## Consequences
 
@@ -68,5 +68,5 @@ Extract shared code into versioned internal packages consumed by all services.
 
 ## Related Decisions
 
-- [ADR-A-002](./adr-a-002.md) — ORM restricted to repository layer
-- [ADR-A-006](./adr-a-006.md) — Centralize parsers in monstrino-infra
+- [ADR-A-002](./adr-a-002.md) - ORM restricted to repository layer
+- [ADR-A-006](./adr-a-006.md) - Centralize parsers in monstrino-infra

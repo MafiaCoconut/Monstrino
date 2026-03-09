@@ -7,7 +7,7 @@ tags: [llm, normalization, release-data, parsing]
 description: "Applies LLM-assisted normalization via llm-gateway to extract structured data from inconsistent and free-form Monster High release titles."
 ---
 
-# ADR-LS-002 — Use LLM-Assisted Normalization for Release Data
+# ADR-LS-002 - Use LLM-Assisted Normalization for Release Data
 
 | Field      | Value                                                         |
 | ---------- | ------------------------------------------------------------- |
@@ -55,11 +55,11 @@ Use an LLM to extract structured fields (line name, character, wave, generation)
 
 ### Negative
 
-- Non-deterministic — requires output validation and fallback handling.
+- Non-deterministic - requires output validation and fallback handling.
 - Adds latency compared to rule-based parsing.
 - Depends on `llm-gateway` availability.
 
 ## Related Decisions
 
-- [ADR-LS-001](./adr-ls-001.md) — llm-gateway isolation
-- [ADR-DI-005](../data-ingestion/adr-di-005.md) — Heterogeneous parsed models
+- [ADR-LS-001](./adr-ls-001.md) - llm-gateway isolation
+- [ADR-DI-005](../data-ingestion/adr-di-005.md) - Heterogeneous parsed models

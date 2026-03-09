@@ -7,7 +7,7 @@ tags: [architecture, services, domain, structure]
 description: "Organizes microservices into domain-based subdirectories to clarify ownership, improve navigation, and make architectural intent explicit."
 ---
 
-# ADR-A-004 — Organize Services by Domain Capabilities
+# ADR-A-004 - Organize Services by Domain Capabilities
 
 | Field      | Value                                                          |
 | ---------- | -------------------------------------------------------------- |
@@ -64,5 +64,5 @@ Services are grouped into subdirectories representing high-level product capabil
 
 ## Related Decisions
 
-- [ADR-A-001](./adr-a-001.md) — Shared packages organization
-- [ADR-DM-001](../domain-model/adr-dm-001.md) — Database domain schema structure
+- [ADR-A-001](./adr-a-001.md) - Shared packages organization
+- [ADR-DM-001](../domain-model/adr-dm-001.md) - Database domain schema structure

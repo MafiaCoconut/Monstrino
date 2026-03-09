@@ -7,7 +7,7 @@ tags: [domain-model, characters, variants, catalog]
 description: "Introduces a character variant concept to represent the same character appearing across multiple distinct franchise contexts within the Monster High universe."
 ---
 
-# ADR-DM-003 — Introduce Character Variant Concept
+# ADR-DM-003 - Introduce Character Variant Concept
 
 | Field      | Value                                                     |
 | ---------- | --------------------------------------------------------- |
@@ -52,8 +52,8 @@ A `Character` represents the canonical identity (the person/creature), and `Char
 
 > The domain model introduces a two-level character structure:
 >
-> - **`Character`** — the canonical identity (e.g., "Wednesday Addams").
-> - **`CharacterVariant`** — a specific version within a franchise or generation (e.g., "Wednesday Addams — Wednesday TV Series").
+> - **`Character`** - the canonical identity (e.g., "Wednesday Addams").
+> - **`CharacterVariant`** - a specific version within a franchise or generation (e.g., "Wednesday Addams - Wednesday TV Series").
 >
 > Releases reference `CharacterVariant`, not `Character` directly.
 
@@ -72,5 +72,5 @@ A `Character` represents the canonical identity (the person/creature), and `Char
 
 ## Related Decisions
 
-- [ADR-DM-001](./adr-dm-001.md) — Database domain schema structure
-- [ADR-DI-001](../data-ingestion/adr-di-001.md) — Separated parsed and canonical tables
+- [ADR-DM-001](./adr-dm-001.md) - Database domain schema structure
+- [ADR-DI-001](../data-ingestion/adr-di-001.md) - Separated parsed and canonical tables

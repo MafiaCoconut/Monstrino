@@ -1,6 +1,6 @@
 ---
 title: Custom Packages Overview
-description: All 7 internal Python packages at a glance — architectural layers, responsibilities, and dependency graph.
+description: All 7 internal Python packages at a glance - architectural layers, responsibilities, and dependency graph.
 sidebar_label: Overview
 sidebar_position: 0
 ---
@@ -42,7 +42,7 @@ All packages are versioned independently and distributed via private Git sources
 ├──────────────────────────────────────────────────────────────────────┤
 │  monstrino-models         (ORM + DTOs)                               │
 ├──────────────────────────────────────────────────────────────────────┤
-│  monstrino-core           (pure domain — no external deps)           │
+│  monstrino-core           (pure domain - no external deps)           │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -53,5 +53,5 @@ All packages are versioned independently and distributed via private Git sources
 3. **`monstrino-contracts`** may only import `monstrino-core`.
 4. **`monstrino-api`** has no internal Monstrino dependencies.
 5. **`monstrino-repositories`** imports `core`, `models`, `contracts`.
-6. **`monstrino-infra`** imports `core`, `api` — never `models` or `repositories` directly.
-7. **`monstrino-testing`** is a `devDependency` only — never added to production service dependencies.
+6. **`monstrino-infra`** imports `core`, `api` - never `models` or `repositories` directly.
+7. **`monstrino-testing`** is a `devDependency` only - never added to production service dependencies.

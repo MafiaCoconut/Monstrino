@@ -16,7 +16,7 @@
 .title {
   font-size: 3rem;
   font-weight: 800;
-  color: white;
+  color: var(--monstrino-heading-color);
   margin-bottom: 1rem;
 }
 
@@ -28,7 +28,7 @@
 
 .subtitle {
   font-size: 1.2rem;
-  color: #bbb;
+  color: var(--monstrino-text-muted);
   line-height: 1.6;
 }
 
@@ -58,7 +58,7 @@
   padding: 2.2rem;
   border-radius: 20px;
   border: 1px solid rgba(255, 44, 168, 0.25);
-  background: rgba(20, 20, 28, 0.7);
+  background: var(--monstrino-card-bg);
   backdrop-filter: blur(12px);
   text-decoration: none;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
@@ -79,19 +79,19 @@
 .cardTitle {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--monstrino-heading-color);
   margin: 0;
 }
 
 .cardDesc {
-  color: #bbb;
+  color: var(--monstrino-text-muted);
   font-size: 1rem;
   line-height: 1.65;
   flex: 1;
 }
 
 .cardDesc strong {
-  color: #ddd;
+  color: var(--monstrino-heading-color);
 }
 
 .cardCta {

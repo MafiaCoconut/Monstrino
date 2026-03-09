@@ -6,7 +6,7 @@
   "className": "monstrino-subcategory",
   "link": {
     "type": "generated-index",
-    "title": "testing-service — Use Cases",
+    "title": "testing-service - Use Cases",
     "description": "All functional use cases implemented inside the testing-service microservice.",
     "slug": "/support/microservices/testing-service/use-cases"
   }

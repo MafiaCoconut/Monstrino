@@ -7,7 +7,7 @@ tags: [media-pipeline, services, subscriber, processor, decomposition]
 description: "Splits media rehosting into a subscriber service that detects new images and a processor that downloads and stores them, separating event detection from I/O."
 ---
 
-# ADR-MP-003 — Split Media Rehosting Pipeline into Subscriber and Processor
+# ADR-MP-003 - Split Media Rehosting Pipeline into Subscriber and Processor
 
 | Field      | Value                                                                  |
 | ---------- | ---------------------------------------------------------------------- |
@@ -20,8 +20,8 @@ description: "Splits media rehosting into a subscriber service that detects new 
 
 The original `media` service combined two distinct concerns:
 
-1. **Discovery** — detecting new releases that need their images downloaded (subscriber to catalog events or database polling).
-2. **Processing** — actually downloading, transforming, and storing images in S3.
+1. **Discovery** - detecting new releases that need their images downloaded (subscriber to catalog events or database polling).
+2. **Processing** - actually downloading, transforming, and storing images in S3.
 
 As the service grew, mixing these responsibilities made it harder to scale, monitor, and maintain each concern independently.
 
@@ -36,8 +36,8 @@ One service handles both discovery and processing.
 
 ### Option 2: Split into Subscriber and Processor ✅
 
-- **`media-rehosting-subscriber`** — monitors the catalog for releases needing media processing, creates `media_ingest_job` records.
-- **`media-rehosting-processor`** — reads jobs from the queue, downloads images, uploads to S3, marks jobs complete.
+- **`media-rehosting-subscriber`** - monitors the catalog for releases needing media processing, creates `media_ingest_job` records.
+- **`media-rehosting-processor`** - reads jobs from the queue, downloads images, uploads to S3, marks jobs complete.
 
 - **Pros:** Independent scaling, clear single responsibility per service, separate failure modes.
 - **Cons:** Additional service to deploy and monitor.
@@ -46,8 +46,8 @@ One service handles both discovery and processing.
 
 > The media rehosting pipeline is split into two services:
 >
-> - **`media-rehosting-subscriber`** — discovery and job creation.
-> - **`media-rehosting-processor`** — image download, transformation, and S3 upload.
+> - **`media-rehosting-subscriber`** - discovery and job creation.
+> - **`media-rehosting-processor`** - image download, transformation, and S3 upload.
 
 ## Consequences
 
@@ -63,5 +63,5 @@ One service handles both discovery and processing.
 
 ## Related Decisions
 
-- [ADR-MP-004](./adr-mp-004.md) — Media ingestion jobs table
-- [ADR-MP-001](./adr-mp-001.md) — Image rehosting decision
+- [ADR-MP-004](./adr-mp-004.md) - Media ingestion jobs table
+- [ADR-MP-001](./adr-mp-001.md) - Image rehosting decision

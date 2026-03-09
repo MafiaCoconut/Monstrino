@@ -7,7 +7,7 @@ tags: [product-strategy, mvp, images, prices, priority]
 description: "Prioritizes building the image pipeline before price collection to unblock catalog visual completeness and improve user-facing quality sooner."
 ---
 
-# ADR-PS-005 — Prioritize Image Pipeline Over Price Collection for MVP
+# ADR-PS-005 - Prioritize Image Pipeline Over Price Collection for MVP
 
 | Field      | Value                                                        |
 | ---------- | ------------------------------------------------------------ |
@@ -20,8 +20,8 @@ description: "Prioritizes building the image pipeline before price collection to
 
 The catalog roadmap includes two data enrichment tracks beyond the core release data:
 
-1. **Image pipeline** — downloading, rehosting, and serving product images from Monstrino-controlled storage.
-2. **Price collection** — tracking MSRP and secondary market prices from sources like Mattel Shopify and third-party retailers.
+1. **Image pipeline** - downloading, rehosting, and serving product images from Monstrino-controlled storage.
+2. **Price collection** - tracking MSRP and secondary market prices from sources like Mattel Shopify and third-party retailers.
 
 Both are valuable, but development bandwidth is limited. A priority decision was needed.
 
@@ -44,9 +44,9 @@ Get images working first to make the catalog visually useful, then add price tra
 ## Decision
 
 > Development priority order for catalog enrichment:
-> 1. **Catalog** — core release data
-> 2. **Images** — media rehosting pipeline
-> 3. **Prices** — MSRP and market price tracking
+> 1. **Catalog** - core release data
+> 2. **Images** - media rehosting pipeline
+> 3. **Prices** - MSRP and market price tracking
 
 ## Consequences
 
@@ -54,7 +54,7 @@ Get images working first to make the catalog visually useful, then add price tra
 
 - Visually compelling catalog accessible earlier.
 - Better user experience at launch.
-- Cleaner development sequencing — image infrastructure is also needed for price-related product images.
+- Cleaner development sequencing - image infrastructure is also needed for price-related product images.
 
 ### Negative
 

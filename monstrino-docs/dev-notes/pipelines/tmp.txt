@@ -367,11 +367,11 @@ Once enough data is available, the pipeline prepares a normalized representation
 
 The exact service split may evolve, but the pipeline naturally maps to roles like these:
 
-- **source collector** — discovers new items,
-- **parser/enricher** — extracts and improves structured values,
-- **catalog importer** — persists normalized domain records,
-- **LLM gateway** — performs controlled AI validation or enrichment,
-- **job scheduler** — triggers periodic work.
+- **source collector** - discovers new items,
+- **parser/enricher** - extracts and improves structured values,
+- **catalog importer** - persists normalized domain records,
+- **LLM gateway** - performs controlled AI validation or enrichment,
+- **job scheduler** - triggers periodic work.
 
 ## Storage zones
 
@@ -404,14 +404,14 @@ Used when ingestion results should notify downstream processors.
 
 A practical state model for catalog ingestion might look like this:
 
-- `init` — item discovered but not yet processed,
-- `fetched` — source payload downloaded,
-- `parsed` — initial fields extracted,
-- `enriched` — optional enrichment completed,
-- `imported` — normalized write completed,
-- `failed` — terminal failure,
-- `retry_pending` — temporary failure waiting for retry,
-- `needs_review` — ambiguity too high for automatic import.
+- `init` - item discovered but not yet processed,
+- `fetched` - source payload downloaded,
+- `parsed` - initial fields extracted,
+- `enriched` - optional enrichment completed,
+- `imported` - normalized write completed,
+- `failed` - terminal failure,
+- `retry_pending` - temporary failure waiting for retry,
+- `needs_review` - ambiguity too high for automatic import.
 
 ## Idempotency strategy
 

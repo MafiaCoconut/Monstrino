@@ -832,9 +832,9 @@ Benefits:
 ## 18.1 environments
 
 Known environments:
-- `local` — development
-- `test` — test environment on server with test data
-- `prod` / production — production environment on server with real production data
+- `local` - development
+- `test` - test environment on server with test data
+- `prod` / production - production environment on server with real production data
 
 ## 18.2 current infra layout
 

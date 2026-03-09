@@ -7,7 +7,7 @@ tags: [data-ingestion, external-id, identifier, source]
 description: "Adopts external_id as the stable primary identifier for ingested records, replacing fragile URL-based keys that are source-specific and mutable."
 ---
 
-# ADR-DI-003 — Use `external_id` as Main Ingestion Identifier
+# ADR-DI-003 - Use `external_id` as Main Ingestion Identifier
 
 | Field      | Value                                                     |
 | ---------- | --------------------------------------------------------- |
@@ -31,7 +31,7 @@ When storing and re-identifying records from external sources, a stable identifi
 Store the full scrape URL as the record identifier.
 
 - **Pros:** No extra mapping step, URL is immediately available.
-- **Cons:** Unstable — URLs change, contain noise, not unique across sources.
+- **Cons:** Unstable - URLs change, contain noise, not unique across sources.
 
 ### Option 2: Use `source` + `external_id` Composite Identifier ✅
 
@@ -60,5 +60,5 @@ Each source provides a stable, source-native identifier (product ID, SKU, slug) 
 
 ## Related Decisions
 
-- [ADR-DI-004](./adr-di-004.md) — Idempotency enforcement using this identifier
-- [ADR-DI-001](./adr-di-001.md) — Parsed tables boundary
+- [ADR-DI-004](./adr-di-004.md) - Idempotency enforcement using this identifier
+- [ADR-DI-001](./adr-di-001.md) - Parsed tables boundary

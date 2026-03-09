@@ -7,7 +7,7 @@ tags: [media-pipeline, images, rehosting, s3, storage]
 description: "Rehosts all external product images into Monstrino-controlled storage to eliminate broken links, ensure availability, and own image delivery."
 ---
 
-# ADR-MP-001 — Rehost External Images into Monstrino Storage
+# ADR-MP-001 - Rehost External Images into Monstrino Storage
 
 | Field      | Value                                                         |
 | ---------- | ------------------------------------------------------------- |
@@ -65,6 +65,6 @@ Download every external image, store it in Monstrino-controlled S3-compatible st
 
 ## Related Decisions
 
-- [ADR-MP-002](./adr-mp-002.md) — S3-compatible storage
-- [ADR-MP-003](./adr-mp-003.md) — Media pipeline subscriber/processor split
-- [ADR-MP-004](./adr-mp-004.md) — Media ingestion jobs
+- [ADR-MP-002](./adr-mp-002.md) - S3-compatible storage
+- [ADR-MP-003](./adr-mp-003.md) - Media pipeline subscriber/processor split
+- [ADR-MP-004](./adr-mp-004.md) - Media ingestion jobs

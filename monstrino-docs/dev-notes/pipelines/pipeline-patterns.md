@@ -66,13 +66,13 @@ Additional domain-specific states are allowed if they improve clarity.
 
 Useful internal components often include:
 
-- **downloader** — fetches external resources,
-- **parser** — extracts structured fields from raw data,
-- **mapper** — transforms one representation into another,
-- **validator** — checks data integrity and plausibility,
-- **uploader** — persists files to external storage,
-- **deduplicator** — prevents duplicate writes,
-- **command dispatcher** — sends internal commands or events.
+- **downloader** - fetches external resources,
+- **parser** - extracts structured fields from raw data,
+- **mapper** - transforms one representation into another,
+- **validator** - checks data integrity and plausibility,
+- **uploader** - persists files to external storage,
+- **deduplicator** - prevents duplicate writes,
+- **command dispatcher** - sends internal commands or events.
 
 This keeps use cases testable and avoids giant service classes.
 

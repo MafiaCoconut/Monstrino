@@ -47,7 +47,7 @@ The following metrics are considered most important for Monstrino workloads:
 
 ## Pipeline Observability
 
-Ingestion pipelines are particularly important to monitor because failures are often silent — a job may be stuck in `processing` or accumulating in `retry_pending` without immediately affecting the user-facing API.
+Ingestion pipelines are particularly important to monitor because failures are often silent - a job may be stuck in `processing` or accumulating in `retry_pending` without immediately affecting the user-facing API.
 
 :::tip
 Every pipeline should expose enough structured logging to answer:
@@ -58,7 +58,7 @@ Every pipeline should expose enough structured logging to answer:
 - what was retried,
 - how long processing took.
 
-See [Pipelines Overview — Observability](../pipelines/pipelines-overview#observability) for details.
+See [Pipelines Overview - Observability](../pipelines/pipelines-overview#observability) for details.
 :::
 
 ---
@@ -81,5 +81,5 @@ Each log entry for pipeline operations should include:
 
 ## Related Documents
 
-- [Kubernetes Cluster Architecture](./kubernetes-cluster-architecture) — the infrastructure being observed,
-- [Pipeline Patterns and Conventions](../pipelines/pipeline-patterns) — logging conventions for pipeline operations.
+- [Kubernetes Cluster Architecture](./kubernetes-cluster-architecture) - the infrastructure being observed,
+- [Pipeline Patterns and Conventions](../pipelines/pipeline-patterns) - logging conventions for pipeline operations.

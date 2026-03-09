@@ -62,6 +62,6 @@ Those concerns belong to the ingestion architecture, described in [Data Flow: In
 
 ## Related Documents
 
-- [API Gateway Architecture](./api-gateway-architecture) — the specific design of the API gateway,
-- [Data Flow: Ingestion](./data-flow-ingestion) — how data gets into the system before UI access,
-- [Service Boundaries](./service-boundaries) — why services don't share data directly.
+- [API Gateway Architecture](./api-gateway-architecture) - the specific design of the API gateway,
+- [Data Flow: Ingestion](./data-flow-ingestion) - how data gets into the system before UI access,
+- [Service Boundaries](./service-boundaries) - why services don't share data directly.

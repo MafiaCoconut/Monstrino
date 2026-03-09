@@ -1,4 +1,4 @@
-MONSTRINO — COMPLETE ADR LIST
+MONSTRINO - COMPLETE ADR LIST
 
 ADR-01
 Title: Focus the product domain on Monster High instead of LEGO or Funko

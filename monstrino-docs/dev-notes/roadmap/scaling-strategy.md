@@ -78,6 +78,6 @@ These approaches are lower-risk than infrastructure changes and should be explor
 
 ## Related Documents
 
-- [Platform Architecture Evolution](./platform-evolution) — broader architectural direction,
-- [Kubernetes Cluster Architecture](../infrastructure/kubernetes-cluster-architecture) — current cluster setup,
-- [Environment Strategy](../infrastructure/environment-strategy) — how environments are currently separated.
+- [Platform Architecture Evolution](./platform-evolution) - broader architectural direction,
+- [Kubernetes Cluster Architecture](../infrastructure/kubernetes-cluster-architecture) - current cluster setup,
+- [Environment Strategy](../infrastructure/environment-strategy) - how environments are currently separated.

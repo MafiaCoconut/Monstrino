@@ -9,14 +9,14 @@ description: Design and responsibilities of the API gateway that serves as the e
 # API Gateway Architecture
 
 :::info
-This document describes the role and design of the API gateway — the single entry point for all external clients of the Monstrino platform.
+This document describes the role and design of the API gateway - the single entry point for all external clients of the Monstrino platform.
 :::
 
 ---
 
 ## Purpose
 
-The API gateway is the **only entry point for external clients** — browsers, mobile applications, and third-party consumers.
+The API gateway is the **only entry point for external clients** - browsers, mobile applications, and third-party consumers.
 
 It shields clients from internal service topology and provides a stable, versioned interface regardless of how backend services evolve.
 
@@ -73,6 +73,6 @@ It should not:
 
 ## Related Documents
 
-- [Data Flow: UI Access](./data-flow-ui) — the full UI-to-backend flow,
-- [Service Boundaries](./service-boundaries) — how internal services are separated from the gateway,
-- [Ingress and Networking](../infrastructure/ingress-and-networking) — how the gateway is exposed externally.
+- [Data Flow: UI Access](./data-flow-ui) - the full UI-to-backend flow,
+- [Service Boundaries](./service-boundaries) - how internal services are separated from the gateway,
+- [Ingress and Networking](../infrastructure/ingress-and-networking) - how the gateway is exposed externally.

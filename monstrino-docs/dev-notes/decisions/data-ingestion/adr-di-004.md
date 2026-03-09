@@ -7,7 +7,7 @@ tags: [data-ingestion, idempotency, deduplication, external-id]
 description: "Enforces idempotency in the ingestion pipeline using a compound unique constraint on source + external_id to prevent duplicate records across repeated runs."
 ---
 
-# ADR-DI-004 — Enforce Idempotency Using `source` + `external_id`
+# ADR-DI-004 - Enforce Idempotency Using `source` + `external_id`
 
 | Field      | Value                                                            |
 | ---------- | ---------------------------------------------------------------- |
@@ -18,7 +18,7 @@ description: "Enforces idempotency in the ingestion pipeline using a compound un
 
 ## Context
 
-The ingestion pipeline is designed to run repeatedly — re-scraping sources on a schedule, re-processing records after errors, and replaying historical data. Without a deduplication mechanism, repeated runs would create duplicate parsed records for the same real-world entity.
+The ingestion pipeline is designed to run repeatedly - re-scraping sources on a schedule, re-processing records after errors, and replaying historical data. Without a deduplication mechanism, repeated runs would create duplicate parsed records for the same real-world entity.
 
 ## Options Considered
 
@@ -34,7 +34,7 @@ Insert every ingested record without checking for existing entries.
 Use the source URL as a unique key.
 
 - **Pros:** Immediately available from the scrape.
-- **Cons:** URLs are unstable — this would fail to deduplicate reparsed records after URL changes.
+- **Cons:** URLs are unstable - this would fail to deduplicate reparsed records after URL changes.
 
 ### Option 3: `source` + `external_id` Uniqueness Constraint ✅
 
@@ -53,7 +53,7 @@ Apply a database-level unique constraint on `(source, external_id)` in parsed ta
 
 - Prevents duplicate records regardless of how many times a source is re-scraped.
 - Safe to run ingestion jobs repeatedly without side effects.
-- Enables clean replay — re-running a parser updates existing records in place.
+- Enables clean replay - re-running a parser updates existing records in place.
 
 ### Negative
 
@@ -61,5 +61,5 @@ Apply a database-level unique constraint on `(source, external_id)` in parsed ta
 
 ## Related Decisions
 
-- [ADR-DI-003](./adr-di-003.md) — external_id as identifier definition
-- [ADR-DI-002](./adr-di-002.md) — Processing state workflow
+- [ADR-DI-003](./adr-di-003.md) - external_id as identifier definition
+- [ADR-DI-002](./adr-di-002.md) - Processing state workflow

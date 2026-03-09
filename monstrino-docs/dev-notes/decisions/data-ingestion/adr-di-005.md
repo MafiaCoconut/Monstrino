@@ -7,7 +7,7 @@ tags: [data-ingestion, parsed-models, heterogeneous, sources]
 description: "Designs parsed models to accommodate heterogeneous data from multiple external sources with differing schemas, missing fields, and alternative taxonomies."
 ---
 
-# ADR-DI-005 — Design Parsed Models for Heterogeneous Source Data
+# ADR-DI-005 - Design Parsed Models for Heterogeneous Source Data
 
 | Field      | Value                                                              |
 | ---------- | ------------------------------------------------------------------ |
@@ -56,9 +56,9 @@ Use a shared parsed model with nullable / optional fields and an additional `raw
 
 ### Negative
 
-- Importer logic is more complex — must handle varying field presence per source.
+- Importer logic is more complex - must handle varying field presence per source.
 
 ## Related Decisions
 
-- [ADR-DI-001](./adr-di-001.md) — Parsed tables as ingestion boundary
-- [ADR-DI-006](./adr-di-006.md) — Replayable JSON storage
+- [ADR-DI-001](./adr-di-001.md) - Parsed tables as ingestion boundary
+- [ADR-DI-006](./adr-di-006.md) - Replayable JSON storage

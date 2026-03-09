@@ -79,7 +79,7 @@ cat > "$BASE_DIR/use-cases/_category_.json" <<EOF
   "className": "monstrino-subcategory",
   "link": {
     "type": "generated-index",
-    "title": "$SERVICE_NAME — Use Cases",
+    "title": "$SERVICE_NAME - Use Cases",
     "description": "All functional use cases implemented inside the $SERVICE_NAME microservice.",
     "slug": "/$DOMAIN_NAME/microservices/$SERVICE_NAME/use-cases"
   }
@@ -108,7 +108,7 @@ cat > "$BASE_DIR/flows/_category_.json" <<EOF
   "className": "monstrino-subcategory",
   "link": {
     "type": "generated-index",
-    "title": "$SERVICE_NAME — Execution Flows",
+    "title": "$SERVICE_NAME - Execution Flows",
     "description": "Execution flows, diagrams, and lifecycle steps for the $SERVICE_NAME microservice.",
     "slug": "/$DOMAIN_NAME/microservices/$SERVICE_NAME/flows"
   }
@@ -137,7 +137,7 @@ cat > "$BASE_DIR/internal-services/_category_.json" <<EOF
   "className": "monstrino-subcategory",
   "link": {
     "type": "generated-index",
-    "title": "$SERVICE_NAME — Internal Services",
+    "title": "$SERVICE_NAME - Internal Services",
     "description": "Internal modules, helpers, engines and utilities powering the $SERVICE_NAME microservice.",
     "slug": "/$DOMAIN_NAME/microservices/$SERVICE_NAME/internal-services"
   }
@@ -166,7 +166,7 @@ cat > "$BASE_DIR/testing/_category_.json" <<EOF
   "className": "monstrino-subcategory",
   "link": {
     "type": "generated-index",
-    "title": "$SERVICE_NAME — Testing",
+    "title": "$SERVICE_NAME - Testing",
     "description": "Testing strategy, fixtures and test scenarios of the $SERVICE_NAME microservice.",
     "slug": "/$DOMAIN_NAME/microservices/$SERVICE_NAME/testing"
   }

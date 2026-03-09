@@ -7,7 +7,7 @@ tags: [product-strategy, mvp, scope, releases]
 description: "Focuses the MVP scope on the release archive first, deferring user-facing social features to validate the catalog foundation before expanding."
 ---
 
-# ADR-PS-003 — Prioritize Release Archive Over User Features for MVP
+# ADR-PS-003 - Prioritize Release Archive Over User Features for MVP
 
 | Field      | Value                                                   |
 | ---------- | ------------------------------------------------------- |
@@ -24,7 +24,7 @@ Prior to this decision, development had touched multiple areas simultaneously:
 - User collection management
 - User profile pages
 
-However, all of these features depend on the existence of a catalog. Without a populated, browsable release archive, user features have no value — there is nothing to collect, track, or display.
+However, all of these features depend on the existence of a catalog. Without a populated, browsable release archive, user features have no value - there is nothing to collect, track, or display.
 
 ## Options Considered
 
@@ -44,7 +44,7 @@ Defer all user-facing features (auth, collections, profiles) until the release a
 
 ## Decision
 
-> The **first Monstrino release must contain only the release archive** — a browsable, searchable catalog of Monster High releases. User accounts, collections, and personalization are out of scope for MVP.
+> The **first Monstrino release must contain only the release archive** - a browsable, searchable catalog of Monster High releases. User accounts, collections, and personalization are out of scope for MVP.
 
 ## Consequences
 
@@ -61,5 +61,5 @@ Defer all user-facing features (auth, collections, profiles) until the release a
 
 ## Related Decisions
 
-- [ADR-PS-002](./adr-ps-002.md) — Automated acquisition as core
-- [ADR-PS-005](./adr-ps-005.md) — Image pipeline priority over price collection
+- [ADR-PS-002](./adr-ps-002.md) - Automated acquisition as core
+- [ADR-PS-005](./adr-ps-005.md) - Image pipeline priority over price collection

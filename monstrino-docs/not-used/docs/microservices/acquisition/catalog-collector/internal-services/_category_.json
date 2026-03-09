@@ -6,7 +6,7 @@
   "className": "monstrino-subcategory",
   "link": {
     "type": "generated-index",
-    "title": "catalog-collector — Internal Services",
+    "title": "catalog-collector - Internal Services",
     "description": "Internal modules, helpers, engines and utilities powering the catalog-collector microservice.",
     "slug": "/acquisition/microservices/catalog-collector/internal-services"
   }

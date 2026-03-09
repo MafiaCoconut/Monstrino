@@ -1,10 +1,10 @@
 ---
 id: exclusive-resolver-tests
-title: ExclusiveResolverService — Test Suite
+title: ExclusiveResolverService - Test Suite
 sidebar_label: Tests
 ---
 
-# ExclusiveResolverService — Test Suite
+# ExclusiveResolverService - Test Suite
 
 :::info
 This page documents the complete automated test suite for  
@@ -115,9 +115,9 @@ uow_factory
 
 **Descriptions**
 
-- `seed_exclusive_vendor_list` — inserts exclusive vendors into DB  
-- `seed_release_list` — inserts a release with ID `1`  
-- `uow_factory` — async UnitOfWork lifecycle manager  
+- `seed_exclusive_vendor_list` - inserts exclusive vendors into DB  
+- `seed_release_list` - inserts a release with ID `1`  
+- `uow_factory` - async UnitOfWork lifecycle manager  
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: monstrino-infra
-description: Concrete infrastructure adapters — HTTP/2 client with circuit breaker, database settings, APScheduler adapter, and web scrapers.
+description: Concrete infrastructure adapters - HTTP/2 client with circuit breaker, database settings, APScheduler adapter, and web scrapers.
 sidebar_label: monstrino-infra
 sidebar_position: 6
 ---
@@ -55,7 +55,7 @@ Full-featured async HTTP client built on `httpx`:
 - **Circuit Breaker** via `aiobreaker` (configurable fail threshold + reset timeout)
 - **Concurrency limit** via `asyncio.Semaphore(10)`
 - **Retry logic** with exponential backoff
-- **Pydantic response validation** — returns typed objects directly
+- **Pydantic response validation** - returns typed objects directly
 
 ```python
 client = HttpClient(timeout=20.0, breaker_fail_threshold=5)

@@ -6,7 +6,7 @@
   "className": "monstrino-subcategory",
   "link": {
     "type": "generated-index",
-    "title": "testing-service — Execution Flows",
+    "title": "testing-service - Execution Flows",
     "description": "Execution flows, diagrams, and lifecycle steps for the testing-service microservice.",
     "slug": "/support/microservices/testing-service/flows"
   }

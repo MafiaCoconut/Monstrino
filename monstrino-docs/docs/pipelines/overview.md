@@ -126,9 +126,9 @@ The pipeline architecture is designed to support additional pipelines in the fut
 
 Potential additions include:
 
-- **Market Data Pipeline** — collection and normalization of second‑hand market prices
-- **User Content Pipeline** — ingestion and moderation of user‑generated media
-- **AI Enrichment Pipeline** — large‑scale semantic enrichment of catalog metadata
+- **Market Data Pipeline** - collection and normalization of second‑hand market prices
+- **User Content Pipeline** - ingestion and moderation of user‑generated media
+- **AI Enrichment Pipeline** - large‑scale semantic enrichment of catalog metadata
 
 Because pipelines communicate through storage and events rather than tight service coupling,
 new pipelines can be added without redesigning the existing architecture.

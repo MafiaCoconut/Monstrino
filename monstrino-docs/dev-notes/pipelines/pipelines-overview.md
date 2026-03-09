@@ -86,10 +86,10 @@ Each pipeline should have a stable deduplication strategy based on one or more o
 
 A pipeline may first store raw or semi-structured source data and only later map it into normalized Monstrino entities. This helps with:
 
-- **traceability** — know where data came from,
-- **replayability** — re-run parsers on preserved input,
-- **safer parser evolution** — change parsers without losing raw evidence,
-- **lower coupling** — collectors stay independent from catalog models.
+- **traceability** - know where data came from,
+- **replayability** - re-run parsers on preserved input,
+- **safer parser evolution** - change parsers without losing raw evidence,
+- **lower coupling** - collectors stay independent from catalog models.
 
 ---
 
@@ -97,7 +97,7 @@ A pipeline may first store raw or semi-structured source data and only later map
 
 Not every pipeline uses every stage, but this is the general pattern.
 
-### Stage 1 — Trigger
+### Stage 1 - Trigger
 
 The pipeline starts from a trigger:
 
@@ -106,7 +106,7 @@ The pipeline starts from a trigger:
 - internal event,
 - administrative reprocess action.
 
-### Stage 2 — Discovery
+### Stage 2 - Discovery
 
 The system detects a new candidate item or existing stale item.
 
@@ -117,7 +117,7 @@ Examples:
 - a media record appears in a topic,
 - an unprocessed ingestion row exists in a staging table.
 
-### Stage 3 — Job Creation
+### Stage 3 - Job Creation
 
 The system stores a dedicated processing job row. This decouples source discovery from heavy work execution.
 
@@ -135,7 +135,7 @@ Typical job metadata:
 | `correlation_id` | traceability across systems |
 | `timestamps` | created, updated |
 
-### Stage 4 — Processing
+### Stage 4 - Processing
 
 A processor service fetches pending jobs and performs the actual work.
 
@@ -147,17 +147,17 @@ Examples:
 - call AI enrichment service,
 - persist normalized records.
 
-### Stage 5 — Persistence
+### Stage 5 - Persistence
 
 Results are stored in one or more zones:
 
-- **ingest/raw zone** — raw or semi-structured source data,
-- **normalized catalog zone** — canonical domain entities,
-- **media zone** — hosted media assets,
-- **market zone** — price snapshots and listings,
-- **event outbox** — downstream event emission.
+- **ingest/raw zone** - raw or semi-structured source data,
+- **normalized catalog zone** - canonical domain entities,
+- **media zone** - hosted media assets,
+- **market zone** - price snapshots and listings,
+- **event outbox** - downstream event emission.
 
-### Stage 6 — State Transition
+### Stage 6 - State Transition
 
 The job is marked with the next processing state.
 
@@ -214,7 +214,7 @@ Every production-grade pipeline should define the following.
 
 ### Input Contract
 
-What exactly enters the pipeline — for example:
+What exactly enters the pipeline - for example:
 
 - source URL,
 - parsed source payload,
@@ -224,7 +224,7 @@ What exactly enters the pipeline — for example:
 
 ### Output Contract
 
-What exactly is guaranteed on success — for example:
+What exactly is guaranteed on success - for example:
 
 - new job row,
 - normalized entity write,

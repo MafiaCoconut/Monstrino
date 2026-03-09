@@ -32,17 +32,17 @@ The platform has reached a stable foundation across its core functions:
 | Area | Status |
 |---|---|
 | Catalog ingestion pipeline | Stable and operational |
-| Canonical domain model | Stable — entities, invariants, ownership rules in place |
+| Canonical domain model | Stable - entities, invariants, ownership rules in place |
 | Media ingestion and rehosting | Operational |
-| LLM-based enrichment (text) | Available — characters, series, content type, tier |
+| LLM-based enrichment (text) | Available - characters, series, content type, tier |
 | Catalog API | Stable, production-ready |
-| Internal package layer | Stable — 7 packages covering all architectural layers |
+| Internal package layer | Stable - 7 packages covering all architectural layers |
 
 ---
 
 ## Section Contents
 
-- [Platform Architecture Evolution](./platform-evolution) — current architectural state, mid-term goals, and long-term direction
-- [Data Collection Strategy](./data-collection-strategy) — continuous data collection approach and pipeline relationship
-- [AI Integration Roadmap](./ai-roadmap) — phased plan for AI capability expansion
-- [Scaling Strategy](./scaling-strategy) — infrastructure scaling plan and reliability improvements
+- [Platform Architecture Evolution](./platform-evolution) - current architectural state, mid-term goals, and long-term direction
+- [Data Collection Strategy](./data-collection-strategy) - continuous data collection approach and pipeline relationship
+- [AI Integration Roadmap](./ai-roadmap) - phased plan for AI capability expansion
+- [Scaling Strategy](./scaling-strategy) - infrastructure scaling plan and reliability improvements

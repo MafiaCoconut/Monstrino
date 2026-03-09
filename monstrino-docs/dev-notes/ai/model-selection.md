@@ -67,9 +67,9 @@ All models are executed locally using **Ollama** in the homelab environment.
 :::warning
 Local execution has real constraints to keep in mind:
 
-- **Hardware ceiling** — available model sizes are limited by local GPU/CPU memory,
-- **No auto-scaling** — inference throughput is fixed by the homelab setup,
-- **Manual upgrades** — model updates require deliberate action, not automatic rollouts.
+- **Hardware ceiling** - available model sizes are limited by local GPU/CPU memory,
+- **No auto-scaling** - inference throughput is fixed by the homelab setup,
+- **Manual upgrades** - model updates require deliberate action, not automatic rollouts.
 
 These are acceptable given the current project stage and data volumes.
 :::
@@ -88,5 +88,5 @@ This means model upgrades or replacements require changes in one place only.
 
 ## Related Documents
 
-- [AI Orchestrator Architecture](./ai-orchestrator-architecture) — the service responsible for model routing,
-- [Ollama Client Design](./ollama-client-design) — how models are invoked at the HTTP level.
+- [AI Orchestrator Architecture](./ai-orchestrator-architecture) - the service responsible for model routing,
+- [Ollama Client Design](./ollama-client-design) - how models are invoked at the HTTP level.

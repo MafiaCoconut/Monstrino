@@ -1,10 +1,10 @@
 ---
 id: character-resolver-tests
-title: CharacterResolverService — Test Suite
+title: CharacterResolverService - Test Suite
 sidebar_label: Tests
 ---
 
-# CharacterResolverService — Test Suite
+# CharacterResolverService - Test Suite
 
 :::info
 This page documents the complete automated test suite for  
@@ -113,10 +113,10 @@ uow_factory
 
 **Descriptions:**
 
-- `seed_character_list` — inserts characters (e.g., Frankie Stein, Draculaura)  
-- `seed_character_role_list` — inserts roles (`MAIN`, `SECONDARY`)  
-- `seed_release_list` — creates a release with ID 1  
-- `uow_factory` — async UnitOfWork lifecycle manager  
+- `seed_character_list` - inserts characters (e.g., Frankie Stein, Draculaura)  
+- `seed_character_role_list` - inserts roles (`MAIN`, `SECONDARY`)  
+- `seed_release_list` - creates a release with ID 1  
+- `uow_factory` - async UnitOfWork lifecycle manager  
 
 ---
 

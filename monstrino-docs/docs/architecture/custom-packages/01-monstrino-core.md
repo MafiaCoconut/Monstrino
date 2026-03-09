@@ -1,6 +1,6 @@
 ---
 title: monstrino-core
-description: Domain foundation — ports (Protocols), value objects, domain errors, and the UnitOfWork interface. No framework dependencies.
+description: Domain foundation - ports (Protocols), value objects, domain errors, and the UnitOfWork interface. No framework dependencies.
 sidebar_label: monstrino-core
 sidebar_position: 1
 ---
@@ -22,7 +22,7 @@ This package must remain **independent from infrastructure, persistence, and tra
 | `pydantic` |
 | `lxml` |
 
-No internal Monstrino packages are depended upon — this package is the root of the dependency tree.
+No internal Monstrino packages are depended upon - this package is the root of the dependency tree.
 
 ## Actual Structure
 
@@ -32,7 +32,7 @@ monstrino_core/
 │   ├── errors/           # Domain exceptions: DB, parsing, API, release-type errors
 │   ├── refs/             # Entity references: parse refs, parsed content refs, market refs
 │   ├── rules/            # Business rules for release classification (content type, tier)
-│   ├── scopes/           # ParseScope — acquisition scope definition
+│   ├── scopes/           # ParseScope - acquisition scope definition
 │   ├── services/         # Domain services: formatters, resolvers
 │   │   ├── gtin_formatter.py
 │   │   ├── name_formatter.py
@@ -69,7 +69,7 @@ class ParseReleasePort(Protocol):
 Enums cover the full business taxonomy: `ReleaseTypeContentType` (doll-figure, pet-figure, vinyl-figure, playset, fashion-pack, funko-pop, …), `TierType`, `CategoryEnum`, `SeriesTypesEnum`, `GeoCountryCode`, media states, etc.
 
 ### Unit of Work Interface
-`UnitOfWorkInterface` is a generic async context manager with `commit()`, `rollback()`, and `savepoint()` — completely ORM-agnostic.
+`UnitOfWorkInterface` is a generic async context manager with `commit()`, `rollback()`, and `savepoint()` - completely ORM-agnostic.
 
 ## Must NOT Contain
 
@@ -81,4 +81,4 @@ Enums cover the full business taxonomy: `ReleaseTypeContentType` (doll-figure, p
 
 ## Architectural Role
 
-`monstrino-core` is the **root of the entire dependency tree** — all other Monstrino packages depend on it, but it depends on none of them.
+`monstrino-core` is the **root of the entire dependency tree** - all other Monstrino packages depend on it, but it depends on none of them.

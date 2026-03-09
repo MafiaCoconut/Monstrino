@@ -47,7 +47,7 @@ monstrino_models/
 │       ├── market/
 │       └── media/
 ├── mappers/
-│   └── auto_mapper.py  # AutoMapper — automated ORM ↔ DTO conversion
+│   └── auto_mapper.py  # AutoMapper - automated ORM ↔ DTO conversion
 ├── enums/
 └── test/               # Empty test namespace packages (auth, character, release, etc.)
 ```

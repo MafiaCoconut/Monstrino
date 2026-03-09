@@ -7,7 +7,7 @@ tags: [frontend, repository, monorepo, separation]
 description: "Moves the frontend into a dedicated separate repository to isolate its build pipeline, tooling, and CI configuration from the backend monorepo."
 ---
 
-# ADR-FD-002 — Separate Frontend into a Dedicated Repository
+# ADR-FD-002 - Separate Frontend into a Dedicated Repository
 
 | Field      | Value                                                        |
 | ---------- | ------------------------------------------------------------ |
@@ -61,4 +61,4 @@ Move the frontend into its own repository (`monstrino-ui`), with its own CI, dep
 
 ## Related Decisions
 
-- [ADR-FD-001](./adr-fd-001.md) — Next.js migration
+- [ADR-FD-001](./adr-fd-001.md) - Next.js migration

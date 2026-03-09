@@ -50,7 +50,7 @@ The collection strategy is built around three continuous activities:
 ## Why Early Collection Matters
 
 :::tip
-The value of a dataset grows over time — but only if collection started early.
+The value of a dataset grows over time - but only if collection started early.
 
 Starting market data collection before the platform launches publicly means that:
 - day-one users see historical data, not an empty chart,
@@ -73,6 +73,6 @@ This strategy is implemented by two pipeline categories:
 
 ## Related Documents
 
-- [Platform Architecture Evolution](./platform-evolution) — where data collection fits in the broader roadmap,
+- [Platform Architecture Evolution](./platform-evolution) - where data collection fits in the broader roadmap,
 - [Market Release Discovery Pipeline](../pipelines/market-release-discovery-pipeline),
 - [Market Price Collection Pipeline](../pipelines/market-price-collection-pipeline).

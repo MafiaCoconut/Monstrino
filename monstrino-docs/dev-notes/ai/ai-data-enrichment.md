@@ -9,7 +9,7 @@ description: How and where AI-assisted enrichment fits into the Monstrino data i
 # AI Data Enrichment Strategy
 
 :::info
-This document describes the role of AI-assisted enrichment within the Monstrino data ingestion pipeline — specifically, when it runs and what problems it is expected to solve.
+This document describes the role of AI-assisted enrichment within the Monstrino data ingestion pipeline - specifically, when it runs and what problems it is expected to solve.
 :::
 
 ---
@@ -96,6 +96,6 @@ If AI enrichment fails or returns low-confidence results:
 
 ## Related Documents
 
-- [Catalog Ingestion Pipeline](../pipelines/catalog-ingestion-pipeline) — the full ingestion flow this enrichment step belongs to,
-- [AI Command Execution Schema](./ai-command-schema) — how enrichment commands are structured,
-- [AI Orchestrator Architecture](./ai-orchestrator-architecture) — the service that executes enrichment requests.
+- [Catalog Ingestion Pipeline](../pipelines/catalog-ingestion-pipeline) - the full ingestion flow this enrichment step belongs to,
+- [AI Command Execution Schema](./ai-command-schema) - how enrichment commands are structured,
+- [AI Orchestrator Architecture](./ai-orchestrator-architecture) - the service that executes enrichment requests.

@@ -6,7 +6,7 @@
   "className": "monstrino-subcategory",
   "link": {
     "type": "generated-index",
-    "title": "catalog-collector — Execution Flows",
+    "title": "catalog-collector - Execution Flows",
     "description": "Execution flows, diagrams, and lifecycle steps for the catalog-collector microservice.",
     "slug": "/acquisition/microservices/catalog-collector/flows"
   }

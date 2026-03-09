@@ -33,7 +33,7 @@ Used for **development and experimentation** on a developer machine.
 Characteristics:
 
 - reduced infrastructure footprint,
-- local datasets — no access to production data,
+- local datasets - no access to production data,
 - developer tools enabled (debug logging, relaxed auth, etc.),
 - services may be run partially or individually.
 
@@ -46,8 +46,8 @@ Used for **validating new deployments and integration testing** before productio
 Characteristics:
 
 - realistic configuration mirroring production,
-- isolated namespace — changes do not affect production,
-- staging datasets — realistic but not live data,
+- isolated namespace - changes do not affect production,
+- staging datasets - realistic but not live data,
 - used to verify that services work together as expected.
 
 ---
@@ -58,9 +58,9 @@ Runs the **live public platform and all active collectors**.
 
 Characteristics:
 
-- production data — real catalog, media, and market records,
-- stable configuration — changes require deliberate deployment,
-- restricted access — not accessible for ad hoc experimentation.
+- production data - real catalog, media, and market records,
+- stable configuration - changes require deliberate deployment,
+- restricted access - not accessible for ad hoc experimentation.
 
 :::warning
 Production should never be used for testing new behavior. All testing must pass through `local` and `test` first.
@@ -78,5 +78,5 @@ See [Kubernetes Namespace Structure](./kubernetes-namespace-structure) for detai
 
 ## Related Documents
 
-- [Kubernetes Cluster Architecture](./kubernetes-cluster-architecture) — the cluster that runs these environments,
-- [Kubernetes Namespace Structure](./kubernetes-namespace-structure) — namespace-level isolation per environment.
+- [Kubernetes Cluster Architecture](./kubernetes-cluster-architecture) - the cluster that runs these environments,
+- [Kubernetes Namespace Structure](./kubernetes-namespace-structure) - namespace-level isolation per environment.

@@ -6,7 +6,7 @@
   "className": "monstrino-subcategory",
   "link": {
     "type": "generated-index",
-    "title": "testing-service — Internal Services",
+    "title": "testing-service - Internal Services",
     "description": "Internal modules, helpers, engines and utilities powering the testing-service microservice.",
     "slug": "/support/microservices/testing-service/internal-services"
   }

@@ -1,0 +1,1182 @@
+# FILE: docs/api/_category_.json
+{
+  "label": "API",
+  "position": 6,
+  "link": {
+    "type": "generated-index",
+    "title": "API",
+    "description": "Monstrino API architecture, gateway strategy, internal service contracts, public API direction, and delivery conventions."
+  }
+}
+=============================================================================
+# FILE: docs/api/00-overview.md
+---
+title: API Overview
+sidebar_position: 1
+description: Overview of the Monstrino API layer, its responsibilities, boundaries, and consumer-facing direction.
+---
+
+# API Overview
+
+The Monstrino API layer is responsible for turning internal domain data into stable consumer-facing contracts.
+
+At a platform level, the API is designed around a simple rule:
+
+- external clients should talk to a single backend entrypoint
+- internal services should keep domain ownership and implementation freedom
+- delivery models may differ from persistence models
+- ingestion, enrichment, and processing services are not exposed directly to public consumers
+
+## Why this layer exists
+
+Monstrino is not a single CRUD application. It is a platform with multiple architectural zones:
+
+- catalog ingestion and parsing
+- AI enrichment and normalization
+- market discovery and price collection
+- media ingestion and rehosting
+- canonical catalog storage
+- frontend delivery and future external consumers
+
+Because of that, the platform needs an explicit delivery layer that protects clients from internal changes.
+
+## API goals
+
+The API layer exists to achieve five goals:
+
+1. provide a clean read model for the frontend
+2. hide internal service topology from consumers
+3. support aggregation across catalog, market, and media domains
+4. enable future public API products without leaking internal schemas
+5. keep room for independent evolution of internal services
+
+## High-level model
+
+```mermaid
+flowchart TB
+    UI[Frontend UI / Clients] --> GATEWAY[API Gateway]
+    PUBLIC[Future External Consumers] --> GATEWAY
+
+    GATEWAY --> CATALOG[release-catalog-service]
+    GATEWAY --> MEDIA[media and attachment reads]
+    GATEWAY --> MARKET[market read models]
+
+    INGEST[Ingestion / AI / processing services] -.internal only.-> CATALOG
+    INGEST -.internal only.-> MEDIA
+    INGEST -.internal only.-> MARKET
+```
+
+## Scope of this section
+
+This API section documents:
+
+- the role of the API Gateway
+- internal service API boundaries
+- recommended contract shapes
+- versioning and compatibility rules
+- authentication and authorization strategy
+- error handling and observability expectations
+- future public API direction
+
+## What this section does not document
+
+This section does not attempt to fully document:
+
+- database schemas
+- ingestion worker internals
+- AI orchestration internals
+- scheduler implementation details
+- ORM-level persistence models
+
+Those belong in architecture, pipelines, domain, or dev-notes.
+
+## Related pages
+
+- [Architecture Overview](../architecture/01-architecture-overview)
+- [Service Communication](../architecture/05-service-communication)
+- [Security Boundaries](../architecture/06-security-boundaries)
+- [Scalability Strategy](../architecture/07-scalability-strategy)
+- [API Design Principles](../principles/04-api-design-principles)
+=============================================================================
+# FILE: docs/api/01-api-architecture.md
+---
+title: API Architecture
+sidebar_position: 2
+description: Structural view of the Monstrino API layer and how requests move through the delivery stack.
+---
+
+# API Architecture
+
+The Monstrino API architecture follows a delivery-oriented model.
+
+External consumers do not call domain services directly. Instead, requests enter through a single gateway layer that performs request validation, routing, aggregation, response shaping, and policy enforcement.
+
+## Architectural position
+
+The API sits between two worlds:
+
+- **upstream consumers**: frontend UI, documentation examples, future third-party API clients
+- **downstream services**: release catalog, media read models, market read models, and selected internal capabilities
+
+## Request lifecycle
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant G as API Gateway
+    participant R as Release Catalog Service
+    participant M as Media Read Model
+    participant P as Market Read Model
+
+    C->>G: GET /releases/{slug}
+    G->>R: Fetch canonical release view
+    G->>M: Fetch attached media
+    G->>P: Fetch market summary
+    R-->>G: Release data
+    M-->>G: Media data
+    P-->>G: Market data
+    G-->>C: Aggregated response
+```
+
+## API layers inside the gateway
+
+A professional gateway should be split conceptually into the following layers:
+
+### 1. Transport layer
+Responsible for:
+
+- HTTP routing
+- request parsing
+- query/path/header extraction
+- status code mapping
+- content negotiation if introduced later
+
+### 2. Access layer
+Responsible for:
+
+- auth checks
+- permission checks
+- rate limiting
+- client identity extraction
+- API token validation for future public consumers
+
+### 3. Orchestration layer
+Responsible for:
+
+- calling downstream services
+- combining multiple read models
+- deciding which dependencies are required vs optional
+- fallback behavior for partial data failures
+
+### 4. Presentation layer
+Responsible for:
+
+- shaping final response models
+- hiding internal field names that should not leak
+- sorting and grouping related data
+- preserving stable contracts for clients
+
+## Why direct service exposure is avoided
+
+Direct service exposure would create four problems:
+
+1. the frontend would become tightly coupled to internal topology
+2. service boundaries would leak into UI logic
+3. future refactors would become expensive
+4. public API stabilization would be much harder
+
+## Delivery model vs domain model
+
+The gateway may consume canonical domain objects such as releases, series, characters, pets, media assets, media attachments, MSRP records, and market observations, but it should return consumer-oriented view models rather than raw service DTOs.
+
+That distinction matters because public delivery contracts optimize for:
+
+- readability
+- stability
+- pagination
+- discoverability
+- backwards compatibility
+
+not for persistence concerns.
+
+## Recommended deployment stance
+
+The gateway should be the only service intentionally exposed at the public HTTP edge.
+
+A good deployment rule is:
+
+- gateway: public ingress
+- docs site: public ingress
+- internal services: cluster-internal only
+- worker services: no public ingress
+- AI and ingestion services: internal only
+
+=============================================================================
+# FILE: docs/api/02-api-gateway.md
+---
+title: API Gateway
+sidebar_position: 3
+description: Responsibilities, boundaries, and design expectations for the Monstrino API Gateway.
+---
+
+# API Gateway
+
+The API Gateway is the public backend entrypoint of the Monstrino platform.
+
+Its job is not to become a second business domain. Its job is to provide a stable delivery facade over internal services.
+
+## Core responsibilities
+
+The gateway should handle the following concerns:
+
+- request routing
+- contract-level validation
+- aggregation of downstream reads
+- response shaping
+- authentication and authorization checks
+- pagination normalization
+- filtering and sorting normalization
+- error translation
+- observability and request tracing
+
+## What the gateway should not do
+
+The gateway should not become the place where core domain rules live.
+
+It should avoid:
+
+- owning catalog truth
+- owning market truth
+- owning media truth
+- duplicating ingestion logic
+- embedding AI processing workflows
+- reimplementing domain validation already owned by downstream services
+
+## Recommended endpoint groups
+
+A clean top-level route structure could look like this:
+
+```text
+/api/v1/releases
+/api/v1/series
+/api/v1/characters
+/api/v1/pets
+/api/v1/market
+/api/v1/media
+/api/v1/search
+/api/v1/health
+```
+
+This keeps the API readable and predictable.
+
+## BFF + API product hybrid
+
+For Monstrino, the gateway can serve two modes at once:
+
+### Frontend delivery mode
+Optimized for:
+
+- page rendering
+- aggregated responses
+- minimal round trips
+- UI-friendly payloads
+
+### Public API mode
+Optimized for:
+
+- stable external contracts
+- explicit pagination
+- documented filtering
+- token-based access
+- stronger backwards compatibility guarantees
+
+These two modes may share infrastructure, but they should still be treated as distinct contract surfaces.
+
+## Example: release detail endpoint
+
+A release detail endpoint should feel like a ready-to-render view, not a bag of unrelated raw rows.
+
+```json
+{
+  "id": "uuid",
+  "slug": "dawn-of-the-dance-3-pack",
+  "code": "dawn-of-the-dance-3-pack",
+  "title": "Dawn of the Dance 3-Pack",
+  "mpn": "V7967",
+  "year": 2011,
+  "description": "...",
+  "textFromBox": null,
+  "series": [
+    {
+      "id": "uuid",
+      "slug": "dawn-of-the-dance",
+      "title": "Dawn of the Dance",
+      "kind": "line",
+      "relation": "primary"
+    }
+  ],
+  "characters": [
+    {
+      "id": "uuid",
+      "slug": "draculaura",
+      "title": "Draculaura",
+      "role": "main"
+    }
+  ],
+  "pets": [],
+  "releaseTypes": [
+    {
+      "code": "doll-figure",
+      "category": "content",
+      "title": "Doll Figure"
+    }
+  ],
+  "exclusiveVendors": [
+    {
+      "code": "walmart",
+      "title": "Walmart"
+    }
+  ],
+  "media": {
+    "primary": {
+      "url": "https://media.monstrino.com/...",
+      "width": 1200,
+      "height": 1600
+    },
+    "gallery": []
+  },
+  "market": {
+    "msrp": [],
+    "priceSummary": null
+  }
+}
+```
+
+This kind of contract is easier to consume than raw storage-aligned DTOs.
+
+## Gateway quality bar
+
+A strong gateway implementation should provide:
+
+- stable route naming
+- consistent pagination format
+- consistent filtering semantics
+- explicit nullability behavior
+- explicit sorting defaults
+- correlation IDs in logs and responses where needed
+- contract tests against downstream integrations
+=============================================================================
+# FILE: docs/api/03-internal-service-apis.md
+---
+title: Internal Service APIs
+sidebar_position: 4
+description: Internal API boundaries between the gateway and Monstrino domain services.
+---
+
+# Internal Service APIs
+
+Internal service APIs exist to preserve domain ownership while still allowing the delivery layer to assemble rich responses.
+
+## Internal API principles
+
+Internal service APIs should be:
+
+- explicit
+- minimal
+- domain-owned
+- cluster-internal
+- documented by capability, not by controller file layout
+
+## Service groups relevant to delivery
+
+### Release Catalog Service
+Primary source for canonical catalog reads.
+
+Typical responsibilities:
+
+- release lookup by id, code, or slug
+- series resolution
+- character and pet relationships
+- release types and exclusivity metadata
+- external references where needed internally
+
+### Market Read Models
+Responsible for delivery-friendly market data.
+
+Typical responsibilities:
+
+- latest observed prices
+- source-based market links
+- price history summaries
+- region-specific MSRP views
+
+### Media Read Models
+Responsible for media attachment and asset delivery metadata.
+
+Typical responsibilities:
+
+- resolving media attachments for a release or other owner
+- selecting primary image
+- returning active variants
+- returning stable public URLs
+- exposing moderation-safe visible assets only
+
+## What should stay internal-only
+
+The following capabilities should remain internal and undocumented for external consumers:
+
+- collector execution endpoints
+- parser execution endpoints
+- AI orchestration endpoints
+- enrichment retries
+- media ingestion claim/retry operations
+- scheduler-triggered maintenance operations
+
+Those are platform operations, not public product APIs.
+
+## Recommended internal endpoint style
+
+Internal APIs should prioritize clarity over public elegance. For example:
+
+```text
+/internal/releases/by-slug/{slug}
+/internal/releases/{id}/relationships
+/internal/media/owners/{owner_type}/{owner_id}/attachments
+/internal/market/releases/{release_id}/summary
+/internal/market/releases/{release_id}/msrp
+```
+
+These routes are not meant to be public-facing. They are meant to make ownership and intent obvious.
+
+## Aggregation rule
+
+The gateway should aggregate internal reads, but it should not force internal services to return frontend-shaped responses.
+
+A healthy split looks like this:
+
+- internal services return domain-oriented read models
+- gateway transforms them into delivery-oriented contracts
+
+## Partial failure behavior
+
+Because gateway responses may depend on multiple services, partial data rules must be explicit.
+
+Recommended policy:
+
+- missing optional market data should not break release pages
+- missing optional media variants should not break release pages if a primary asset exists
+- missing canonical release data should fail the request
+- internal timeouts should be translated into stable consumer-facing errors
+
+## Internal API evolution
+
+Internal API compatibility matters, but it does not need the same long-lived guarantees as public APIs.
+
+A practical rule is:
+
+- breaking internal changes are allowed only with coordinated rollout
+- gateway integrations must be covered by contract tests
+- cross-service field naming should stay stable where shared packages already define DTOs
+=============================================================================
+# FILE: docs/api/04-public-api-strategy.md
+---
+title: Public API Strategy
+sidebar_position: 5
+description: Direction and boundaries for the future Monstrino public API.
+---
+
+# Public API Strategy
+
+The public API is a planned product surface, not the current primary integration mode.
+
+That distinction matters.
+
+The frontend can evolve faster with a gateway-oriented delivery model, while the public API should be introduced only when the platform is ready to support external consumers with stable contracts, authentication, quotas, and documentation.
+
+## Public API goals
+
+A future public API should enable third parties to:
+
+- search releases
+- retrieve release detail pages in machine-readable form
+- browse characters, pets, and series
+- inspect selected market metadata
+- resolve public media metadata
+- build community tools and catalog integrations
+
+## What should not be exposed initially
+
+The first public API should stay conservative.
+
+It should not expose:
+
+- ingestion internals
+- raw parsed content
+- AI command schemas
+- internal retry state
+- scheduler jobs
+- moderation internals
+- storage provider details beyond what is necessary for delivery
+
+## Recommended maturity stages
+
+### Stage 1 — Internal gateway only
+Current practical focus.
+
+- frontend-oriented contracts
+- no third-party token program
+- fast iteration
+
+### Stage 2 — Read-only external API
+First safe external milestone.
+
+- release, series, character, pet, media, and selected market reads
+- token-based access
+- documented quotas
+- explicit terms of use
+
+### Stage 3 — Extended ecosystem API
+Only after operational maturity.
+
+- richer filtering
+- export-like capabilities
+- webhooks or feeds if needed
+- partner integrations
+
+## Recommended public route families
+
+```text
+/api/v1/releases
+/api/v1/releases/{slug}
+/api/v1/series
+/api/v1/series/{slug}
+/api/v1/characters
+/api/v1/characters/{slug}
+/api/v1/pets
+/api/v1/pets/{slug}
+/api/v1/media
+/api/v1/search
+```
+
+## Contract posture
+
+The public API should follow stricter rules than the internal delivery API:
+
+- versioned base path
+- stronger backwards compatibility guarantees
+- deprecation notices before removal
+- explicit rate limiting
+- explicit documentation of nullable fields
+- explicit pagination and sorting rules
+
+## Good first product
+
+The best first public API product for Monstrino is likely a read-only catalog API.
+
+That is the safest entry point because it is:
+
+- useful
+- low-risk
+- easy to document
+- naturally aligned with the platform’s strongest domain
+
+=============================================================================
+# FILE: docs/api/05-authentication-and-authorization.md
+---
+title: Authentication and Authorization
+sidebar_position: 6
+description: Authentication and authorization model for the Monstrino API layer.
+---
+
+# Authentication and Authorization
+
+Authentication and authorization requirements differ depending on the API surface.
+
+## Surface-specific policy
+
+### Public documentation pages
+Usually public.
+
+### Public catalog reads
+May be public initially or token-protected later.
+
+### Admin and operational APIs
+Must be protected.
+
+### Internal service APIs
+Must not be publicly reachable.
+
+## Recommended auth model
+
+### 1. Gateway session or token auth
+Use the gateway as the policy enforcement point.
+
+This keeps consumer auth logic in one place and prevents every internal service from becoming externally security-aware.
+
+### 2. Service-to-service trust
+Internal service APIs should rely on cluster-private networking plus service authentication where needed.
+
+### 3. Admin scope separation
+Admin operations should be isolated from public catalog reads.
+
+A strong split is:
+
+- public read scope
+- authenticated user scope if introduced later
+- admin scope
+- internal service scope
+
+## API token direction
+
+When the public API is introduced, token design should support at least:
+
+- token identifier
+- owner or client application
+- status
+- created_at / expires_at
+- optional scopes
+- rate limit tier
+
+## Authorization philosophy
+
+Monstrino is primarily a read platform from the consumer perspective.
+
+That means authorization should stay simple unless write surfaces are introduced later.
+
+Recommended policy:
+
+- catalog reads: broad access
+- market summary reads: broad access if legally and operationally acceptable
+- admin write operations: explicit admin-only access
+- ingestion, AI, and maintenance operations: internal-only
+
+## Security boundary rule
+
+Public clients should never receive direct credentials, topology information, or operational endpoints for:
+
+- object storage administration
+- internal service addresses
+- AI infrastructure
+- scheduler control
+- ingestion job management
+
+=============================================================================
+# FILE: docs/api/06-api-contracts-and-versioning.md
+---
+title: API Contracts and Versioning
+sidebar_position: 7
+description: Rules for contract design, naming, compatibility, and API versioning.
+---
+
+# API Contracts and Versioning
+
+Stable APIs do not happen by accident. They require explicit contract discipline.
+
+## Contract design goals
+
+Monstrino API contracts should be:
+
+- stable
+- explicit
+- easy to consume
+- decoupled from persistence layout
+- predictable across endpoint families
+
+## Naming rules
+
+Recommended conventions:
+
+- resource paths use plural nouns
+- path parameters identify the primary resource
+- query parameters handle filtering, sorting, and pagination
+- response field names remain consistent across endpoints
+- externally visible names should prefer clarity over internal abbreviations
+
+## Versioning strategy
+
+The public-facing API should use URL versioning:
+
+```text
+/api/v1/...
+```
+
+Why this is a good fit:
+
+- simple to document
+- easy to route
+- easy to deprecate
+- works well with gateway policy layers
+
+## Compatibility rules
+
+### Safe changes
+
+- adding optional fields
+- adding new filter values when documented
+- adding new endpoints
+- improving descriptions or examples
+
+### Breaking changes
+
+- renaming fields
+- changing field meaning
+- changing field type
+- removing fields
+- changing pagination contract
+- changing default sorting without documentation
+
+## DTOs vs response contracts
+
+Shared DTO packages are useful for internal consistency, but public contracts should not blindly mirror DTO classes.
+
+Reasons:
+
+- DTOs may carry persistence-oriented fields
+- public responses may need nested composition
+- delivery models often require field renaming for clarity
+- public contracts need stronger stability guarantees
+
+## Example response envelope
+
+A consistent response envelope is optional, but if used, it should stay simple.
+
+```json
+{
+  "data": [],
+  "meta": {
+    "page": 1,
+    "pageSize": 24,
+    "total": 240
+  }
+}
+```
+
+For detail endpoints, a plain resource response is also acceptable if used consistently.
+
+## Pagination recommendation
+
+For catalog browsing endpoints, support:
+
+- `page`
+- `pageSize`
+- `sort`
+- endpoint-specific filters
+
+Do not invent different pagination contracts for different resources unless there is a strong operational reason.
+
+## Deprecation policy
+
+For public APIs:
+
+- mark deprecated fields or endpoints in documentation
+- provide replacement guidance
+- keep deprecations available for a defined transition period
+- remove only in a new version or after an explicit migration window
+
+=============================================================================
+# FILE: docs/api/07-response-shaping.md
+---
+title: Response Shaping
+sidebar_position: 8
+description: How Monstrino transforms canonical domain data into consumer-oriented API responses.
+---
+
+# Response Shaping
+
+One of the most important responsibilities of the API layer is response shaping.
+
+Monstrino stores and processes data in multiple domain zones, but consumers should receive coherent resource views.
+
+## Why shaping matters
+
+Without response shaping, clients would need to understand:
+
+- release entities
+- relation tables and link records
+- media attachment ownership rules
+- market observation structures
+- raw ingest artifacts
+
+That would be bad API design.
+
+## Shape resources around consumer use cases
+
+The gateway should return resources that match how clients actually render or use the platform.
+
+### Release detail view
+A release detail response should include:
+
+- release identity fields
+- human-readable title and slug
+- year and identifiers such as MPN or GTIN when available
+- related series
+- related characters and pets
+- release type metadata
+- exclusivity information
+- primary media and gallery media
+- optional market summary
+
+### Character detail view
+A character detail response should include:
+
+- identity and slug
+- primary display metadata
+- alt names
+- associated releases
+- related pets where relevant
+- public media
+
+### Series detail view
+A series detail response should include:
+
+- title, slug, kind
+- parent/secondary relations where relevant
+- tagged release groups
+- notable releases or waves
+
+## Keep nullability intentional
+
+If a field may genuinely be absent, keep it nullable and document why.
+
+Examples:
+
+- `mpn`
+- `gtin`
+- `description`
+- `textFromBox`
+- `market.priceSummary`
+
+Do not fake certainty in the contract when the domain data is not guaranteed.
+
+## Do not leak storage details
+
+Avoid exposing internal fields unless they are product-relevant.
+
+Examples that usually should stay internal:
+
+- lease state
+- retry counters
+- raw payloads
+- internal storage keys unless directly needed
+- ingestion trace internals
+- moderation reasons unless the consumer is privileged
+
+## Media shaping rules
+
+A media response should prioritize usability:
+
+- primary image first
+- only active and visible assets
+- stable public URL
+- width and height when available
+- useful alt text or caption if present
+
+## Example: release media block
+
+```json
+{
+  "media": {
+    "primary": {
+      "assetId": "uuid",
+      "url": "https://media.monstrino.com/images/...",
+      "width": 1200,
+      "height": 1600,
+      "altText": "Draculaura in Dawn of the Dance 3-Pack"
+    },
+    "gallery": [
+      {
+        "assetId": "uuid",
+        "url": "https://media.monstrino.com/images/...",
+        "role": "gallery",
+        "sortOrder": 2
+      }
+    ]
+  }
+}
+```
+
+## Aggregation discipline
+
+Good shaping does not mean unlimited aggregation.
+
+The gateway should compose only what a route genuinely needs. Over-aggregation makes the API slow, expensive, and hard to cache.
+
+=============================================================================
+# FILE: docs/api/08-error-handling.md
+---
+title: Error Handling
+sidebar_position: 9
+description: Error taxonomy and consumer-facing error design for the Monstrino API layer.
+---
+
+# Error Handling
+
+Good APIs fail clearly.
+
+The Monstrino API should expose stable consumer-facing errors even when internal failures come from different downstream services.
+
+## Error design goals
+
+Errors should be:
+
+- predictable
+- machine-readable
+- easy to trace in logs
+- safe to expose
+- clearly separated from internal implementation details
+
+## Recommended error envelope
+
+```json
+{
+  "error": {
+    "code": "release_not_found",
+    "message": "Release not found.",
+    "requestId": "req_123456"
+  }
+}
+```
+
+## Recommended error categories
+
+### 400 Bad Request
+Invalid query parameter, invalid sort field, malformed path value.
+
+### 401 Unauthorized
+Missing or invalid authentication for a protected endpoint.
+
+### 403 Forbidden
+Authenticated but not allowed to access the requested capability.
+
+### 404 Not Found
+Requested resource does not exist.
+
+### 409 Conflict
+State conflict for protected admin or write operations.
+
+### 429 Too Many Requests
+Rate limit reached.
+
+### 500 Internal Server Error
+Unexpected failure inside the platform.
+
+### 502 / 503 / 504
+Downstream dependency issue or timeout.
+
+## Internal-to-external translation
+
+Internal service errors should be translated before they reach clients.
+
+Examples:
+
+- internal timeout -> `503 service_unavailable` or `504 gateway_timeout`
+- downstream validation error on an internal write path -> stable gateway error contract
+- missing optional market data -> no error, just partial response if policy allows
+
+## Request tracing
+
+Every error path should be traceable through:
+
+- request ID
+- correlation ID when used across services
+- structured logs
+- metrics and alerting
+
+## Error message rule
+
+Consumer-facing messages should be clear but not over-detailed.
+
+Good:
+
+- `Release not found.`
+- `Invalid sort value.`
+- `Authentication required.`
+
+Bad:
+
+- raw stack traces
+- SQL details
+- internal hostnames
+- bucket names unless intentionally public
+
+=============================================================================
+# FILE: docs/api/09-media-delivery.md
+---
+title: Media Delivery
+sidebar_position: 10
+description: How media assets should be represented and delivered through the Monstrino API layer.
+---
+
+# Media Delivery
+
+Media is a first-class part of the Monstrino product experience.
+
+From an API perspective, media delivery should feel simple even though the underlying platform may involve ingestion jobs, attachments, variants, moderation, object storage, and public URL generation.
+
+## Delivery responsibilities
+
+The API layer should expose media in a form that is:
+
+- safe for public consumption
+- stable over time
+- useful for frontend rendering
+- decoupled from ingestion internals
+
+## Relevant concepts
+
+### Media Asset
+Represents the stored media object and its technical metadata.
+
+### Media Attachment
+Represents how an asset is attached to a domain owner such as a release.
+
+### Media Asset Variant
+Represents a transformed or alternate version of an asset, such as resized derivatives.
+
+### Media Ingestion Job
+Represents internal processing state and should usually not be exposed in public read APIs.
+
+## Public media contract recommendations
+
+A public media object should expose only what consumers need:
+
+- stable asset identifier
+- public URL
+- width and height when known
+- content type
+- display role
+- sort order
+- caption or alt text when available
+
+## Variant selection
+
+If variants are available, the API should either:
+
+- choose the best default variant automatically, or
+- expose a simple variant list with predictable naming
+
+Do not force clients to understand internal storage transforms.
+
+## Visibility and moderation
+
+Only media that is safe and intended for the current audience should be exposed.
+
+Examples of internal concerns that should stay behind the API boundary:
+
+- quarantined asset state
+- failed variant generation details
+- moderation review internals
+- retry status and lease ownership
+
+## URL strategy
+
+Public media should be served through stable public URLs.
+
+The API may reference those URLs directly, while the underlying bucket, provider, and storage key remain internal implementation details unless intentionally part of the public contract.
+
+## Example media item
+
+```json
+{
+  "assetId": "uuid",
+  "url": "https://media.monstrino.com/images/releases/dawn-of-the-dance-3-pack/main.webp",
+  "contentType": "image/webp",
+  "width": 1200,
+  "height": 1600,
+  "role": "primary",
+  "sortOrder": 1,
+  "altText": "Dawn of the Dance 3-Pack promotional image"
+}
+```
+
+=============================================================================
+# FILE: docs/api/10-consumer-flows.md
+---
+title: Consumer Flows
+sidebar_position: 11
+description: Typical frontend and external consumer flows through the Monstrino API.
+---
+
+# Consumer Flows
+
+This page documents how the API is expected to support the most important client journeys.
+
+## 1. Release page rendering
+
+A release page is the most important delivery flow.
+
+Typical client need:
+
+- release identity
+- related characters and pets
+- primary and gallery media
+- series placement
+- release type and exclusivity
+- optional market summary
+
+Typical API sequence:
+
+```mermaid
+flowchart TB
+    A[Client opens release page] --> B[GET /api/v1/releases/{slug}]
+    B --> C[API Gateway resolves release]
+    C --> D[Gateway aggregates catalog + media + market]
+    D --> E[Gateway returns page-ready response]
+```
+
+## 2. Catalog browsing
+
+Typical client need:
+
+- paginated results
+- stable sorting
+- filtering by year, series, character, type, exclusivity, or other supported dimensions
+- lightweight cards rather than full detail payloads
+
+Recommended endpoint posture:
+
+```text
+GET /api/v1/releases?page=1&pageSize=24&sort=year_desc
+GET /api/v1/releases?series=dawn-of-the-dance
+GET /api/v1/releases?character=draculaura
+```
+
+## 3. Character page rendering
+
+Typical client need:
+
+- character identity and summary
+- associated releases
+- primary image
+- related pet information where applicable
+
+The API should prefer one clear character detail response over many small calls.
+
+## 4. Search
+
+Search should be treated as its own consumer flow, not just a filter shortcut.
+
+Typical client need:
+
+- mixed resource results
+- resource type labels
+- canonical slugs for navigation
+- relevance-oriented ranking
+
+A clean route can be:
+
+```text
+GET /api/v1/search?q=draculaura
+```
+
+## 5. External read-only integration
+
+Future third-party clients will usually need:
+
+- stable pagination
+- predictable filtering
+- authentication token support
+- stronger quotas and versioning guarantees
+
+That is why public API readiness should be treated as a product milestone, not just a route export.
+=============================================================================

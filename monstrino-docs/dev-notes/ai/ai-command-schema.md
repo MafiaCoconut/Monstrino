@@ -87,5 +87,5 @@ Model returns:  { "command": "finalize", "params": { "result": {...} }, "is_fina
 
 ## Related Documents
 
-- [AI Orchestrator Architecture](./ai-orchestrator-architecture) — the service that interprets these commands,
-- [AI Data Enrichment Strategy](./ai-data-enrichment) — concrete use cases for command execution.
+- [AI Orchestrator Architecture](./ai-orchestrator-architecture) - the service that interprets these commands,
+- [AI Data Enrichment Strategy](./ai-data-enrichment) - concrete use cases for command execution.

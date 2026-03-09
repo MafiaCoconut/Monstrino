@@ -1,10 +1,10 @@
 ---
 id: series-resolver-tests
-title: SeriesResolverService — Test Suite
+title: SeriesResolverService - Test Suite
 sidebar_label: Tests
 ---
 
-# SeriesResolverService — Test Suite
+# SeriesResolverService - Test Suite
 
 :::info
 This page documents the complete automated test suite for  
@@ -146,10 +146,10 @@ uow_factory
 
 **Descriptions:**
 
-- `seed_series` — inserts a sample series into DB
-- `seed_series_parent_and_child` — inserts parent and child series into DB  
-- `seed_release_list` — inserts releases into DB  
-- `uow_factory` — manages async UoW lifecycle  
+- `seed_series` - inserts a sample series into DB
+- `seed_series_parent_and_child` - inserts parent and child series into DB  
+- `seed_release_list` - inserts releases into DB  
+- `uow_factory` - manages async UoW lifecycle  
 
 ---
 

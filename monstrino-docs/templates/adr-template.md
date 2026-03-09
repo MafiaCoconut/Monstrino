@@ -1,6 +1,6 @@
 ---
 id: adr-template
-title: ADR-XXX — <Short Descriptive Title>
+title: ADR-XXX - <Short Descriptive Title>
 sidebar_label: ADR-XXX <Short Title>
 ---
 

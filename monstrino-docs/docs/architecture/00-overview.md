@@ -1,14 +1,14 @@
 ---
 title: Architecture Overview
 sidebar_position: 0
-description: How Monstrino is structured — from system boundaries and communication patterns to deployment, storage, and observability.
+description: How Monstrino is structured - from system boundaries and communication patterns to deployment, storage, and observability.
 ---
 
 # Architecture
 
 This section documents the architecture of the Monstrino platform at multiple levels of detail, following the **C4 model** (Context → Container) and expanding into cross-cutting concerns.
 
-The architecture is driven by a consistent set of priorities: **data integrity over throughput**, **explicit service boundaries**, and **dependency inversion at every layer**. These principles are not aspirational — they are reflected in every structural decision documented here.
+The architecture is driven by a consistent set of priorities: **data integrity over throughput**, **explicit service boundaries**, and **dependency inversion at every layer**. These principles are not aspirational - they are reflected in every structural decision documented here.
 
 ---
 
@@ -18,9 +18,9 @@ Architecture documentation here is organized from high-level to low-level:
 
 | Document | What It Covers |
 |---|---|
-| [Architecture Overview](/docs/architecture/architecture-overview/) | Full system map — all services, their roles, and primary interactions |
-| [System Context](/docs/architecture/system-context/) | C4 Level 1 — external actors, systems, and top-level boundaries |
-| [Container Architecture](/docs/architecture/container-architecture/) | C4 Level 2 — deployable units, entry points, and internal service layout |
+| [Architecture Overview](/docs/architecture/architecture-overview/) | Full system map - all services, their roles, and primary interactions |
+| [System Context](/docs/architecture/system-context/) | C4 Level 1 - external actors, systems, and top-level boundaries |
+| [Container Architecture](/docs/architecture/container-architecture/) | C4 Level 2 - deployable units, entry points, and internal service layout |
 | [Storage Architecture](/docs/architecture/storage-architecture/) | Databases, object storage, schema ownership, and data residency |
 | [Service Communication](/docs/architecture/service-communication/) | Synchronous and asynchronous integration patterns between services |
 | [Security Boundaries](/docs/architecture/security-boundaries/) | Network isolation, auth enforcement points, and trust zones |
@@ -34,15 +34,15 @@ Architecture documentation here is organized from high-level to low-level:
 
 Beyond runtime architecture, this section also covers the code-level structure that keeps services consistent:
 
-- **[Custom Packages](/docs/architecture/custom-packages/overview/)** — the 7 internal Python libraries that form the platform foundation
-- **[Architecture Patterns](/docs/architecture/patterns/overview/)** — clean architecture, repository pattern, unit of work, and dependency inversion as applied in Monstrino
+- **[Custom Packages](/docs/architecture/custom-packages/overview/)** - the 7 internal Python libraries that form the platform foundation
+- **[Architecture Patterns](/docs/architecture/patterns/overview/)** - clean architecture, repository pattern, unit of work, and dependency inversion as applied in Monstrino
 
 ---
 
 ## Key Architectural Properties
 
 **Clean Architecture throughout**  
-Business logic lives in `monstrino-core` and service use-case layers. It has no dependency on frameworks, databases, or HTTP. Infrastructure adapts to domain interfaces — not the other way around.
+Business logic lives in `monstrino-core` and service use-case layers. It has no dependency on frameworks, databases, or HTTP. Infrastructure adapts to domain interfaces - not the other way around.
 
 **Services own their data**  
 Each service has its own database or schema. Cross-domain access always goes through the owning service's API. There are no shared databases between services.

@@ -105,9 +105,9 @@ Example response:
 
 ## Fields
 
-- `command` — operation to execute
-- `params` — parameters required for execution
-- `is_final` — indicates if the response is the final result
+- `command` - operation to execute
+- `params` - parameters required for execution
+- `is_final` - indicates if the response is the final result
 
 ## Benefits
 

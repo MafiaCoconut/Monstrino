@@ -7,7 +7,7 @@ tags: [domain-model, releases, external-references, sources]
 description: "Adds an external reference system to canonical releases to track and verify release data from multiple independent external sources."
 ---
 
-# ADR-DM-002 — Add Release External Reference System
+# ADR-DM-002 - Add Release External Reference System
 
 | Field      | Value                                                             |
 | ---------- | ----------------------------------------------------------------- |
@@ -18,7 +18,7 @@ description: "Adds an external reference system to canonical releases to track a
 
 ## Context
 
-A single canonical release in the catalog may have been discovered from — and be verifiable through — multiple external sources (Mattel Shopify, fan wikis, retailer listings, etc.). There was no structured way to record this many-to-one relationship between sources and canonical releases.
+A single canonical release in the catalog may have been discovered from - and be verifiable through - multiple external sources (Mattel Shopify, fan wikis, retailer listings, etc.). There was no structured way to record this many-to-one relationship between sources and canonical releases.
 
 Previously, a single `source_url` field on the release was used, which could only capture one reference and made multi-source traceability impossible.
 
@@ -67,5 +67,5 @@ Create a separate table linking canonical releases to all known external source 
 
 ## Related Decisions
 
-- [ADR-DI-001](../data-ingestion/adr-di-001.md) — Ingestion boundary with parsed tables
-- [ADR-DI-003](../data-ingestion/adr-di-003.md) — external_id as ingestion identifier
+- [ADR-DI-001](../data-ingestion/adr-di-001.md) - Ingestion boundary with parsed tables
+- [ADR-DI-003](../data-ingestion/adr-di-003.md) - external_id as ingestion identifier

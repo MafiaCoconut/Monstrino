@@ -26,7 +26,7 @@ The platform uses **MinIO**, which provides an S3-compatible API, allowing the s
 
 | Reason | Notes |
 |---|---|
-| **Self-hosted** | runs inside the homelab cluster — no external dependency |
+| **Self-hosted** | runs inside the homelab cluster - no external dependency |
 | **S3 compatibility** | standard API, well-supported by client libraries |
 | **Performance** | performant for large binary files such as images |
 | **Portability** | same API as AWS S3 means production migration is low-friction |
@@ -49,9 +49,9 @@ monstrino-media/images/a3f7c2d1e9b04f6a8c2d5e7f1b3a9c0d
 
 This allows:
 
-- **deterministic lookup** — given a known key, the object is always at the same path,
-- **deduplication** — content hash as the key prevents storing the same file twice,
-- **predictable structure** — no ambiguity about where a given asset lives.
+- **deterministic lookup** - given a known key, the object is always at the same path,
+- **deduplication** - content hash as the key prevents storing the same file twice,
+- **predictable structure** - no ambiguity about where a given asset lives.
 
 ---
 
@@ -73,5 +73,5 @@ MinIO should be treated as append-mostly storage. Objects representing processed
 
 ## Related Documents
 
-- [Media Rehosting Pipeline](../pipelines/media-rehosting-pipeline) — the pipeline that uploads files into this storage,
-- [Kubernetes Cluster Architecture](./kubernetes-cluster-architecture) — the cluster MinIO runs in.
+- [Media Rehosting Pipeline](../pipelines/media-rehosting-pipeline) - the pipeline that uploads files into this storage,
+- [Kubernetes Cluster Architecture](./kubernetes-cluster-architecture) - the cluster MinIO runs in.

@@ -1,5 +1,5 @@
 /*
- * DocCard — swizzled theme component styles
+ * DocCard - swizzled theme component styles
  *
  * Uses project-level Infima CSS variables wherever possible so the card
  * automatically inherits any future theming changes.
@@ -72,7 +72,7 @@
   opacity: 1;
 }
 
-/* Focus visible — keyboard accessibility */
+/* Focus visible - keyboard accessibility */
 .card:focus-visible {
   outline: 2px solid rgba(255, 44, 168, 0.75);
   outline-offset: 2px;

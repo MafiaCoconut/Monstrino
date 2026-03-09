@@ -6,7 +6,7 @@
   "className": "monstrino-subcategory",
   "link": {
     "type": "generated-index",
-    "title": "testing-service — Testing",
+    "title": "testing-service - Testing",
     "description": "Testing strategy, fixtures and test scenarios of the testing-service microservice.",
     "slug": "/support/microservices/testing-service/testing"
   }

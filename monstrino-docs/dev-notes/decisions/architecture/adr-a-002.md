@@ -7,7 +7,7 @@ tags: [architecture, orm, repositories, clean-architecture]
 description: "Restricts SQLAlchemy ORM usage exclusively to the repository layer to prevent session state leakage and enforce clean architecture boundaries."
 ---
 
-# ADR-A-002 — Restrict ORM Usage to Repositories
+# ADR-A-002 - Restrict ORM Usage to Repositories
 
 | Field      | Value                                                             |
 | ---------- | ----------------------------------------------------------------- |
@@ -58,5 +58,5 @@ ORM objects are used only inside repository implementations. Application and dom
 
 ## Related Decisions
 
-- [ADR-A-003](./adr-a-003.md) — Unit of Work and BaseRepo persistence stack
-- [ADR-A-001](./adr-a-001.md) — Shared packages for models and repositories
+- [ADR-A-003](./adr-a-003.md) - Unit of Work and BaseRepo persistence stack
+- [ADR-A-001](./adr-a-001.md) - Shared packages for models and repositories

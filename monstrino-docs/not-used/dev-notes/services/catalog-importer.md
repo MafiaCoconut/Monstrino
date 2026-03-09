@@ -1,6 +1,6 @@
 ---
 id: service-catalog-importer
-title: Service — catalog-importer
+title: Service - catalog-importer
 sidebar_label: catalog-importer
 ---
 

@@ -7,7 +7,7 @@ tags: [product-strategy, domain, niche, monster-high]
 description: "Narrows the product domain to Monster High collectibles, rejecting broader markets to enable deep, high-quality catalog coverage in a well-defined niche."
 ---
 
-# ADR-PS-001 — Focus the Product Domain on Monster High Instead of LEGO or Funko
+# ADR-PS-001 - Focus the Product Domain on Monster High Instead of LEGO or Funko
 
 | Field      | Value                                                      |
 | ---------- | ---------------------------------------------------------- |
@@ -20,9 +20,9 @@ description: "Narrows the product domain to Monster High collectibles, rejecting
 
 Monstrino was initially conceived as a collectible catalog. Several domains were evaluated:
 
-- **LEGO** — massive market, well-documented, catalogues exist in abundance (BrickLink, BrickSet, Rebrickable).
-- **Funko POP** — large SKU count, active secondary market, dominated by Pop Price Guide and Hobbydb.
-- **Monster High (Mattel)** — passionate niche community, majority of fan sites are maintained manually with no automation.
+- **LEGO** - massive market, well-documented, catalogues exist in abundance (BrickLink, BrickSet, Rebrickable).
+- **Funko POP** - large SKU count, active secondary market, dominated by Pop Price Guide and Hobbydb.
+- **Monster High (Mattel)** - passionate niche community, majority of fan sites are maintained manually with no automation.
 
 The goal was to find a domain where automated data collection provides meaningful value and where existing tooling is insufficient.
 
@@ -31,12 +31,12 @@ The goal was to find a domain where automated data collection provides meaningfu
 ### Option 1: LEGO Sets Catalog
 
 - **Pros:** Massive audience, established market, structured data available.
-- **Cons:** Heavily saturated — very difficult to differentiate.
+- **Cons:** Heavily saturated - very difficult to differentiate.
 
 ### Option 2: Funko POP Catalog
 
 - **Pros:** Large market, active trading community.
-- **Cons:** Saturated — Funko provides official tracking via their own app.
+- **Cons:** Saturated - Funko provides official tracking via their own app.
 
 ### Option 3: Monster High Catalog ✅
 
@@ -62,9 +62,9 @@ The goal was to find a domain where automated data collection provides meaningfu
 
 ### Risks
 
-- Mattel could discontinue Monster High again — mitigated by building a reusable platform architecture.
+- Mattel could discontinue Monster High again - mitigated by building a reusable platform architecture.
 
 ## Related Decisions
 
-- [ADR-PS-002](./adr-ps-002.md) — Automated acquisition as core capability
-- [ADR-PS-003](./adr-ps-003.md) — MVP scope prioritization
+- [ADR-PS-002](./adr-ps-002.md) - Automated acquisition as core capability
+- [ADR-PS-003](./adr-ps-003.md) - MVP scope prioritization

@@ -76,6 +76,6 @@ See [Service Boundaries](./service-boundaries) for the isolation principles that
 
 ## Related Documents
 
-- [Container Architecture](./container-architecture) — how services are packaged and deployed,
-- [Service Boundaries](./service-boundaries) — domain separation and data ownership,
-- [Data Flow: Ingestion](./data-flow-ingestion) — how data moves from sources into the platform.
+- [Container Architecture](./container-architecture) - how services are packaged and deployed,
+- [Service Boundaries](./service-boundaries) - domain separation and data ownership,
+- [Data Flow: Ingestion](./data-flow-ingestion) - how data moves from sources into the platform.

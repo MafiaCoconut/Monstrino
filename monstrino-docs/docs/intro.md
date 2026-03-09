@@ -1,7 +1,7 @@
 ---
 title: Introduction
 sidebar_position: 1
-description: Overview of the Monstrino platform — architecture, AI features, custom packages, patterns, pipelines, and principles.
+description: Overview of the Monstrino platform - architecture, AI features, custom packages, patterns, pipelines, and principles.
 ---
 
 import DocCard from '@site/src/components/DocCard/DocCard';
@@ -36,23 +36,27 @@ The system is built as a service-oriented architecture with explicit responsibil
 </DocCard>
 
 <DocCard title="AI Features" href="/docs/ai-features/ai-strategy/">
-  How Monstrino uses LLMs for catalog enrichment — strategy, orchestration, and a real walkthrough.
+  How Monstrino uses AI for catalog enrichment - strategy and orchestration.
 </DocCard>
 
 <DocCard title="Custom Packages" href="/docs/architecture/custom-packages/overview/">
-  The 7 internal Python packages — architectural layers, responsibilities, and dependency rules.
+  The 7 internal Python packages - architectural layers and dependency rules.
 </DocCard>
 
 <DocCard title="Architecture Patterns" href="/docs/architecture/patterns/overview/">
   Clean Architecture, Unit of Work, dependency inversion, service and repository structure.
 </DocCard>
 
-<DocCard title="Catalog Ingestion Pipeline" href="/docs/pipelines/data-ingestion/catalog-ingestion-pipeline/">
-  Staged pipeline: collection → parsing → enrichment → import.
+<DocCard title="Pipelines" href="/docs/pipelines/overview/">
+  End-to-end ingestion pipelines - catalog collection, parsing and more.
 </DocCard>
 
 <DocCard title="Design Principles" href="/docs/principles/design-principles/">
   Core engineering principles that guide service design and platform evolution.
+</DocCard>
+
+<DocCard title="Domain Models" href="/docs/models/overview/">
+  Catalog, releases, series, characters, market, media, and ingest - the full domain model.
 </DocCard>
 
 </div>
@@ -67,20 +71,35 @@ C4-style system documentation covering system context, container architecture, s
 
 Two embedded subsections:
 
-- **Custom Packages** — the 7 internal Python packages (`monstrino-core` through `monstrino-testing`) with full dependency graph, structure, and responsibility breakdown
-- **Architecture Patterns** — Clean Architecture, Unit of Work, dependency rules, service and repository structure with real code examples
+- **Custom Packages** - the 7 internal Python packages (`monstrino-core` through `monstrino-testing`) with full dependency graph, structure, and responsibility breakdown
+- **Architecture Patterns** - Clean Architecture, Unit of Work, dependency rules, service and repository structure with real code examples
 
 ### AI Features
 
 How Monstrino integrates LLMs without losing operational control:
 
 - AI strategy and where AI is and is not used
-- `ai-orchestrator` service — scenario-based execution, multi-step command loop, model abstraction
+- `ai-orchestrator` service - scenario-based execution, multi-step command loop, model abstraction
 - Step-by-step enrichment walkthrough using a real release payload with full JSON examples
 
 ### Pipelines
 
 End-to-end ingestion architecture, catalog ingestion stages (collection → parsing → enrichment → import), and the media ingestion and normalization flow.
+
+### Domain Models
+
+Structured documentation of the Monstrino domain model across all bounded areas:
+
+- **Catalog** - canonical entities: `Release`, `Series`, `Character`, `Pet`, and their reference data
+- **Release & Series** - release versioning, series hierarchy, and release-to-series associations
+- **Character & Pet** - character roles, pet types, and relationships to releases
+- **Release Relationships** - cross-release links: recolors, repacks, exclusives
+- **Market** - store listings, pricing observations, and vendor tracking
+- **Media** - image assets, storage variants, and normalization metadata
+- **Ingest** - raw parsed payloads and import tracking records
+- **Reference Data** - shared lookup tables used across the domain
+- **Value Objects & Enums** - shared primitives, enums, and typed identifiers
+- **Processing & Scheduling** - task scheduling and pipeline execution state
 
 ### Principles
 

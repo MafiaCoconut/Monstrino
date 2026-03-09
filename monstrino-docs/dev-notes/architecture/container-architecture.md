@@ -55,9 +55,9 @@ Deployment
 
 This pattern provides:
 
-- **self-healing** — failed pods are replaced automatically,
-- **rolling updates** — new versions are deployed without downtime,
-- **independent scaling** — replicas per service are configured separately.
+- **self-healing** - failed pods are replaced automatically,
+- **rolling updates** - new versions are deployed without downtime,
+- **independent scaling** - replicas per service are configured separately.
 
 ---
 
@@ -75,6 +75,6 @@ Images are built per service and versioned independently.
 
 ## Related Documents
 
-- [Kubernetes Cluster Architecture](../infrastructure/kubernetes-cluster-architecture) — the cluster these containers run on,
-- [Service Boundaries](./service-boundaries) — domain ownership per service,
-- [System Context](./system-context) — what the system as a whole does.
+- [Kubernetes Cluster Architecture](../infrastructure/kubernetes-cluster-architecture) - the cluster these containers run on,
+- [Service Boundaries](./service-boundaries) - domain ownership per service,
+- [System Context](./system-context) - what the system as a whole does.

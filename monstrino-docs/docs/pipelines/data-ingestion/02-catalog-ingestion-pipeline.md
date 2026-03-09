@@ -1,6 +1,6 @@
 ---
 title: Catalog Ingestion Pipeline
-sidebar_position: 4
+sidebar_position: 2
 description: Data ingestion and normalization pipeline for catalog data in the Monstrino platform.
 ---
 
@@ -22,6 +22,10 @@ Each stage has clearly defined responsibilities and can evolve independently.
 
 ---
 
+## High
+
+---
+
 ## Pipeline Stages
 
 | Stage | Responsibility |
@@ -35,7 +39,7 @@ This staged architecture improves reliability and allows partial reprocessing if
 
 ---
 
-## Stage 1 — Source Collection
+## Stage 1 - Source Collection
 
 The first stage of the catalog ingestion pipeline is responsible for discovering new releases for a specific external source and collecting detailed parsed data for releases that have not yet been processed.
 
@@ -76,8 +80,8 @@ The collection stage is executed as follows:
 
 This stage intentionally separates two levels of source data:
 
-- `ParseReleaseRef` — lightweight release discovery records containing only source identity
-- `ReleaseParsedContentRef` — detailed parsed release content collected only for new releases
+- `ParseReleaseRef` - lightweight release discovery records containing only source identity
+- `ReleaseParsedContentRef` - detailed parsed release content collected only for new releases
 
 This separation reduces unnecessary heavy parsing and makes the collection stage more efficient.
 
@@ -89,7 +93,7 @@ These records then become the input for downstream enrichment and import stages.
 
 ---
 
-## Stage 2 — Parsed Data Enrichment
+## Stage 2 - Parsed Data Enrichment
 
 The second stage of the catalog ingestion pipeline is responsible for improving incomplete parsed release records before they are imported into the normalized domain model.
 
@@ -113,9 +117,9 @@ The enrichment stage uses this field to manage work ownership and lifecycle tran
 
 Typical state progression for this stage is:
 
-- `init` — the record has not yet been processed
-- `claimed` — the record has been reserved by a worker
-- `ready-to-import` — enrichment is complete and the record can move to the import stage
+- `init` - the record has not yet been processed
+- `claimed` - the record has been reserved by a worker
+- `ready-to-import` - enrichment is complete and the record can move to the import stage
 
 This state-based approach prevents duplicate processing when multiple pods are running at the same time.
 
@@ -176,7 +180,7 @@ These records become the input for the downstream import stage.
 
 ---
 
-## Stage 3 — Catalog Import
+## Stage 3 - Catalog Import
 
 The third stage of the catalog ingestion pipeline is responsible for transforming enriched parsed release records into canonical catalog entities and their domain relationships.
 

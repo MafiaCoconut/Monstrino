@@ -7,7 +7,7 @@ tags: [product-strategy, acquisition, automation, ingestion]
 description: "Makes automated data acquisition the core product capability, replacing the manual update model used by existing competing catalog sites."
 ---
 
-# ADR-PS-002 — Make Automated Data Acquisition the Core Product Capability
+# ADR-PS-002 - Make Automated Data Acquisition the Core Product Capability
 
 | Field      | Value                                                      |
 | ---------- | ---------------------------------------------------------- |
@@ -50,7 +50,7 @@ Build a system that automatically discovers new releases, scrapes source data, n
 
 ### Positive
 
-- High scalability — new releases appear in the catalog without manual work.
+- High scalability - new releases appear in the catalog without manual work.
 - Minimal ongoing labor once parsers are stable.
 - Provides a durable competitive advantage over manual sites.
 
@@ -61,6 +61,6 @@ Build a system that automatically discovers new releases, scrapes source data, n
 
 ## Related Decisions
 
-- [ADR-PS-001](./adr-ps-001.md) — Domain selection (Monster High)
-- [ADR-DI-001](../data-ingestion/adr-di-001.md) — Parsed tables ingestion boundary
-- [ADR-DI-002](../data-ingestion/adr-di-002.md) — Processing state workflow
+- [ADR-PS-001](./adr-ps-001.md) - Domain selection (Monster High)
+- [ADR-DI-001](../data-ingestion/adr-di-001.md) - Parsed tables ingestion boundary
+- [ADR-DI-002](../data-ingestion/adr-di-002.md) - Processing state workflow

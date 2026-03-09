@@ -1,72 +1,72 @@
-MONSTRINO — ADR LIST BY CATEGORY
+MONSTRINO - ADR LIST BY CATEGORY
 
 ================================================================================
 PRODUCT & STRATEGY
 ================================================================================
 
-ADR-01 — Focus the product domain on Monster High instead of LEGO or Funko
-ADR-02 — Make automated data acquisition the core product capability
-ADR-03 — Prioritize release archive over user features for MVP
-ADR-25 — Defer affiliate monetization
-ADR-26 — Prioritize image pipeline over price collection for MVP
+ADR-01 - Focus the product domain on Monster High instead of LEGO or Funko
+ADR-02 - Make automated data acquisition the core product capability
+ADR-03 - Prioritize release archive over user features for MVP
+ADR-25 - Defer affiliate monetization
+ADR-26 - Prioritize image pipeline over price collection for MVP
 
 ================================================================================
 DATA INGESTION & PARSING
 ================================================================================
 
-ADR-04 — Separate ingestion data from canonical catalog data
-ADR-05 — Use database processing_state for ingestion workflows
-ADR-06 — Use external_id as main ingestion identifier
-ADR-07 — Enforce idempotency using source + external_id
-ADR-08 — Design parsed models for heterogeneous source data
-ADR-09 — Store parsed content as replayable JSON
+ADR-04 - Separate ingestion data from canonical catalog data
+ADR-05 - Use database processing_state for ingestion workflows
+ADR-06 - Use external_id as main ingestion identifier
+ADR-07 - Enforce idempotency using source + external_id
+ADR-08 - Design parsed models for heterogeneous source data
+ADR-09 - Store parsed content as replayable JSON
 
 ================================================================================
 SERVICE ARCHITECTURE & APPLICATION DESIGN
 ================================================================================
 
-ADR-11 — Introduce shared packages for cross-service code
-ADR-12 — Restrict ORM usage to repositories
-ADR-13 — Introduce UnitOfWork and BaseRepo persistence architecture
-ADR-14 — Organize services by domain capabilities
-ADR-15 — Introduce Contracts → Command → Dispatcher API architecture
-ADR-22 — Centralize source parsers in monstrino-infra
+ADR-11 - Introduce shared packages for cross-service code
+ADR-12 - Restrict ORM usage to repositories
+ADR-13 - Introduce UnitOfWork and BaseRepo persistence architecture
+ADR-14 - Organize services by domain capabilities
+ADR-15 - Introduce Contracts → Command → Dispatcher API architecture
+ADR-22 - Centralize source parsers in monstrino-infra
 
 ================================================================================
 DATABASE & DOMAIN MODEL
 ================================================================================
 
-ADR-17 — Structure database by domain schemas
-ADR-30 — Add release external reference system
-ADR-31 — Introduce character variant concept
+ADR-17 - Structure database by domain schemas
+ADR-30 - Add release external reference system
+ADR-31 - Introduce character variant concept
 
 ================================================================================
 MEDIA & STORAGE
 ================================================================================
 
-ADR-10 — Rehost external images into Monstrino storage
-ADR-20 — Use S3-compatible object storage
-ADR-21 — Split media rehosting pipeline into subscriber and processor
-ADR-29 — Introduce media ingestion jobs
+ADR-10 - Rehost external images into Monstrino storage
+ADR-20 - Use S3-compatible object storage
+ADR-21 - Split media rehosting pipeline into subscriber and processor
+ADR-29 - Introduce media ingestion jobs
 
 ================================================================================
 LLM & EXTERNAL SOURCES
 ================================================================================
 
-ADR-16 — Isolate LLM processing behind llm-gateway
-ADR-23 — Use LLM-assisted normalization for release data
-ADR-24 — Use official Mattel Shopify sources for MSRP prices
+ADR-16 - Isolate LLM processing behind llm-gateway
+ADR-23 - Use LLM-assisted normalization for release data
+ADR-24 - Use official Mattel Shopify sources for MSRP prices
 
 ================================================================================
 INFRASTRUCTURE & DEPLOYMENT
 ================================================================================
 
-ADR-18 — Deploy Monstrino on single-node k3s cluster
-ADR-19 — Publish homelab services through Cloudflared
+ADR-18 - Deploy Monstrino on single-node k3s cluster
+ADR-19 - Publish homelab services through Cloudflared
 
 ================================================================================
 FRONTEND
 ================================================================================
 
-ADR-27 — Migrate frontend from Vite to Next.js
-ADR-28 — Separate frontend into dedicated repository
+ADR-27 - Migrate frontend from Vite to Next.js
+ADR-28 - Separate frontend into dedicated repository

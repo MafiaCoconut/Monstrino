@@ -16,17 +16,12 @@ const config: Config = {
   tagline: '',
   favicon: 'img/monstrino_icon.svg',
 
-  // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
-  future: {
-    v4: true, // Improve compatibility with the upcoming Docusaurus v4
-  },
-
   // Set the production url of your site here
   url: SITE_URL,
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
-  trailingSlash: true,
+  trailingSlash: false,
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -95,14 +90,12 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/monstrino_icon.svg',
     colorMode: {
-      defaultMode: 'dark',    
-      respectPrefersColorScheme: false,
-      disableSwitch: true,
-      // respectPrefersColorScheme: true,
+      defaultMode: 'dark',
+      respectPrefersColorScheme: true,
+      disableSwitch: false,
     },
     navbar: {
       hideOnScroll: false,
-      style: 'dark',
       title: 'Monstrino Docs',
       logo: {
         alt: 'My Site Logo',

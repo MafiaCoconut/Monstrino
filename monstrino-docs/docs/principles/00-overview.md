@@ -28,7 +28,7 @@ Writing them down serves three purposes:
 | Document | What It Defines |
 |---|---|
 | [Design Principles](/docs/principles/design-principles/) | Core engineering values: correctness over speed, explicit over implicit, domain stability first |
-| [Service Boundaries](/docs/principles/service-boundaries/) | Domain ownership model — which service is responsible for what, and why cross-domain calls must go through APIs |
+| [Service Boundaries](/docs/principles/service-boundaries/) | Domain ownership model - which service is responsible for what, and why cross-domain calls must go through APIs |
 | [Data Ownership](/docs/principles/data-ownership/) | Which domain owns which data, who may write it, and how external access is controlled |
 | [API Design Principles](/docs/principles/api-design-principles/) | Consistent API structure rules: response shape, error format, versioning, and pagination |
 
@@ -36,7 +36,7 @@ Writing them down serves three purposes:
 
 ## How These Principles Interact
 
-The four documents are not independent — they reflect a single unified model:
+The four documents are not independent - they reflect a single unified model:
 
 - **Design principles** establish the values.
 - **Service boundaries** apply those values at the service level.

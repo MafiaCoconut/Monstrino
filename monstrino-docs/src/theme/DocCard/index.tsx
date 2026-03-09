@@ -82,7 +82,7 @@ function CardShell({
         <p className={styles.cardDescription}>{description}</p>
       ) : (
         <p className={clsx(styles.cardDescription, styles.cardDescriptionEmpty)}>
-          —
+          -
         </p>
       )}
 

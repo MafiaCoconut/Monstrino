@@ -7,7 +7,7 @@ tags: [infra, cloudflare, tunnel, networking, homelab]
 description: "Exposes homelab services to the internet via Cloudflare Tunnel, bypassing CGNAT and eliminating the need for a public static IP address."
 ---
 
-# ADR-IP-002 — Publish Homelab Services Through Cloudflared
+# ADR-IP-002 - Publish Homelab Services Through Cloudflared
 
 | Field      | Value                                                          |
 | ---------- | -------------------------------------------------------------- |
@@ -59,9 +59,9 @@ Run the `cloudflared` daemon in the cluster, which establishes an encrypted outb
 
 ### Negative
 
-- All external traffic passes through Cloudflare — trust dependency.
+- All external traffic passes through Cloudflare - trust dependency.
 - Not suitable for non-HTTP services (e.g., raw TCP databases).
 
 ## Related Decisions
 
-- [ADR-IP-001](./adr-ip-001.md) — k3s homelab deployment
+- [ADR-IP-001](./adr-ip-001.md) - k3s homelab deployment

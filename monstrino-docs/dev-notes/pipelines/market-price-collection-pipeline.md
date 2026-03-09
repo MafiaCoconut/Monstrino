@@ -173,7 +173,7 @@ Recommended handling:
 
 - retry transient fetch errors,
 - mark persistent parser issues for review with `parse_failed`,
-- keep old snapshots intact — **never overwrite historical observations**,
+- keep old snapshots intact - **never overwrite historical observations**,
 - avoid collapsing all failures into one generic state.
 
 ---

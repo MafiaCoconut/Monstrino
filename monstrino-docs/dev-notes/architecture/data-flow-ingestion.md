@@ -9,7 +9,7 @@ description: How data moves from external sources through the Monstrino ingestio
 # Data Flow: Ingestion
 
 :::info
-This document provides a high-level view of how data flows through the ingestion pipeline — from external sources to normalized platform storage.
+This document provides a high-level view of how data flows through the ingestion pipeline - from external sources to normalized platform storage.
 :::
 
 ---
@@ -32,7 +32,7 @@ Data moves through the following stages in sequence:
 | **4. Validation** | verify extracted values for plausibility and completeness |
 | **5. Persistence** | write normalized records into the appropriate storage zone |
 
-Not every item goes through every stage — clean, well-structured sources may skip enrichment entirely.
+Not every item goes through every stage - clean, well-structured sources may skip enrichment entirely.
 
 ---
 
@@ -80,7 +80,7 @@ This separation is an architectural decision. See [ADR-DI-001](../decisions/data
 
 ## Related Documents
 
-- [Pipelines Overview](../pipelines/pipelines-overview) — detailed pipeline mechanics and conventions,
-- [Catalog Ingestion Pipeline](../pipelines/catalog-ingestion-pipeline) — the specific pipeline for catalog data,
-- [Service Boundaries](./service-boundaries) — how domain ownership applies to ingestion stages,
-- [AI Data Enrichment Strategy](../ai/ai-data-enrichment) — how the enrichment stage works.
+- [Pipelines Overview](../pipelines/pipelines-overview) - detailed pipeline mechanics and conventions,
+- [Catalog Ingestion Pipeline](../pipelines/catalog-ingestion-pipeline) - the specific pipeline for catalog data,
+- [Service Boundaries](./service-boundaries) - how domain ownership applies to ingestion stages,
+- [AI Data Enrichment Strategy](../ai/ai-data-enrichment) - how the enrichment stage works.

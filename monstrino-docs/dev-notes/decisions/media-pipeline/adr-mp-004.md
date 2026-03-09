@@ -7,7 +7,7 @@ tags: [media-pipeline, jobs, database, async-processing]
 description: "Introduces a media ingestion jobs table to queue, track, and retry asynchronous image download and storage operations."
 ---
 
-# ADR-MP-004 — Introduce Media Ingestion Jobs
+# ADR-MP-004 - Introduce Media Ingestion Jobs
 
 | Field      | Value                                                           |
 | ---------- | --------------------------------------------------------------- |
@@ -74,6 +74,6 @@ A dedicated table stores pending media processing work as records with state tra
 
 ## Related Decisions
 
-- [ADR-DI-002](../data-ingestion/adr-di-002.md) — Processing state pattern
-- [ADR-MP-003](./adr-mp-003.md) — Subscriber/processor service split
-- [ADR-MP-002](./adr-mp-002.md) — S3 storage
+- [ADR-DI-002](../data-ingestion/adr-di-002.md) - Processing state pattern
+- [ADR-MP-003](./adr-mp-003.md) - Subscriber/processor service split
+- [ADR-MP-002](./adr-mp-002.md) - S3 storage

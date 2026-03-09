@@ -7,7 +7,7 @@ tags: [product-strategy, monetization, affiliate]
 description: "Defers affiliate monetization links to avoid conflicting interests between product integrity and revenue generation during the MVP phase."
 ---
 
-# ADR-PS-004 — Defer Affiliate Monetization
+# ADR-PS-004 - Defer Affiliate Monetization
 
 | Field      | Value                                                   |
 | ---------- | ------------------------------------------------------- |
@@ -49,7 +49,7 @@ Build the catalog as a neutral, reference-quality archive first. Revisit monetiz
 ### Positive
 
 - Cleaner product identity as a reference catalog.
-- Simpler architecture — no affiliate parameter injection or tracking.
+- Simpler architecture - no affiliate parameter injection or tracking.
 - Better trust positioning with the community.
 
 ### Negative
@@ -58,4 +58,4 @@ Build the catalog as a neutral, reference-quality archive first. Revisit monetiz
 
 ## Related Decisions
 
-- [ADR-PS-003](./adr-ps-003.md) — MVP scope prioritization
+- [ADR-PS-003](./adr-ps-003.md) - MVP scope prioritization

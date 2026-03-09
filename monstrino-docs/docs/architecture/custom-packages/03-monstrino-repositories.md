@@ -1,6 +1,6 @@
 ---
 title: monstrino-repositories
-description: Data access layer — base CRUD repository, domain-specific interfaces, SQLAlchemy implementations, and UnitOfWork.
+description: Data access layer - base CRUD repository, domain-specific interfaces, SQLAlchemy implementations, and UnitOfWork.
 sidebar_label: monstrino-repositories
 sidebar_position: 3
 ---
@@ -32,11 +32,11 @@ monstrino_repositories/
 │   ├── crud_repo/
 │   ├── dto/
 │   ├── factory/
-│   │   ├── mapper_factory.py  # MapperFactory — builds ORM↔DTO mappers
-│   │   └── repo_factory.py    # RepoFactory — constructs repository instances
+│   │   ├── mapper_factory.py  # MapperFactory - builds ORM↔DTO mappers
+│   │   └── repo_factory.py    # RepoFactory - constructs repository instances
 │   ├── orm_base_repo/
 │   │   ├── interfaces/        # BaseRepoInterface
-│   │   └── orm_base/          # SqlAlchemyBaseRepo — base async SQLAlchemy repo
+│   │   └── orm_base/          # SqlAlchemyBaseRepo - base async SQLAlchemy repo
 │   └── utilities/
 │       ├── db_error_handler.py          # Top-level DB error handler
 │       ├── repo_exception_translator.py # Translates DB exceptions to domain errors
@@ -71,8 +71,8 @@ monstrino_repositories/
 ### Repository Interfaces vs Implementations
 
 Each domain entity has a clear separation:
-- `repositories_interfaces/` — abstract contracts (Protocols / ABCs) that the domain and application layers depend on
-- `repositories_impl/` — SQLAlchemy concrete implementations; only the infrastructure layer references these directly
+- `repositories_interfaces/` - abstract contracts (Protocols / ABCs) that the domain and application layers depend on
+- `repositories_impl/` - SQLAlchemy concrete implementations; only the infrastructure layer references these directly
 
 ### Exception Translation
 

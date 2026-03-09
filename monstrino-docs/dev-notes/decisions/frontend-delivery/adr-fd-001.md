@@ -7,7 +7,7 @@ tags: [frontend, nextjs, vite, seo, ssr]
 description: "Migrates the frontend from a Vite SPA to Next.js to enable server-side rendering and incremental static regeneration for SEO-critical catalog pages."
 ---
 
-# ADR-FD-001 — Migrate Frontend from Vite to Next.js
+# ADR-FD-001 - Migrate Frontend from Vite to Next.js
 
 | Field      | Value                                                    |
 | ---------- | -------------------------------------------------------- |
@@ -21,7 +21,7 @@ description: "Migrates the frontend from a Vite SPA to Next.js to enable server-
 The initial Monstrino frontend was built with **Vite + React** as a client-side single-page application (SPA). While this worked for development, it presented a fundamental SEO problem:
 
 - Google Search requires pre-rendered HTML to index pages correctly.
-- A SPA delivers an empty shell and relies on JavaScript execution for content — this degrades or blocks indexing.
+- A SPA delivers an empty shell and relies on JavaScript execution for content - this degrades or blocks indexing.
 - A catalog product must be discoverable via search to provide any value.
 
 ## Options Considered
@@ -42,7 +42,7 @@ Pre-generate all pages at build time.
 
 ### Option 3: Next.js with SSR/ISR ✅
 
-Migrate to Next.js, which supports Server-Side Rendering (SSR) and Incremental Static Regeneration (ISR) — individual pages can be statically generated and automatically revalidated as catalog data updates.
+Migrate to Next.js, which supports Server-Side Rendering (SSR) and Incremental Static Regeneration (ISR) - individual pages can be statically generated and automatically revalidated as catalog data updates.
 
 - **Pros:** Full HTML delivery for SEO, ISR means pages update without full rebuilds, strong ecosystem, App Router provides file-based routing and layouts.
 - **Cons:** Migration effort, more complex than a pure SPA.
@@ -66,4 +66,4 @@ Migrate to Next.js, which supports Server-Side Rendering (SSR) and Incremental S
 
 ## Related Decisions
 
-- [ADR-FD-002](./adr-fd-002.md) — Frontend in a dedicated repository
+- [ADR-FD-002](./adr-fd-002.md) - Frontend in a dedicated repository

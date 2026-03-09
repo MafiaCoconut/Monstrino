@@ -14,7 +14,7 @@ This document describes how external HTTP traffic reaches the cluster and how se
 
 ---
 
-## External Access — Ingress
+## External Access - Ingress
 
 External access to services is handled through an **Ingress controller**.
 
@@ -39,7 +39,7 @@ Client (browser / API consumer)
 
 ## Internal Networking
 
-Services communicate internally using **Kubernetes service discovery** — no external URLs or hardcoded IPs.
+Services communicate internally using **Kubernetes service discovery** - no external URLs or hardcoded IPs.
 
 Service DNS pattern:
 
@@ -69,5 +69,5 @@ See the Kubernetes manifests in `monstrino-configurations/kubernetes/cloudflared
 
 ## Related Documents
 
-- [Kubernetes Cluster Architecture](./kubernetes-cluster-architecture) — the cluster this networking belongs to,
-- [Kubernetes Namespace Structure](./kubernetes-namespace-structure) — how namespaces affect DNS resolution.
+- [Kubernetes Cluster Architecture](./kubernetes-cluster-architecture) - the cluster this networking belongs to,
+- [Kubernetes Namespace Structure](./kubernetes-namespace-structure) - how namespaces affect DNS resolution.

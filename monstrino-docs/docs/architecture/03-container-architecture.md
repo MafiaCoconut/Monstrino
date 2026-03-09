@@ -173,14 +173,14 @@ This ensures a clear separation between **public access and internal services**.
 
 Additional architectural documentation expands on specific parts of the system:
 
-- [Architecture Overview](./architecture-overview.md) — high-level system description
-- [System Context](./system-context.md) — external system environment
-- [Storage Architecture](./storage-architecture.md) — storage design
-- [Domain Model](./domain-model.md) — core domain entities and relations
-- [Service Communication](./service-communication.md) — inter-service communication model
-- [Security Boundaries](./security-boundaries.md) — access control and security model
-- [Design Principles](./design-principles.md) — architectural principles and decisions
-- `catalog-ingestion-pipeline.md` — data ingestion pipeline *(planned)*
-- `media-pipeline.md` — media processing architecture *(planned)*
+- [Architecture Overview](./architecture-overview.md) - high-level system description
+- [System Context](./system-context.md) - external system environment
+- [Storage Architecture](./storage-architecture.md) - storage design
+- [Domain Model](./domain-model.md) - core domain entities and relations
+- [Service Communication](./service-communication.md) - inter-service communication model
+- [Security Boundaries](./security-boundaries.md) - access control and security model
+- [Design Principles](./design-principles.md) - architectural principles and decisions
+- `catalog-ingestion-pipeline.md` - data ingestion pipeline *(planned)*
+- `media-pipeline.md` - media processing architecture *(planned)*
 
 Together these documents provide a complete architectural view of the Monstrino platform. -->

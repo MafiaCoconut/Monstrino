@@ -67,5 +67,5 @@ Across namespaces, the full DNS path is required:
 
 ## Related Documents
 
-- [Kubernetes Cluster Architecture](./kubernetes-cluster-architecture) — the cluster this namespace structure belongs to,
-- [Environment Strategy](./environment-strategy) — how environments are defined and what each provides.
+- [Kubernetes Cluster Architecture](./kubernetes-cluster-architecture) - the cluster this namespace structure belongs to,
+- [Environment Strategy](./environment-strategy) - how environments are defined and what each provides.

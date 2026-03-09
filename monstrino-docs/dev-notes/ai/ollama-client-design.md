@@ -34,9 +34,9 @@ A dedicated `OllamaClient` abstraction encapsulates communication details and ex
 
 ## Design Goals
 
-- **Reusable client component** — all Ollama communication is in one place,
-- **Configurable generation options** — inference parameters are injected, not hardcoded,
-- **Isolation from infrastructure details** — callers do not construct HTTP requests directly.
+- **Reusable client component** - all Ollama communication is in one place,
+- **Configurable generation options** - inference parameters are injected, not hardcoded,
+- **Isolation from infrastructure details** - callers do not construct HTTP requests directly.
 
 ---
 
@@ -47,13 +47,13 @@ The client exposes configurable options that control model inference behavior.
 | Option | Description |
 |---|---|
 | `context_window` (num_ctx) | number of tokens the model considers as context |
-| `temperature` | controls randomness — lower is more deterministic |
+| `temperature` | controls randomness - lower is more deterministic |
 | `batch_size` (num_batch) | tokens processed per batch during generation |
 | `thread_count` (num_thread) | CPU threads allocated to inference |
 
 :::note
 These parameters are configured centrally in the client implementation.
-Consumers of `OllamaClient` should not set raw inference options directly — they should use higher-level generation request objects.
+Consumers of `OllamaClient` should not set raw inference options directly - they should use higher-level generation request objects.
 :::
 
 ---
@@ -80,5 +80,5 @@ Those concerns belong to higher layers within `ai-orchestrator`.
 
 ## Related Documents
 
-- [AI Orchestrator Architecture](./ai-orchestrator-architecture) — where this client fits in the service,
-- [Model Selection Strategy](./model-selection) — which models are configured for use.
+- [AI Orchestrator Architecture](./ai-orchestrator-architecture) - where this client fits in the service,
+- [Model Selection Strategy](./model-selection) - which models are configured for use.

@@ -7,7 +7,7 @@ tags: [media-pipeline, storage, s3, minio, portability]
 description: "Uses S3-compatible object storage (MinIO in homelab) to enable portable image storage that can migrate to managed cloud providers without code changes."
 ---
 
-# ADR-MP-002 — Use S3-Compatible Object Storage
+# ADR-MP-002 - Use S3-Compatible Object Storage
 
 | Field      | Value                                                        |
 | ---------- | ------------------------------------------------------------ |
@@ -65,5 +65,5 @@ Target the S3 API in all code. Run MinIO locally. Any S3-compatible cloud servic
 
 ## Related Decisions
 
-- [ADR-MP-001](./adr-mp-001.md) — Image rehosting into Monstrino storage
-- [ADR-IP-001](../infra-platform/adr-ip-001.md) — k3s homelab deployment
+- [ADR-MP-001](./adr-mp-001.md) - Image rehosting into Monstrino storage
+- [ADR-IP-001](../infra-platform/adr-ip-001.md) - k3s homelab deployment

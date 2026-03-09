@@ -7,7 +7,7 @@ tags: [architecture, api, contracts, dispatcher, clean-architecture]
 description: "Establishes a Contracts → Command → Dispatcher API pattern to decouple HTTP concerns from application logic and enable clean, testable handlers."
 ---
 
-# ADR-A-005 — Introduce Contracts → Command → Dispatcher API Architecture
+# ADR-A-005 - Introduce Contracts → Command → Dispatcher API Architecture
 
 | Field      | Value                                                                 |
 | ---------- | --------------------------------------------------------------------- |
@@ -66,5 +66,5 @@ A structured pipeline cleanly separates HTTP concerns from application logic.
 
 ## Related Decisions
 
-- [ADR-A-002](./adr-a-002.md) — ORM restricted to repository layer
-- [ADR-A-003](./adr-a-003.md) — UnitOfWork and BaseRepo persistence
+- [ADR-A-002](./adr-a-002.md) - ORM restricted to repository layer
+- [ADR-A-003](./adr-a-003.md) - UnitOfWork and BaseRepo persistence

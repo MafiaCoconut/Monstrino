@@ -1,6 +1,6 @@
 ---
 id: service-catalog-collector
-title: Service — catalog-collector
+title: Service - catalog-collector
 sidebar_label: catalog-collector
 ---
 

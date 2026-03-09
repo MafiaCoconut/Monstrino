@@ -1,5 +1,5 @@
 /*
- * DocCardList — swizzled theme component styles
+ * DocCardList - swizzled theme component styles
  *
  * Responsive CSS grid that auto-fills columns based on available space.
  * No media queries are needed for the core layout thanks to auto-fill + minmax.

@@ -331,7 +331,7 @@
 
 [//]: # (  "name": "Draculaura Ghouls Rule",)
 
-[//]: # (  "displayName": "Draculaura — Ghouls Rule",)
+[//]: # (  "displayName": "Draculaura - Ghouls Rule",)
 
 [//]: # (  "mpn": "MPN123",)
 

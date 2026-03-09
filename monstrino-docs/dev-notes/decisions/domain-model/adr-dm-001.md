@@ -7,7 +7,7 @@ tags: [domain-model, database, schemas, organization]
 description: "Structures the PostgreSQL database into domain-scoped schemas to reduce namespace pollution and clarify which tables belong to which part of the system."
 ---
 
-# ADR-DM-001 — Structure Database by Domain Schemas
+# ADR-DM-001 - Structure Database by Domain Schemas
 
 | Field      | Value                                                        |
 | ---------- | ------------------------------------------------------------ |
@@ -40,10 +40,10 @@ Organize tables into named PostgreSQL schemas that correspond to system domains.
 
 > The database is organized into PostgreSQL schemas by domain:
 >
-> - `catalog` — canonical release, character, series data
-> - `ingest` — parsed tables and ingestion workflow state
-> - `media` — media asset jobs and references
-> - `core` — cross-domain tables (lookups, configuration, audit)
+> - `catalog` - canonical release, character, series data
+> - `ingest` - parsed tables and ingestion workflow state
+> - `media` - media asset jobs and references
+> - `core` - cross-domain tables (lookups, configuration, audit)
 
 ## Consequences
 
@@ -60,5 +60,5 @@ Organize tables into named PostgreSQL schemas that correspond to system domains.
 
 ## Related Decisions
 
-- [ADR-A-004](../architecture/adr-a-004.md) — Services organized by domain capability
-- [ADR-DI-001](../data-ingestion/adr-di-001.md) — Parsed tables as ingestion boundary
+- [ADR-A-004](../architecture/adr-a-004.md) - Services organized by domain capability
+- [ADR-DI-001](../data-ingestion/adr-di-001.md) - Parsed tables as ingestion boundary

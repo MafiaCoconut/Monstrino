@@ -7,7 +7,7 @@ tags: [data-ingestion, catalog, parsed-tables, boundary]
 description: "Separates raw ingestion data into parsed tables, decoupling external source formats from the canonical catalog schema to allow safe re-ingestion."
 ---
 
-# ADR-DI-001 — Separate Ingestion Data from Canonical Catalog Data
+# ADR-DI-001 - Separate Ingestion Data from Canonical Catalog Data
 
 | Field      | Value                                                          |
 | ---------- | -------------------------------------------------------------- |
@@ -69,6 +69,6 @@ All external data lands in `parsed_*` staging tables first. A dedicated importer
 
 ## Related Decisions
 
-- [ADR-DI-002](./adr-di-002.md) — Processing state as ingestion workflow
-- [ADR-DI-003](./adr-di-003.md) — external_id as ingestion identifier
-- [ADR-DI-006](./adr-di-006.md) — Replayable JSON storage
+- [ADR-DI-002](./adr-di-002.md) - Processing state as ingestion workflow
+- [ADR-DI-003](./adr-di-003.md) - external_id as ingestion identifier
+- [ADR-DI-006](./adr-di-006.md) - Replayable JSON storage

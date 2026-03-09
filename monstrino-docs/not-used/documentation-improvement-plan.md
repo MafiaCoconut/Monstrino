@@ -31,11 +31,11 @@
 | Roadmap документов              | 0 (стабы по 2 строки)     |
 | Reflection документов           | 0                         |
 
-Архитектурная часть docs/ — **70-80% готовности**, dev-notes — **50-60%**.
+Архитектурная часть docs/ - **70-80% готовности**, dev-notes - **50-60%**.
 
 ---
 
-# ПРИОРИТЕТ 1 — Критично для собеседования
+# ПРИОРИТЕТ 1 - Критично для собеседования
 
 ## 1. Создать секцию docs/ai-features/ (AI в проекте)
 
@@ -84,7 +84,7 @@
 ## 3. Расширить ADR-009 (LLM as Assistive Processing Component)
 
 **Файл:** `dev-notes/decisions/product-strategy/adr-002.md`
-**Текущее состояние:** СТАБ — 5 строк контента
+**Текущее состояние:** СТАБ - 5 строк контента
 
 - [ ] Расширить контекст: почему LLM нужен, какие проблемы решает
 - [ ] Описать альтернативы: rule-based only, LLM-driven architecture, hybrid
@@ -120,13 +120,13 @@
 
 ---
 
-# ПРИОРИТЕТ 2 — Важно для впечатления "senior architecture"
+# ПРИОРИТЕТ 2 - Важно для впечатления "senior architecture"
 
 ## 6. Написать roadmap (short-term + long-term)
 
 **Файлы:**
-- `dev-notes/roadmap/short-term.md` — СТАБ (2 строки)
-- `dev-notes/roadmap/long-term.md` — СТАБ (2 строки)
+- `dev-notes/roadmap/short-term.md` - СТАБ (2 строки)
+- `dev-notes/roadmap/long-term.md` - СТАБ (2 строки)
 
 ### short-term.md
 - [ ] Ближайшие архитектурные приоритеты
@@ -146,7 +146,7 @@
 
 ## 7. Расширить 6 стаб-ADR до полного формата
 
-Каждый из этих ADR имеет правильную структуру, но контент — 2-3 предложения.
+Каждый из этих ADR имеет правильную структуру, но контент - 2-3 предложения.
 Нужно расширить до уровня ADR-001/002/003.
 
 | ADR | Файл | Что нужно |
@@ -166,8 +166,8 @@
 **Текущее состояние:** ПУСТО (только _category_.json)
 
 Предложения:
-- [ ] `reflection-on-data-modeling.md` — эволюция ParsedRelease v1→v3, чему научился
-- [ ] `reflection-on-shared-packages.md` — плюсы и минусы shared packages после реальной работы
+- [ ] `reflection-on-data-modeling.md` - эволюция ParsedRelease v1→v3, чему научился
+- [ ] `reflection-on-shared-packages.md` - плюсы и минусы shared packages после реальной работы
 
 ---
 
@@ -176,10 +176,10 @@
 В `dev-notes/intro.md` описана концепция "Service Reality", но **ни одного документа нет**.
 Нужны хотя бы для ключевых сервисов:
 
-- [ ] `catalog-collector` — самый зрелый сервис
-- [ ] `catalog-importer` — ядро domain population
-- [ ] `catalog-api-service` — domain API boundary
-- [ ] `llm-gateway` — AI/LLM сервис (важно для собеседования)
+- [ ] `catalog-collector` - самый зрелый сервис
+- [ ] `catalog-importer` - ядро domain population
+- [ ] `catalog-api-service` - domain API boundary
+- [ ] `llm-gateway` - AI/LLM сервис (важно для собеседования)
 
 Где размещать: создать `dev-notes/services/` или `dev-notes/service-reality/`
 
@@ -188,7 +188,7 @@
 ## 10-12. Дописать package-reality документы
 
 ### 10. package-monstrino-contracts.md
-**Текущее состояние:** СРЕДНИЙ — нет секций Guarantees, Non-Guarantees, Failure Modes
+**Текущее состояние:** СРЕДНИЙ - нет секций Guarantees, Non-Guarantees, Failure Modes
 
 - [ ] Добавить Guarantees
 - [ ] Добавить Non-Guarantees
@@ -197,7 +197,7 @@
 - [ ] Описать конкретные контракты которые определены
 
 ### 11. package-monstrino-models.md
-**Текущее состояние:** СРЕДНИЙ — нет секций Guarantees, Non-Guarantees, Failure Modes
+**Текущее состояние:** СРЕДНИЙ - нет секций Guarantees, Non-Guarantees, Failure Modes
 
 - [ ] Добавить Guarantees
 - [ ] Добавить Non-Guarantees
@@ -206,7 +206,7 @@
 - [ ] Описать основные ORM модели и домены
 
 ### 12. package-monstrino-infra.md
-**Текущее состояние:** СРЕДНИЙ — не описывает реальный контент
+**Текущее состояние:** СРЕДНИЙ - не описывает реальный контент
 
 - [ ] Описать parser registry (ReleaseParserPort, PriceParserPort)
 - [ ] Описать API-клиенты к конкретным сервисам
@@ -216,7 +216,7 @@
 
 ---
 
-# ПРИОРИТЕТ 3 — Порядок и polish
+# ПРИОРИТЕТ 3 - Порядок и polish
 
 ## 13. Исправить filename vs ADR ID mismatch
 
@@ -270,7 +270,7 @@
 - `ingestion-architecture.md` → `/img/pipelines/ingestion-pipeline.jpg`
 
 - [ ] Проверить что все изображения существуют в `static/img/`
-- [ ] Если нет — создать или убрать битые ссылки
+- [ ] Если нет - создать или убрать битые ссылки
 
 ---
 
@@ -289,7 +289,7 @@
 
 ---
 
-## 19. dev-notes/architecture/boundaries.md — расширить
+## 19. dev-notes/architecture/boundaries.md - расширить
 
 **Текущее состояние:** Слишком лаконичный (5 коротких секций по 2-3 строки)
 
@@ -299,7 +299,7 @@
 
 ---
 
-## 20. dev-notes/architecture/data-flow.md — расширить
+## 20. dev-notes/architecture/data-flow.md - расширить
 
 **Текущее состояние:** Только ASCII flow + 4 bullet points + 4 failure handling points
 
@@ -329,10 +329,10 @@
 
 # Рекомендуемый порядок работы
 
-1. **AI секция** (пункты 1, 3, 5) — самый большой пробел для собеседования
-2. **Пустые файлы** (пункты 2, 6) — пустые файлы бросаются в глаза
-3. **intro.md** (пункт 4) — первое что увидит reviewer
-4. **Service reality + reflections** (пункты 8, 9) — показывают senior mindset
-5. **Стаб-ADR** (пункт 7) — расширить до полного формата
-6. **Package reality** (пункты 10-12) — дописать недостающие секции
-7. **Организация и polish** (пункты 13-20) — финальная чистка
+1. **AI секция** (пункты 1, 3, 5) - самый большой пробел для собеседования
+2. **Пустые файлы** (пункты 2, 6) - пустые файлы бросаются в глаза
+3. **intro.md** (пункт 4) - первое что увидит reviewer
+4. **Service reality + reflections** (пункты 8, 9) - показывают senior mindset
+5. **Стаб-ADR** (пункт 7) - расширить до полного формата
+6. **Package reality** (пункты 10-12) - дописать недостающие секции
+7. **Организация и polish** (пункты 13-20) - финальная чистка

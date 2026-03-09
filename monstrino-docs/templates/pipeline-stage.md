@@ -1,4 +1,4 @@
-## Stage N — <Stage Name>
+## Stage N - <Stage Name>
 
 ### Purpose
 

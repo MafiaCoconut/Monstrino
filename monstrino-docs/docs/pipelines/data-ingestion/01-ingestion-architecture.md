@@ -12,8 +12,8 @@ The ingestion layer is responsible for transforming **external unstructured data
 
 The ingestion system is composed of two main pipelines:
 
-- **Catalog ingestion pipeline** — processes product and release data
-- **Media ingestion pipeline** — processes and normalizes images
+- **Catalog ingestion pipeline** - processes product and release data
+- **Media ingestion pipeline** - processes and normalizes images
 
 These pipelines share a common goal but operate independently to maintain **clear responsibilities and scalability**.
 

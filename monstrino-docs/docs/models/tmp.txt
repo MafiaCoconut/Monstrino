@@ -1,0 +1,1413 @@
+FILE: docs/domain/_category_.json
+{
+  "label": "Domain",
+  "position": 6,
+  "link": {
+    "type": "generated-index",
+    "title": "Domain",
+    "description": "Canonical domain model documentation for Monstrino, including catalog, market, media, ingest, and reference data."
+  }
+}
+=============================================================================
+FILE: docs/domain/00-overview.md
+---
+title: Domain Overview
+sidebar_position: 1
+description: High-level overview of the Monstrino domain model and its main bounded areas.
+---
+
+# Domain Overview
+
+Monstrino is centered around a **canonical collectible catalog** that is enriched from external sources, extended with market data, and linked to a reusable media system.
+
+This section documents the main domain areas and how they fit together.
+
+## Domain Areas
+
+### Catalog
+The catalog domain contains the canonical business entities that users interact with most often:
+
+- `Release`
+- `Series`
+- `Character`
+- `Pet`
+- catalog reference data such as release types, relation types, exclusive vendors, and character roles
+
+The catalog is the stable, cleaned, user-facing representation of Monster High entities.
+
+### Market
+The market domain records where a release appears in real stores or marketplaces and how its price changes over time.
+
+It contains:
+
+- `ReleaseMarketLink`
+- `MarketProductPriceObservation`
+- `ReleaseMsrp`
+- `ReleaseMsrpSource`
+
+### Media
+The media domain stores reusable media assets independently from any one business entity.
+
+It contains:
+
+- `MediaAsset`
+- `MediaAttachment`
+- `MediaAssetVariant`
+- `MediaIngestionJob`
+
+This separation allows one storage model to serve releases, characters, pets, admin uploads, parsed assets, and future user content.
+
+### Ingest
+The ingest domain is the raw and semi-structured staging layer between external sources and the canonical catalog.
+
+It contains:
+
+- `ParsedRelease`
+- `ParsedCharacter`
+- `ParsedSeries`
+- `ParsedPet`
+
+These entities are intentionally less stable than canonical catalog entities.
+
+### Reference Data
+Reference data supports multiple domain areas and standardizes identifiers, country metadata, currencies, and source definitions.
+
+It contains:
+
+- `Source`
+- `SourceCountry`
+- `GeoCountry`
+- `MoneyCurrency`
+- `SourceType`
+- `SourceTechType`
+
+## Architectural Intent
+
+The Monstrino domain model follows a few key rules:
+
+1. **Canonical entities are separate from parsed entities.** Raw source data is not treated as trusted business truth.
+2. **Media is reusable infrastructure-backed domain data, not just release image URLs.**
+3. **Market data is historical and append-oriented.** Price observations should not overwrite past observations.
+4. **Reference data is explicit.** Codes, countries, currencies, source types, and relation types are modeled instead of being hardcoded across services.
+5. **Relationships are first-class.** Releases are connected to series, characters, pets, market listings, sources, and media through dedicated link models.
+
+## High-Level Domain Map
+
+```mermaid
+flowchart TB
+    Release[Release]
+    Series[Series]
+    Character[Character]
+    Pet[Pet]
+    Market[Market Domain]
+    Media[Media Domain]
+    Ingest[Ingest Domain]
+    Ref[Reference Data]
+
+    Series --> Release
+    Character --> Release
+    Pet --> Release
+    Release --> Market
+    Release --> Media
+    Ingest --> Release
+    Ingest --> Series
+    Ingest --> Character
+    Ingest --> Pet
+    Ref --> Release
+    Ref --> Market
+    Ref --> Ingest
+```
+
+## Recommended Reading Order
+
+1. [Catalog Domain](./01-catalog-domain)
+2. [Release Model](./02-release-model)
+3. [Series Model](./03-series-model)
+4. [Character and Pet Model](./04-character-and-pet-model)
+5. [Release Relationships](./05-release-relationships)
+6. [Market Model](./06-market-model)
+7. [Media Model](./07-media-model)
+8. [Ingest Model](./08-ingest-model)
+9. [Reference Data](./09-reference-data)
+10. [Value Objects and Enums](./10-value-objects-and-enums)
+11. [Processing and Scheduling](./11-processing-and-scheduling)
+
+## Design Summary
+
+A good mental model is this:
+
+- **Catalog** answers what the thing is.
+- **Ingest** answers where the information came from and what was parsed.
+- **Market** answers where the thing is sold and for how much.
+- **Media** answers which assets represent the thing.
+- **Reference data** answers which codes and classifications are valid.
+
+=============================================================================
+FILE: docs/domain/01-catalog-domain.md
+---
+title: Catalog Domain
+sidebar_position: 2
+description: Overview of the canonical catalog model: releases, series, characters, pets, and their reference data.
+---
+
+# Catalog Domain
+
+The catalog domain is the canonical business core of Monstrino. It contains the entities that define the collectible universe independently from any one source page, crawler payload, or media storage implementation.
+
+## Main Entities
+
+### Release
+`Release` is the central entity of the platform.
+
+A release represents a concrete product or collectible entry, such as a doll, set, fashion pack, or bundle.
+
+Core attributes include:
+
+- title
+- code
+- slug
+- `mpn`
+- `year`
+- description
+- `text_from_box`
+
+### Series
+`Series` groups releases into lines, sublines, or waves.
+
+A series may be hierarchical through `parent_id`, which allows structures such as:
+
+- line
+- subline
+- wave
+
+### Character
+`Character` represents a canonical Monster High character identity.
+
+It exists independently from a specific release and may later appear in many releases with different release-specific variants.
+
+### Pet
+`Pet` is modeled separately from `Character` and can be linked both:
+
+- to a canonical owner via `CharacterPetOwnership`
+- to a release via `ReleasePet`
+
+## Catalog Reference Data
+
+The catalog depends on explicit reference tables instead of free-form strings everywhere.
+
+Important reference entities include:
+
+- `ReleaseType`
+- `RelationType`
+- `ExclusiveVendor`
+- `CharacterRole`
+
+These models keep classification stable and make UI filtering, validation, and analytics easier.
+
+## External References
+
+The canonical catalog can be linked back to source systems through dedicated external reference models:
+
+- `ReleaseExternalReference`
+- `SeriesExternalReference`
+- `CharacterExternalReference`
+- `PetExternalReference`
+
+This is important because canonical entities must survive source changes while still preserving traceability.
+
+## Catalog Relationship Structure
+
+```mermaid
+erDiagram
+    RELEASE ||--o{ RELEASE_TYPE_LINK : has
+    RELEASE ||--o{ RELEASE_SERIES_LINK : belongs_to
+    RELEASE ||--o{ RELEASE_CHARACTER : contains
+    RELEASE ||--o{ RELEASE_PET : contains
+    RELEASE ||--o{ RELEASE_RELATION_LINK : relates_to
+    RELEASE ||--o{ RELEASE_EXCLUSIVE_LINK : sold_by
+    RELEASE ||--o{ RELEASE_EXTERNAL_REFERENCE : mapped_from
+
+    SERIES ||--o{ RELEASE_SERIES_LINK : groups
+    SERIES ||--o{ SERIES_EXTERNAL_REFERENCE : mapped_from
+
+    CHARACTER ||--o{ RELEASE_CHARACTER : appears_in
+    CHARACTER ||--o{ CHARACTER_PET_OWNERSHIP : owns
+    CHARACTER ||--o{ CHARACTER_EXTERNAL_REFERENCE : mapped_from
+
+    PET ||--o{ RELEASE_PET : appears_in
+    PET ||--o{ CHARACTER_PET_OWNERSHIP : owned_by
+    PET ||--o{ PET_EXTERNAL_REFERENCE : mapped_from
+```
+
+## Modeling Principles
+
+### Canonical first
+Catalog entities should describe the cleaned business truth as Monstrino understands it, not the raw wording of any one source.
+
+### Stable identity
+Each canonical entity should have a durable identity that survives re-crawls, source edits, and pipeline retries.
+
+### Explicit links instead of hidden arrays
+Many-to-many relations are modeled through dedicated link entities. This is preferable for:
+
+- metadata on the relation itself
+- history and traceability
+- easier indexing and querying
+- future enrichment
+
+### Per-release variation belongs on the link
+A release-specific appearance of a character or pet is not identical to the canonical base entity. Variant details belong on `ReleaseCharacter` or `ReleasePet`, not on the canonical `Character` or `Pet` records.
+
+## What belongs outside the catalog
+
+The catalog should **not** own:
+
+- parsed HTML or raw payloads
+- media storage internals
+- pricing history
+- scheduler state
+- crawler execution state
+
+Those belong to ingest, media, market, or operational models.
+
+## Related Pages
+
+- [Release Model](./02-release-model)
+- [Series Model](./03-series-model)
+- [Character and Pet Model](./04-character-and-pet-model)
+- [Release Relationships](./05-release-relationships)
+
+=============================================================================
+FILE: docs/domain/02-release-model.md
+---
+title: Release Model
+sidebar_position: 3
+description: Detailed documentation of the Release entity and all release-owned relationships.
+---
+
+# Release Model
+
+`Release` is the central aggregate root of the Monstrino catalog.
+
+A release represents a concrete collectible entry and acts as the main anchor for classification, composition, pricing, and media attachment.
+
+## Core DTO
+
+The canonical `Release` model contains the stable product identity:
+
+- `id`
+- `title`
+- `mpn`
+- `year`
+- `description`
+- `text_from_box`
+- `code`
+- `slug`
+- timestamps
+
+## Why Release is the center
+
+Almost every other domain area eventually connects back to a release:
+
+- series classify a release
+- release types classify what kind of product it is
+- characters and pets appear inside a release
+- exclusive vendors define special distribution
+- relations connect one release to another
+- market data tracks price and listings for a release
+- media assets visually represent a release
+
+## Release as an Aggregate Root
+
+```mermaid
+flowchart TB
+    R[Release]
+    RT[ReleaseTypeLink]
+    RS[ReleaseSeriesLink]
+    RC[ReleaseCharacter]
+    RP[ReleasePet]
+    RE[ReleaseExclusiveLink]
+    RR[ReleaseRelationLink]
+    RX[ReleaseExternalReference]
+    RM[ReleaseMarketLink]
+    MSRP[ReleaseMsrp]
+
+    R --> RT
+    R --> RS
+    R --> RC
+    R --> RP
+    R --> RE
+    R --> RR
+    R --> RX
+    R --> RM
+    R --> MSRP
+```
+
+## Classification
+
+A release is classified through link entities rather than embedded arrays.
+
+### ReleaseTypeLink
+Links a release to a `ReleaseType`.
+
+This keeps release type classification normalized and allows one release to support more than one type if the domain ever needs that.
+
+### ReleaseSeriesLink
+Links a release to a `Series`.
+
+The link itself carries `relation_type`, which means the series relationship is not just structural but semantic. Examples include a primary line or a secondary association.
+
+## Composition
+
+### ReleaseCharacter
+`ReleaseCharacter` connects a release to a canonical `Character` and stores release-specific details such as:
+
+- `role_id`
+- `position`
+- `is_uniq_to_release`
+- notes and description
+- body, articulation, finish, face, and hair variants
+- optional standalone release pointer
+
+This is exactly the right place for character-specific variation inside a release.
+
+### ReleasePet
+`ReleasePet` connects a release to a canonical `Pet` and stores release-specific pet details such as:
+
+- `position`
+- `is_uniq_to_release`
+- finish type
+- size variant
+- pose variant
+- colorway
+- optional standalone release pointer
+
+## Distribution and Relationships
+
+### ReleaseExclusiveLink
+Associates a release with an `ExclusiveVendor`.
+
+### ReleaseRelationLink
+Associates one release with another release through a typed relation, such as:
+
+- reissue
+- variant
+- collection inclusion
+- related edition
+
+## Invariants
+
+The domain should keep the following business rules stable:
+
+1. `code` and `slug` should identify the canonical release consistently.
+2. `mpn` may be absent, but when present it should be treated as important product identity data.
+3. Release-specific character or pet properties must live on relation entities, not on canonical identities.
+4. A release can belong to multiple series, but the semantics of each membership must be explicit.
+5. Inter-release relationships should always be typed.
+
+## Release Identity Strategy
+
+A release should be thought of as the canonical platform object derived from one or more sources.
+
+It is **not** the same thing as:
+
+- a parsed source page
+- a market listing
+- a media asset
+- a raw source payload
+
+Those models orbit around the release.
+
+## Documentation Boundary
+
+This page focuses on the release aggregate itself. The following concerns are documented separately:
+
+- series hierarchy: [Series Model](./03-series-model)
+- characters and pets: [Character and Pet Model](./04-character-and-pet-model)
+- relation entities and classification links: [Release Relationships](./05-release-relationships)
+- prices and listings: [Market Model](./06-market-model)
+- media attachments and assets: [Media Model](./07-media-model)
+
+=============================================================================
+FILE: docs/domain/03-series-model.md
+---
+title: Series Model
+sidebar_position: 4
+description: Documentation of the Series hierarchy and release-to-series associations.
+---
+
+# Series Model
+
+`Series` provides the hierarchical taxonomy used to organize releases into lines, sublines, and waves.
+
+## Core DTO
+
+The canonical `Series` model contains:
+
+- `id`
+- `title`
+- `description`
+- `series_type`
+- `primary_image`
+- `parent_id`
+- `code`
+- `slug`
+- timestamps
+
+## Hierarchy
+
+The presence of `parent_id` makes the series model hierarchical.
+
+Typical structures may look like this:
+
+- line → subline
+- line → wave
+- subline → wave
+
+This allows Monstrino to model both broad franchise lines and more granular campaign structures.
+
+## Series Kinds and Value Objects
+
+The DTO model uses `series_type`, while value objects also define richer distinctions such as:
+
+- `SeriesKind`: `line`, `subline`, `wave`
+- series relation types: `primary`, `secondary`
+- series tags and type enums for richer classification
+
+Documenting these separately helps keep the core entity stable while allowing classification rules to evolve.
+
+## Release Membership
+
+A release connects to a series through `ReleaseSeriesLink`.
+
+That link includes:
+
+- `release_id`
+- `series_id`
+- `relation_type`
+
+This is important because release membership can have semantics, not just containment.
+
+## Diagram
+
+```mermaid
+erDiagram
+    SERIES ||--o{ SERIES : parent_of
+    SERIES ||--o{ RELEASE_SERIES_LINK : classifies
+    RELEASE ||--o{ RELEASE_SERIES_LINK : belongs_to
+    SERIES ||--o{ SERIES_EXTERNAL_REFERENCE : mapped_from
+```
+
+## Modeling Rules
+
+### Series is a taxonomy entity
+A series is a classification object, not a release variant.
+
+### Hierarchy is optional
+Not every series must have a parent. Top-level lines should remain valid standalone objects.
+
+### Membership metadata belongs on the link
+Whether a release belongs primarily or secondarily to a series should be stored on `ReleaseSeriesLink`, not inferred from list order.
+
+## Recommended Usage
+
+Use `Series` when the platform needs to answer questions like:
+
+- Which line does this release belong to?
+- Which releases are part of this wave?
+- Is this release in more than one series context?
+- What is the display hierarchy for catalog navigation?
+
+## Future-Friendly Extensions
+
+This model is ready to support future features such as:
+
+- breadcrumbs and faceted navigation
+- series landing pages
+- fan-facing grouping by era or generation
+- editorial tags layered on top of core series hierarchy
+
+=============================================================================
+FILE: docs/domain/04-character-and-pet-model.md
+---
+title: Character and Pet Model
+sidebar_position: 5
+description: Canonical character and pet identities together with release-specific variants.
+---
+
+# Character and Pet Model
+
+Monstrino separates **canonical identity** from **release-specific appearance**.
+
+This is one of the most important modeling decisions in the catalog domain.
+
+## Character
+
+The canonical `Character` model contains identity-level information:
+
+- `id`
+- `title`
+- `gender`
+- `description`
+- `primary_image`
+- `slug`
+- `code`
+- `alt_names`
+- `notes`
+
+A character exists independently from any one release.
+
+## Pet
+
+The canonical `Pet` model contains:
+
+- `id`
+- `title`
+- `description`
+- `primary_image`
+- `code`
+- `slug`
+
+A pet is modeled as a first-class entity, not as a text field attached to a character or release.
+
+## Character-to-Pet Ownership
+
+`CharacterPetOwnership` links a canonical character to a canonical pet.
+
+This relationship answers questions like:
+
+- Which pet belongs to a character canonically?
+- Which pets are associated with this character across the platform?
+
+## Release-Specific Representation
+
+### ReleaseCharacter
+When a character appears in a release, that appearance is modeled through `ReleaseCharacter`.
+
+This link carries release-specific information such as:
+
+- role
+- position
+- uniqueness to the release
+- body and face variants
+- articulation level
+- styling details
+- notes and description
+
+### ReleasePet
+When a pet appears in a release, that appearance is modeled through `ReleasePet`.
+
+This link carries:
+
+- position
+- uniqueness to the release
+- finish
+- size and pose variants
+- colorway
+- notes and description
+
+## Character and Pet Images
+
+The release-specific image models:
+
+- `ReleaseCharacterImage`
+- `ReleasePetImage`
+
+allow variant-level imagery to be represented without overloading the canonical character or pet record.
+
+## Diagram
+
+```mermaid
+flowchart TB
+    Character[Character]
+    Pet[Pet]
+    Ownership[CharacterPetOwnership]
+    ReleaseCharacter[ReleaseCharacter]
+    ReleasePet[ReleasePet]
+    Release[Release]
+
+    Character --> Ownership
+    Pet --> Ownership
+    Release --> ReleaseCharacter
+    Character --> ReleaseCharacter
+    Release --> ReleasePet
+    Pet --> ReleasePet
+```
+
+## Modeling Rules
+
+1. Canonical `Character` and `Pet` records describe stable identity.
+2. Release-specific styling or packaging facts belong on `ReleaseCharacter` and `ReleasePet`.
+3. Images can exist at both canonical and release-specific levels.
+4. Character-to-pet ownership should remain separate from release composition.
+
+## Why this matters
+
+Without this separation, the platform would quickly mix up:
+
+- who the character is
+- which version of the character appears in a specific release
+- which pet canonically belongs to a character
+- which pet variant appears in a specific package
+
+Keeping those layers separate makes the data model much more reliable.
+
+=============================================================================
+FILE: docs/domain/05-release-relationships.md
+---
+title: Release Relationships
+sidebar_position: 6
+description: Typed links and relationship models surrounding the Release aggregate.
+---
+
+# Release Relationships
+
+The release model relies heavily on explicit relationship entities.
+
+This page documents the link models that connect a release to classification data, vendors, other releases, and external identifiers.
+
+## Link Models
+
+### ReleaseTypeLink
+Connects a release to `ReleaseType`.
+
+Purpose:
+
+- normalize release classification
+- avoid hardcoded type strings on the release itself
+- keep classification extensible
+
+### ReleaseSeriesLink
+Connects a release to `Series` and stores `relation_type`.
+
+Purpose:
+
+- support primary and secondary series membership
+- allow richer navigation and grouping
+
+### ReleaseExclusiveLink
+Connects a release to an `ExclusiveVendor`.
+
+Purpose:
+
+- model retailer exclusives explicitly
+- support filtering by exclusive channel
+- preserve normalized vendor metadata
+
+### ReleaseRelationLink
+Connects one release to another release through a `RelationType`.
+
+Purpose:
+
+- model reissues
+- model variants
+- model collection inclusion or other cross-release relationships
+
+### ReleaseExternalReference
+Connects a canonical release to a source-country external identifier.
+
+Purpose:
+
+- preserve traceability to source systems
+- support re-ingestion and reconciliation
+- avoid using source IDs as canonical identity
+
+## Supporting Reference Models
+
+These relationship models rely on catalog reference data:
+
+- `ReleaseType`
+- `ExclusiveVendor`
+- `RelationType`
+- `CharacterRole`
+
+## Diagram
+
+```mermaid
+erDiagram
+    RELEASE ||--o{ RELEASE_TYPE_LINK : typed_as
+    RELEASE ||--o{ RELEASE_SERIES_LINK : grouped_in
+    RELEASE ||--o{ RELEASE_EXCLUSIVE_LINK : exclusive_to
+    RELEASE ||--o{ RELEASE_RELATION_LINK : related_to
+    RELEASE ||--o{ RELEASE_EXTERNAL_REFERENCE : sourced_from
+
+    RELEASE_TYPE_LINK }o--|| RELEASE_TYPE : references
+    RELEASE_SERIES_LINK }o--|| SERIES : references
+    RELEASE_EXCLUSIVE_LINK }o--|| EXCLUSIVE_VENDOR : references
+    RELEASE_RELATION_LINK }o--|| RELATION_TYPE : references
+```
+
+## Important Design Note
+
+There is a useful distinction in the current DTOs:
+
+- `ReleaseSeriesLink` stores `relation_type` directly as a string
+- `ReleaseRelationLink` stores `relation_type_id` as a foreign-key-like identifier
+
+This should be treated as a documented current-state inconsistency. It is not necessarily wrong, but the platform should eventually decide whether typed relationships should consistently use string codes or consistently use reference entities.
+
+## External Reference Strategy
+
+External references are deliberately separate from canonical entities.
+
+This means Monstrino can:
+
+- merge duplicate source pages into one canonical object
+- survive source URL changes
+- preserve per-source IDs without leaking them into user-facing identity
+
+## Relationship Modeling Guidelines
+
+Use a dedicated link entity when at least one of the following is true:
+
+- the relation has metadata
+- the relation may evolve independently
+- the relation needs timestamps
+- the relation is many-to-many
+- the relation needs business semantics
+
+That rule is followed throughout the release domain.
+
+=============================================================================
+FILE: docs/domain/06-market-model.md
+---
+title: Market Model
+sidebar_position: 7
+description: Documentation of market links, price observations, MSRP records, and source provenance.
+---
+
+# Market Model
+
+The market domain tracks how releases appear in commerce and how pricing changes over time.
+
+It is intentionally separate from the canonical catalog because market data is volatile, source-specific, and historical.
+
+## Core Models
+
+### ReleaseMarketLink
+`ReleaseMarketLink` connects a canonical release to a concrete store or marketplace page.
+
+Fields include:
+
+- `release_id`
+- `source_country_id`
+- `url`
+- optional `external_id`
+
+This is the bridge between a release and market-specific observation streams.
+
+### MarketProductPriceObservation
+This model records point-in-time observations of market prices.
+
+Fields include:
+
+- `release_market_link_id`
+- `observed_at`
+- `currency_code`
+- `price_amount_minor`
+- optional `shipping_amount_minor`
+- `availability`
+- optional `raw_payload`
+
+This model should be treated as append-oriented historical data.
+
+### ReleaseMsrp
+This model stores canonical MSRP-like pricing facts for a release by country and currency.
+
+Fields include:
+
+- `release_id`
+- `country_code`
+- `currency_code`
+- `msrp_amount_minor`
+- `valid_from`
+- `valid_to`
+
+### ReleaseMsrpSource
+This model preserves provenance for MSRP records.
+
+Fields include:
+
+- `release_msrp_id`
+- optional `release_market_link_id`
+- `url`
+- `source_type`
+- optional `confidence`
+- optional `captured_at`
+- optional `note`
+
+## Why MSRP and observations are separate
+
+This separation is correct and important.
+
+- `MarketProductPriceObservation` answers: **what was seen on a page at a certain time?**
+- `ReleaseMsrp` answers: **what should be treated as a structured baseline retail price fact?**
+
+One is observational and time-series oriented. The other is normalized business data.
+
+## Diagram
+
+```mermaid
+flowchart TB
+    Release[Release]
+    Link[ReleaseMarketLink]
+    Obs[MarketProductPriceObservation]
+    Msrp[ReleaseMsrp]
+    MsrpSource[ReleaseMsrpSource]
+    SourceCountry[SourceCountry]
+
+    Release --> Link
+    SourceCountry --> Link
+    Link --> Obs
+    Release --> Msrp
+    Msrp --> MsrpSource
+    Link --> MsrpSource
+```
+
+## Modeling Rules
+
+1. A market page is not a release. It is linked to a release.
+2. Price observations should never overwrite older observations.
+3. MSRP should remain country- and currency-aware.
+4. MSRP provenance should be retained whenever possible.
+5. Currency values should be stored in minor units to avoid floating-point errors.
+
+## Common Queries This Model Supports
+
+- current observed price per source page
+- price history for a release
+- current lowest observed price in a region
+- MSRP by country and time range
+- confidence and provenance for retail baseline values
+
+## Future Extensions
+
+This model is ready for later additions such as:
+
+- seller type distinctions
+- marketplace confidence scoring
+- condition grading
+- deduplicated offer normalization
+- regional market analytics
+
+=============================================================================
+FILE: docs/domain/07-media-model.md
+---
+title: Media Model
+sidebar_position: 8
+description: Documentation of reusable media assets, attachments, variants, and ingestion jobs.
+---
+
+# Media Model
+
+The media domain is designed as a reusable asset system rather than a collection of image URLs scattered across business tables.
+
+This is one of the strongest parts of the Monstrino model.
+
+## Core Models
+
+### MediaAsset
+`MediaAsset` is the canonical stored asset record.
+
+It includes:
+
+- storage coordinates: provider, bucket, storage key, optional public URL
+- visibility and source type
+- media kind
+- content hash and metadata
+- image or media dimensions
+- original filename
+- ingestion trace
+- license and attribution fields
+- source URL
+- storage and moderation state
+
+This model describes the stored asset itself.
+
+### MediaAttachment
+`MediaAttachment` connects an asset to an owner.
+
+Fields include:
+
+- `asset_id`
+- `owner_service`
+- `owner_type`
+- `owner_id`
+- `owner_ref`
+- `role`
+- `sort_order`
+- display and accessibility fields such as filename, caption, and alt text
+- `source_context`
+
+This means one asset system can attach media to many kinds of domain entities.
+
+### MediaAssetVariant
+`MediaAssetVariant` stores transformed or derivative versions of an asset.
+
+Fields include:
+
+- `asset_id`
+- `variant_name`
+- optional `transform`
+- storage coordinates
+- content metadata
+- dimensions
+- status and error message
+
+Variants are useful for thumbnails, web-optimized versions, crops, or future AI-generated derivations.
+
+### MediaIngestionJob
+`MediaIngestionJob` tracks the processing lifecycle of media work.
+
+It includes:
+
+- job identity and idempotency key
+- ownership target
+- source metadata
+- role and sort order
+- retry and lease state
+- processing result IDs
+- captured content metadata
+- error information
+
+This is the operational bridge between external URLs, storage, normalization, and final attachment.
+
+## Diagram
+
+```mermaid
+erDiagram
+    MEDIA_ASSET ||--o{ MEDIA_ATTACHMENT : attached_as
+    MEDIA_ASSET ||--o{ MEDIA_ASSET_VARIANT : has_variant
+    MEDIA_INGESTION_JOB }o--|| MEDIA_ASSET : creates
+    MEDIA_INGESTION_JOB }o--|| MEDIA_ATTACHMENT : creates
+```
+
+## Why MediaAsset and MediaAttachment are separate
+
+This separation is essential.
+
+- `MediaAsset` describes the file in storage.
+- `MediaAttachment` describes how the file is used by the business domain.
+
+That means the same asset could theoretically be attached:
+
+- to a release gallery
+- to a character page
+- to an admin record
+- to a parsed record under review
+
+without duplicating the physical file model.
+
+## Media Ownership Pattern
+
+The owner fields on `MediaAttachment` make the system intentionally generic:
+
+- `owner_service`
+- `owner_type`
+- `owner_id`
+- `owner_ref`
+
+This pattern is very flexible, but it also means ownership conventions must be documented clearly and applied consistently across services.
+
+## Recommended Invariants
+
+1. `content_hash_sha256` should be the primary deduplication signal whenever available.
+2. `MediaAttachment` should be the only supported path for attaching assets to business entities.
+3. Asset variants should always point back to one original asset.
+4. Asset visibility and moderation state must remain explicit fields.
+5. Media job idempotency must be preserved across retries.
+
+## Legacy vs Modern Media
+
+The catalog DTOs still include legacy image models such as:
+
+- `ReleaseImage`
+- `ReleaseCharacterImage`
+- `ReleasePetImage`
+
+These are useful today, but the long-term architecture clearly points toward the reusable `MediaAsset` + `MediaAttachment` model as the more scalable approach.
+
+=============================================================================
+FILE: docs/domain/08-ingest-model.md
+---
+title: Ingest Model
+sidebar_position: 9
+description: Documentation of parsed entities and the staging layer between external sources and canonical catalog records.
+---
+
+# Ingest Model
+
+The ingest domain is the raw and semi-structured staging layer of Monstrino.
+
+It exists to capture source data before it becomes canonical business truth.
+
+## Core Parsed Models
+
+### ParsedRelease
+`ParsedRelease` is the richest ingest model and captures:
+
+- main product attributes such as title, `mpn`, `year`, `gtin`
+- raw release-related lists such as characters, gender, series, content type, pack type, tier type, exclusive vendor, pet titles, reissue hints
+- image fields such as `primary_image`, `images`, `images_url`
+- text fields such as raw description and box text
+- source information such as URL, source country, and external ID
+- original HTML and raw payload
+- content hash
+- processing state and processing errors
+
+### ParsedCharacter
+Captures source-derived character data before canonical normalization.
+
+### ParsedSeries
+Captures source-derived series data, including optional parent title and source linkage.
+
+### ParsedPet
+Captures source-derived pet data, including owner-title hints from the source.
+
+## Why parsed models matter
+
+Parsed entities let the platform preserve source reality without forcing early normalization.
+
+That is important because source data can be:
+
+- incomplete
+- ambiguous
+- inconsistent across countries
+- wrong
+- partially structured
+
+## Canonicalization Flow
+
+```mermaid
+flowchart TB
+    Source[External Source]
+    Parsed[Parsed Entity]
+    Enrichment[Enrichment / Mapping]
+    Canonical[Canonical Catalog Entity]
+    Market[Market / Media / References]
+
+    Source --> Parsed
+    Parsed --> Enrichment
+    Enrichment --> Canonical
+    Canonical --> Market
+```
+
+## Processing States
+
+Parsed entities store explicit processing state instead of relying on implicit queue logic.
+
+This is good because it supports:
+
+- retryable workflows
+- failure visibility
+- operator review
+- incremental enrichment
+
+## Modeling Rules
+
+1. Parsed entities are not user-facing canonical truth.
+2. Parsed entities may contain lossy, redundant, or source-specific fields.
+3. Source payload preservation is allowed and expected in ingest.
+4. Mapping from parsed data to canonical data should be deterministic where possible and reviewable where necessary.
+5. Parsed entities should remain traceable to source country and external identifiers.
+
+## Relationship to the catalog
+
+The catalog should never depend on parsed wording directly for business identity.
+
+Instead:
+
+- ingest stores what the source said
+- canonical entities store what Monstrino decided is true enough to publish
+
+That boundary is one of the most important architectural lines in the whole system.
+
+## Processing Concerns
+
+The ingest domain is closely related to:
+
+- source definitions
+- schedulers
+- collectors and importers
+- enrichment services
+- media ingestion jobs
+
+Those processing concerns are described further in [Processing and Scheduling](./11-processing-and-scheduling).
+
+=============================================================================
+FILE: docs/domain/09-reference-data.md
+---
+title: Reference Data
+sidebar_position: 10
+description: Supporting reference entities for sources, countries, currencies, and source classification.
+---
+
+# Reference Data
+
+Reference data provides the shared controlled vocabulary and identifiers used by multiple Monstrino services.
+
+Without these models, domain logic would leak hardcoded strings and ad-hoc assumptions across services.
+
+## Core Models
+
+### Source
+`Source` defines a crawlable or queryable external system.
+
+Fields include:
+
+- `code`
+- `title`
+- `source_type_id`
+- `source_tech_type_id`
+- `base_url`
+- description
+- `last_parsed_at`
+- `is_enabled`
+
+### SourceCountry
+`SourceCountry` defines a country-specific view of a source.
+
+Fields include:
+
+- `source_id`
+- `source_code`
+- `country_code`
+- optional `base_url`
+- `is_active`
+
+This is especially important because many retail or content sources differ by country.
+
+### GeoCountry
+`GeoCountry` defines country-level reference metadata.
+
+### MoneyCurrency
+`MoneyCurrency` defines currency-level metadata.
+
+Fields such as `minor_unit` are especially important for price normalization.
+
+### SourceType
+`SourceType` classifies a source functionally.
+
+Examples might include marketplace, official store, wiki, catalog page, or another logical source category.
+
+### SourceTechType
+`SourceTechType` classifies the technical access pattern of the source.
+
+Examples might include HTML, API, RSS, Shopify-like storefronts, and so on.
+
+## Diagram
+
+```mermaid
+flowchart TB
+    SourceType[SourceType]
+    SourceTechType[SourceTechType]
+    Source[Source]
+    SourceCountry[SourceCountry]
+    GeoCountry[GeoCountry]
+    Currency[MoneyCurrency]
+
+    SourceType --> Source
+    SourceTechType --> Source
+    Source --> SourceCountry
+    GeoCountry --> SourceCountry
+```
+
+## Why these models matter
+
+These models allow the rest of the system to stay clean:
+
+- ingest knows where data came from
+- market knows which country a listing belongs to
+- canonical external references remain traceable
+- pricing can use proper currency metadata
+- collectors can be grouped by technology and source type
+
+## Modeling Rules
+
+1. Source identity should be stable and code-driven.
+2. Country-specific source behavior belongs on `SourceCountry`, not on `Source` itself.
+3. Currency logic should rely on `MoneyCurrency` and minor units.
+4. Source types and technical source types should stay separate.
+
+## Common Usage Patterns
+
+- `ReleaseExternalReference` uses `source_country_id`
+- `ReleaseMarketLink` uses `source_country_id`
+- parsed entities often store `source_country_id`
+- series, character, and pet external references may store `source_id`
+
+That difference should stay documented because it affects reconciliation logic.
+
+=============================================================================
+FILE: docs/domain/10-value-objects-and-enums.md
+---
+title: Value Objects and Enums
+sidebar_position: 11
+description: Shared domain enums and value objects used across Monstrino schemas.
+---
+
+# Value Objects and Enums
+
+Monstrino uses enums and value objects to keep important domain states and classifications explicit.
+
+This page documents the current conceptual groups and how they should be used.
+
+## Catalog-Related Enums
+
+### Series
+Observed enum groups include:
+
+- `SeriesKind`: `line`, `subline`, `wave`
+- `SeriesRelationTypes`: `primary`, `secondary`
+- series type enums
+- series tag enums
+
+These should drive classification logic, navigation, and validation instead of scattered free-form strings.
+
+### Character
+The DTOs reference value objects such as `CharacterGender`.
+
+Character identity-level fields should continue to rely on centralized value objects where possible.
+
+### Release / Product Semantics
+The value object file also contains structured product tags and signals such as:
+
+- reissue and reboot-type concepts
+- content structure concepts such as multipacks or playset inclusion
+- theme tags
+- generation tags such as `g1`, `g2`, `g3`
+- rarity and fan-signal tags
+
+These are ideal candidates for filtering, badges, discovery features, and enrichment outputs.
+
+## Media Enums
+
+Observed media-related enums include:
+
+- `MediaKind`: image, video, audio, document, other
+- `VariantStatus`: active, generating, failed
+- `AssetSourceType`: parsed, user upload, admin upload, imported
+- `AssetStatus`: active, deleted, quarantined
+- `AssetVisibility`: public, unlisted, private
+- `AttachmentSourceContext`: parsed, user upload, admin
+- `ModerationState`: ok, pending, rejected
+- `IngestionJobState`: init, pending, claimed, retrying, completed, failed, quarantined
+- `IngestionJobType`: external ingest, normalize asset
+
+## Core and Geography Value Objects
+
+The DTOs reference country-related value objects such as `GeoCountryCode`.
+
+These should remain centralized and reused across:
+
+- source-country mapping
+- market pricing
+- region-aware enrichment
+- storage of external references
+
+## Design Guidelines
+
+1. Prefer enum codes over ad-hoc string literals.
+2. Keep enum ownership close to the relevant domain area.
+3. Use human-readable titles in reference data and machine-stable codes in enums.
+4. Do not duplicate the same classification concept in multiple inconsistent enum families.
+5. When AI enrichment returns classification labels, map them into these controlled vocabularies instead of persisting arbitrary raw text.
+
+## When to use an enum vs reference data
+
+Use an **enum** when:
+
+- the set is code-level and relatively stable
+- it is internal to application logic
+- values are not expected to be edited by operators often
+
+Use **reference data** when:
+
+- values need richer metadata
+- values may be operator-managed
+- values need descriptions, ordering, or UI labels
+- relations should be normalized with IDs or stable codes
+
+That distinction explains why Monstrino uses both approaches.
+
+=============================================================================
+FILE: docs/domain/11-processing-and-scheduling.md
+---
+title: Processing and Scheduling
+sidebar_position: 12
+description: Operational models related to scheduled processing, ingest progression, and media job execution.
+---
+
+# Processing and Scheduling
+
+Although scheduling is not part of the core collectible business domain, Monstrino still benefits from documenting its processing model because many domain transitions depend on recurring jobs.
+
+## Scheduler Job Model
+
+The current scheduler `Job` model contains:
+
+- `id`
+- trigger configuration such as `trigger`, `run_date`, `day`, `hour`, `minute`, `day_of_week`
+- execution target through `func`
+- execution inputs through `args` and `kwargs`
+- planning fields such as `next_run_time`
+- optional `job_type`
+
+This model represents **when and how** work is executed, not business truth itself.
+
+## Domain-adjacent Responsibilities
+
+Scheduling is domain-adjacent because it drives processes such as:
+
+- source collection
+- reprocessing parsed entities
+- media ingestion retries
+- price observation collection
+- release discovery loops
+
+## Relation to MediaIngestionJob
+
+It is important to distinguish these two layers:
+
+- `Job` schedules and triggers work
+- `MediaIngestionJob` tracks business-relevant processing of a concrete media task
+
+One is orchestration metadata. The other is domain-aware operational state.
+
+## Recommended Boundary
+
+Keep the scheduler model outside the canonical business core, but document it here because it is essential for understanding lifecycle transitions.
+
+## Example Lifecycle
+
+```mermaid
+flowchart TB
+    Scheduler[Scheduler Job]
+    Collector[Collector / Processor]
+    Parsed[Parsed Entity]
+    Enricher[Enrichment]
+    Canonical[Canonical Entity]
+    MediaJob[MediaIngestionJob]
+    Asset[MediaAsset]
+
+    Scheduler --> Collector
+    Collector --> Parsed
+    Parsed --> Enricher
+    Enricher --> Canonical
+    Scheduler --> MediaJob
+    MediaJob --> Asset
+```
+
+## Processing Design Guidelines
+
+1. Scheduling metadata should not be mixed into canonical catalog entities.
+2. Retry logic should live in operational job models, not in release or character records.
+3. Domain publication should depend on explicit processing outcomes, not merely on job execution attempts.
+4. Idempotency should be preserved wherever jobs can be replayed.
+5. Lease and retry fields belong on execution-state models such as media ingestion jobs.
+
+## Why this page exists
+
+Projects with many pipelines often fail because the relationship between domain models and execution models is left implicit.
+
+Making that boundary explicit helps keep Monstrino professional and maintainable as the number of pipelines grows.

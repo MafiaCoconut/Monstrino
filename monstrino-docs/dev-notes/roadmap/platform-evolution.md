@@ -55,13 +55,13 @@ Future architectural evolution may include:
 | Horizontal ingestion scaling | partition pipeline work across more processors |
 
 :::note
-Long-term goals represent architectural intent, not commitments. They are written to create **pressure against decisions that make these paths harder** — not to define a delivery schedule.
+Long-term goals represent architectural intent, not commitments. They are written to create **pressure against decisions that make these paths harder** - not to define a delivery schedule.
 :::
 
 ---
 
 ## Related Documents
 
-- [Data Collection Strategy](./data-collection-strategy) — how and why data is collected continuously,
-- [AI Integration Roadmap](./ai-roadmap) — phased plan for AI capability expansion,
-- [Scaling Strategy](./scaling-strategy) — how the infrastructure is expected to grow.
+- [Data Collection Strategy](./data-collection-strategy) - how and why data is collected continuously,
+- [AI Integration Roadmap](./ai-roadmap) - phased plan for AI capability expansion,
+- [Scaling Strategy](./scaling-strategy) - how the infrastructure is expected to grow.

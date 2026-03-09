@@ -1,6 +1,6 @@
 ---
 title: monstrino-testing
-description: Shared pytest plugin — deterministic UUID fixtures, async DB schema setup, repository helpers, and pre-built test data factories.
+description: Shared pytest plugin - deterministic UUID fixtures, async DB schema setup, repository helpers, and pre-built test data factories.
 sidebar_label: monstrino-testing
 sidebar_position: 7
 ---
@@ -11,7 +11,7 @@ sidebar_position: 7
 
 `monstrino-testing` provides **shared testing infrastructure** for all Monstrino services.
 
-It is a pytest plugin package that exports reusable fixtures, data builders, database setup helpers, and mock utilities — eliminating duplicated test scaffolding across service test suites.
+It is a pytest plugin package that exports reusable fixtures, data builders, database setup helpers, and mock utilities - eliminating duplicated test scaffolding across service test suites.
 
 ## Dependencies
 
@@ -27,7 +27,7 @@ It is a pytest plugin package that exports reusable fixtures, data builders, dat
 
 ```text
 monstrino_testing/
-├── plugin.py                  # Central pytest plugin — re-exports all fixtures via `from monstrino_testing.fixtures import *`
+├── plugin.py                  # Central pytest plugin - re-exports all fixtures via `from monstrino_testing.fixtures import *`
 └── fixtures/
     ├── api/
     │   └── llm_gateway.py     # LlmGateway mock fixture
@@ -80,7 +80,7 @@ async def engine():
 `DATABASE_URL` defaults to `postgresql+asyncpg://pytest:pytest@localhost:5432/monstrino` but can be overridden via the `DATABASE_URL` env variable.
 
 ### Repositories Fixture
-`build_repositories(session)` instantiates the full `Repositories` dataclass, wiring every concrete `SqlAlchemy*Repo` implementation to a shared async session — spanning auth, catalog, core, ingest, market, and media domains.
+`build_repositories(session)` instantiates the full `Repositories` dataclass, wiring every concrete `SqlAlchemy*Repo` implementation to a shared async session - spanning auth, catalog, core, ingest, market, and media domains.
 
 ### Data Fixtures
 Each data fixture returns a pre-populated Pydantic DTO, e.g.:
@@ -95,7 +95,7 @@ These fixtures can be composed and injected directly into test functions without
 
 ## Benefits
 
--   **Zero boilerplate** — one package import gives access to all reusable fixtures
--   **Consistent test data** — shared IDs and entity builders across all services
--   **Real DB integration** — `engine`/`unit_of_work` fixtures support true integration tests
--   **Isolated data fixtures** — DTO-only fixtures work without any DB connection
+-   **Zero boilerplate** - one package import gives access to all reusable fixtures
+-   **Consistent test data** - shared IDs and entity builders across all services
+-   **Real DB integration** - `engine`/`unit_of_work` fixtures support true integration tests
+-   **Isolated data fixtures** - DTO-only fixtures work without any DB connection

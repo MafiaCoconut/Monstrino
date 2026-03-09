@@ -7,7 +7,7 @@ tags: [architecture, persistence, unit-of-work, repository-pattern]
 description: "Defines a UnitOfWork and BaseRepository pattern to manage database session lifecycle consistently across all services."
 ---
 
-# ADR-A-003 — Introduce UnitOfWork and BaseRepo Persistence Architecture
+# ADR-A-003 - Introduce UnitOfWork and BaseRepo Persistence Architecture
 
 | Field      | Value                                                                   |
 | ---------- | ----------------------------------------------------------------------- |
@@ -44,9 +44,9 @@ A `UnitOfWork` context manager owns the session lifecycle and is shared across a
 
 > All database access follows a unified persistence stack:
 >
-> - **`UnitOfWork`** — context manager owning the session, commit, and rollback lifecycle.
-> - **`BaseRepo`** — low-level generic repository for raw session access.
-> - **`CrudRepo`** — higher-level reusable repository with `save`, `get_one`, `get_many`, `exists`, etc.
+> - **`UnitOfWork`** - context manager owning the session, commit, and rollback lifecycle.
+> - **`BaseRepo`** - low-level generic repository for raw session access.
+> - **`CrudRepo`** - higher-level reusable repository with `save`, `get_one`, `get_many`, `exists`, etc.
 >
 > Use cases receive a `UnitOfWork` instance and access repositories through it.
 
@@ -65,5 +65,5 @@ A `UnitOfWork` context manager owns the session lifecycle and is shared across a
 
 ## Related Decisions
 
-- [ADR-A-002](./adr-a-002.md) — ORM restricted to repositories
-- [ADR-A-001](./adr-a-001.md) — Shared packages (monstrino-repositories)
+- [ADR-A-002](./adr-a-002.md) - ORM restricted to repositories
+- [ADR-A-001](./adr-a-001.md) - Shared packages (monstrino-repositories)

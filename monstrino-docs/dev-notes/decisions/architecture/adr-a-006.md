@@ -7,7 +7,7 @@ tags: [architecture, parsers, monstrino-infra, shared-packages]
 description: "Centralizes all external source parsers inside the monstrino-infra shared package to eliminate duplication and ensure consistent parsing across services."
 ---
 
-# ADR-A-006 — Centralize Source Parsers in `monstrino-infra`
+# ADR-A-006 - Centralize Source Parsers in `monstrino-infra`
 
 | Field      | Value                                                              |
 | ---------- | ------------------------------------------------------------------ |

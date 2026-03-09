@@ -64,6 +64,6 @@ For external access, see [Ingress and Networking](./ingress-and-networking).
 
 ## Related Documents
 
-- [Kubernetes Namespace Structure](./kubernetes-namespace-structure) — how environments are isolated within the cluster,
-- [Ingress and Networking](./ingress-and-networking) — how external traffic reaches services,
-- [Environment Strategy](./environment-strategy) — local, test, and production environments.
+- [Kubernetes Namespace Structure](./kubernetes-namespace-structure) - how environments are isolated within the cluster,
+- [Ingress and Networking](./ingress-and-networking) - how external traffic reaches services,
+- [Environment Strategy](./environment-strategy) - local, test, and production environments.

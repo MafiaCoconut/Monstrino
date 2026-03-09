@@ -7,7 +7,7 @@ tags: [data-ingestion, json, replayability, raw-payload]
 description: "Stores the full raw parsed payload as replayable JSON alongside structured columns to prevent data loss across schema migrations."
 ---
 
-# ADR-DI-006 — Store Parsed Content as Replayable JSON
+# ADR-DI-006 - Store Parsed Content as Replayable JSON
 
 | Field      | Value                                                         |
 | ---------- | ------------------------------------------------------------- |
@@ -44,9 +44,9 @@ Store the complete raw parsed payload as a JSON column in addition to structured
 
 ### Use Cases Enabled
 
-- **Replay** — re-run importer logic on existing records without re-scraping.
-- **Backfill** — extract new fields from previously captured data.
-- **Manual edit** — inspect and correct raw data without losing original context.
+- **Replay** - re-run importer logic on existing records without re-scraping.
+- **Backfill** - extract new fields from previously captured data.
+- **Manual edit** - inspect and correct raw data without losing original context.
 
 ## Consequences
 
@@ -63,5 +63,5 @@ Store the complete raw parsed payload as a JSON column in addition to structured
 
 ## Related Decisions
 
-- [ADR-DI-001](./adr-di-001.md) — Parsed tables boundary
-- [ADR-DI-005](./adr-di-005.md) — Heterogeneous parsed models
+- [ADR-DI-001](./adr-di-001.md) - Parsed tables boundary
+- [ADR-DI-005](./adr-di-005.md) - Heterogeneous parsed models

@@ -1,7 +1,7 @@
 ---
 title: Architecture Overview
 sidebar_position: 1
-description: High-level architecture of the Monstrino platform — purpose, boundaries, data flow, storage, infrastructure, and future evolution.
+description: High-level architecture of the Monstrino platform - purpose, boundaries, data flow, storage, infrastructure, and future evolution.
 ---
 
 # Architecture Overview
@@ -67,11 +67,11 @@ Monstrino is an information platform, not a commerce platform.
 
 ### Main problems
 
-- **Fragmented information** — release, character, pet, and media data is spread across different websites.
-- **Incomplete or outdated references** — manually maintained sources often lag behind new releases.
-- **Missing structured pricing history** — official and market prices are rarely preserved in a reusable structured form.
-- **Lack of fair-price visibility** — collectors often lack a clear baseline for buying or selling decisions.
-- **No unified source aggregation** — users currently need to manually combine official retailer data, fandom references, and market observations.
+- **Fragmented information** - release, character, pet, and media data is spread across different websites.
+- **Incomplete or outdated references** - manually maintained sources often lag behind new releases.
+- **Missing structured pricing history** - official and market prices are rarely preserved in a reusable structured form.
+- **Lack of fair-price visibility** - collectors often lack a clear baseline for buying or selling decisions.
+- **No unified source aggregation** - users currently need to manually combine official retailer data, fandom references, and market observations.
 
 ### Architectural answer
 
@@ -83,12 +83,12 @@ Automated collection and normalization allow Monstrino to make data available ea
 
 The architecture is shaped by a few explicit priorities:
 
-- **Clear responsibility boundaries** — acquisition, normalization, media handling, market tracking, and public delivery are separated.
-- **Incremental evolution** — new sources, new entities, and new processing steps should be addable without redesigning the whole system.
-- **Reusable subsystems** — media processing is designed to be reusable beyond release images in the future.
-- **Public/internal separation** — the frontend interacts with a single external facade, while internal service topology remains private.
-- **Practical complexity** — schema and service complexity should exist for concrete value, not for architectural aesthetics.
-- **Production-minded operation** — infrastructure, access rules, contracts, and storage choices are designed deliberately rather than ad hoc.
+- **Clear responsibility boundaries** - acquisition, normalization, media handling, market tracking, and public delivery are separated.
+- **Incremental evolution** - new sources, new entities, and new processing steps should be addable without redesigning the whole system.
+- **Reusable subsystems** - media processing is designed to be reusable beyond release images in the future.
+- **Public/internal separation** - the frontend interacts with a single external facade, while internal service topology remains private.
+- **Practical complexity** - schema and service complexity should exist for concrete value, not for architectural aesthetics.
+- **Production-minded operation** - infrastructure, access rules, contracts, and storage choices are designed deliberately rather than ad hoc.
 
 ---
 
@@ -96,83 +96,12 @@ The architecture is shaped by a few explicit priorities:
 
 ### Four major concerns
 
-- **Acquisition** — collect raw data from external sources and store parsed forms.
-- **Processing** — transform parsed records into normalized domain entities.
-- **Media** — ingest, store, attach, normalize, and derive image variants.
-- **Exposure** — expose normalized data to the frontend through a single public API facade backed by internal service APIs.
+- **Acquisition** - collect raw data from external sources and store parsed forms.
+- **Processing** - transform parsed records into normalized domain entities.
+- **Media** - ingest, store, attach, normalize, and derive image variants.
+- **Exposure** - expose normalized data to the frontend through a single public API facade backed by internal service APIs.
 
-```mermaid
-flowchart TD
-    subgraph External[External Sources]
-        E1[Mattel retail sites]
-        E2[Shopify XML feeds]
-        E3[Monster High fandom API]
-        E4[Second-hand sources planned]
-    end
-
-    subgraph Acquisition[Acquisition]
-        CC[catalog-collector]
-        MPC[market-price-collector in progress]
-    end
-
-    subgraph Processing[Processing]
-        CDE[catalog-data-enricher planned]
-        LLM[ai-orchestrator in progress]
-        CI[catalog-importer]
-    end
-
-    subgraph Media[Media]
-        KB[Kafka event bus planned]
-        MRS[media-rehosting-service in progress]
-        MN[media-normalizator in progress]
-    end
-
-    subgraph APIs[Internal APIs]
-        CAS[catalog-api-service]
-        MAS[market-api-service planned]
-        MEDAS[media-api-service planned]
-        PAS[public-api-service]
-    end
-
-    subgraph Storage[Storage]
-        DB[(PostgreSQL)]
-        OBJ[(S3 / MinIO)]
-    end
-
-    UI[Frontend UI]
-
-    E1 --> CC
-    E2 --> CC
-    E3 --> CC
-    E4 --> MPC
-
-    CC --> DB
-    MPC --> DB
-
-    DB --> CDE
-    CDE --> LLM
-    LLM --> CDE
-    CDE --> DB
-
-    DB --> CI
-    CI --> DB
-    CI --> KB
-
-    KB --> MRS
-    MRS --> DB
-    MRS --> OBJ
-    OBJ --> MN
-    MN --> DB
-
-    DB --> CAS
-    DB --> MAS
-    DB --> MEDAS
-
-    CAS --> PAS
-    MAS --> PAS
-    MEDAS --> PAS
-    PAS --> UI
-```
+![](/img/architecture/architecture-overview.jpg)
 
 :::info Architecture boundary
 `public-api-service` is the only service reachable by the frontend. All other services are intended to remain internal to the cluster.
@@ -184,30 +113,30 @@ flowchart TD
 
 ### Acquisition
 
-- `catalog-collector` — **Ready**. Collects raw release data from external sources and stores parsed records.
-- `market-price-collector` — **In Progress**. Collects pricing observations from official and, later, second-hand sources.
+- `catalog-collector` - **Ready**. Collects raw release data from external sources and stores parsed records.
+- `market-price-collector` - **In Progress**. Collects pricing observations from official and, later, second-hand sources.
 
 ### Enrichment and Processing
 
-- `catalog-data-enricher` — **Planned**. Enriches parsed records, including LLM-assisted attribute refinement.
-- `ai-orchestrator` — **In Progress**. Internal gateway for LLM-backed enrichment tasks.
-- `catalog-importer` — **Ready**. Converts parsed records into normalized domain entities and resolves relations.
+- `catalog-data-enricher` - **Planned**. Enriches parsed records, including LLM-assisted attribute refinement.
+- `ai-orchestrator` - **In Progress**. Internal gateway for LLM-backed enrichment tasks.
+- `catalog-importer` - **Ready**. Converts parsed records into normalized domain entities and resolves relations.
 
 ### Media
 
-- `media-rehosting-service` — **In Progress**. Accepts media work, stores originals, and creates media asset records.
-- `media-normalizator` — **In Progress**. Produces derived formats and enhanced image variants.
-- `media-api-service` — **Planned**. Internal read API for media data.
+- `media-rehosting-service` - **In Progress**. Accepts media work, stores originals, and creates media asset records.
+- `media-normalizator` - **In Progress**. Produces derived formats and enhanced image variants.
+- `media-api-service` - **Planned**. Internal read API for media data.
 
 ### Read APIs and Delivery
 
-- `catalog-api-service` — **Ready**. Internal read API for catalog domain data.
-- `market-api-service` — **Planned**. Internal read API for market and pricing data.
-- `public-api-service` — **Ready**. Single external-facing facade for the frontend.
+- `catalog-api-service` - **Ready**. Internal read API for catalog domain data.
+- `market-api-service` - **Planned**. Internal read API for market and pricing data.
+- `public-api-service` - **Ready**. Single external-facing facade for the frontend.
 
 ### Internal Tooling
 
-- `testing-service` — **Internal**. Used to validate SQLAlchemy repositories and ORM behavior in isolation.
+- `testing-service` - **Internal**. Used to validate SQLAlchemy repositories and ORM behavior in isolation.
 
 ---
 
@@ -219,26 +148,26 @@ The core domain is centered around collectible releases and their relationships.
 
 **Identity entities**
 
-- `Character` — canonical Monster High character identity
-- `Pet` — pet identity associated with one or more characters
-- `Series` — named collection or line that groups releases
+- `Character` - canonical Monster High character identity
+- `Pet` - pet identity associated with one or more characters
+- `Series` - named collection or line that groups releases
 
 **Release entities**
 
-- `Release` — a specific product release
-- `ReleaseCharacter` — relation between a release and its character set
-- `ReleasePet` — relation between a release and included pets
-- `ReleaseItem` — items or components contained in a release
-- `ReleaseMsrp` — official MSRP associated with a release
+- `Release` - a specific product release
+- `ReleaseCharacter` - relation between a release and its character set
+- `ReleasePet` - relation between a release and included pets
+- `ReleaseItem` - items or components contained in a release
+- `ReleaseMsrp` - official MSRP associated with a release
 
 **Media entities**
 
-- `MediaAsset` — stored media object
-- `MediaAssetAttachment` — link between media and a domain entity
+- `MediaAsset` - stored media object
+- `MediaAssetAttachment` - link between media and a domain entity
 
 **Market entities**
 
-- `MarketProductPriceObservation` — recorded price observation for a release at a given time and source
+- `MarketProductPriceObservation` - recorded price observation for a release at a given time and source
 
 Additional supporting models are used for enrichment, exclusivity, external references, source tracing, and other domain-specific metadata.
 
@@ -248,13 +177,13 @@ Additional supporting models are used for enrichment, exclusivity, external refe
 
 ### Pipeline summary
 
-1. **Acquisition** — `catalog-collector` collects external source data, parses it into structured intermediate representations, and stores the parsed result in ingest-related storage.
-2. **Optional enrichment** — planned enrichment components can refine selected parsed attributes through `ai-orchestrator` and write improved values back.
-3. **Domain import** — `catalog-importer` reads parsed records, resolves relations, and writes normalized domain entities into the catalog model.
-4. **Media handoff** — media-related work can be emitted for downstream handling. Kafka is planned as the transport for transient media processing events.
-5. **Media rehosting and attachment** — `media-rehosting-service` stores original images in object storage and creates corresponding media asset and attachment records.
-6. **Media normalization** — `media-normalizator` generates derived variants such as JPG, PNG, and WEBP, and can apply image enhancement or cleanup steps.
-7. **Public delivery** — the frontend sends requests only to `public-api-service`, which validates the request, orchestrates calls to internal APIs, transforms responses into UI-ready DTOs, and returns the final payload.
+1. **Acquisition** - `catalog-collector` collects external source data, parses it into structured intermediate representations, and stores the parsed result in ingest-related storage.
+2. **Optional enrichment** - planned enrichment components can refine selected parsed attributes through `ai-orchestrator` and write improved values back.
+3. **Domain import** - `catalog-importer` reads parsed records, resolves relations, and writes normalized domain entities into the catalog model.
+4. **Media handoff** - media-related work can be emitted for downstream handling. Kafka is planned as the transport for transient media processing events.
+5. **Media rehosting and attachment** - `media-rehosting-service` stores original images in object storage and creates corresponding media asset and attachment records.
+6. **Media normalization** - `media-normalizator` generates derived variants such as JPG, PNG, and WEBP, and can apply image enhancement or cleanup steps.
+7. **Public delivery** - the frontend sends requests only to `public-api-service`, which validates the request, orchestrates calls to internal APIs, transforms responses into UI-ready DTOs, and returns the final payload.
 
 ### Why this staged model matters
 

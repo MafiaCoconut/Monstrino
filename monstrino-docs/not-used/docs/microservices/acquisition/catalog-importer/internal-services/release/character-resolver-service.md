@@ -22,12 +22,12 @@ The service writes the resulting links into `release_character_link`.
 
 ### Depends on
 
-- `TitleFormatter` — normalizes the incoming character name.
-- `UnitOfWorkInterface` — provides access to repositories.
-- `character_role` repository — retrieves role IDs (MAIN / SECONDARY).
-- `character` repository — verifies the existence of characters in the DB.
-- `release_character_link` repository — checks and writes release–character relations.
-- `CharacterDataInvalidError` — raised for invalid raw input.
+- `TitleFormatter` - normalizes the incoming character name.
+- `UnitOfWorkInterface` - provides access to repositories.
+- `character_role` repository - retrieves role IDs (MAIN / SECONDARY).
+- `character` repository - verifies the existence of characters in the DB.
+- `release_character_link` repository - checks and writes release–character relations.
+- `CharacterDataInvalidError` - raised for invalid raw input.
 
 ## Input specification
 

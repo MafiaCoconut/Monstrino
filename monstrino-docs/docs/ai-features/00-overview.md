@@ -1,7 +1,7 @@
 ---
 title: AI Features Overview
 sidebar_position: 1
-description: How Monstrino integrates LLM-based inference into a production data pipeline — architecture, boundaries, and operational control.
+description: How Monstrino integrates LLM-based inference into a production data pipeline - architecture, boundaries, and operational control.
 ---
 
 import Admonition from '@theme/Admonition';
@@ -18,9 +18,9 @@ The integration is designed around one principle: **AI increases data quality wi
 
 Monster High release data arriving from external sources is frequently incomplete.
 
-A release record may contain a title, an MPN, and a description — but the `characters`, `series`, `tier`, or `content_type` fields are empty. Filling them through deterministic rules alone would require maintaining increasingly fragile pattern matching across many source formats, languages, and naming conventions.
+A release record may contain a title, an MPN, and a description - but the `characters`, `series`, `tier`, or `content_type` fields are empty. Filling them through deterministic rules alone would require maintaining increasingly fragile pattern matching across many source formats, languages, and naming conventions.
 
-LLMs solve this class of problem well. They can interpret natural language descriptions, recognize entity names in context, and return structured output — without requiring hand-crafted rules for every variation.
+LLMs solve this class of problem well. They can interpret natural language descriptions, recognize entity names in context, and return structured output - without requiring hand-crafted rules for every variation.
 
 <Admonition type="info" title="Scope">
 AI is used exclusively for interpretation and enrichment tasks. Ingestion, storage, normalization, public APIs, and media processing are all fully deterministic and have no dependency on AI availability.
@@ -56,7 +56,7 @@ Most "AI integrations" in hobby or early-stage projects are direct API calls wit
 
 ### Centralized scenario execution
 
-`ai-orchestrator` exposes named business scenarios — `characters-enrichment`, `series-enrichment`, `image-recognition` — not generic endpoints like "ask AI". Calling services use domain vocabulary, not model vocabulary.
+`ai-orchestrator` exposes named business scenarios - `characters-enrichment`, `series-enrichment`, `image-recognition` - not generic endpoints like "ask AI". Calling services use domain vocabulary, not model vocabulary.
 
 ### Model abstraction
 
@@ -74,7 +74,7 @@ This keeps all side effects deterministic and in backend code.
 
 ### Validation before persistence
 
-AI output is not trusted unconditionally. Before any enriched value reaches the catalog, `catalog-data-enricher` validates the result for structural correctness, completeness, and consistency. Records that fail validation are flagged for administrator review — they do not enter the pipeline silently.
+AI output is not trusted unconditionally. Before any enriched value reaches the catalog, `catalog-data-enricher` validates the result for structural correctness, completeness, and consistency. Records that fail validation are flagged for administrator review - they do not enter the pipeline silently.
 
 ### Operational isolation
 
@@ -110,4 +110,4 @@ Internal architecture of the `ai-orchestrator` service: scenario-based execution
 
 **[LLM Enrichment Walkthrough](/docs/ai-features/llm-enrichment-walkthrough/)**
 
-A step-by-step trace of a real enrichment run using the *Dawn of the Dance 3-Pack* release — from raw parsed input through multi-step AI interaction to validated structured output ready for import.
+A step-by-step trace of a real enrichment run using the *Dawn of the Dance 3-Pack* release - from raw parsed input through multi-step AI interaction to validated structured output ready for import.

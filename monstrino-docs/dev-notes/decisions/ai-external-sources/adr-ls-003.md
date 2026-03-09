@@ -7,7 +7,7 @@ tags: [external-sources, mattel, shopify, msrp, prices]
 description: "Uses official Mattel Shopify stores as the primary authoritative source for MSRP price data, ensuring pricing accuracy and consistency."
 ---
 
-# ADR-LS-003 — Use Official Mattel Shopify Sources for MSRP Prices
+# ADR-LS-003 - Use Official Mattel Shopify Sources for MSRP Prices
 
 | Field      | Value                                                          |
 | ---------- | -------------------------------------------------------------- |
@@ -36,7 +36,7 @@ Collect MSRP from Amazon, Target, Walmart, and similar retailers.
 Use resale prices as a proxy for value.
 
 - **Pros:** Reflects actual market value.
-- **Cons:** Not MSRP — this is secondary market pricing, noisy data.
+- **Cons:** Not MSRP - this is secondary market pricing, noisy data.
 
 ### Option 3: Official Mattel Shopify Stores ✅
 
@@ -64,5 +64,5 @@ Parse MSRP directly from Mattel's official Shopify-based stores using the Shopif
 
 ## Related Decisions
 
-- [ADR-A-006](../architecture/adr-a-006.md) — Parsers centralized in monstrino-infra
-- [ADR-PS-005](../product-strategy/adr-ps-005.md) — Prices deprioritized until after image pipeline
+- [ADR-A-006](../architecture/adr-a-006.md) - Parsers centralized in monstrino-infra
+- [ADR-PS-005](../product-strategy/adr-ps-005.md) - Prices deprioritized until after image pipeline
