@@ -1,21 +1,53 @@
-MIT License
+Monstrino Source License (MSL) v1.0
 
-Copyright (c) 2025 MafiaCoconut
+Copyright (c) 2026 Aleksandr Kachanov
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+1. Purpose
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+The Monstrino project source code is made publicly available for the purpose
+of learning, studying software architecture, and reviewing implementation
+approaches.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+This license allows viewing and studying the source code but does not grant
+permission to use the code in other software projects.
+
+2. Permitted Uses
+
+You are allowed to:
+
+- View and read the source code
+- Study the architecture and implementation
+- Fork the repository for personal, non-commercial educational purposes
+- Run the official Monstrino project for evaluation or personal exploration
+
+3. Prohibited Uses
+
+You may NOT:
+
+- Use the source code or substantial parts of it in another software project
+- Copy the implementation into other repositories or products
+- Use the code for commercial purposes
+- Redistribute modified versions of the project
+- Offer the software or derivative works as a service
+
+4. Contributions
+
+Contributions to the official Monstrino repository may be accepted at the
+discretion of the project owner. By submitting a contribution, you grant the
+project owner the right to use, modify, and redistribute that contribution
+within the Monstrino project.
+
+5. No Warranty
+
+This software is provided "as is", without warranty of any kind, express or
+implied, including but not limited to warranties of merchantability,
+fitness for a particular purpose, and noninfringement.
+
+6. Termination
+
+Any violation of this license immediately terminates the permissions granted
+under this license.
+
+7. Contact
+
+For permissions beyond the scope of this license, contact the project owner.
