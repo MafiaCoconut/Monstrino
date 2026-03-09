@@ -1,0 +1,10 @@
+{
+  "label": "Market Ingestion",
+  "position": 2,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "doc",
+    "id": "pipelines/market-ingestion/market-ingestion-pipeline"
+  }
+}

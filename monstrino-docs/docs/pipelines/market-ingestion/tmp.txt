@@ -1,0 +1,1063 @@
+---
+title: Market Ingestion Pipeline
+sidebar_position: 10
+description: End-to-end overview of the Monstrino market ingestion pipeline, including release discovery, price collection, MSRP tracking, and source trust handling.
+---
+
+# Market Ingestion Pipeline
+
+The market ingestion pipeline is responsible for collecting commercial pricing information for releases across official stores and retail sources.
+
+Its purpose is not limited to a single scraping action. Instead, it defines the full market data flow for Monstrino:
+
+- discovering new release entries in commercial sources
+- creating and maintaining `market-release-link` records
+- collecting price observations for known release links on a scheduled basis
+- preserving historical price records across different observation dates
+- initializing and maintaining MSRP data for releases
+- selecting the most trustworthy MSRP source based on source confidence rules
+
+In the future, this pipeline will also evolve to capture broader commercial availability metadata such as shipping support, shipping cost, taxes, and other purchase-related signals.
+
+# Pipeline Scope
+
+The market ingestion area is implemented as an umbrella flow with two dedicated sub-pipelines:
+
+1. **Market Release Discovery**
+2. **Market Price Collection**
+
+This separation is intentional.
+
+Discovery is responsible for finding new market-facing release entries and creating persistent links to them.  
+Price collection is responsible for repeatedly revisiting known market links and storing time-based observations.
+
+This means the market ingestion domain is documented at three levels:
+
+- this page: overall market ingestion architecture
+- `market-release-discovery-pipeline.md`
+- `market-price-collection-pipeline.md`
+
+# Goals
+
+The pipeline exists to support the following platform capabilities:
+
+- collect primary market price data for releases
+- continuously discover new retail release references
+- maintain persistent source-specific release links
+- store full historical price observations
+- create initial MSRP records when a trusted commercial price first becomes available
+- compare MSRP source trustworthiness and overwrite MSRP ownership only when the incoming source is more trusted
+- prepare the platform for future market analytics and availability tracking
+
+# Source Landscape
+
+The first target sources are official and high-trust retail channels, including:
+
+- Mattel Creations
+- Mattel Shop
+- other official marketplace websites
+- toy store websites
+
+The source model is country-aware.
+
+Monstrino uses separate source reference records for:
+
+- the logical source itself
+- the country-specific commercial presence of that source
+
+This is represented through `source` and `source_country`.
+
+For example:
+
+- `mattel_shop` exists once as a logical source
+- the same source may have many `source_country` entries
+- each country-specific entry may expose different prices, product availability, tax rules, and delivery behavior
+
+This structure allows the market ingestion pipeline to treat the same commercial platform as multiple operational market endpoints.
+
+# High-Level Flow
+
+```mermaid
+flowchart TB
+    A["Scheduler Trigger"] --> B["Select Source / Source Country"]
+    B --> C{"Pipeline Type"}
+
+    C --> D["Market Release Discovery"]
+    C --> E["Market Price Collection"]
+
+    D --> F["Parse ReleaseRefs from Source"]
+    F --> G["Check Existing market-release-link"]
+    G --> H["Insert Missing market-release-link Records"]
+
+    E --> I["Load Known market-release-link Records"]
+    I --> J["Resolve Parser via Registry"]
+    J --> K["Parse MarketReleaseRef"]
+    K --> L["Resolve release_id via catalog-api-service"]
+    L --> M["Check / Create release-msrp"]
+    M --> N["Compare MSRP Source Confidence"]
+    N --> O["Store overwrite event if stronger source wins"]
+    O --> P["Insert release-product-price-observation"]
+
+    H --> Q["Persist Market Link State"]
+    P --> R["Persist Historical Price State"]
+```
+
+# Architecture Overview
+
+The market ingestion pipeline is scheduler-driven.
+
+It is implemented through separate services and per-source runtime isolation:
+
+- each service is triggered by scheduler
+- each source is processed in a dedicated Kubernetes pod
+- a single service pod may still handle multiple country-specific triggers for the same source
+
+This gives the platform flexibility in scheduling, scaling, and isolating failures per source.
+
+The source integration layer is registry-based.
+
+A central `PortsRegistry` maps:
+
+- source name
+- port type
+- parser implementation
+
+This allows the pipeline to resolve the correct adapter implementation without hardcoding source-specific logic into orchestration code.
+
+At runtime, the process is:
+
+- determine the source
+- resolve the appropriate parser through the registry
+- execute the source-specific parsing flow
+- normalize data into market DTOs
+- perform persistence and release linking
+
+This design keeps the orchestration layer stable while source-specific logic remains isolated in adapters.
+
+# Triggering Model
+
+## Scheduler-driven execution
+
+Both market sub-pipelines are started through scheduler triggers.
+
+## Market Release Discovery
+
+- runs by scheduler
+- processes available release references for a source
+- a single service can contain multiple scheduler triggers for different countries
+- different sources are deployed as separate Kubernetes pods
+
+## Market Price Collection
+
+- runs by scheduler
+- processes known market links
+- one trigger can process an unlimited number of records
+- processing is grouped by source and source country
+- one source runs in one Kubernetes pod, but that pod may still work with multiple countries for the same source
+
+The scheduler layer itself is shared across platform packages and is not redefined independently inside every service.
+
+# Sub-Pipeline 1: Market Release Discovery
+
+## Purpose
+
+This sub-pipeline discovers new commercial release references in retail sources and creates persistent source-specific market links for future processing.
+
+## Discovery Stages
+
+1. A scheduler trigger starts the discovery flow.
+2. The source-specific collector is selected.
+3. The parser collects `ReleaseRef` entries from the source.
+4. Parsing strategy depends on `source_tech_type`.
+5. Supported acquisition patterns may differ by source:
+   - XML
+   - API
+   - HTML
+6. The use case checks whether each discovered release already exists in `release-market-link`.
+7. If the release link does not exist, a new record is created.
+
+## Output
+
+The main output of discovery is the creation of new persistent market-release-link records.
+
+These records become the input set for the price collection pipeline.
+
+# Sub-Pipeline 2: Market Price Collection
+
+## Purpose
+
+This sub-pipeline revisits known market links and captures time-based commercial observations for releases.
+
+Its result is not just the current price, but a growing historical record of commercial state over time.
+
+## Collection Stages
+
+1. `market-price-collector` starts for a specific source context.
+2. A `ProcessJob` loads all known records for the source and its country.
+3. For each record, an asynchronous use case is launched.
+4. The job resolves the correct parser implementation from the registry using `SourceName`.
+5. The parser extracts market data into a `MarketReleaseRef` model.
+6. `MarketReleaseRef.mpn` is sent to `catalog-api-service` to resolve the canonical `release_id`.
+7. The pipeline checks whether the release already has an MSRP record.
+8. If no MSRP exists, a new `release-msrp` record is created.
+9. If MSRP already exists, source trust is compared via `release-msrp-source.confidence`.
+10. If the incoming source is more trustworthy, an overwrite event is stored in a dedicated event table.
+11. The parsed market observation is inserted into `release-product-price-observation`.
+
+# Extracted Market Data
+
+The pipeline is designed to extract at least the following market fields:
+
+- price
+- availability on site
+- shipping information
+- tax information
+- MPN
+
+These fields may not always be available from every source, but they define the intended market ingestion contract.
+
+Future enrichment of the market layer may include:
+
+- delivery support by region
+- shipping cost breakdown
+- tax breakdown
+- expanded availability states
+
+# MSRP Handling and Source Trust
+
+One of the most important responsibilities of the market ingestion pipeline is MSRP initialization and maintenance.
+
+## MSRP creation
+
+If the pipeline encounters the first trustworthy commercial price for a release, it creates a `release-msrp` record.
+
+## MSRP overwrite rules
+
+If a later source provides a different MSRP candidate, Monstrino does not blindly overwrite the existing value.
+
+Instead, it compares source trust through `release-msrp-source.confidence`.
+
+The rule is:
+
+- **lower confidence value = stronger trust**
+
+Example:
+
+- official Mattel source may have confidence `1`
+- fan-maintained or secondary source may have confidence `100`
+
+If the new source is more trusted than the one currently backing MSRP, the pipeline allows the MSRP source to be replaced and stores an explicit overwrite event for traceability.
+
+This makes MSRP state auditable and avoids silent source replacement.
+
+# Data Persistence Strategy
+
+The pipeline persists data into market-specific tables that support both current state and historical analysis.
+
+Core persistence outcomes include:
+
+- creation of `market-release-link`
+- insertion of `release-product-price-observation`
+- creation of `release-msrp`
+- recording of MSRP overwrite events when source trust changes ownership
+
+The persistence model is history-preserving.
+
+Each observation cycle creates a new record.
+
+That means:
+
+- price history is retained
+- unchanged prices are still stored as new observations
+- repeated parsing snapshots remain visible over time
+- the system can later reconstruct price timelines without inferring gaps
+
+This is a deliberate design choice.
+
+# Historical Observation Model
+
+The market ingestion pipeline uses an append-oriented observation strategy.
+
+## Rules
+
+- each parsing cycle produces a new observation record
+- unchanged prices are still stored
+- price history is never flattened into a single mutable row
+- time-series reconstruction is based on explicit records, not on inferred state changes
+
+This model is especially important for:
+
+- price trend analysis
+- commercial timeline reconstruction
+- comparison between markets
+- future analytics and alerts
+
+# Identity and Deduplication
+
+The pipeline identifies an already-known source listing using:
+
+- `source_country_id`
+- `external_id`
+
+Together, these fields define the uniqueness boundary for source-specific commercial entries.
+
+This is the correct level of uniqueness because:
+
+- the same product may appear in different countries
+- the same source can expose different commercial records across countries
+- country-specific links must not collapse into a single global record
+
+At a broader catalog level, multiple different market listings may still refer to the same canonical release.  
+That relationship is handled by release resolution, not by source listing deduplication.
+
+# Release Linking
+
+Release linking happens after market parsing and before final persistence.
+
+The linking flow is:
+
+1. parse market-facing product information
+2. extract MPN
+3. request canonical `release_id` from `catalog-api-service`
+4. connect the market observation to the canonical catalog release
+
+This means the market ingestion layer does not define release identity by itself.  
+It relies on the catalog domain as the canonical release authority.
+
+This separation is important because:
+
+- market sources are noisy and unstable
+- canonical release identity belongs to the catalog domain
+- market ingestion should enrich release commerce data, not redefine core release structure
+
+# Registry-Based Source Resolution
+
+Source parser selection is implemented through a central registry.
+
+The registry maps:
+
+- source
+- port type
+- adapter implementation
+
+This allows different pipeline stages to request a parser implementation by contract rather than by direct hardcoded dependency.
+
+Conceptually, the flow is:
+
+1. scheduler selects source context
+2. use case requests the required parser port
+3. registry returns the correct adapter
+4. source-specific parsing runs through that adapter
+
+This pattern keeps source growth manageable as the number of integrations increases.
+
+It also supports different parser contracts for different source behaviors, for example:
+
+- series parsing
+- release parsing
+- market extraction
+
+# Boundaries
+
+The market ingestion pipeline is responsible for:
+
+- discovering market-facing release entries
+- maintaining market-release links
+- collecting commercial observations
+- initializing MSRP
+- comparing MSRP source trust
+- storing historical market records
+
+The market ingestion pipeline does **not** own:
+
+- canonical release creation
+- catalog domain modeling
+- AI enrichment
+- media ingestion or media normalization
+- public API delivery
+- frontend shaping
+- broader analytics and reporting logic
+
+This keeps the pipeline focused on collection and persistence of commercial source truth.
+
+# Reliability Model
+
+The pipeline is designed to preserve whatever useful information can be collected during an observation cycle.
+
+In practice, this means the system is tolerant of partial market payloads and is oriented toward preserving observable source state rather than requiring perfect extraction every time.
+
+The detailed operational error-handling behavior is implementation-specific and is intentionally not part of this architecture-level document.
+
+# Observability
+
+For an enterprise-grade service, the market ingestion pipeline should expose metrics and logs around:
+
+- scheduler trigger executions
+- source and country runs
+- parsed release references
+- newly created market-release-link records
+- processed market links
+- successful release resolutions
+- inserted price observations
+- MSRP creations
+- MSRP overwrite events
+- source-level parsing failures
+- processing throughput per source
+- duration per collection cycle
+
+This gives operators visibility into both discovery growth and recurring collection health.
+
+# Future Evolution
+
+The current pipeline focuses on primary market sources.  
+A planned future direction is expansion toward second-hand market sources.
+
+That future evolution may introduce:
+
+- second-hand marketplace adapters
+- seller-specific commercial records
+- different trust policies for non-official sources
+- more complex price normalization rules
+- separation between MSRP-oriented and resale-oriented pricing streams
+
+This will likely require either:
+
+- an extension of the current market ingestion pipeline
+- or a dedicated second-hand market pipeline with partially shared infrastructure
+
+# Design Summary
+
+The market ingestion pipeline is one of the key commercial intelligence flows in Monstrino.
+
+It is designed around several core principles:
+
+- scheduler-driven execution
+- source and country awareness
+- adapter-based parser resolution
+- explicit separation of discovery and collection
+- canonical release resolution through catalog services
+- append-only historical market observations
+- trust-based MSRP ownership
+- future extensibility toward richer market analytics
+
+This design allows Monstrino to build a historically accurate and source-aware view of release pricing across multiple official and retail markets.
+
+# Related Pages
+
+- [Pipelines Overview](./00-overview)
+- [Market Release Discovery Pipeline](./market-release-discovery-pipeline)
+- [Market Price Collection Pipeline](./market-price-collection-pipeline)
+- [API Overview](../api/00-overview)
+- [Catalog Domain](../domain/01-catalog-domain)
+- [Market Model](../domain/06-market-model)
+
+==========================================
+---
+title: Market Release Discovery Pipeline
+sidebar_position: 11
+description: Scheduler-driven discovery pipeline that finds new market-facing release entries and creates persistent market-release-link records.
+---
+
+# Market Release Discovery Pipeline
+
+The market release discovery pipeline is responsible for scanning official and retail market sources, extracting release references, and creating persistent `market-release-link` records for newly discovered source entries.
+
+This pipeline does not collect historical pricing data.  
+Its responsibility is discovery, source coverage expansion, and durable market link creation.
+
+# Purpose
+
+The discovery pipeline exists to answer a simple but important question:
+
+**Which releases are currently present in a commercial source and not yet known to the market layer?**
+
+Its outputs become the source inventory used by the recurring price collection pipeline.
+
+# Pipeline Role Inside Market Ingestion
+
+Within the broader market ingestion architecture, release discovery is the first stage.
+
+It is responsible for:
+
+- scanning market sources for product references
+- extracting source-specific release entries
+- checking whether those entries are already known
+- creating new `market-release-link` records when needed
+
+It is not responsible for:
+
+- recurring price history collection
+- MSRP source comparison
+- historical commercial observations
+- catalog domain ownership
+- media processing
+- public API delivery
+
+# Trigger Model
+
+The pipeline is fully scheduler-driven.
+
+Key runtime characteristics:
+
+- the trigger is executed by scheduler
+- different sources are run independently
+- one source typically runs in its own Kubernetes pod
+- a single service may still define multiple scheduler triggers for different country contexts
+
+This allows country-specific discovery behavior even when the underlying logical source is the same.
+
+For example, a source with multiple country storefronts may expose different listings and therefore must be scanned through separate country-aware runs.
+
+# Source Context Model
+
+The pipeline operates on a combination of:
+
+- logical source
+- country-specific source context
+
+This is important because one commercial source may have:
+
+- different storefront URLs
+- different product catalogs
+- different prices
+- different release availability by country
+
+As a result, discovery must operate at the `source_country` level, not only at the logical `source` level.
+
+# High-Level Discovery Flow
+
+```mermaid
+flowchart TB
+    A["Scheduler Trigger"] --> B["Select Source Country Context"]
+    B --> C["Resolve Parser via Registry"]
+    C --> D["Collect ReleaseRefs from Source"]
+    D --> E["Normalize Source Entries"]
+    E --> F["Check Existing market-release-link"]
+    F --> G{"Already Known?"}
+    G -- No --> H["Create New market-release-link"]
+    G -- Yes --> I["Skip Existing Entry"]
+    H --> J["Persist New Discovery State"]
+    I --> K["Finish Run"]
+    J --> K
+```
+
+# Discovery Stages
+
+## 1. Scheduler starts the run
+
+A scheduler trigger starts the discovery process for a specific source or country-aware source context.
+
+## 2. Source adapter is resolved
+
+The pipeline resolves the correct parser implementation through the registry layer.
+
+This allows discovery logic to remain orchestration-driven while source-specific parsing stays inside dedicated adapters.
+
+## 3. Release references are collected
+
+The parser retrieves `ReleaseRef`-like entries from the source.
+
+These references represent market-facing release candidates discovered in the source inventory.
+
+## 4. Acquisition strategy depends on source technology
+
+The exact collection logic depends on `source_tech_type`.
+
+Supported patterns may include:
+
+- XML feeds
+- source APIs
+- HTML parsing
+
+This makes discovery adaptable to different source integration styles without changing the orchestration model.
+
+## 5. Existing links are checked
+
+For each discovered source entry, the pipeline checks whether the corresponding `market-release-link` already exists.
+
+## 6. New links are inserted
+
+If the entry is not yet known, a new persistent `market-release-link` record is created.
+
+If it already exists, the entry is skipped and the pipeline continues.
+
+# Parsing Model
+
+The release discovery pipeline does not use a single universal parser.
+
+Instead, the platform uses a registry-based integration model where parser implementations are resolved by source name and port contract.
+
+Conceptually, this means:
+
+- orchestration code selects the source context
+- the registry provides the correct parser adapter
+- the parser returns source-specific release references in a normalized shape
+
+This design is important because different sources may require completely different collection mechanisms even though the pipeline contract remains the same.
+
+# Registry Resolution
+
+Monstrino uses a `PortsRegistry` pattern to map:
+
+- source
+- port type
+- adapter implementation
+
+This allows the discovery pipeline to request a parsing contract rather than directly instantiate a source-specific collector.
+
+Benefits of this approach:
+
+- clear separation of orchestration and parsing
+- cleaner scaling as the number of sources grows
+- easier replacement of source adapters
+- better alignment with clean architecture boundaries
+
+# Input and Output
+
+## Input
+
+The discovery pipeline starts from:
+
+- scheduler trigger
+- source context
+- country context
+- source adapter configuration
+
+## Output
+
+Its main output is the creation of persistent `market-release-link` records.
+
+These records represent source-specific release entries that can later be revisited by the market price collection pipeline.
+
+# Identity and Deduplication
+
+The discovery process must avoid creating duplicate market links for the same source entry.
+
+At the source-entry level, uniqueness is determined by:
+
+- `source_country_id`
+- `external_id`
+
+This allows:
+
+- the same source to expose different entries by country
+- the same release to exist across multiple source-country combinations
+- the market layer to remain country-aware without collapsing distinct commercial listings
+
+# Persistence Outcome
+
+The discovery pipeline mainly persists one type of business outcome:
+
+- a new `market-release-link` record for a previously unseen source entry
+
+That record becomes a durable pointer between:
+
+- the source-country storefront
+- the source-side release entry
+- the future commercial observation stream
+
+This is the foundational dataset required for recurring market collection.
+
+# Boundaries
+
+The release discovery pipeline is responsible for:
+
+- source scanning
+- extraction of release references
+- source-specific discovery normalization
+- creation of missing market links
+
+The release discovery pipeline is not responsible for:
+
+- recurring observation history
+- repeated price collection
+- MSRP ownership rules
+- second-hand market data
+- AI enrichment
+- release model creation in the catalog domain
+- media asset ingestion
+
+# Observability
+
+For operational visibility, the pipeline should expose logs and metrics for:
+
+- scheduler executions
+- sources scanned
+- country-specific runs
+- release references parsed
+- new market links created
+- skipped existing entries
+- source-level parsing failures
+- run duration by source
+
+This makes it possible to measure both source coverage growth and discovery stability over time.
+
+# Reliability Model
+
+The discovery pipeline should be able to progress even when a source is imperfect or partially structured.
+
+At the architecture level, the key design goal is durability of newly discovered valid entries rather than requiring fully complete source data on every run.
+
+Detailed retry and low-level failure handling remain implementation concerns.
+
+# Future Evolution
+
+Over time, the discovery pipeline may expand to support:
+
+- more commercial source types
+- deeper country-specific storefront strategies
+- prioritization of high-trust commercial sources
+- source ranking heuristics
+- broader second-hand source discovery
+
+This makes the discovery layer one of the main expansion points for Monstrino market intelligence.
+
+# Design Summary
+
+The market release discovery pipeline is the entry point into the commercial market graph of Monstrino.
+
+It is designed around:
+
+- scheduler-driven source scanning
+- country-aware source modeling
+- adapter-based parser resolution
+- source-technology-dependent acquisition
+- durable creation of `market-release-link` records
+- clear separation from recurring price collection
+
+This makes it the foundation for all later market observation and pricing history work.
+
+# Related Pages
+
+- [Pipelines Overview](./00-overview)
+- [Market Ingestion Pipeline](./market-ingestion-pipeline)
+- [Market Price Collection Pipeline](./market-price-collection-pipeline)
+
+==========================================
+---
+title: Market Price Collection Pipeline
+sidebar_position: 12
+description: Scheduler-driven recurring pipeline that revisits known market links, stores price observations, and maintains MSRP ownership based on source trust.
+---
+
+# Market Price Collection Pipeline
+
+The market price collection pipeline is responsible for revisiting known market-facing release links and storing recurring commercial observations over time.
+
+It is the historical pricing engine of the Monstrino market layer.
+
+This pipeline is not about discovering new market entries.  
+Its job is to repeatedly collect market state for already known links and preserve that state as explicit historical records.
+
+# Purpose
+
+The purpose of the price collection pipeline is to build a durable, source-aware, time-based pricing history for releases.
+
+It supports several important platform goals:
+
+- recurring collection of commercial price data
+- append-only historical observation storage
+- availability of a time series rather than a single mutable current state
+- initialization of MSRP when a release receives its first trustworthy source price
+- trust-based overwrite handling when a stronger MSRP source appears
+
+# Pipeline Role Inside Market Ingestion
+
+Within the broader market ingestion architecture, price collection is the recurring observation stage.
+
+It is responsible for:
+
+- loading known `market-release-link` records
+- requesting source-specific market data for those links
+- resolving canonical release identity through the catalog API
+- storing price observations
+- creating MSRP when missing
+- comparing MSRP source trust
+- storing overwrite events when MSRP source ownership changes
+
+It is not responsible for:
+
+- initial source discovery
+- creation of source inventory
+- catalog release creation
+- AI enrichment
+- media processing
+- public delivery shaping
+
+# Trigger Model
+
+The pipeline is scheduler-driven.
+
+Operationally:
+
+- one trigger can process an unlimited number of records
+- execution is grouped by source and source country
+- one source commonly runs in one Kubernetes pod
+- a single pod may still process multiple country contexts for the same source
+
+This allows scaling and isolation by source while preserving country-aware collection behavior.
+
+# High-Level Collection Flow
+
+```mermaid
+flowchart TB
+    A["Scheduler Trigger"] --> B["Load Known market-release-link Records"]
+    B --> C["Start ProcessJob"]
+    C --> D["Resolve Parser via Registry"]
+    D --> E["Fetch Market Data into MarketReleaseRef"]
+    E --> F["Resolve release_id via catalog-api-service"]
+    F --> G["Check Existing release-msrp"]
+    G --> H{"MSRP Exists?"}
+    H -- No --> I["Create release-msrp"]
+    H -- Yes --> J["Compare Source Confidence"]
+    I --> K["Insert release-product-price-observation"]
+    J --> L{"Incoming Source More Trusted?"}
+    L -- Yes --> M["Store MSRP overwrite event"]
+    L -- No --> N["Keep Existing MSRP Ownership"]
+    M --> K
+    N --> K
+    K --> O["Persist Historical Observation"]
+```
+
+# Processing Stages
+
+## 1. Scheduler starts the source run
+
+A scheduler trigger starts the collection flow for a specific source context.
+
+## 2. Known links are loaded
+
+A `ProcessJob` loads all known market links for the source and its country context.
+
+## 3. Records are processed asynchronously
+
+For each loaded market link, a dedicated use case is started asynchronously.
+
+This allows the collector to handle an unbounded number of source entries in a single triggered run.
+
+## 4. Parser is resolved from the registry
+
+The job uses source identity to obtain the correct parser implementation from the registry layer.
+
+## 5. Market data is extracted
+
+The source parser returns commercial source state in a market DTO such as `MarketReleaseRef`.
+
+## 6. Canonical release is resolved
+
+Using `MarketReleaseRef.mpn`, the collector requests the canonical `release_id` from `catalog-api-service`.
+
+This ensures the market layer links observations to the catalog domain rather than defining release identity on its own.
+
+## 7. MSRP state is checked
+
+If the release has no MSRP record, the collector creates one.
+
+If MSRP already exists, the pipeline evaluates whether the current source should replace the existing MSRP owner.
+
+## 8. Observation is inserted
+
+The parsed market state is stored in `release-product-price-observation` as a new historical record.
+
+# Extracted Market Fields
+
+The intended market extraction contract includes at least:
+
+- price
+- site availability
+- shipping information
+- tax information
+- MPN
+
+Different sources may expose different subsets of these fields, but this defines the long-term collection target.
+
+# Historical Observation Strategy
+
+The price collection pipeline uses an append-only historical observation model.
+
+Rules:
+
+- every parsing cycle creates a new observation record
+- unchanged prices are still stored
+- current state is not represented by a single frequently overwritten row
+- price timelines are reconstructed from explicit historical observations
+
+This gives Monstrino a reliable time series for later analysis.
+
+# Why Unchanged Prices Are Stored
+
+The pipeline intentionally persists observations even when the commercial value has not changed.
+
+This is important because it allows the system to answer questions such as:
+
+- when was a price last confirmed?
+- how long was a price stable?
+- which sources were observed successfully at a given point in time?
+- what did the market layer know on a specific date?
+
+Without storing unchanged observations, this kind of historical reasoning becomes weaker and more inferential.
+
+# MSRP Initialization and Ownership
+
+One of the most important business responsibilities of the pipeline is MSRP maintenance.
+
+## Creating MSRP
+
+If the pipeline encounters a valid source price for a release that does not yet have MSRP, it creates a new `release-msrp` record.
+
+## Comparing source trust
+
+If MSRP already exists, Monstrino compares source trust using `release-msrp-source.confidence`.
+
+The rule is:
+
+- lower confidence value means stronger trust
+
+Example trust interpretation:
+
+- official Mattel source: confidence `1`
+- fan-maintained source: confidence `100`
+
+## Overwrite handling
+
+If the incoming source is more trusted than the current MSRP source:
+
+- MSRP ownership may be replaced
+- an explicit overwrite event is stored in a dedicated event table
+
+This makes source changes traceable and prevents silent MSRP ownership shifts.
+
+# Release Resolution
+
+The price collection pipeline depends on the catalog domain for canonical release identity.
+
+The linking flow is:
+
+1. source parser extracts market product data
+2. the pipeline obtains `mpn`
+3. `catalog-api-service` resolves the canonical `release_id`
+4. the observation is linked to the resolved release
+
+This separation protects the market layer from becoming a second catalog authority.
+
+# Registry-Based Adapter Resolution
+
+Like the discovery pipeline, the price collection pipeline relies on a registry pattern.
+
+The registry maps:
+
+- source
+- port type
+- implementation
+
+This allows the collector to select parsing behavior dynamically based on source identity.
+
+Benefits include:
+
+- clean orchestration logic
+- source-specific parsing isolation
+- simpler extension to new sources
+- better adherence to architectural boundaries
+
+# Identity and Deduplication
+
+The pipeline processes known market links that were previously discovered.
+
+At the source entry level, uniqueness is derived from:
+
+- `source_country_id`
+- `external_id`
+
+This allows the same logical source to expose different country-specific listings and preserves the commercial identity of each storefront entry.
+
+# Persistence Outcomes
+
+The price collection pipeline can produce several persistent outcomes:
+
+- insertion of `release-product-price-observation`
+- creation of `release-msrp`
+- insertion of MSRP overwrite events when source ownership changes
+
+These outcomes together build the time-based pricing memory of the platform.
+
+# Boundaries
+
+The price collection pipeline is responsible for:
+
+- revisiting known market links
+- parsing recurring source state
+- resolving canonical release identity
+- storing historical observations
+- creating MSRP when absent
+- comparing MSRP source trust
+
+The price collection pipeline is not responsible for:
+
+- discovering new market listings
+- inventing catalog releases
+- changing the catalog domain model
+- ingesting media
+- AI enrichment
+- frontend response shaping
+- analytics presentation
+
+# Observability
+
+For enterprise-grade operations, the pipeline should expose visibility into:
+
+- scheduler trigger counts
+- source and country runs
+- number of market links processed
+- successful release resolutions
+- observation records inserted
+- MSRP records created
+- MSRP overwrite events recorded
+- parsing failures by source
+- throughput per source
+- collection duration
+
+These signals make it possible to monitor both freshness and processing health.
+
+# Reliability Model
+
+The collection pipeline is designed to preserve commercially useful source state over time.
+
+At the architecture level, the design favors durable observation storage and partial business value capture rather than requiring perfect source responses on every cycle.
+
+Detailed retry strategy and low-level failure rules are intentionally left to implementation-level documentation.
+
+# Future Evolution
+
+The current pipeline focuses on primary retail and official commercial sources.
+
+Future expansion may include:
+
+- second-hand marketplace collection
+- richer shipping and tax extraction
+- stronger source trust strategies
+- region-aware delivery analysis
+- more advanced market normalization rules
+
+These additions may either extend the current pipeline or branch into a dedicated resale-focused market flow.
+
+# Design Summary
+
+The market price collection pipeline is the recurring pricing memory of Monstrino.
+
+It is designed around:
+
+- scheduler-driven execution
+- source-aware and country-aware processing
+- asynchronous processing of known market links
+- registry-based source parser resolution
+- append-only observation history
+- canonical release resolution through catalog services
+- trust-based MSRP ownership
+
+This design allows Monstrino to preserve a reliable commercial timeline for releases across multiple official and retail sources.
+
+# Related Pages
+
+- [Pipelines Overview](./00-overview)
+- [Market Ingestion Pipeline](./market-ingestion-pipeline)
+- [Market Release Discovery Pipeline](./market-release-discovery-pipeline)
