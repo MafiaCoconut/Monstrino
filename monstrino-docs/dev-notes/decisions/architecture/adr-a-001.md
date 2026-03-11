@@ -1,72 +1,115 @@
 ---
 id: adr-a-001
-title: "ADR-A-001: Shared Packages for Cross-Service Code"
-sidebar_label: "A-001: Shared Packages"
+title: "ADR-A-001: Complex Architecture Justified by Unstructured External Data"
+sidebar_label: "A-001: Complex Architecture"
 sidebar_position: 1
-tags: [architecture, packages, shared-code, monorepo]
-description: "Introduces shared Python packages across microservices to eliminate code duplication and establish a monorepo-style shared library foundation."
+tags: [architecture, data-ingestion, data-quality]
+description: "Justifies the multi-stage ingestion architecture by documenting the complexity and inconsistency of external data sources that Monstrino must process."
 ---
 
-# ADR-A-001 - Introduce Shared Packages for Cross-Service Code
+# ADR-A-001 - Complex Architecture Justified by Unstructured External Data
 
-| Field      | Value                                                        |
-| ---------- | ------------------------------------------------------------ |
-| **Status** | Accepted                                                     |
-| **Date**   | 2025-10-01                                                   |
-| **Author** | @Aleks                                              |
-| **Tags**   | `#architecture` `#packages` `#shared-code` `#monorepo`      |
+| Field      | Value                                                                 |
+| ---------- | --------------------------------------------------------------------- |
+| **Status** | Accepted                                                              |
+| **Date**   | 2025-09-09                                                            |
+| **Author** | @Aleks                                                                |
+| **Tags**   | `#architecture` `#data-ingestion` `#data-quality`                     |
 
 ## Context
 
-As the number of microservices grew, the same classes were being duplicated across services:
+The Monstrino platform aggregates information about Monster High releases from many external sources:
 
-- ORM models for `releases`, `characters`, etc.
-- Repository interfaces and base implementations.
-- Infrastructure helpers (DB session management, S3 clients, HTTP clients).
-- Test fixtures and factories.
+- official brand websites
+- fan wikis
+- online stores
+- marketplace listings
+- scraped HTML pages
+- JSON APIs
+- textual descriptions
+- images
 
-Maintaining identical code in multiple services made refactoring expensive and introduced drift between implementations.
+The main difficulty is that **incoming data is not structured**.
+
+External sources frequently contain:
+
+- incomplete information
+- conflicting data
+- inconsistent naming
+- mixed information inside single text fields
+- duplicates of the same release
+- different formats for the same entities
+
+The core responsibility of Monstrino is to transform **unstructured and inconsistent external data** into a **clean, normalized canonical catalog**, which includes identifying characters, series, model numbers, release types, deduplicating entries, and collecting historical price data.
+
+### Example 1 — Inconsistent Release Titles
+
+Different sources may describe the same release as:
+
+- `Draculaura Doll`
+- `Monster High Draculaura Basic Doll`
+- `Original Draculaura (2010)`
+
+All three must resolve to the same product with a canonical title, character, and series.
+
+### Example 2 — Mixed Information Inside Text Blocks
+
+A single store description may embed: release title, characters list, store exclusivity, and model number — all in unstructured prose. The system must extract and normalize each data point automatically.
+
+### Example 3 — Multiple Character Name Variants
+
+`Clawdeen`, `Clawdeen Wolf`, `Clawdeen W.`, `Clawdeen (Monster High)` — all must resolve to a single canonical entity.
+
+### Example 4 — Ambiguous Series Names
+
+`Skulltimate Secrets Draculaura`, `Skulltimate Secrets Series 1 Draculaura`, `SS1 Draculaura` — all correspond to the same series and wave.
+
+### Example 5 — Price Data From Multiple Markets
+
+The same release may appear at different prices across Mattel Shop, Walmart, and eBay secondary market. Prices also vary by region, currency, and shipping. The system must store historical prices, detect MSRP, and differentiate primary from secondary market data.
 
 ## Options Considered
 
-### Option 1: Copy Code Between Services
+### Option 1: Simple Scraper + Direct Database Storage
 
-Keep all code local to each service, accept duplication.
+One service scrapes websites and writes parsed data directly to the main database.
 
-- **Pros:** No inter-service dependency, independent deployability.
-- **Cons:** High maintenance cost, diverging implementations, bug fixes must be applied in multiple places.
+- **Pros:** Simple implementation, faster initial development.
+- **Cons:** Difficult to handle ambiguous data, parsing logic tightly coupled with storage, limited scalability, high risk of duplicated or corrupted records.
 
-### Option 2: Shared Internal Packages ✅
+### Option 2: Multi-Stage Data Ingestion Architecture ✅
 
-Extract shared code into versioned internal packages consumed by all services.
+Data passes through multiple processing stages: raw ingestion → parsed content → data enrichment → canonical catalog. Each stage performs a single responsibility.
 
-- **Pros:** Single source of truth, shared bug fixes, consistent interfaces across services.
-- **Cons:** Introduces inter-package dependency, packaging and versioning complexity.
+- **Pros:** Isolation of unreliable source data, incremental improvements in parsing logic, safe integration of new sources, controlled normalization into the canonical catalog.
+- **Cons:** Increased architectural complexity, more services to operate, higher infrastructure overhead.
 
 ## Decision
 
-> Shared code is extracted into internal packages:
+> We adopt a **multi-stage ingestion architecture** because external data sources are inconsistent, incomplete, and unstructured.
 >
-> - `monstrino-models` - ORM and domain models
-> - `monstrino-repositories` - repository interfaces and base implementations
-> - `monstrino-core` - application-layer utilities
-> - `monstrino-testing` - shared test fixtures and factories
-> - `monstrino-infra` - infrastructure clients (DB, S3, HTTP, parsers)
+> Core pipeline:
+> `external sources → data collectors → ingestion pipelines → parsing services → data enrichment services → canonical catalog`
+
+The complexity is justified because **the architecture directly reflects the complexity of the incoming data**.
 
 ## Consequences
 
 ### Positive
 
-- One change propagates to all services consuming the package.
-- Consistent domain model across the entire system.
-- Reduces total lines of code to maintain.
+- Resilient processing of low-quality data.
+- Easier addition of new data sources.
+- Improved testability of ingestion pipelines.
+- Ability to evolve parsing algorithms independently.
+- Clear separation of responsibilities between services.
 
 ### Negative
 
-- Package versioning and release process adds engineering overhead.
-- Breaking changes in shared packages require coordinated upgrades across services.
+- More services to operate and monitor.
+- Higher infrastructure overhead.
+- Risk of overengineering if data volume remains small.
 
 ## Related Decisions
 
-- [ADR-A-002](./adr-a-002.md) - ORM restricted to repository layer
-- [ADR-A-006](./adr-a-006.md) - Centralize parsers in monstrino-infra
+- [ADR-A-002](./adr-a-002.md) - Shared packages for cross-service code
+- [ADR-A-007](./adr-a-007.md) - Centralize parsers in monstrino-infra

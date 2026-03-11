@@ -1,0 +1,392 @@
+У нас есть релиз 
+https://shopping.mattel.com/en-gb/products/monster-high-skulltimate-secrets-gore-geous-oasis-jinafire-long-doll-jdr52-en-gb
+
+на этой странице мы видим данные
+- Title
+- Description
+- Includes description
+- Images
+
+Этого явно мало для полноценного подробного каталога
+
+Так как сайты Mattel сделаны на основе Shopify мы можем открыть информацию о продукте в формате JSON через добавление `?view=json` в конце url 
+
+https://shopping.mattel.com/en-gb/products/monster-high-skulltimate-secrets-gore-geous-oasis-jinafire-long-doll-jdr52-en-gb?view=json
+
+Тогда мы получим вот такие данные
+
+```json
+{
+  "product": {
+    "productJson": {
+      "id": 15212691947906,
+      "title": "Monster High Skulltimate Secrets Gore-Geous Oasis Playset, Jinafire Long Doll And Accessories",
+      "handle": "monster-high-skulltimate-secrets-gore-geous-oasis-jinafire-long-doll-jdr52-en-gb",
+      "published_at": "2025-12-17T20:45:59+00:00",
+      "created_at": "2025-12-17T20:45:57+00:00",
+      "vendor": "Monster High",
+      "tags": ["...", 
+        "Filter-Subtype: Fantasy",
+        "Filter-Subtype: Skulltimate Secrets",
+        "Filter-WebCategory: Dolls"
+      ],
+      "price": 3699,
+      "variants": [
+        {
+          "id": 56100538483074,
+          "sku": "JDR52",
+          "name": "Monster High Skulltimate Secrets Gore-Geous Oasis Playset, Jinafire Long Doll And Accessories",
+          "barcode": "0194735288892"
+        }
+      ],
+      "images": ["...", "..."]
+    },
+    "metaPayload": {
+      "image_thumbnail_link": "http://images.salsify.com/image/upload/s--sxrOxEu1--/ab46c79b5fe09b17182c55f56eab7fa94154891c.jpg",
+      "product_description": "Reveal a Monster High doll, unlock accessories, ...",
+      "bullet_feature_1": "Monster High Skulltimate Secrets just got a revamp with this Destination!",
+      "bullet_feature_2": "Inside the luggage case lurks a dragon and 19 surprises!",
+      "bullet_feature_3": "Next, uncover lots of vacation-ready clothing!",
+      "bullet_feature_4": "Unpack this suitcase to find the third and final key!",
+      "bullet_feature_5": "Mix and match 125+ outfit possibilities!",
+      "bullet_feature_6": "Hang the keys on the hotel keychain!",
+      "bullet_feature_7": "Uncover even more mysteries with Draculaura and Lagoona Blue!",
+      "whats_in_the_box": "Includes 1 Jinafire Long doll, 1 storage case, 3 keys, 2 suitcases, and assorted clothing and accessories"
+    }
+  }
+}
+```
+Важно упомянуть что json выше это не оригинальный json а его укороченная версия, для отображение только нужны для платформы данных. Оригинальный json можно посмотреть в файле <вставить ссылку>
+
+Таким образом из этого JSON мы уже получить больше данных
+- Title
+- description
+- Inside description
+- MPN (Model Product Number) (SKU)
+- GTIN
+- Images
+- External_id (handle)
+- Tags
+
+используя эти данные мы можем заполнить модель данных
+```python
+release = ReleaseParsedContentRef(
+    title="Monster High Skulltimate Secrets Gore-Geous Oasis Playset, Jinafire Long Doll And Accessories",
+    external_id="monster-high-skulltimate-secrets-gore-geous-oasis-jinafire-long-doll-jdr52-en-gb",
+    url="https://shopping.mattel.com/en-gb/product/monster-high-skulltimate-secrets-gore-geous-oasis-jinafire-long-doll-jdr52",
+
+    # Metadata
+    mpn="JDR52",
+    type=None,
+    subtype=["Fantasy", "Skulltimate Secrets"],
+    language="en-GB",
+    region="GB",
+    gtin="0194735288892",
+
+    # Content Data
+    description="Reveal a Monster High doll, unlock accessories, ...",
+    content_description="Includes 1 Jinafire Long doll, 1 storage case, 3 keys, 2 suitcases, and assorted clothing and accessories.",
+    year=2025,
+    year_raw="2025-12-17",
+    gender=None,
+    characters=None,
+    pets=None,
+    series=None,
+    exclusive_vendor=None,
+    reissue_of=None,
+    content_type=["Doll"],
+    pack_type=None,
+    tier_type=None,
+
+    primary_image_url="https://shopping.mattel.com/cdn/shop/files/ab46c79b5fe09b17182c55f56eab7fa94154891c_68e0983b-3737-41df-9aa0-d2a4bff659f5.jpg?v=1766004361",
+    images=[
+        "https://shopping.mattel.com/cdn/shop/files/ab46c79b5fe09b17182c55f56eab7fa94154891c_68e0983b-3737-41df-9aa0-d2a4bff659f5.jpg?v=1766004361",
+        "..."
+    ],
+    images_url=None,
+
+    raw_payload={}
+    extra={},
+)
+```
+
+как можно увидеть выше, важные для контекста поля в середине,
+почти не заполнены совсем, и это мы будем исправлять дальше
+
+=
+Нужно выделить что из текущего описания мы не можем написать алгоритм который
+будет в 100% случаев получать корректные данные
+в одном случае он реально вернет например characters,
+а в другом вернет другие рандомные слова
+= 
+
+Данные в таком формате собирает catalog-collector сервис и сохраняет их в бд
+в схеме ingest для сырых спарсенных данных
+
+Дальше за дело берется сервис `catalog-data-enricher` который с помощью AI
+дозаполнит эти данные из описания релиза
+
+Он возьмет эту модель данных, возьмет поле mpn, запросит у сервиса `catalog-api-service`
+информацию существует ли такой релиз, если он существует, тогда `catalog-data-enricher`
+попробует из новополученных данных получить недостающие данные
+если такого релиза в бд нет, тогда `catalog-data-enricher` начнет заполнять недостающие
+данные из текущей модели данных
+
+пример запроса в `catalog-api-service`
+
+```json
+{
+  "query": {
+    "filters": { "mpn": "JDR52"},
+    "page": { "limit": 10, "offset": 0 },
+    "include": {"id": true, "mpn": true}
+  },
+  "context": { "locale": "en" }
+}
+```
+
+после получения ответа `catalog-data-enricher` начинает идти по каждому атрибуту
+и проверять если в нем данные
+
+возьмем для примера поле `characters`
+
+сервис увидит что это поле = None
+
+после чего он вызовет через AiOrchestartorClient API запрос к сервису `ai-orchestrator`
+и в качестве payload передаст контекстные поля
+
+```json
+
+{
+    "scenario_name": "enrich-release-characters",
+    "payload":{
+        "mpn": "",
+        "title": "",
+        "description": "",
+        "content_description": "",
+    }
+}
+
+```
+
+`catalog-data-enricher` выполнит api запросы для всех пропущенных данных в `ai-orchestrator`
+и закончит выполнение, поставив processing_state у этого релиза в `waiting-for-enrichment`
+
+когда `ai-orchestrator` закончит, он сам вызовет через api запрос в `catalog-data-enricher`
+что поступили новые данные по такому-то полю
+
+внутри сервиса `ai-orchestrator` уже прописаны промпт, системный промпт, алгоритм
+вывыдения characters из описания
+
+после вызова сценария, UseCase передаст эти данные в LLM запущенную через
+сервис `ollama`
+
+Модель проанализирует эти данные и вернет соотвествующую модель данных
+ 
+```json
+{
+  "status": "final",
+  "is_final": true,
+  "final_payload": {
+    "data": {
+      "characters": [
+        {
+          "name": "Draculaura",
+          "slug": "draculaura"
+        },
+        {
+          "name": "Clawdeen Wolf",
+          "slug": "clawdeen-wolf"
+        },
+        {
+          "name": "Frankie Stein",
+          "slug": "frankie-stein"
+        }
+      ],
+      "matched_characters_count": 3,
+      "confidence": 0.96
+    }
+  },
+  "message": "Final structured result is ready.",
+  "metadata": {
+    "reasoning_stage": "completed"
+  }
+}
+```
+
+Если бы модели понадобились дополнительные данные из других таблиц по типу (release-types, series and etc) 
+модель вернула бы модель данных
+
+```json
+{
+  "status": "request_action",
+  "is_final": false,
+  "requested_action": {
+    "command_name": "get_more_info_about_characters",
+    "command_params": {
+      "character_names": [
+        "Draculaura",
+        "Clawdeen Wolf",
+        "Frankie Stein"
+      ]
+    }
+  },
+  "message": "Potential characters detected from release description.",
+  "metadata": {
+    "reasoning_stage": "character_lookup_requested"
+  }
+}
+```
+
+После того как ai-orchestrator usecase получит "status": "final"
+он вернет полученные данные он выполнит api запрос в в `catalog-data-enricher`
+что поступили новые данные по такому-то полю
+
+и он уже сохранит эти данные в бд
+
+после того как по всем данным будет получен ответ от `ai-orchestrator`
+`catalog-data-enricher` переведет processing_state в статус `ready-for-import`
+
+после работы `catalog-data-enricher` данные о релизе будут выглядеть вот так
+
+```python
+ParsedRelease(
+    title="Monster High Skulltimate Secrets Gore-Geous Oasis Playset, Jinafire Long Doll And Accessories",
+    mpn="JDR52",
+    year_raw="2025-12-17",
+    year=2025,
+    gtin="0194735288892",
+
+    # ---------- Release ----------
+    characters_raw=["Jinafire Long"],
+    gender_raw="ghoul",
+    series_raw=[
+        "Skulltimate Secrets",
+        "Destination: Gore-geous Oasis",
+    ],
+    content_type_raw=[
+        "doll-figure",
+        "playset",
+    ],
+    pack_type_raw=[
+        "1-pack",
+    ],
+    release_items: [
+        {
+            "title": "storage case",
+            "category": "item"
+        },
+        {
+            "title": "key_1",
+            "category": "item"
+        },
+        {
+            "title": "suitcase",
+            "category": "clothes"
+        },
+        
+    ]
+    tier_type_raw=["standard"],
+    exclusive_vendor_raw=None,
+    pet_title_raw=None,
+    reissue_of_raw=None,
+    extra={},
+
+    primary_image="https://shopping.mattel.com/cdn/shop/files/ab46c79b5fe09b17182c55f56eab7fa94154891c_68e0983b-3737-41df-9aa0-d2a4bff659f5.jpg?v=1766004361",
+    images=[
+        "https://shopping.mattel.com/cdn/shop/files/ab46c79b5fe09b17182c55f56eab7fa94154891c_68e0983b-3737-41df-9aa0-d2a4bff659f5.jpg?v=1766004361",
+        "..."
+    ],
+    images_url=None,
+
+    # ---------- Text ----------
+    description_raw=(
+        "Reveal a Monster High doll, unlock accessories ..."
+    ),
+    content_description=(
+        "Includes 1 Jinafire Long doll, 1 storage case ..."
+    ),
+
+    # ---------- Source info ----------
+    url="https://shopping.mattel.com/en-gb/product/monster-high-skulltimate-secrets-gore-geous-oasis-jinafire-long-doll-jdr52",
+    source_country_id=None,
+    external_id="monster-high-skulltimate-secrets-gore-geous-oasis-jinafire-long-doll-jdr52-en-gb",
+
+    # -------- Original data -------
+    original_html_content=None,
+    raw_payload=None,
+    content_hash=None,
+)
+```
+
+как можно заметить из данных выше, благодаря сервисам AI
+мы смогли заполнить дополнительные поля
+
+- characters
+- gender_raw
+- series_raw
+- content_type_raw
+- pack_type_raw
+- release_items
+- tier_type_raw
+
+Благодаря AI нам не нужно вручную заполнять эти данные для каждого из тысячи релизов
+
+теперь свою работу начинает `catalog-importer`
+он берет модель данных выше, и начинает каждый атрибут обрабатывать
+и сохранять в соотвествующую таблицу
+
+=
+Тут тебе нужно из памяти достать как именно catalog-importer разбивает
+parsed_release на разные релизы
+=
+
+
+
+полный набор данных
+```json
+
+release = ReleaseParsedContentRef(
+    title="Monster High Skulltimate Secrets Gore-Geous Oasis Playset, Jinafire Long Doll And Accessories",
+    external_id="monster-high-skulltimate-secrets-gore-geous-oasis-jinafire-long-doll-jdr52-en-gb",
+    url="https://shopping.mattel.com/en-gb/product/monster-high-skulltimate-secrets-gore-geous-oasis-jinafire-long-doll-jdr52",
+
+    # Metadata
+    mpn="JDR52",
+    type=None,
+    subtype=["Fantasy", "Skulltimate Secrets"],
+    language="en-GB",
+    region="GB",
+    gtin="0194735288892",
+
+    # Content Data
+    description="Reveal a Monster High doll, unlock accessories, and take the trip of an unlifetime with Skulltimate Secrets, Destination: Gore-geous Oasis! Kids can discover the secret to a dream scare-cation with this spooky set, which includes over 19 surprises -- but first, they must find the three keys that will, one-by-one, unlock all the travel-themed clothing and accessories! Each sold separately, subject to availability. Fully articulated. Dolls cannot stand alone. Colors and decorations may vary.",
+    content_description="Includes 1 Jinafire Long doll, 1 storage case, 3 keys, 2 suitcases, and assorted clothing and accessories. Doll cannot stand alone. Colors and decorations may vary.",
+    year=2025,
+    year_raw="2025-12-17",
+    gender=None,
+    characters=["Jinafire Long"],
+    pets=None,
+    series=["Skulltimate Secrets", "Destination: Gore-geous Oasis"],
+    exclusive_vendor=None,
+    reissue_of=None,
+    content_type=["Doll", "Accessories", "Playset"],
+    pack_type=["Playset", "Single Doll Set"],
+    tier_type=None,
+
+    primary_image_url="https://shopping.mattel.com/cdn/shop/files/ab46c79b5fe09b17182c55f56eab7fa94154891c_68e0983b-3737-41df-9aa0-d2a4bff659f5.jpg?v=1766004361",
+    images=[
+        "https://shopping.mattel.com/cdn/shop/files/ab46c79b5fe09b17182c55f56eab7fa94154891c_68e0983b-3737-41df-9aa0-d2a4bff659f5.jpg?v=1766004361",
+        "https://shopping.mattel.com/cdn/shop/files/f66eea15cb671628a24c4545e80efe80c89a28ce_8fc4a799-e373-4105-b4dc-58cbaa73377c.jpg?v=1766004360",
+        "https://shopping.mattel.com/cdn/shop/files/effa2bb532443cf0825c248770c2f735b29df821_24abe026-5b96-48d6-9378-42048e3d9f60.jpg?v=1766004360",
+        "https://shopping.mattel.com/cdn/shop/files/255672cdacb99ef685e689fcdd7dc4b523dc7a58_09c1ee51-c41a-490b-aaab-ce97532ff38e.jpg?v=1766004361",
+        "https://shopping.mattel.com/cdn/shop/files/a7bc2656bff29450db388e4116ac3a5ceccf2db8_e9d048c9-e84a-42ae-b8a0-350b5d0d0e43.jpg?v=1766004361",
+        "https://shopping.mattel.com/cdn/shop/files/24b105f77cbe4d29a57df7955f37710105365b38_94620675-d65b-449e-a9b6-5f281f8503f6.jpg?v=1766004361",
+    ],
+    images_url=None,
+
+    raw_payload={},
+    extra={},
+)
+
+```

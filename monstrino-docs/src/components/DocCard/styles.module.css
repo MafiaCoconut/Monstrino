@@ -12,6 +12,19 @@
 .card p {
   color: #ccc;
 }
+
+[data-theme='light'] .card {
+  background: #ffffff;
+  border: 1px solid rgba(201, 29, 134, 0.15);
+  backdrop-filter: none;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+}
+[data-theme='light'] .card h3 {
+  color: #111114;
+}
+[data-theme='light'] .card p {
+  color: rgba(0, 0, 0, 0.6);
+}
 .cardLink {
   transition: border-color 0.2s, transform 0.2s;
   cursor: pointer;

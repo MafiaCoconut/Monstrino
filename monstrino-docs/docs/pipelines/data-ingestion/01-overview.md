@@ -4,7 +4,7 @@ sidebar_position: 1
 description: Overview of the Monstrino ingestion system that processes external data into normalized catalog and media assets.
 ---
 
-# Ingestion Architecture
+# Data Ingestion Pipeline
 
 :::info
 The ingestion layer is responsible for transforming **external unstructured data** into **normalized domain entities and media assets** used by the Monstrino platform.

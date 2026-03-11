@@ -1,9 +1,27 @@
 ---
 title: AI Strategy
 sidebar_position: 2
+description: How AI is used in Monstrino — what it does, where it is used, and why it is designed as an assistive layer rather than a system dependency.
 ---
 
 # AI Strategy
+
+:::note In plain terms
+Product pages on external stores are messy. A description might say
+*"includes accessories"* without listing them, or mention three character
+names where only one is actually inside the box.
+
+Monstrino uses AI to read those descriptions and convert them into
+structured, reliable catalog data — automatically, at scale.
+
+Without AI, this would require hundreds of hand-written parsing rules
+that break the moment a source changes its wording. With AI, the platform
+can handle thousands of inconsistent product pages and still produce clean,
+queryable results.
+
+AI is a **data quality multiplier**. It is not a system dependency —
+the platform continues to function without it, just with less complete data.
+:::
 
 This document describes how Artificial Intelligence is used within the **Monstrino** platform, the boundaries of its responsibility, and the architectural principles guiding its integration.
 

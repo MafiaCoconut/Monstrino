@@ -4,17 +4,26 @@ import styles from './ImageLightbox.module.css';
 interface ImageLightboxProps {
   /** Image source URL */
   src: string;
+  /** Optional image source for screens narrower than mobileSrcBreakpoint */
+  mobileSrc?: string;
+  /** Breakpoint in px below which mobileSrc is used (default: 900) */
+  mobileSrcBreakpoint?: number;
   /** Alt text */
   alt?: string;
   /** Optional className for the trigger image */
   className?: string;
   /** Optional inline style for the trigger image */
   style?: React.CSSProperties;
+  /** Disable lightbox on mobile (uses mobileSrcBreakpoint, default 900px) */
+  disableLightboxOnMobile?: boolean;
 }
 
-const MIN_SCALE = 0.25;
+const MIN_SCALE = 0.1;
 const MAX_SCALE = 5;
 const SCALE_STEP = 0.25;
+
+const CLOSE_BTN_HEIGHT = 125; // navbar (~60px) + offset (12px) + btn (44px) + gap (8px)
+const CONTROLS_HEIGHT = 72;
 
 /**
  * Reusable image lightbox component.
@@ -28,24 +37,72 @@ const SCALE_STEP = 0.25;
  */
 export default function ImageLightbox({
   src,
+  mobileSrc,
+  mobileSrcBreakpoint = 900,
   alt = '',
   className,
   style,
+  disableLightboxOnMobile = false,
 }: ImageLightboxProps): ReactNode {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    if (!mobileSrc && !disableLightboxOnMobile) return;
+    const mq = window.matchMedia(`(max-width: ${mobileSrcBreakpoint - 1}px)`);
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, [mobileSrc, mobileSrcBreakpoint, disableLightboxOnMobile]);
+
+  const activeSrc = mobileSrc && isMobile ? mobileSrc : src;
   const [open, setOpen] = useState(false);
   const [scale, setScale] = useState(1);
+  const [fitScale, setFitScale] = useState(1);
   const [translate, setTranslate] = useState({ x: 0, y: 0 });
   const dragging = useRef(false);
   const lastPos = useRef({ x: 0, y: 0 });
+  const lightboxImgRef = useRef<HTMLImageElement>(null);
+
+  // ---------- fit-to-screen calculation ----------
+  const calculateFitScale = useCallback(() => {
+    const img = lightboxImgRef.current;
+    if (!img || !img.naturalWidth || !img.naturalHeight) return;
+    const availW = window.innerWidth * 0.96;
+    const availH = window.innerHeight - CLOSE_BTN_HEIGHT - CONTROLS_HEIGHT - 16;
+    const scaleW = availW / img.naturalWidth;
+    const scaleH = availH / img.naturalHeight;
+    const fit = Math.min(scaleW, scaleH, 1);
+    setFitScale(fit);
+    setScale(fit);
+    setTranslate({ x: 0, y: 0 });
+  }, []);
 
   // ---------- open / close ----------
   const openLightbox = useCallback(() => {
-    setScale(1);
+    if (disableLightboxOnMobile && isMobile) return;
     setTranslate({ x: 0, y: 0 });
+    setScale(1);
     setOpen(true);
-  }, []);
+  }, [disableLightboxOnMobile, isMobile]);
 
   const closeLightbox = useCallback(() => setOpen(false), []);
+
+  // When lightbox opens, compute fit scale (handles cached images)
+  useEffect(() => {
+    if (!open) return;
+    const img = lightboxImgRef.current;
+    if (img?.complete && img.naturalWidth) {
+      calculateFitScale();
+    }
+  }, [open, calculateFitScale]);
+
+  // Recalculate on resize
+  useEffect(() => {
+    if (!open) return;
+    window.addEventListener('resize', calculateFitScale);
+    return () => window.removeEventListener('resize', calculateFitScale);
+  }, [open, calculateFitScale]);
 
   // ---------- zoom ----------
   const zoomIn = useCallback(
@@ -57,9 +114,9 @@ export default function ImageLightbox({
     [],
   );
   const resetZoom = useCallback(() => {
-    setScale(1);
+    setScale(fitScale);
     setTranslate({ x: 0, y: 0 });
-  }, []);
+  }, [fitScale]);
 
   // ---------- keyboard ----------
   useEffect(() => {
@@ -107,31 +164,40 @@ export default function ImageLightbox({
     dragging.current = false;
   }, []);
 
-  // ---------- prevent body scroll ----------
+  // ---------- prevent body scroll + hide footer ----------
   useEffect(() => {
+    const footer = document.querySelector('footer') as HTMLElement | null;
     if (open) {
       document.body.style.overflow = 'hidden';
+      if (footer) footer.style.visibility = 'hidden';
     } else {
       document.body.style.overflow = '';
+      if (footer) footer.style.visibility = '';
     }
     return () => {
       document.body.style.overflow = '';
+      if (footer) footer.style.visibility = '';
     };
   }, [open]);
 
   return (
     <>
       {/* Trigger image */}
-      <img
-        src={src}
-        alt={alt}
-        className={`${styles.trigger} ${className ?? ''}`}
-        style={style}
-        onClick={openLightbox}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === 'Enter' && openLightbox()}
-      />
+      {(() => {
+        const lightboxDisabled = disableLightboxOnMobile && isMobile;
+        return (
+          <img
+            src={activeSrc}
+            alt={alt}
+            className={`${lightboxDisabled ? '' : styles.trigger} ${className ?? ''}`}
+            style={style}
+            onClick={lightboxDisabled ? undefined : openLightbox}
+            role={lightboxDisabled ? undefined : 'button'}
+            tabIndex={lightboxDisabled ? undefined : 0}
+            onKeyDown={lightboxDisabled ? undefined : (e) => e.key === 'Enter' && openLightbox()}
+          />
+        );
+      })()}
 
       {/* Lightbox overlay */}
       {open && (
@@ -154,13 +220,15 @@ export default function ImageLightbox({
             onPointerUp={onPointerUp}
           >
             <img
-              src={src}
+              ref={lightboxImgRef}
+              src={activeSrc}
               alt={alt}
               className={styles.lightboxImage}
               style={{
                 transform: `translate(${translate.x}px, ${translate.y}px) scale(${scale})`,
               }}
               draggable={false}
+              onLoad={calculateFitScale}
             />
           </div>
 
@@ -173,8 +241,8 @@ export default function ImageLightbox({
             <button className={styles.controlBtn} onClick={zoomIn} title="Zoom in (+)">
               +
             </button>
-            <button className={styles.controlBtn} onClick={resetZoom} title="Reset (0)">
-              ⟲
+            <button className={styles.controlBtn} onClick={resetZoom} title="Fit to screen (0)">
+              ⊡
             </button>
           </div>
         </div>

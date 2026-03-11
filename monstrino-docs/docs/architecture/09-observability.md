@@ -341,19 +341,16 @@ flowchart TD
 
 ---
 
-Architectural Intent
+## Architectural Intent
 
 The purpose of Monstrino observability is to make background processing visible, understandable, and operable.
 
 The platform is designed so that observability does not depend on a single tool.
 Instead, it combines:
 
-logs for event-level understanding
-
-processing state for workflow visibility
-
-metrics for system-level trends
-
-alerts for intervention points
+- logs for event-level understanding
+- processing state for workflow visibility
+- metrics for system-level trends
+- alerts for intervention points
 
 The most distinctive part of this model is that observability is partially embedded into the domain workflow itself through processing states.

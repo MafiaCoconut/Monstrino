@@ -8,7 +8,7 @@ import DocCard from '@site/src/components/DocCard/DocCard';
 
 # Monstrino Documentation
 
-Monstrino is a data platform for Monster High collectors. It aggregates release, character, pet, media, and pricing information from multiple external sources, normalizes that data into a structured domain model, and exposes it through a single public API.
+Monstrino is a data platform for Monster High collectors. It resolves release, character, pet, media, and pricing data from uncontrolled, heterogeneous sources into a canonical domain model with stable product identities and source provenance, and exposes it through a single public API.
 
 The system is built as a service-oriented architecture with explicit responsibility boundaries, designed for long-term maintainability and incremental evolution on self-hosted infrastructure.
 
@@ -57,6 +57,10 @@ The system is built as a service-oriented architecture with explicit responsibil
 
 <DocCard title="Domain Models" href="/docs/models/overview/">
   Catalog, releases, series, characters, market, media, and ingest - the full domain model.
+</DocCard>
+
+<DocCard title="The Catalog as a Master Data Problem" href="/docs/architecture/catalog-as-master-data/">
+  Canonical identity, source reconciliation, controlled vocabulary, and resolver-based normalization under uncontrolled upstream data.
 </DocCard>
 
 </div>

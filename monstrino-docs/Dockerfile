@@ -6,20 +6,13 @@ WORKDIR /app
 ARG SITE_ENV=prod
 ENV SITE_ENV=${SITE_ENV}
 
-COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* ./
+COPY package.json yarn.lock ./
 
-RUN if [ -f package-lock.json ]; then npm ci; \
-    elif [ -f yarn.lock ]; then corepack enable && yarn install --frozen-lockfile; \
-    elif [ -f pnpm-lock.yaml ]; then corepack enable && pnpm install --frozen-lockfile; \
-    else npm install; fi
+RUN corepack enable && yarn install --frozen-lockfile
 
 COPY . .
 
-# 
-RUN if [ -f package-lock.json ]; then npm run build; \
-    elif [ -f yarn.lock ]; then yarn build; \
-    elif [ -f pnpm-lock.yaml ]; then pnpm build; \
-    else npm run build; fi
+RUN yarn build
 
 
 # -------- runtime stage --------

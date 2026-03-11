@@ -75,9 +75,10 @@
   --ifm-color-primary-lighter: #ff74ca;
   --ifm-color-primary-lightest: #ff9edf;
   --ifm-background-color: #0d0d0f;
+  --ifm-background-surface-color: #0d0d0f;
   --ifm-navbar-background-color: #111114;
   --ifm-card-background-color: #16161a;
-  --ifm-footer-background-color: #0d0d0f;
+  --ifm-footer-background-color: #111114;
   --docusaurus-highlighted-code-line-bg: rgba(255, 44, 168, 0.08);
 
   /* Table */
@@ -95,6 +96,25 @@
   --monstrino-stat-card-bg: rgba(25, 25, 32, 0.65);
   --monstrino-quick-link-bg: rgba(30, 30, 35, 0.75);
   --monstrino-navbar-glass-bg: rgba(17, 17, 20, 0.8);
+}
+
+[data-theme='dark'] html,
+[data-theme='dark'] body,
+[data-theme='dark'] #__docusaurus,
+[data-theme='dark'] .main-wrapper,
+[data-theme='dark'] article,
+[data-theme='dark'] .theme-doc-markdown,
+[data-theme='dark'] [class*='docItemContainer'],
+[data-theme='dark'] [class*='docPage'],
+[data-theme='dark'] [class*='docMainContainer'],
+[data-theme='dark'] [class*='docRootLayout'],
+[data-theme='dark'] [class*='sidebarViewport'],
+[data-theme='dark'] aside {
+  background-color: #0d0d0f !important;
+}
+
+[data-theme='dark'] .main-wrapper .container {
+  background-color: #0d0d0f !important;
 }
 
 
@@ -165,9 +185,31 @@ input,
   padding-top: var(--ifm-navbar-height) !important;
 }
 
-.footer {
+.footer,
+.footer__bottom,
+.footer__links,
+footer {
   background: var(--ifm-footer-background-color);
+  border: none;
+}
+
+footer {
   border-top: 1px solid rgba(255,44,168,0.15);
+}
+
+[data-theme='dark'] .footer,
+[data-theme='dark'] .footer__bottom,
+[data-theme='dark'] .footer__links,
+[data-theme='dark'] footer {
+  background-color: #111114 !important;
+  border-color: rgba(255,44,168,0.15) !important;
+}
+
+.footer,
+footer {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
 }
 
 /* Mobile sidebar width (hamburger menu) */
@@ -221,4 +263,93 @@ input,
 .monstrino-hover:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 18px rgba(255,44,168,0.25);
+}
+
+/* ===== Edit this page / doc footer — light theme ===== */
+:root .theme-doc-footer,
+:root [class*='docFooter'],
+:root [class*='editThisPage'],
+:root .theme-edit-this-page {
+  background-color: transparent !important;
+  color: var(--ifm-color-primary);
+}
+
+:root .theme-doc-footer a,
+:root .theme-edit-this-page a {
+  color: var(--ifm-color-primary);
+}
+
+:root [class*='lastUpdated'],
+:root [class*='lastUpdatedAt'] {
+  color: var(--ifm-color-secondary);
+}
+
+/* ===== Pagination nav (Previous / Next) — light theme ===== */
+[data-theme='light'] .pagination-nav {
+  background-color: transparent !important;
+}
+[data-theme='light'] .pagination-nav__link {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(201, 29, 134, 0.2) !important;
+  color: #111114 !important;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06) !important;
+}
+
+[data-theme='light'] .pagination-nav__link:hover {
+  background-color: rgba(201, 29, 134, 0.05) !important;
+  border-color: rgba(201, 29, 134, 0.5) !important;
+}
+
+[data-theme='light'] .pagination-nav__sublabel {
+  color: rgba(0, 0, 0, 0.45) !important;
+}
+
+[data-theme='light'] .pagination-nav__label {
+  color: #c91d86 !important;
+}
+
+/* ===== Navbar right items order: Search → Theme toggle → GitHub ===== */
+.navbar__items--right .navbar__search {
+  order: 1;
+}
+
+/* Color mode toggle: direct child div containing a clean-btn button */
+.navbar__items--right > div:has(> button.clean-btn) {
+  order: 2;
+  margin-left: 10px;
+}
+
+.navbar__items--right .navbar__item.navbar__link {
+  order: 3;
+}
+
+/* ===== Background glow circles (dark theme) ===== */
+[data-theme='dark'] body::before {
+  content: '';
+  position: fixed;
+  top: 10%;
+  right: 5%;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(255,44,168,0.25) 0%, rgba(0,0,0,0) 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+[data-theme='dark'] body::after {
+  content: '';
+  position: fixed;
+  bottom: 15%;
+  left: 5%;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(140,59,255,0.25) 0%, rgba(0,0,0,0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Content above background glow circles */
+[data-theme='dark'] .main-wrapper {
+  position: relative;
+  z-index: 1;
 }

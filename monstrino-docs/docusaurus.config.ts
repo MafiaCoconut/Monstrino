@@ -43,33 +43,21 @@ const config: Config = {
       'classic',
       {
         docs: {
-          id: 'docs',
           path: 'docs',
           routeBasePath: 'docs',
           sidebarPath: './sidebars.js',
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
           editUrl:
             'https://github.com/MafiaCoconut/Monstrino/',
         },
         blog: false,
-        // blog: {
-        //   showReadingTime: true,
-        //   feedOptions: {
-        //     type: ['rss', 'atom'],
-        //     xslt: true,
-        //   },
-        //   // Please change this to your repo.
-        //   // Remove this to remove the "edit this page" links.
-        //   editUrl:
-        //     'https://github.com/MafiaCoconut/Monstrino/',
-        //   // Useful options to enforce blogging best practices
-        //   onInlineTags: 'warn',
-        //   onInlineAuthors: 'warn',
-        //   onUntruncatedBlogPosts: 'warn',
-        // },
         theme: {
           customCss: './src/css/custom.css',
+        },
+        sitemap: {
+          changefreq: 'weekly',
+          priority: 0.5,
+          ignorePatterns: ['/tags/**'],
+          filename: 'sitemap.xml',
         },
       } satisfies Preset.Options,
     ],
@@ -82,6 +70,37 @@ const config: Config = {
         path: 'dev-notes',
         routeBasePath: 'dev-notes',
         sidebarPath: './sidebars-dev-notes.js',
+      },
+    ],
+    [
+      '@easyops-cn/docusaurus-search-local',
+      {
+        hashed: true,
+        language: ['en', 'ru'],
+        indexDocs: true,
+        indexPages: false,
+        docsRouteBasePath: ['docs', 'dev-notes'],
+        docsDir: ['docs', 'dev-notes'],
+        searchResultLimits: 8,
+        searchResultContextMaxLength: 50,
+      },
+    ],
+    [
+      '@docusaurus/plugin-pwa',
+      {
+        debug: false,
+        offlineModeActivationStrategies: ['appInstalled', 'standalone', 'queryString'],
+        pwaHead: [
+          {tagName: 'link', rel: 'icon', href: '/img/monstrino_icon.svg'},
+          {tagName: 'link', rel: 'manifest', href: '/manifest.json'},
+          {tagName: 'meta', name: 'theme-color', content: '#ff2ca8'},
+          {tagName: 'meta', name: 'apple-mobile-web-app-capable', content: 'yes'},
+          {tagName: 'meta', name: 'apple-mobile-web-app-status-bar-style', content: '#ff2ca8'},
+          {tagName: 'link', rel: 'apple-touch-icon', href: '/img/pwa_192.png'},
+          {tagName: 'link', rel: 'mask-icon', href: '/img/monstrino_icon.svg', color: '#ff2ca8'},
+          {tagName: 'meta', name: 'msapplication-TileImage', content: '/img/pwa_192.png'},
+          {tagName: 'meta', name: 'msapplication-TileColor', content: '#ff2ca8'},
+        ],
       },
     ],
   ],
@@ -114,59 +133,21 @@ const config: Config = {
     },
     footer: {
       style: 'dark',
-      links: [
-        // {
-        //   title: 'Docs',
-        //   items: [
-        //     {
-        //       label: 'Tutorial',
-        //       to: 'docs/intro',
-        //     },
-        //   ],
-        // },
-        // {
-        //   title: 'Community',
-        //   items: [
-        //     {
-        //       label: 'Stack Overflow',
-        //       href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-        //     },
-        //     {
-        //       label: 'Discord',
-        //       href: 'https://discordapp.com/invite/docusaurus',
-        //     },
-        //     {
-        //       label: 'X',
-        //       href: 'https://x.com/docusaurus',
-        //     },
-        //   ],
-        // },
-        // {
-          // title: 'More',
-          // items: [
-          //   {
-          //     label: 'Blog',
-          //     to: '/blog',
-          //   },
-          //   {
-          //     label: 'GitHub',
-          //     href: 'https://github.com/facebook/docusaurus',
-          //   },
-          // ],
-        // },
-      ],
-      copyright: `Copyright © ${new Date().getFullYear()} Monstrino, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Monstrino. Monster High and all related characters, names, and trademarks are the property of Mattel, Inc. Monstrino is an independent platform and is not affiliated with or endorsed by Mattel. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
+    },
+    liveCodeBlock: {
+      playgroundPosition: 'bottom',
     },
   } satisfies Preset.ThemeConfig,
 
   markdown: {
     mermaid: true,
   },
-  themes: ['@docusaurus/theme-mermaid'],
+  themes: ['@docusaurus/theme-mermaid', '@docusaurus/theme-live-codeblock'],
 };
 
 export default config;

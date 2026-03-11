@@ -75,8 +75,6 @@ For example, when `catalog-data-enricher` needs AI-based enrichment, it sends re
 
 This means that if prompt logic or AI model settings change, only the AI Orchestrator needs to be updated. The calling service remains unchanged.
 
-<!-- INSERT DIAGRAM: AI Scenario Lifecycle -->
-
 ---
 
 # Scenario-Based Execution
@@ -163,7 +161,6 @@ It knows:
 
 The Use Case is where scenario intelligence lives.
 ![](/img/ai-features/ai-orchestrator-internal-execution-flow.jpg)
-<!-- INSERT DIAGRAM: Internal Execution Flow -->
 
 ---
 
@@ -217,7 +214,6 @@ as long as they implement the required contract.
 This follows the same architectural principle used elsewhere in Monstrino: domain and application logic depend on ports, while infrastructure provides adapters.
 
 ![](/img/ai-features/ai-orchestrator-client-abstraction.jpg)
-<!-- INSERT DIAGRAM: Client Abstraction Diagram -->
 
 ---
 
@@ -300,7 +296,6 @@ A concrete example:
 
 This pattern allows AI to participate in controlled iterative workflows without giving the model direct access to system services.
 ![](/img/ai-features/ai-orchestrator-multi-step-command-loop.jpg)
-<!-- INSERT DIAGRAM: Multi-Step AI Command Loop -->
 
 ---
 

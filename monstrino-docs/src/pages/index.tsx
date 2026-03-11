@@ -23,17 +23,64 @@ export default function Home(): JSX.Element {
           </h1>
 
           <p className={styles.subtitle}>
-            Your complete source of truth for Monsters, Releases, Characters,
-            Pipelines, Data Models, Services, and the entire Monstrino ecosystem.
+            Monster High data is scattered, inconsistent, and incomplete across sources.<br/>
+            Monstrino resolves it — canonical product records, controlled vocabulary,
+            and pricing history with provenance for every release.
           </p>
 
           <div className={styles.buttons}>
-            <Link className={styles.primaryButton} to={useBaseUrl("introduction")}>
-              Get Started
-            </Link>
-            <Link className={styles.secondaryButton} to={useBaseUrl("docs/ai-features/overview")}>
-              AI Features
-            </Link>
+            <div className={styles.buttonsRow}>
+              <Link className={styles.primaryButton} to={useBaseUrl("introduction")}>
+                Get Started
+              </Link>
+              <Link className={styles.secondaryButton} to={useBaseUrl("docs/ai-features/overview")}>
+                AI Features
+              </Link>
+            </div>
+            <div className={styles.buttonsRow}>
+              <Link className={styles.tertiaryButton} to={useBaseUrl("docs/raw-to-catalog/overview")}>
+                From Raw Data to Structured Catalog
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* PLATFORM PILLARS */}
+        <section className={styles.section}>
+          <div className={styles.pillars}>
+            <div className={styles.pillar}>
+              <div className={styles.pillarHeader}>
+                <div className={styles.pillarIcon}>🗂</div>
+                <div className={styles.pillarSubtitle}>Canonical Catalog</div>
+              </div>
+              <div className={styles.pillarTitle}>Stable product identities across sources</div>
+              <p className={styles.pillarText}>
+                Every release, character, pet, and series has a durable canonical identity independent of any source identifier.
+                Classification uses controlled vocabulary. External references preserve source provenance without polluting canonical data.
+              </p>
+            </div>
+            <div className={styles.pillar}>
+              <div className={styles.pillarHeader}>
+                <div className={styles.pillarIcon}>🔀</div>
+                <div className={styles.pillarSubtitle}>Source Reconciliation</div>
+              </div>
+              <div className={styles.pillarTitle}>Uncontrolled sources, normalized entities</div>
+              <p className={styles.pillarText}>
+                Sources provide no schema guarantees. A resolver chain translates partial, inconsistent, and conflicting source hints
+                into canonical domain entities — domain-aware resolution, not field mapping.
+              </p>
+            </div>
+            <div className={styles.pillar}>
+              <div className={styles.pillarHeader}>
+                <div className={styles.pillarIcon}>✦</div>
+                <div className={styles.pillarSubtitle}>Enrichment Pipeline</div>
+              </div>
+              <div className={styles.pillarTitle}>Completeness without compromising authority</div>
+              <p className={styles.pillarText}>
+                Attribute gaps are addressed through a staged enrichment layer. AI inference returns structured proposals —
+                a validation step decides what enters the catalog. Probabilistic systems assist without becoming the source of truth.
+              </p>
+            </div>
           </div>
         </section>
 
@@ -71,6 +118,8 @@ export default function Home(): JSX.Element {
               <Link className={styles.quickLinkItem} to={useBaseUrl("dev-notes/pipelines/pipelines-overview")}>
                 ⚙ Pipeline Patterns
               </Link>
+            </div>
+            <div className={styles.quickLinks}>
               <Link className={styles.quickLinkItem} to={useBaseUrl("dev-notes/infrastructure/environment-strategy")}>
                 🌍 Infrastructure
               </Link>
@@ -118,8 +167,10 @@ export default function Home(): JSX.Element {
           <div className={styles.archDiagram}>
             <ImageLightbox
               src={useBaseUrl("/img/architecture/docs-homepage-diagram.jpg")}
+              mobileSrc={useBaseUrl("/img/architecture/architecture-overview.jpg")}
               alt="Monstrino Architecture Diagram"
               className={styles.archImage}
+              disableLightboxOnMobile
             />
             <p className={styles.archCaption}>
               A high-level overview of the core domain, data flow, and microservices.

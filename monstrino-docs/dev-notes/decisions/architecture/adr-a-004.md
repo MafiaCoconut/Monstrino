@@ -1,68 +1,69 @@
 ---
 id: adr-a-004
-title: "ADR-A-004: Organize Services by Domain Capabilities"
-sidebar_label: "A-004: Domain-Based Service Layout"
-sidebar_position: 4
-tags: [architecture, services, domain, structure]
-description: "Organizes microservices into domain-based subdirectories to clarify ownership, improve navigation, and make architectural intent explicit."
+title: "ADR-A-004: UnitOfWork and BaseRepo Persistence"
+sidebar_label: "A-004: UnitOfWork & BaseRepo"
+sidebar_position: 3
+tags: [architecture, persistence, unit-of-work, repository-pattern]
+description: "Defines a UnitOfWork and BaseRepository pattern to manage database session lifecycle consistently across all services."
 ---
 
-# ADR-A-004 - Organize Services by Domain Capabilities
+# ADR-A-004 - Introduce UnitOfWork and BaseRepo Persistence Architecture
 
-| Field      | Value                                                          |
-| ---------- | -------------------------------------------------------------- |
-| **Status** | Accepted                                                       |
-| **Date**   | 2025-11-15                                                     |
-| **Author** | @Aleks                                                |
-| **Tags**   | `#architecture` `#services` `#domain` `#structure`            |
+| Field      | Value                                                                   |
+| ---------- | ----------------------------------------------------------------------- |
+| **Status** | Accepted                                                                |
+| **Date**   | 2025-10-30                                                              |
+| **Author** | @Aleks                                                         |
+| **Tags**   | `#architecture` `#persistence` `#unit-of-work` `#repository-pattern`   |
 
 ## Context
 
-As the number of services grew, keeping all services flat in a single directory made navigation difficult, ownership unclear, and architectural intent invisible.
+Earlier versions of the codebase created a new database session per operation, leading to:
+
+- Inconsistent transaction management.
+- Duplicated session handling code across use cases.
+- No shared transaction scope across multiple repository operations within a single use case.
 
 ## Options Considered
 
-### Option 1: Flat Service Directory
+### Option 1: Per-Operation Sessions
 
-All services in one top-level `services/` folder regardless of domain.
+Each repository method opens and closes its own session.
 
-- **Pros:** Simple, no nesting.
-- **Cons:** Poor discoverability as the number of services grows, no visible grouping by capability.
+- **Pros:** Simple to implement locally.
+- **Cons:** No shared transaction, inconsistent rollback behavior, duplicated boilerplate everywhere.
 
-### Option 2: Domain-Based Grouping ✅
+### Option 2: UnitOfWork + BaseRepo Pattern ✅
 
-Services are grouped into subdirectories representing high-level product capabilities.
+A `UnitOfWork` context manager owns the session lifecycle and is shared across all repository operations within a use case. `BaseRepo` provides generic low-level DB access, `CrudRepo` adds common reusable operations.
 
-- **Pros:** Domain boundaries visible in directory structure, easier onboarding, aligns with architecture diagrams.
-- **Cons:** One additional level of nesting.
+- **Pros:** Atomic multi-repository operations, clean transaction control, reduced boilerplate.
+- **Cons:** Requires upfront investment in the persistence infrastructure.
 
 ## Decision
 
-> Services are organized under domain capability groups:
+> All database access follows a unified persistence stack:
 >
-> ```
-> services/
->   acquisition/
->   catalog/
->   media/
->   platform/
->   support/
->   ui/
-> ```
+> - **`UnitOfWork`** - context manager owning the session, commit, and rollback lifecycle.
+> - **`BaseRepo`** - low-level generic repository for raw session access.
+> - **`CrudRepo`** - higher-level reusable repository with `save`, `get_one`, `get_many`, `exists`, etc.
+>
+> Use cases receive a `UnitOfWork` instance and access repositories through it.
 
 ## Consequences
 
 ### Positive
 
-- Architecture intent is visible in the repo layout.
-- New services are placed in the correct context from the start.
-- Easier to reason about service ownership and coupling.
+- Multiple repository operations in one use case participate in a single transaction.
+- Rollback behavior is consistent and centralized.
+- Reusable CRUD operations reduce boilerplate across all repositories.
 
 ### Negative
 
-- Services that span domains require a placement decision.
+- Initial infrastructure investment to implement the pattern.
+- Developers must understand the UoW pattern to work with the persistence layer.
 
 ## Related Decisions
 
-- [ADR-A-001](./adr-a-001.md) - Shared packages organization
-- [ADR-DM-001](../domain-model/adr-dm-001.md) - Database domain schema structure
+- [ADR-A-002](./adr-a-002.md) - ORM restricted to repositories
+- [ADR-A-001](./adr-a-001.md) - Shared packages (monstrino-repositories)

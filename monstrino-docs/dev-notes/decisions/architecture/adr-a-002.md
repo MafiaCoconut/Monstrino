@@ -1,62 +1,72 @@
 ---
 id: adr-a-002
-title: "ADR-A-002: Restrict ORM Usage to Repositories"
-sidebar_label: "A-002: ORM in Repositories Only"
-sidebar_position: 2
-tags: [architecture, orm, repositories, clean-architecture]
-description: "Restricts SQLAlchemy ORM usage exclusively to the repository layer to prevent session state leakage and enforce clean architecture boundaries."
+title: "ADR-A-002: Shared Packages for Cross-Service Code"
+sidebar_label: "A-002: Shared Packages"
+sidebar_position: 1
+tags: [architecture, packages, shared-code, monorepo]
+description: "Introduces shared Python packages across microservices to eliminate code duplication and establish a monorepo-style shared library foundation."
 ---
 
-# ADR-A-002 - Restrict ORM Usage to Repositories
+# ADR-A-002 - Introduce Shared Packages for Cross-Service Code
 
-| Field      | Value                                                             |
-| ---------- | ----------------------------------------------------------------- |
-| **Status** | Accepted                                                          |
-| **Date**   | 2025-10-17                                                        |
-| **Author** | @Aleks                                                   |
-| **Tags**   | `#architecture` `#orm` `#repositories` `#clean-architecture`     |
+| Field      | Value                                                        |
+| ---------- | ------------------------------------------------------------ |
+| **Status** | Accepted                                                     |
+| **Date**   | 2025-10-01                                                   |
+| **Author** | @Aleks                                                       |
+| **Tags**   | `#architecture` `#packages` `#shared-code` `#monorepo`       |
 
 ## Context
 
-SQLAlchemy ORM objects carry session state, lazy-loading behavior, and persistence metadata. When these objects escape the repository layer and spread into application logic, use cases, or API handlers, it causes:
+As the number of microservices grew, the same classes were being duplicated across services:
 
-- Business logic coupled to persistence details.
-- Session leaks and unexpected lazy-loading in non-database contexts.
-- Difficult and fragile unit tests.
+- ORM models for `releases`, `characters`, etc.
+- Repository interfaces and base implementations.
+- Infrastructure helpers (DB session management, S3 clients, HTTP clients).
+- Test fixtures and factories.
+
+Maintaining identical code in multiple services made refactoring expensive and introduced drift between implementations.
 
 ## Options Considered
 
-### Option 1: ORM Objects Everywhere
+### Option 1: Copy Code Between Services
 
-Allow ORM entities to flow freely through all layers.
+Keep all code local to each service, accept duplication.
 
-- **Pros:** Convenient, less mapping boilerplate.
-- **Cons:** Business logic becomes coupled to SQLAlchemy, lazy-loading causes hidden queries, testing requires real database sessions.
+- **Pros:** No inter-service dependency, independent deployability.
+- **Cons:** High maintenance cost, diverging implementations, bug fixes must be applied in multiple places.
 
-### Option 2: ORM Restricted to Repository Layer ✅
+### Option 2: Shared Internal Packages ✅
 
-ORM objects are used only inside repository implementations. Application and domain layers use DTOs, commands, and plain data structures.
+Extract shared code into versioned internal packages consumed by all services.
 
-- **Pros:** Clean architecture boundaries, testable business logic without DB, free to change ORM without touching application code.
-- **Cons:** Additional DTO mapping layer required.
+- **Pros:** Single source of truth, shared bug fixes, consistent interfaces across services.
+- **Cons:** Introduces inter-package dependency, packaging and versioning complexity.
 
 ## Decision
 
-> **SQLAlchemy ORM entities may only be instantiated and used inside repository implementations.** Application layer, use cases, dispatchers, and API handlers must work exclusively with DTOs, commands, and domain data classes.
+> Shared code is extracted into internal packages:
+>
+> - `monstrino-models` - ORM and domain models
+> - `monstrino-repositories` - repository interfaces and base implementations
+> - `monstrino-core` - application-layer utilities
+> - `monstrino-testing` - shared test fixtures and factories
+> - `monstrino-infra` - infrastructure clients (DB, S3, HTTP, parsers)
 
 ## Consequences
 
 ### Positive
 
-- Application logic is persistence-agnostic and unit-testable.
-- ORM schema changes do not propagate into business logic.
-- Clean separation of concerns.
+- One change propagates to all services consuming the package.
+- Consistent domain model across the entire system.
+- Reduces total lines of code to maintain.
 
 ### Negative
 
-- Mapping between ORM entities and DTOs introduces boilerplate.
+- Package versioning and release process adds engineering overhead.
+- Breaking changes in shared packages require coordinated upgrades across services.
 
 ## Related Decisions
 
-- [ADR-A-003](./adr-a-003.md) - Unit of Work and BaseRepo persistence stack
-- [ADR-A-001](./adr-a-001.md) - Shared packages for models and repositories
+- [ADR-A-002](./adr-a-002.md) - ORM restricted to repository layer
+- [ADR-A-006](./adr-a-006.md) - Centralize parsers in monstrino-infra

@@ -11,7 +11,7 @@ Each pipeline is responsible for transforming raw external information into norm
 domain data that can be safely exposed through platform APIs.
 
 Pipelines are intentionally separated by responsibility so that different types of processing
-can evolve independently without affecting the entire system.
+evolve independently without affecting the entire system.
 
 At a high level, the system currently operates these main pipelines:
 

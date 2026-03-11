@@ -1,70 +1,68 @@
 ---
 id: adr-a-005
-title: "ADR-A-005: Contracts → Command → Dispatcher API"
-sidebar_label: "A-005: Contracts/Command/Dispatcher"
-sidebar_position: 5
-tags: [architecture, api, contracts, dispatcher, clean-architecture]
-description: "Establishes a Contracts → Command → Dispatcher API pattern to decouple HTTP concerns from application logic and enable clean, testable handlers."
+title: "ADR-A-005: Organize Services by Domain Capabilities"
+sidebar_label: "A-005: Domain-Based Service Layout"
+sidebar_position: 4
+tags: [architecture, services, domain, structure]
+description: "Organizes microservices into domain-based subdirectories to clarify ownership, improve navigation, and make architectural intent explicit."
 ---
 
-# ADR-A-005 - Introduce Contracts → Command → Dispatcher API Architecture
+# ADR-A-005 - Organize Services by Domain Capabilities
 
-| Field      | Value                                                                 |
-| ---------- | --------------------------------------------------------------------- |
-| **Status** | Accepted                                                              |
-| **Date**   | 2025-12-10                                                            |
-| **Author** | @Aleks                                                       |
-| **Tags**   | `#architecture` `#api` `#contracts` `#dispatcher` `#clean-architecture` |
+| Field      | Value                                                          |
+| ---------- | -------------------------------------------------------------- |
+| **Status** | Accepted                                                       |
+| **Date**   | 2025-11-15                                                     |
+| **Author** | @Aleks                                                |
+| **Tags**   | `#architecture` `#services` `#domain` `#structure`            |
 
 ## Context
 
-Early API handlers called business logic directly, coupling HTTP concerns (request parsing, validation, HTTP status codes) to application logic. This made handlers hard to test, hard to reuse logic from non-HTTP contexts, and blurred layer boundaries.
+As the number of services grew, keeping all services flat in a single directory made navigation difficult, ownership unclear, and architectural intent invisible.
 
 ## Options Considered
 
-### Option 1: Direct Handler → Business Logic Calls
+### Option 1: Flat Service Directory
 
-HTTP handlers call use cases or service methods directly.
+All services in one top-level `services/` folder regardless of domain.
 
-- **Pros:** Simple and fast to write.
-- **Cons:** Transport concerns leak into application logic, hard to test without HTTP stack, no reuse from background jobs or CLI.
+- **Pros:** Simple, no nesting.
+- **Cons:** Poor discoverability as the number of services grows, no visible grouping by capability.
 
-### Option 2: Contracts → Command → Dispatcher Pipeline ✅
+### Option 2: Domain-Based Grouping ✅
 
-A structured pipeline cleanly separates HTTP concerns from application logic.
+Services are grouped into subdirectories representing high-level product capabilities.
 
-- **Pros:** Each layer has a single responsibility, testable in isolation, application logic reusable from any transport.
-- **Cons:** More files and abstractions per feature.
+- **Pros:** Domain boundaries visible in directory structure, easier onboarding, aligns with architecture diagrams.
+- **Cons:** One additional level of nesting.
 
 ## Decision
 
-> API requests flow through the following pipeline:
+> Services are organized under domain capability groups:
 >
 > ```
-> HTTP Request
->   → Contract (input validation and deserialization)
->   → Mapper (Contract → Command)
->   → Command (application-level intent)
->   → Dispatcher (routes Command to UseCase)
->   → UseCase (business logic)
+> services/
+>   acquisition/
+>   catalog/
+>   media/
+>   platform/
+>   support/
+>   ui/
 > ```
->
-> The HTTP layer only handles transport. Business logic is invoked via Commands, unaware of HTTP.
 
 ## Consequences
 
 ### Positive
 
-- Application logic is fully transport-agnostic.
-- Each layer is independently testable.
-- Background jobs and CLI can invoke use cases directly through Commands without HTTP.
+- Architecture intent is visible in the repo layout.
+- New services are placed in the correct context from the start.
+- Easier to reason about service ownership and coupling.
 
 ### Negative
 
-- Each feature requires multiple layers (Contract, Mapper, Command, UseCase).
-- More boilerplate per endpoint, potentially over-engineered for simple CRUD operations.
+- Services that span domains require a placement decision.
 
 ## Related Decisions
 
-- [ADR-A-002](./adr-a-002.md) - ORM restricted to repository layer
-- [ADR-A-003](./adr-a-003.md) - UnitOfWork and BaseRepo persistence
+- [ADR-A-001](./adr-a-001.md) - Shared packages organization
+- [ADR-DM-001](../domain-model/adr-dm-001.md) - Database domain schema structure

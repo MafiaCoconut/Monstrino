@@ -184,6 +184,54 @@
 /* Responsive                                                          */
 /* ------------------------------------------------------------------ */
 
+/* ------------------------------------------------------------------ */
+/* Light theme overrides                                               */
+/* ------------------------------------------------------------------ */
+
+[data-theme='light'] .card {
+  background: #ffffff;
+  border: 1px solid rgba(201, 29, 134, 0.15);
+  backdrop-filter: none;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+}
+
+[data-theme='light'] .card:hover {
+  border-color: rgba(201, 29, 134, 0.45);
+  box-shadow: 0 8px 28px rgba(201, 29, 134, 0.12);
+}
+
+[data-theme='light'] .cardTitle {
+  color: #111114 !important;
+}
+
+[data-theme='light'] .cardDescription {
+  color: rgba(0, 0, 0, 0.55) !important;
+}
+
+[data-theme='light'] .cardDescriptionEmpty {
+  color: rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-theme='light'] .typeTag {
+  color: rgba(201, 29, 134, 0.9);
+  border-color: rgba(201, 29, 134, 0.25);
+}
+
+[data-theme='light'] .countBadge {
+  color: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='light'] .arrow {
+  color: rgba(201, 29, 134, 0.5);
+}
+
+[data-theme='light'] .card:hover .arrow {
+  color: #c91d86;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
   .card {
     padding: 1.1rem 1.2rem 2.2rem;

@@ -383,5 +383,5 @@ The market ingestion pipeline is designed around several core principles:
 - [Pipelines Overview](../overview)
 - [Market Release Discovery Pipeline](./market-release-discovery-pipeline)
 - [Market Price Collection Pipeline](./market-price-collection-pipeline)
-- [API Overview](../../api/00-overview)
-- [Market Model](../../models/06-market-model)
+- [API Overview](../../api/overview)
+- [Market Model](../../models/market-model)

@@ -8,8 +8,8 @@ description: Data ingestion and normalization pipeline for catalog data in the M
 
 ## Overview
 
-The catalog ingestion pipeline is responsible for collecting external data about Monster High releases
-and transforming it into the normalized domain model used by the Monstrino platform.
+The catalog ingestion pipeline collects external data about Monster High releases
+and transforms it into the normalized domain model used by the Monstrino platform.
 
 The pipeline follows a staged processing approach:
 
@@ -22,7 +22,9 @@ Each stage has clearly defined responsibilities and can evolve independently.
 
 ---
 
-## High
+## High-Level Catalog Ingestion Flow
+
+![](/img/pipelines/catalog-ingestion-pipeline.jpg)
 
 ---
 

@@ -1,54 +1,70 @@
 ---
 id: adr-a-006
-title: "ADR-A-006: Centralize Source Parsers in monstrino-infra"
-sidebar_label: "A-006: Parsers in monstrino-infra"
-sidebar_position: 6
-tags: [architecture, parsers, monstrino-infra, shared-packages]
-description: "Centralizes all external source parsers inside the monstrino-infra shared package to eliminate duplication and ensure consistent parsing across services."
+title: "ADR-A-006: Contracts → Command → Dispatcher API"
+sidebar_label: "A-006: Contracts/Command/Dispatcher"
+sidebar_position: 5
+tags: [architecture, api, contracts, dispatcher, clean-architecture]
+description: "Establishes a Contracts → Command → Dispatcher API pattern to decouple HTTP concerns from application logic and enable clean, testable handlers."
 ---
 
-# ADR-A-006 - Centralize Source Parsers in `monstrino-infra`
+# ADR-A-006 - Introduce Contracts → Command → Dispatcher API Architecture
 
-| Field      | Value                                                              |
-| ---------- | ------------------------------------------------------------------ |
-| **Status** | Accepted                                                           |
-| **Date**   | 2026-02-13                                                         |
-| **Author** | @Aleks                                                    |
-| **Tags**   | `#architecture` `#parsers` `#monstrino-infra` `#shared-packages`  |
+| Field      | Value                                                                 |
+| ---------- | --------------------------------------------------------------------- |
+| **Status** | Accepted                                                              |
+| **Date**   | 2025-12-10                                                            |
+| **Author** | @Aleks                                                       |
+| **Tags**   | `#architecture` `#api` `#contracts` `#dispatcher` `#clean-architecture` |
 
 ## Context
 
-Multiple services need to parse the same external sources (e.g., Mattel Shopify, fan sites). When parsers lived inside individual services, the same parsing logic was duplicated or slightly diverged across the codebase, causing inconsistencies when the same source was used in different contexts.
+Early API handlers called business logic directly, coupling HTTP concerns (request parsing, validation, HTTP status codes) to application logic. This made handlers hard to test, hard to reuse logic from non-HTTP contexts, and blurred layer boundaries.
 
 ## Options Considered
 
-### Option 1: Parsers Local to Each Service
+### Option 1: Direct Handler → Business Logic Calls
 
-Each service that needs to parse a source implements its own parser.
+HTTP handlers call use cases or service methods directly.
 
-- **Pros:** Services are fully self-contained.
-- **Cons:** Duplicated parser logic, inconsistent normalization, bugs must be fixed in multiple places.
+- **Pros:** Simple and fast to write.
+- **Cons:** Transport concerns leak into application logic, hard to test without HTTP stack, no reuse from background jobs or CLI.
 
-### Option 2: Centralize Parsers in `monstrino-infra` ✅
+### Option 2: Contracts → Command → Dispatcher Pipeline ✅
 
-All source parsers live in the `monstrino-infra` shared package and are consumed by any service that needs them.
+A structured pipeline cleanly separates HTTP concerns from application logic.
 
-- **Pros:** Single implementation per source, consistent parsing behavior, one place to update when source structure changes.
-- **Cons:** `monstrino-infra` becomes a broader dependency for services.
+- **Pros:** Each layer has a single responsibility, testable in isolation, application logic reusable from any transport.
+- **Cons:** More files and abstractions per feature.
 
 ## Decision
 
-> All source-specific parsers are implemented in and distributed through the **`monstrino-infra`** package. Services import and use parser classes from this package; they do not implement their own.
+> API requests flow through the following pipeline:
+>
+> ```
+> HTTP Request
+>   → Contract (input validation and deserialization)
+>   → Mapper (Contract → Command)
+>   → Command (application-level intent)
+>   → Dispatcher (routes Command to UseCase)
+>   → UseCase (business logic)
+> ```
+>
+> The HTTP layer only handles transport. Business logic is invoked via Commands, unaware of HTTP.
 
 ## Consequences
 
 ### Positive
 
-- Source structure changes require a fix in exactly one place.
-- All services parsing the same source get identical normalized output.
-- Easier to test parsers in isolation as a standalone package.
+- Application logic is fully transport-agnostic.
+- Each layer is independently testable.
+- Background jobs and CLI can invoke use cases directly through Commands without HTTP.
 
 ### Negative
 
-- `monstrino-infra` must be updated and re-released when parsers change, requiring coordinated service upgrades.
-- 
+- Each feature requires multiple layers (Contract, Mapper, Command, UseCase).
+- More boilerplate per endpoint, potentially over-engineered for simple CRUD operations.
+
+## Related Decisions
+
+- [ADR-A-002](./adr-a-002.md) - ORM restricted to repository layer
+- [ADR-A-003](./adr-a-003.md) - UnitOfWork and BaseRepo persistence

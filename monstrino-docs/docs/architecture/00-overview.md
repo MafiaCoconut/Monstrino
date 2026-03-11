@@ -27,6 +27,7 @@ Architecture documentation here is organized from high-level to low-level:
 | [Deployment Architecture](/docs/architecture/deployment-architecture/) | Kubernetes topology, namespacing, and infrastructure dependencies |
 | [Scalability Strategy](/docs/architecture/scalability-strategy/) | Horizontal scaling, workload isolation, and stateless service design |
 | [Observability](/docs/architecture/observability/) | Logging, metrics, and traceability approach across the platform |
+| [The Catalog as a Master Data Problem](/docs/architecture/catalog-as-master-data/) | Canonical identity, source reconciliation, controlled vocabulary, and resolver-based normalization |
 
 ---
 

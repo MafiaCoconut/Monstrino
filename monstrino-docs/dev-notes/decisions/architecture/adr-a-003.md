@@ -1,69 +1,62 @@
 ---
 id: adr-a-003
-title: "ADR-A-003: UnitOfWork and BaseRepo Persistence"
-sidebar_label: "A-003: UnitOfWork & BaseRepo"
-sidebar_position: 3
-tags: [architecture, persistence, unit-of-work, repository-pattern]
-description: "Defines a UnitOfWork and BaseRepository pattern to manage database session lifecycle consistently across all services."
+title: "ADR-A-003: Restrict ORM Usage to Repositories"
+sidebar_label: "A-003: ORM in Repositories Only"
+sidebar_position: 2
+tags: [architecture, orm, repositories, clean-architecture]
+description: "Restricts SQLAlchemy ORM usage exclusively to the repository layer to prevent session state leakage and enforce clean architecture boundaries."
 ---
 
-# ADR-A-003 - Introduce UnitOfWork and BaseRepo Persistence Architecture
+# ADR-A-003 - Restrict ORM Usage to Repositories
 
-| Field      | Value                                                                   |
-| ---------- | ----------------------------------------------------------------------- |
-| **Status** | Accepted                                                                |
-| **Date**   | 2025-10-30                                                              |
-| **Author** | @Aleks                                                         |
-| **Tags**   | `#architecture` `#persistence` `#unit-of-work` `#repository-pattern`   |
+| Field      | Value                                                             |
+| ---------- | ----------------------------------------------------------------- |
+| **Status** | Accepted                                                          |
+| **Date**   | 2025-10-17                                                        |
+| **Author** | @Aleks                                                   |
+| **Tags**   | `#architecture` `#orm` `#repositories` `#clean-architecture`     |
 
 ## Context
 
-Earlier versions of the codebase created a new database session per operation, leading to:
+SQLAlchemy ORM objects carry session state, lazy-loading behavior, and persistence metadata. When these objects escape the repository layer and spread into application logic, use cases, or API handlers, it causes:
 
-- Inconsistent transaction management.
-- Duplicated session handling code across use cases.
-- No shared transaction scope across multiple repository operations within a single use case.
+- Business logic coupled to persistence details.
+- Session leaks and unexpected lazy-loading in non-database contexts.
+- Difficult and fragile unit tests.
 
 ## Options Considered
 
-### Option 1: Per-Operation Sessions
+### Option 1: ORM Objects Everywhere
 
-Each repository method opens and closes its own session.
+Allow ORM entities to flow freely through all layers.
 
-- **Pros:** Simple to implement locally.
-- **Cons:** No shared transaction, inconsistent rollback behavior, duplicated boilerplate everywhere.
+- **Pros:** Convenient, less mapping boilerplate.
+- **Cons:** Business logic becomes coupled to SQLAlchemy, lazy-loading causes hidden queries, testing requires real database sessions.
 
-### Option 2: UnitOfWork + BaseRepo Pattern ✅
+### Option 2: ORM Restricted to Repository Layer ✅
 
-A `UnitOfWork` context manager owns the session lifecycle and is shared across all repository operations within a use case. `BaseRepo` provides generic low-level DB access, `CrudRepo` adds common reusable operations.
+ORM objects are used only inside repository implementations. Application and domain layers use DTOs, commands, and plain data structures.
 
-- **Pros:** Atomic multi-repository operations, clean transaction control, reduced boilerplate.
-- **Cons:** Requires upfront investment in the persistence infrastructure.
+- **Pros:** Clean architecture boundaries, testable business logic without DB, free to change ORM without touching application code.
+- **Cons:** Additional DTO mapping layer required.
 
 ## Decision
 
-> All database access follows a unified persistence stack:
->
-> - **`UnitOfWork`** - context manager owning the session, commit, and rollback lifecycle.
-> - **`BaseRepo`** - low-level generic repository for raw session access.
-> - **`CrudRepo`** - higher-level reusable repository with `save`, `get_one`, `get_many`, `exists`, etc.
->
-> Use cases receive a `UnitOfWork` instance and access repositories through it.
+> **SQLAlchemy ORM entities may only be instantiated and used inside repository implementations.** Application layer, use cases, dispatchers, and API handlers must work exclusively with DTOs, commands, and domain data classes.
 
 ## Consequences
 
 ### Positive
 
-- Multiple repository operations in one use case participate in a single transaction.
-- Rollback behavior is consistent and centralized.
-- Reusable CRUD operations reduce boilerplate across all repositories.
+- Application logic is persistence-agnostic and unit-testable.
+- ORM schema changes do not propagate into business logic.
+- Clean separation of concerns.
 
 ### Negative
 
-- Initial infrastructure investment to implement the pattern.
-- Developers must understand the UoW pattern to work with the persistence layer.
+- Mapping between ORM entities and DTOs introduces boilerplate.
 
 ## Related Decisions
 
-- [ADR-A-002](./adr-a-002.md) - ORM restricted to repositories
-- [ADR-A-001](./adr-a-001.md) - Shared packages (monstrino-repositories)
+- [ADR-A-003](./adr-a-003.md) - Unit of Work and BaseRepo persistence stack
+- [ADR-A-001](./adr-a-001.md) - Shared packages for models and repositories
