@@ -73,14 +73,23 @@ const config: Config = {
       },
     ],
     [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'why-monstrino',
+        path: 'why-monstrino',
+        routeBasePath: 'why-monstrino',
+        sidebarPath: './sidebars-why-monstrino.js',
+      },
+    ],
+    [
       '@easyops-cn/docusaurus-search-local',
       {
         hashed: true,
         language: ['en', 'ru'],
         indexDocs: true,
         indexPages: false,
-        docsRouteBasePath: ['docs', 'dev-notes'],
-        docsDir: ['docs', 'dev-notes'],
+        docsRouteBasePath: ['docs', 'dev-notes', 'why-monstrino'],
+        docsDir: ['docs', 'dev-notes', 'why-monstrino'],
         searchResultLimits: 8,
         searchResultContextMaxLength: 50,
       },
@@ -121,6 +130,7 @@ const config: Config = {
         src: 'img/monstrino_icon.svg',
       },
       items: [
+        {to: 'why-monstrino/intro', label: 'Why Monstrino', position: 'left'},
         {to: 'docs/intro', label: 'Docs', position: 'left'},
         {to: 'dev-notes/intro', label: 'Dev Notes', position: 'left'},
         // {to: '/blog', label: 'Blog', position: 'left'},
