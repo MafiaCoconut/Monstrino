@@ -1,18 +1,24 @@
 ---
 title: Before and After
 sidebar_position: 2
-description: Side-by-side comparison of a release before and after the ingestion pipeline.
+description: >
+  Three states of the same release across the ingestion pipeline —
+  parsed, enriched, and canonical.
 ---
 
 # Before and After
 
-Same release. Same product. Two states.
+Same release. Same product. Three states.
 
 ---
 
-## Before — raw parsed data (ingest schema)
+## Stage 1 — ingest_item.parsed_payload
+
+Produced by `catalog-content-collector`.
+Contains everything the source exposes directly — nothing invented.
 
 ```python
+# ingest_item.parsed_payload → ReleaseParsedContentRef
 ReleaseParsedContentRef(
     title="Monster High Skulltimate Secrets Gore-Geous Oasis Playset, Jinafire Long Doll And Accessories",
     mpn="JDR52",
@@ -20,12 +26,12 @@ ReleaseParsedContentRef(
     year=2025,
     content_type=["Doll"],
 
-    gender=None,
-    characters=None,
-    pets=None,
-    series=None,
-    pack_type=None,
-    tier_type=None,
+    gender=None,          # unknown
+    characters=None,      # unknown
+    pets=None,            # unknown
+    series=None,          # unknown
+    pack_type=None,       # unknown
+    tier_type=None,       # unknown
     exclusive_vendor=None,
     reissue_of=None,
 )
@@ -33,7 +39,44 @@ ReleaseParsedContentRef(
 
 ---
 
-## After — canonical domain entry (catalog schema)
+## Stage 2 — ingest_item.enriched_payload
+
+Produced by `catalog-data-enricher` (scripts + AI Orchestrator).
+All previously unknown attributes are now resolved.
+
+This is the same `ReleaseParsedContentRef` type as `parsed_payload` —
+the difference is that the `None` fields are now filled. These are still
+raw strings and lists, not domain objects. Resolver services have not
+run yet.
+
+```python
+# ingest_item.enriched_payload → ReleaseParsedContentRef
+ReleaseParsedContentRef(
+    title="Monster High Skulltimate Secrets Gore-Geous Oasis Playset, Jinafire Long Doll And Accessories",
+    mpn="JDR52",
+    gtin="0194735288892",
+    year=2025,
+    content_type=["doll-figure", "playset"],
+
+    gender=["ghoul"],
+    characters=["Jinafire Long"],
+    pets=None,
+    series=["Skulltimate Secrets", "Destination: Gore-geous Oasis"],
+    pack_type=["1-pack"],
+    tier_type="standard",
+    exclusive_vendor=None,
+    reissue_of=None,
+)
+```
+
+---
+
+## Stage 3 — canonical domain entry
+
+Produced by `catalog-importer`.
+Stored in `catalog.release` and related tables.
+Raw string values have been resolved into domain objects by
+resolver services.
 
 ```python
 Release(
@@ -70,4 +113,5 @@ Release(
 
 ---
 
-For the full pipeline walkthrough see [From Raw Data to Structured Catalog](./02-raw-to-catalog.md).
+For the full pipeline walkthrough see
+[From Raw Data to Structured Catalog](./02-raw-to-catalog.md).

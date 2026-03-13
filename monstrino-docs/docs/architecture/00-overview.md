@@ -49,7 +49,7 @@ Business logic lives in `monstrino-core` and service use-case layers. It has no 
 Each service has its own database or schema. Cross-domain access always goes through the owning service's API. There are no shared databases between services.
 
 **Ingestion is decoupled from the catalog**  
-The pipeline that collects external data writes to parsed tables. Import processes normalize that data into the canonical domain model. These two stages are separated by design to allow independent failure, retry, and evolution.
+The pipeline that collects external data produces explicit lifecycle objects — `source_discovered_entry`, `source_payload_snapshot`, and `ingest_item`. The enrichment stage processes `ingest_item` work units and writes the final result to `ingest_item.enriched_payload`. The `catalog-importer` then reads `enriched_payload` and normalizes it into the canonical domain model. These stages are separated by design to allow independent failure, retry, and evolution.
 
 **AI is a quality layer, not a system dependency**  
 LLM-based enrichment runs as an optional quality step. If `ai-orchestrator` is unavailable, ingestion and the catalog API continue unaffected.

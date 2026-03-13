@@ -1,0 +1,195 @@
+/* ================================== */
+/* Mermaid – zoomable diagram wrapper */
+/* ================================== */
+
+/* ---------- Inline trigger ---------- */
+.trigger {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  cursor: zoom-in;
+  transition: box-shadow 0.2s ease;
+  border-radius: 8px;
+}
+
+.trigger:hover {
+  box-shadow: 0 4px 20px rgba(255, 44, 168, 0.18);
+}
+
+.expandHint {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: rgba(30, 30, 36, 0.75);
+  border: 1px solid rgba(255, 44, 168, 0.3);
+  color: #bbb;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+  user-select: none;
+}
+
+.trigger:hover .expandHint {
+  opacity: 1;
+}
+
+/* ---------- Overlay ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999 !important;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.2s ease;
+}
+
+/* ---------- Close button ---------- */
+.closeBtn {
+  position: absolute;
+  top: calc(var(--ifm-navbar-height, 3.75rem) + 0.75rem);
+  right: 1rem;
+  z-index: 10001;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+
+.closeBtn:hover {
+  background: rgba(255, 44, 168, 0.35);
+}
+
+/* ---------- Controls ---------- */
+.controls {
+  position: absolute;
+  bottom: 1.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10001;
+  display: flex;
+  gap: 0.6rem;
+  background: rgba(30, 30, 36, 0.85);
+  padding: 0.5rem 0.9rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 44, 168, 0.25);
+}
+
+.controlBtn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+
+.controlBtn:hover {
+  background: rgba(255, 44, 168, 0.25);
+}
+
+.zoomLabel {
+  display: flex;
+  align-items: center;
+  color: #bbb;
+  font-size: 0.8rem;
+  min-width: 42px;
+  justify-content: center;
+  user-select: none;
+}
+
+/* ---------- Keyboard shortcuts hint ---------- */
+.shortcutsHint {
+  position: absolute;
+  top: calc(var(--ifm-navbar-height, 3.75rem) + 0.75rem + 44px + 0.75rem);
+  right: 1rem;
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  background: rgba(30, 30, 36, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+}
+
+.shortcutsHint span {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #999;
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.shortcutsHint kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  padding: 0.05rem 0.3rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #ccc;
+  font-size: 0.68rem;
+  font-family: var(--ifm-font-family-monospace, monospace);
+  line-height: 1.5;
+}
+
+/* ---------- Diagram wrapper (pan area) ---------- */
+/* top = navbar + btn offset + btn height + gap */
+.diagramWrapper {
+  position: absolute;
+  top: calc(var(--ifm-navbar-height, 3.75rem) + 0.75rem + 44px + 0.5rem);
+  left: 0;
+  right: 0;
+  bottom: 72px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+}
+
+.diagramWrapper:active {
+  cursor: grabbing;
+}
+
+/* ---------- Inner diagram (receives transform) ---------- */
+.diagramInner {
+  transition: transform 0.15s ease;
+  user-select: none;
+  /* Force Mermaid SVG to not be constrained */
+}
+
+.diagramInner :global(svg) {
+  max-width: none !important;
+  display: block;
+}
+
+/* ---------- Animations ---------- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

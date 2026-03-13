@@ -137,10 +137,10 @@ export default function Home(): JSX.Element {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Project at a Glance</h2>
           <div className={styles.statsRow}>
-            <div className={styles.statCard}>
+            {/* <div className={styles.statCard}>
               <span className={styles.statNumber}>9</span>
               <span className={styles.statLabel}>Microservices</span>
-            </div>
+            </div> */}
             <div className={styles.statCard}>
               <span className={styles.statNumber}>7</span>
               <span className={styles.statLabel}>Shared Packages</span>
@@ -166,8 +166,9 @@ export default function Home(): JSX.Element {
 
           <div className={styles.archDiagram}>
             <ImageLightbox
-              src={useBaseUrl("/img/architecture/docs-homepage-diagram.jpg")}
-              mobileSrc={useBaseUrl("/img/architecture/architecture-overview.jpg")}
+              // src={useBaseUrl("/img/architecture/docs-homepage-diagram.jpg")}
+              src={useBaseUrl("/img/architecture/architecture-overview-new.jpg")}
+              mobileSrc={useBaseUrl("/img/architecture/architecture-overview-new.jpg")}
               alt="Monstrino Architecture Diagram"
               className={styles.archImage}
               disableLightboxOnMobile

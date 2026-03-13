@@ -3,6 +3,9 @@
     "code_blocks": false,
     "tables": false
   },
+  "MD025": {
+    "front_matter_title": ""
+  },
   "MD046": {
     "style": "fenced"
   }

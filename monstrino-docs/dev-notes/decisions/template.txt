@@ -1,32 +1,198 @@
-# ADR [Номер]: [Короткое название решения]
+==============================================================================
+  MONSTRINO DEV-NOTES/DECISIONS — ADR TEMPLATE
+  Applies to: all Architecture Decision Records across all categories
+==============================================================================
 
-* **Статус:** [Proposed | Accepted | Rejected | Superseded by ADR-XXX]
-* **Дата:** YYYY-MM-DD
-* **Автор:** @username
-* **Теги:** #architecture #tech-stack
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  1. CATEGORY CODES & DIRECTORIES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## Контекст (Context)
-Опишите проблему или ситуацию, которая привела к необходимости принятия решения. 
-- Какие бизнес-требования мы выполняем?
-- Какие технические ограничения существуют?
-- Какие боли мы пытаемся устранить?
+  Code  Directory                 Label
+  ----  ------------------------  ---------------------------
+  PS    product-strategy/         Product Strategy
+  DI    data-ingestion/           Data Ingestion
+  A     architecture/             Architecture
+  DM    domain-model/             Domain Model
+  MP    media-pipeline/           Media Pipeline
+  LS    ai-external-sources/      AI & External Sources
+  IP    infra-platform/           Infra & Platform
+  FD    frontend-delivery/        Frontend & Delivery
 
-## Рассматриваемые варианты (Options)
-Перечислите альтернативы, которые обсуждались:
-1. **Вариант 1:** Краткое описание, плюсы и минусы.
-2. **Вариант 2:** Почему этот вариант был отложен или отклонен.
+  File naming: adr-{lowercase-code}-{NNN}.md
+  Examples:    adr-a-008.md  /  adr-di-007.md  /  adr-ls-004.md
 
-## Решение (Decision)
-Четкая формулировка выбранного пути.
-> Мы выбираем [Технология/Подход], так как это обеспечит [Главное преимущество] в рамках заданных ограничений.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  2. FULL ADR TEMPLATE (.md)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## Последствия (Consequences)
-Что произойдет после внедрения этого решения?
-* **Положительные:** (например, упрощение поддержки, рост скорости отклика).
-* **Отрицательные:** (например, необходимость обучения команды, усложнение инфраструктуры).
-* **Риски:** На что нужно обратить внимание при реализации.
+─────────────────────────── COPY FROM HERE ────────────────────────────────
 
-## Ссылки (Links)
-* [Ссылка на задачу в Jira/GitHub]
-* [Ссылка на обсуждение в Slack/Confluence]
-* [Связанный ADR-001]
+---
+id: adr-{code}-{NNN}
+title: "ADR-{CODE}-{NNN}: {Full Decision Title}"
+sidebar_label: "{CODE}-{NNN}: {Short Label}"
+sidebar_position: {N}
+tags: [{category-tag}, {concept-tag}, {concept-tag}]
+description: "{One or two sentences summarising the decision and its rationale.}"
+---
+
+# ADR-{CODE}-{NNN} — {Full Decision Title}
+
+| Field      | Value                                       |
+| ---------- | ------------------------------------------- |
+| **Status** | Accepted                                    |
+| **Date**   | YYYY-MM-DD                                  |
+| **Author** | @Aleks                                      |
+| **Tags**   | `#{tag-one}` `#{tag-two}` `#{tag-three}`    |
+
+## Context
+
+{Describe the problem, business requirement, or situation that prompted
+this decision. Be explicit about constraints, external forces, and what
+would happen if no decision were made.}
+
+## Options Considered
+
+### Option 1: {Option Name}
+
+{Brief description.}
+
+- **Pro:** {Benefit}
+- **Con:** {Drawback}
+
+### Option 2: {Option Name}
+
+{Brief description.}
+
+- **Pro:** {Benefit}
+- **Con:** {Drawback}
+
+### Option 3: {Option Name} ✅
+
+{Brief description. Mark the chosen option with ✅.}
+
+- **Pro:** {Benefit}
+- **Con:** {Drawback}
+
+## Decision
+
+> We [choose / adopt / reject] **{Option or Approach}** because {primary
+> rationale}. {One or two additional sentences explaining the why.}
+
+## Consequences
+
+### Positive
+
+- {Benefit one}
+- {Benefit two}
+- {Benefit three}
+
+### Negative
+
+- {Cost or drawback one}
+- {Cost or drawback two}
+
+## Related Decisions
+
+- [ADR-{CODE}-{NNN}: {Title}](./{filename}.md)
+- [ADR-{CODE}-{NNN}: {Title}](../{directory}/{filename}.md)
+
+─────────────────────────── END OF TEMPLATE ───────────────────────────────
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  3. FRONTMATTER FIELD RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  id               → adr-{lowercase-code}-{NNN}   matches filename exactly
+  title            → "ADR-{UPPERCASE-CODE}-{NNN}: {Full Title}"
+  sidebar_label    → "{UPPERCASE-CODE}-{NNN}: {Short Label ≤ 30 chars}"
+  sidebar_position → integer, sequential within the category directory
+  tags             → lowercase, kebab-case, no hashes (hashes only in table)
+  description      → 1–2 sentences, no trailing period required
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  4. METADATA TABLE RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Status  → always "Accepted" (Proposed / Rejected / Superseded by ADR-X-NNN
+             only if explicitly not yet agreed upon)
+  Date    → YYYY-MM-DD, the date the decision was made
+  Author  → @Aleks
+  Tags    → backtick-wrapped, hash-prefixed, space-separated
+             Example:  `#architecture` `#boundary` `#data-quality`
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  5. CONTENT RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Context          → Explain WHY a decision was needed, not what was decided.
+                     Include constraints and what failure would look like.
+
+  Options          → Minimum 2, typically 3. Mark chosen option with ✅.
+                     Keep each option brief — pros and cons as bullets.
+
+  Decision         → Always a blockquote (> ...).
+                     Start with "We choose / We adopt / We reject".
+                     State the primary rationale, not just the choice.
+
+  Consequences     → Both Positive AND Negative are required.
+                     Bullets only. Be honest about drawbacks.
+
+  Related Decisions → Optional section. Use only if genuinely related.
+                      Same directory:  [ADR-X-NNN](./adr-x-nnn.md)
+                      Cross directory: [ADR-X-NNN](../category/adr-x-nnn.md)
+                      Never link to the ADR itself (self-reference).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  6. TAG REFERENCE BY CATEGORY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PS   product-strategy, domain, niche, mvp, monetization
+  DI   data-ingestion, catalog, parsing, boundary, idempotency,
+       deduplication, external-id, replayability, workflow
+  A    architecture, boundary, api, services, orm, persistence,
+       clean-architecture, unit-of-work, repository-pattern,
+       shared-packages, monorepo, parsers
+  DM   domain-model, database, schemas, organization, characters
+  MP   media-pipeline, images, rehosting, s3, storage, minio,
+       subscriber, processor, jobs, async, decomposition
+  LS   llm, gateway, ollama, normalization, isolation, external-sources
+  IP   infra, k3s, kubernetes, homelab, deployment, cloudflare, tunnel
+  FD   frontend, nextjs, vite, seo, ssr, repository
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  7. _category_.json TEMPLATE (per new category directory)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{
+  "label": "{Category Display Name}",
+  "position": {N},
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "title": "{Category Display Name} Decisions",
+    "description": "{One sentence describing what decisions live in this category.}"
+  }
+}
+
+  Existing positions: PS=1, DI=2, A=3, DM=4, MP=5, LS=6, IP=7, FD=8
+  New categories start at position 9+.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  8. CHECKLIST BEFORE COMMITTING A NEW ADR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  [ ] File is named  adr-{code}-{NNN}.md  (lowercase, no gaps in numbering)
+  [ ] id in frontmatter matches filename exactly
+  [ ] sidebar_position does not duplicate an existing value in the category
+  [ ] Metadata table has Status, Date, Author, Tags — all filled in
+  [ ] H1 title matches the frontmatter title
+  [ ] At least 2 options, chosen one marked with ✅
+  [ ] Decision section uses a blockquote and starts with "We …"
+  [ ] Both Positive and Negative consequences are present
+  [ ] No self-referential links in Related Decisions
+  [ ] Cross-directory links use  ../category/adr-x-nnn.md  format
+  [ ] File is complete — no truncated sections
+
+==============================================================================

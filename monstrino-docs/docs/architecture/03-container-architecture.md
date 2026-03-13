@@ -85,9 +85,9 @@ Processing services transform collected data into the domain model.
 
 | Service | Responsibility |
 |------|------|
-| catalog-importer | converts parsed releases into normalized domain entities |
-| catalog-data-enricher | enriches parsed data using inference |
-| ai-orchestrator | provides unified access to LLM inference |
+| catalog-importer | reads `ingest_item.enriched_payload` and writes normalized domain entities |
+| catalog-data-enricher | enriches `ingest_item` attributes via built-in scripts and `ai-orchestrator` via `enrichment_job` table |
+| ai-orchestrator | executes AI workflows for individual attributes; coordinates only through `enrichment_job` table |
 
 These services implement the **core transformation pipeline**.
 
@@ -99,10 +99,11 @@ Acquisition services collect data from external sources.
 
 | Service | Responsibility |
 |------|------|
-| catalog-collector | fetches release information |
+| catalog-source-discovery | scans source surfaces, applies domain rules, produces `source_discovered_entry` records |
+| catalog-content-collector | claims eligible entries, fetches payloads, creates `ingest_item` work units |
 | market-price-collector | collects pricing observations |
 
-Collected data is stored as parsed records before processing.
+Collected data moves through explicit lifecycle objects before processing.
 
 ---
 

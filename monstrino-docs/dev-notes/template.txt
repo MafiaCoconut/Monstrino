@@ -1,0 +1,363 @@
+==============================================================================
+  MONSTRINO DEV-NOTES — UNIVERSAL DOCUMENT TEMPLATE
+  Applies to: architecture notes, ADRs, pipeline docs, AI layer, infra, roadmap
+==============================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  1. FILE NAMING CONVENTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  General note:       kebab-case-description.md
+  Architecture:       system-context.md / api-gateway-architecture.md
+  ADR:                adr-[code]-[number].md
+                        codes: a (architecture), di (data-ingestion),
+                               dm (domain-model), ps (product-strategy),
+                               ai (ai-layer), fd (frontend-delivery),
+                               ip (infra-platform), mp (media-pipeline)
+  Pipeline:           [name]-pipeline.md / [name]-overview.md
+  Roadmap:            00-overview.md / [phase-name]-roadmap.md
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  2. FRONTMATTER (required in every .md file)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+---
+id: unique-id-matching-filename          # required, snake_case or kebab-case
+title: "Full Document Title"             # required
+sidebar_label: "Short Sidebar Label"     # required, max ~30 chars
+sidebar_position: 1                      # required, integer
+description: "One-sentence summary."     # required, used in search & hover
+tags: [tag-one, tag-two, tag-three]      # required, lowercase + hyphenated
+---
+
+  Common tags by category:
+    Architecture   → architecture, boundary, service-design, api
+    ADR            → adr, [category-code], decision
+    Data           → data-ingestion, data-quality, pipeline, idempotency
+    AI             → ai, orchestration, enrichment, llm
+    Infrastructure → infrastructure, kubernetes, deployment, s3
+    Roadmap        → roadmap, evolution, phase-1, phase-2
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  3. DOCUMENT STRUCTURES BY TYPE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+──────────────────────────────────────────────────────────────────────────────
+  TYPE A — ARCHITECTURE / FEATURE NOTE
+  Use for: system design, service architecture, component descriptions
+──────────────────────────────────────────────────────────────────────────────
+
+[FRONTMATTER — see section 2]
+
+:::info Engineering Working Notes
+This document describes [topic].
+It is written as an engineering reference, not as API documentation.
+:::
+
+## Overview
+
+[2-4 sentence summary of what this is and why it exists.]
+
+## Purpose
+
+[Clear statement of what this component/system/layer is responsible for.
+Use a bullet list if multiple responsibilities.]
+
+- Responsibility one
+- Responsibility two
+- Responsibility three
+
+## Architecture / How It Works
+
+[Main content. Use numbered sections for sequential flows, tables for
+role/responsibility mapping, code blocks for ASCII diagrams or key structures.]
+
+### [Sub-section: e.g., Request Flow]
+
+```
+[ASCII diagram or flow description]
+```
+
+| Component | Role |
+|-----------|------|
+| Service A | Does X |
+| Service B | Does Y |
+
+### [Sub-section: e.g., Data Zones / State Model]
+
+| Zone / State | Description | Trigger |
+|--------------|-------------|---------|
+| Raw          | Unvalidated input | Ingestion event |
+| Parsed       | Validated, normalized | Parsing complete |
+
+## Operational Notes
+
+:::warning
+[Any important constraints, failure modes, or non-obvious behaviors.]
+:::
+
+- Idempotency: [how handled]
+- Failure handling: [strategy]
+- Observability: [what is logged/traced]
+
+## Future Evolution
+
+- [ ] Planned improvement one
+- [ ] Planned improvement two
+
+## Related Documents
+
+- [Related Doc Title](./related-doc.md)
+- [ADR-X-001: Decision Title](./decisions/category/adr-x-001.md)
+
+
+──────────────────────────────────────────────────────────────────────────────
+  TYPE B — ARCHITECTURE DECISION RECORD (ADR)
+  Use for: any significant technical or architectural decision
+──────────────────────────────────────────────────────────────────────────────
+
+[FRONTMATTER — see section 2]
+  title: "ADR-[CODE]-[NNN]: Short Decision Title"
+  sidebar_label: "[CODE]-[NNN]: Short Title"
+
+| Field      | Value                                      |
+| ---------- | ------------------------------------------ |
+| **Status** | Proposed / Accepted / Rejected / Superseded by ADR-X-NNN |
+| **Date**   | YYYY-MM-DD                                 |
+| **Author** | @username                                  |
+| **Tags**   | `tag-one`, `tag-two`, `tag-three`          |
+
+## Context
+
+[Describe the problem, business requirement, or situation that requires
+a decision. Be explicit about constraints and forces at play.]
+
+## Options Considered
+
+1. **Option Name** — Brief description. Pros: … Cons: …
+2. **Option Name** — Brief description. Pros: … Cons: …
+3. **Option Name** — Brief description. Pros: … Cons: …
+
+## Decision
+
+> We [choose/adopt/reject] **[Option/Approach]** because [primary rationale].
+> [One or two additional sentences explaining the reasoning.]
+
+## Consequences
+
+### Positive
+- Benefit one
+- Benefit two
+
+### Negative
+- Cost or drawback one
+- Cost or drawback two
+
+### Risks
+- Risk one and mitigation
+- Risk two and mitigation
+
+## Related Decisions
+
+- [ADR-X-NNN: Related Title](./adr-x-nnn.md)
+
+
+──────────────────────────────────────────────────────────────────────────────
+  TYPE C — PIPELINE / DATA FLOW DOC
+  Use for: ingestion pipelines, processing flows, event-driven stages
+──────────────────────────────────────────────────────────────────────────────
+
+[FRONTMATTER — see section 2]
+
+:::info Engineering Working Notes
+This document describes the [pipeline name] pipeline.
+It is written as an engineering reference, not as API documentation.
+:::
+
+## Purpose
+
+[What this pipeline does and why it exists. 2-3 sentences.]
+
+## High-Level Flow
+
+[Numbered stages with brief description of each.]
+
+1. **[Stage Name]** — [What happens here, inputs and outputs]
+2. **[Stage Name]** — [What happens here, inputs and outputs]
+3. **[Stage Name]** — [What happens here, inputs and outputs]
+
+## Service Responsibilities
+
+| Service | Responsibility |
+|---------|---------------|
+| Service A | Ingests raw data from sources |
+| Service B | Validates and normalizes |
+| Service C | Publishes enriched output |
+
+## Data / State Model
+
+| State | Description | Next State |
+|-------|-------------|------------|
+| received | Raw event accepted | validating |
+| validating | Schema and content checks | parsed / failed |
+| parsed | Normalized, stored | enriching |
+| enriched | AI metadata attached | published |
+| failed | Terminal error state | (manual retry) |
+
+## Input / Output Contracts
+
+**Input:** [Source, format, trigger — e.g., S3 event, Kafka topic, HTTP call]
+
+**Output:** [Destination, format — e.g., PostgreSQL record, S3 object, event]
+
+## Idempotency Strategy
+
+[How duplicate events or retries are handled safely.]
+
+## Failure Handling
+
+[What happens on error: retry policy, dead-letter queue, alerting, etc.]
+
+## Observability
+
+- Logs: [what is logged and at which stages]
+- Metrics: [key counters or gauges]
+- Traces: [span or trace strategy]
+
+## Future Evolution
+
+- [ ] Planned improvement one
+- [ ] Planned improvement two
+
+## Related Documents
+
+- [Pipeline Overview](./overview.md)
+- [ADR-X-NNN: Relevant Decision](../decisions/category/adr-x-nnn.md)
+
+
+──────────────────────────────────────────────────────────────────────────────
+  TYPE D — ROADMAP DOC
+  Use for: phased plans, architectural direction, capability tracking
+──────────────────────────────────────────────────────────────────────────────
+
+[FRONTMATTER — see section 2]
+
+:::note
+This document captures architectural direction and current priorities.
+It does not represent delivery commitments or release dates.
+:::
+
+## Purpose
+
+[Why this roadmap exists and what decisions/direction it communicates.]
+
+## Current State
+
+| Area | Status | Notes |
+|------|--------|-------|
+| Area one | Operational | Brief note |
+| Area two | In progress | Brief note |
+| Area three | Planned | Brief note |
+
+## Phase 1 — [Phase Name / Theme]
+
+**Status:** Operational / In Progress / Planned
+
+| Capability | Description |
+|------------|-------------|
+| Capability A | What it does and current state |
+| Capability B | What it does and current state |
+
+## Phase 2 — [Phase Name / Theme]
+
+**Status:** Planned / Long-term
+
+| Capability | Description |
+|------------|-------------|
+| Capability C | What it does and target outcome |
+| Capability D | What it does and target outcome |
+
+## Cross-Cutting Constraints
+
+[Principles or constraints that apply across all phases.]
+
+- Principle one
+- Principle two
+
+## Related Documents
+
+- [Architecture Overview](../architecture/system-context.md)
+- [Relevant ADRs](../decisions/category/adr-x-nnn.md)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  4. CALLOUT BLOCKS (Docusaurus admonitions)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  :::info [Optional Title]
+  General context or background information.
+  :::
+
+  :::warning [Optional Title]
+  Important constraint, non-obvious behavior, or known risk.
+  :::
+
+  :::tip [Optional Title]
+  Helpful guidance or best practice.
+  :::
+
+  :::note
+  Supplementary information that is useful but not critical.
+  :::
+
+  Convention:
+    - Docs intro block        → :::info Engineering Working Notes
+    - Operational constraint  → :::warning
+    - Roadmap caveat          → :::note
+    - Guidance                → :::tip
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  5. _category_.json (required per directory)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Pointing to a specific entry doc:
+
+  {
+    "label": "Display Name",
+    "position": 3,
+    "collapsible": true,
+    "collapsed": true,
+    "link": {
+      "type": "doc",
+      "id": "entry-point-doc-id"
+    }
+  }
+
+  Using an auto-generated index:
+
+  {
+    "label": "Display Name",
+    "position": 3,
+    "collapsible": true,
+    "collapsed": true,
+    "link": {
+      "type": "generated-index",
+      "title": "Index Page Title",
+      "description": "Short description shown on the index page."
+    }
+  }
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  6. WRITING CONVENTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Tone          → Professional and technical; written for engineers
+  Focus         → Always explain WHY, not just WHAT
+  Trade-offs    → Document both positive AND negative consequences
+  Links         → Relative paths: [Title](./path/to/file.md)
+  Blockquotes   → Use > for key decision statements in ADRs
+  Lists         → Bullets use dashes (-); numbered lists for sequences
+  Tables        → Always include header row with alignment separators
+  Code blocks   → Use for ASCII diagrams, key structures, examples
+
+==============================================================================

@@ -154,13 +154,17 @@ A scheduler invokes `ProcessNewImageUseCase` for `MediaAsset` records with `proc
 
 ### AI-Assisted Processing
 
-Certain image operations may call the `ai-orchestrator` service through the `ai-orchestrator-api-client` from the `monstrino-infra` package.
+Certain image operations delegate work to the `ai-orchestrator` service via a shared job table.
+
+The media normalization service creates an `enrichment_job` record in the `ai_orchestrator` schema, setting it to `pending_ai_processing`. The `ai-orchestrator` picks up the job on its own schedule, executes the AI workflow, and writes the result back to the job record. The media normalization service then reads the result and applies it.
 
 This can be used for:
 
 - removing unnecessary background elements
 - improving image quality
 - extracting multiple objects from a single image
+
+Each AI operation is an independent job. The `ai-orchestrator` logs every AI call in `ai_enrichment_call` and does not modify media asset records directly — that responsibility stays with the media normalization service.
 
 ### Output
 

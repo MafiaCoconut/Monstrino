@@ -94,33 +94,49 @@ The architecture is shaped by a few explicit priorities:
 
 ## High-Level Architecture
 
-### Four major concerns
+### Five major concerns
 
-- **Acquisition** - collect raw data from external sources and store parsed forms.
-- **Processing** - transform parsed records into normalized domain entities.
-- **Media** - ingest, store, attach, normalize, and derive image variants.
-- **Exposure** - expose normalized data to the frontend through a single public API facade backed by internal service APIs.
-
-![](/img/architecture/architecture-overview.jpg)
+- **Acquisition** — scan external sources, apply domain rules, fetch payloads, and create ingest work units.
+- **Enrichment** — refine parsed attributes through built-in scripts and AI-driven resolution.
+- **Import** — convert enriched data into canonical domain entities.
+- **Media** — ingest, store, deduplicate, normalize, and derive image variants.
+- **Exposure** — expose normalized data to the frontend through a single public API facade backed by internal service APIs.
 
 :::info Architecture boundary
 `public-api-service` is the only service reachable by the frontend. All other services are intended to remain internal to the cluster.
 :::
 
+### Architecture Diagram
+![](/img/architecture/architecture-overview-new.jpg)
+
+
+
+### Data Flow Summary
+
+The architecture follows a staged pipeline model with clear responsibility boundaries:
+
+| Stage | Service(s) | Input → Output |
+|-------|-----------|----------------|
+| **Discovery** | `catalog-source-discovery` | source pages → `source_discovered_entry` |
+| **Collection** | `catalog-content-collector` | eligible entries → `ingest_item` with `parsed_payload` |
+| **Enrichment** | `catalog-data-enricher` + `ai-orchestrator` | `parsed_payload` → `enriched_payload` |
+| **Import** | `catalog-importer` | `enriched_payload` → canonical catalog entities + Kafka events |
+| **Media** | media services | Kafka events → stored & normalized image variants |
+| **Delivery** | `public-api-service` → API services | canonical data → UI-ready DTOs |
+
+
+
 ---
 
-## Main Subsystems and Services
-
-### Acquisition
-
-- `catalog-collector` - **Ready**. Collects raw release data from external sources and stores parsed records.
+- `catalog-source-discovery` - Scans country-specific source surfaces, applies domain eligibility rules, and persists `source_discovered_entry` records.
+- `catalog-content-collector` - Claims eligible discovered entries, fetches source payloads, stores `source_payload_snapshot` records, and creates `ingest_item` work units.
 - `market-price-collector` - **In Progress**. Collects pricing observations from official and, later, second-hand sources.
 
 ### Enrichment and Processing
 
-- `catalog-data-enricher` - **Planned**. Enriches parsed records, including LLM-assisted attribute refinement.
-- `ai-orchestrator` - **In Progress**. Internal gateway for LLM-backed enrichment tasks.
-- `catalog-importer` - **Ready**. Converts parsed records into normalized domain entities and resolves relations.
+- `catalog-data-enricher` - **In Progress**. Processes each `ingest_item` through an attribute resolution loop — built-in scripts first; for unresolved attributes, delegates to `ai-orchestrator` via the `enrichment_job` table state machine. Persists the final result to `ingest_item.enriched_payload` after all attributes are settled.
+- `ai-orchestrator` - **In Progress**. Executes AI workflows for individual catalog attributes. Coordinates with `catalog-data-enricher` exclusively through the `enrichment_job` table state machine — not through direct service calls.
+- `catalog-importer` - **Ready**. Reads `ingest_item.enriched_payload`, resolves canonical releases by MPN, synchronizes domain relations, and publishes media events to Kafka.
 
 ### Media
 
@@ -177,9 +193,9 @@ Additional supporting models are used for enrichment, exclusivity, external refe
 
 ### Pipeline summary
 
-1. **Acquisition** - `catalog-collector` collects external source data, parses it into structured intermediate representations, and stores the parsed result in ingest-related storage.
-2. **Optional enrichment** - planned enrichment components can refine selected parsed attributes through `ai-orchestrator` and write improved values back.
-3. **Domain import** - `catalog-importer` reads parsed records, resolves relations, and writes normalized domain entities into the catalog model.
+1. **Acquisition** - `catalog-source-discovery` scans country-specific source surfaces, applies domain rules, and persists `source_discovered_entry` records. `catalog-content-collector` claims eligible entries, fetches source payloads, stores snapshots, and creates `ingest_item` work units with a structured `parsed_payload`.
+2. **Enrichment** - `catalog-data-enricher` processes each `ingest_item` through an attribute resolution loop — built-in scripts first, with unresolved attributes delegated to `ai-orchestrator` via the `enrichment_job` table state machine. After all attributes are settled the final model is persisted to `ingest_item.enriched_payload`.
+3. **Domain import** - `catalog-importer` reads `ingest_item.enriched_payload`, resolves canonical releases by MPN, synchronizes domain relations, and writes normalized domain entities into the canonical catalog schema.
 4. **Media handoff** - media-related work can be emitted for downstream handling. Kafka is planned as the transport for transient media processing events.
 5. **Media rehosting and attachment** - `media-rehosting-service` stores original images in object storage and creates corresponding media asset and attachment records.
 6. **Media normalization** - `media-normalizator` generates derived variants such as JPG, PNG, and WEBP, and can apply image enhancement or cleanup steps.

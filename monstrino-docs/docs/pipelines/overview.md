@@ -17,9 +17,9 @@ At a high level, the system currently operates these main pipelines:
 
 | Pipeline | Purpose |
 |--------|--------|
-| **Catalog Ingestion Pipeline** | Collects and normalizes product catalog information such as releases, characters, pets, and series |
-| **Media Ingestion Pipeline** | Downloads, deduplicates, stores, and normalizes images associated with catalog entities |
-<!-- | **Market Ingestion Pipeline** | Collects and normalizes products msrp and daily prices | -->
+| **Data Ingestion** | Discovers external sources, builds canonical catalog records, and produces normalized media assets. Consists of two sequential sub-pipelines: catalog ingest (source discovery → enrichment → import) followed by media ingest (image download → deduplication → variant generation), connected via Kafka. |
+| **Market Ingestion** | Collects commercial pricing data for known releases across official stores and retail sources. Consists of two sub-pipelines: market release discovery (scan sources → create `market-release-link` records) and market price collection (revisit known links → store price observations → maintain MSRP ownership based on source trust). |
+| **Review Ingestion** | Discovers and collects user and editorial review data for known releases from external sources. Follows the same discovery + collector architecture as market ingestion. Internal data model is still being defined. |
 
 ---
 
@@ -35,14 +35,22 @@ emits image references that trigger the **media ingestion pipeline**.
 flowchart LR
 
 ExternalSources["External Sources"]
+CommercialSources["Commercial Sources"]
+ReviewSources["Review Sources"]
 CatalogPipeline["Catalog Ingestion Pipeline"]
 MediaPipeline["Media Ingestion Pipeline"]
+MarketPipeline["Market Ingestion Pipeline"]
+ReviewPipeline["Review Ingestion Pipeline"]
 Storage["Platform Storage"]
 
 ExternalSources --> CatalogPipeline
 CatalogPipeline --> Storage
 CatalogPipeline --> MediaPipeline
 MediaPipeline --> Storage
+CommercialSources --> MarketPipeline
+MarketPipeline --> Storage
+ReviewSources --> ReviewPipeline
+ReviewPipeline --> Storage
 ```
 
 ---
@@ -95,8 +103,13 @@ Each pipeline is documented separately in this directory.
 
 | Document | Description |
 |--------|-------------|
-| `catalog-ingestion-pipeline.md` | Detailed flow of catalog data ingestion and normalization |
-| `media-ingestion-pipeline.md` | Detailed flow of media ingestion, rehosting, and normalization |
+| [Data Ingestion Overview](./data-ingestion/overview.md) | How catalog and media ingestion relate, their stages, and the Kafka handoff between them |
+| [Catalog Ingest Overview](./data-ingestion/catalog-ingest/overview.md) | Source discovery, enrichment, AI orchestration, and import into canonical tables |
+| [Media Ingest Overview](./data-ingestion/media-ingest/overview.md) | Image rehosting, deduplication, normalization, and variant generation |
+| [Market Ingestion Overview](./market-ingestion/market-ingestion-pipeline.md) | End-to-end overview of market data flow: release discovery, price collection, MSRP tracking, and source trust handling |
+| [Market Release Discovery](./market-ingestion/market-release-discovery-pipeline.md) | Scheduler-driven discovery of new market-facing release entries; creates persistent `market-release-link` records |
+| [Market Price Collection](./market-ingestion/market-price-collection-pipeline.md) | Recurring collection of price observations for known market links; MSRP initialization and trust-based ownership |
+| [Review Ingestion Overview](./review-ingestion/overview.md) | Architecture overview of the review ingestion pipeline: discovery + collector pattern, scheduler-driven, adapter-based source integration |
 
 These documents describe:
 
@@ -126,9 +139,9 @@ The pipeline architecture is designed to support additional pipelines in the fut
 
 Potential additions include:
 
-- **Market Data Pipeline** - collection and normalization of second‑hand market prices
 - **User Content Pipeline** - ingestion and moderation of user‑generated media
 - **AI Enrichment Pipeline** - large‑scale semantic enrichment of catalog metadata
+- **Secondary Market Pipeline** - collection and normalization of second‑hand market prices (eBay, StockX, etc.)
 
 Because pipelines communicate through storage and events rather than tight service coupling,
 new pipelines can be added without redesigning the existing architecture.

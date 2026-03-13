@@ -1,0 +1,10 @@
+{
+  "label": "Media Ingest",
+  "position": 3,
+  "collapsed": true,
+  "collapsible": true,
+  "link": {
+    "type": "doc",
+    "id": "pipelines/data-ingestion/media-ingest/overview"
+  }
+}
