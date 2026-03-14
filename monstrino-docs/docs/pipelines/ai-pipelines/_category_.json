@@ -1,0 +1,10 @@
+{
+  "label": "AI Pipelines",
+  "position": 2,
+  "collapsed": true,
+  "collapsible": true,
+  "link": {
+    "type": "doc",
+    "id": "pipelines/ai-pipelines/overview"
+  }
+}
