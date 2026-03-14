@@ -88,13 +88,17 @@ flowchart TB
 Even official sources provide only partial data.
 No single source contains everything:
 
-| Attribute     | Official Store | Wiki | Review |
-| ------------- | -------------- | ---- | ------ |
-| Title         | ✔              | ✔    | ✔      |
-| MPN           | ✔              | ✖    | ✖      |
-| Accessories   | ✖              | ✔    | ✔      |
-| Box contents  | ✖              | ✖    | ✔      |
-| Release lore  | ✖              | ✔    | ✔      |
+| Attribute     | Mattel Store | Official Store | Resale Marketplace | Wiki |
+| ------------- | ------------ | -------------- | ------------------ | ---- |
+| Title         | ✔            | ✔              | ✔                  | ✔    |
+| GTIN          | ✔            | ~              | ✖                  | ✖    |
+| MPN           | ✔            | ~              | ✖                  | ✖    |
+| Box contents  | ✖            | ✖              | ✖                  | ~    |
+| Accessories   | ✖            | ✖              | ✖                  | ✖    |
+| Description   | ✔            | ✔              | ✔                  | ✔    |
+| Market price  | ✔            | ✔              | ✔                  | ✖    |
+
+✔ always present · ✖ not available · ~ inconsistent
 
 Reliable catalogs must **combine multiple sources and enrich missing fields**.
 
@@ -157,12 +161,12 @@ flowchart TB
 
 ## Summary
 
-| Property              | Consequence                               |
-| --------------------- | ----------------------------------------- |
-| Distributed           | No single source of truth                 |
-| Inconsistent          | Same product has many representations     |
-| Incomplete            | Attributes must be merged across sources  |
-| Evolves over time     | Catalog requires continuous re-ingestion  |
+| Property          | Consequence                               | Monstrino approach              |
+| ----------------- | ----------------------------------------- | ------------------------------- |
+| Distributed       | No single source of truth                 | Multi-source ingestion          |
+| Inconsistent      | Same product has many representations     | Entity normalization            |
+| Incomplete        | Attributes must be merged across sources  | AI-powered enrichment           |
+| Evolves over time | Catalog requires continuous re-ingestion  | Scheduled re-ingestion          |
 
 **Monstrino** addresses these challenges through automated
 **data ingestion, enrichment, and normalization pipelines**,

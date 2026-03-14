@@ -36,8 +36,14 @@ It implements the infrastructure adapters, HTTP clients, DB configuration, sched
 monstrino_infra/
 ├── adapters/
 ├── api_clients/
+│   ├── catalog-api-client
+│   ├── source-1
+│   └── source-n
 ├── auth/
 ├── collectors/
+│   ├── source-1
+│   ├── source-2
+│   └── source-n
 ├── configs/
 ├── debug/
 ├── gateways/

@@ -1,0 +1,72 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="Page-1" id="ErwD0xOv5jIgNyZCsyLE">
+    <mxGraphModel dx="915" dy="146" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="exEWW-XP2_MnXOEYChhi-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;b&gt;monstrino-core&lt;/b&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(132, 132, 132);&quot;&gt;domain foundation&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="200" x="330" y="559" as="geometry" />
+        </mxCell>
+        <mxCell id="_ylI9bxuGQ2GDGLU9eUl-1" edge="1" parent="1" source="exEWW-XP2_MnXOEYChhi-2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;curved=0;" target="exEWW-XP2_MnXOEYChhi-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="260" y="640" />
+              <mxPoint x="380" y="640" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="exEWW-XP2_MnXOEYChhi-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;b&gt;monstrino-models&lt;/b&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(132, 132, 132);&quot;&gt;ORM + DTOs&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="130" x="195" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="exEWW-XP2_MnXOEYChhi-12" edge="1" parent="1" source="exEWW-XP2_MnXOEYChhi-3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;curved=0;" target="exEWW-XP2_MnXOEYChhi-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="exEWW-XP2_MnXOEYChhi-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;b&gt;monstrino-repositories&lt;/b&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(132, 132, 132);&quot;&gt;repositories, repositories interfaces,&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(132, 132, 132);&quot;&gt;repo factory, unit of work factory&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="207" x="156.5" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="exEWW-XP2_MnXOEYChhi-11" edge="1" parent="1" source="exEWW-XP2_MnXOEYChhi-4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;curved=0;" target="exEWW-XP2_MnXOEYChhi-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="585" y="640" />
+              <mxPoint x="480" y="640" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="exEWW-XP2_MnXOEYChhi-4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="&lt;b&gt;monstrino-api&lt;br&gt;&lt;/b&gt;&lt;font style=&quot;color: light-dark(rgb(132, 132, 132), rgb(132, 132, 132));&quot;&gt;HTTP layer&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="130" x="520" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="exEWW-XP2_MnXOEYChhi-13" edge="1" parent="1" source="exEWW-XP2_MnXOEYChhi-5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;curved=0;" target="exEWW-XP2_MnXOEYChhi-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="exEWW-XP2_MnXOEYChhi-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="&lt;b&gt;monstrino-contracts&lt;/b&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(132, 132, 132);&quot;&gt;shared API contracts sсhemas&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="203" x="483.5" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="exEWW-XP2_MnXOEYChhi-14" edge="1" parent="1" source="exEWW-XP2_MnXOEYChhi-6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;curved=0;" target="exEWW-XP2_MnXOEYChhi-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="exEWW-XP2_MnXOEYChhi-6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="&lt;b&gt;monstrino-infra&lt;/b&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(132, 132, 132);&quot;&gt;adapters, api clients,&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(132, 132, 132);&quot;&gt;&amp;nbsp;scrapers, scheduler&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="170" x="500" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="exEWW-XP2_MnXOEYChhi-15" edge="1" parent="1" source="exEWW-XP2_MnXOEYChhi-7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;curved=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="exEWW-XP2_MnXOEYChhi-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="exEWW-XP2_MnXOEYChhi-16" edge="1" parent="1" source="exEWW-XP2_MnXOEYChhi-7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;curved=0;" target="exEWW-XP2_MnXOEYChhi-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="260" y="992" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="exEWW-XP2_MnXOEYChhi-7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;gradientColor=#b3b3b3;" value="&lt;b&gt;monstrino-testing&lt;/b&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(132, 132, 132);&quot;&gt;data fixtures, DB fixtures&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="164" x="348" y="962" as="geometry" />
+        </mxCell>
+        <mxCell id="_ylI9bxuGQ2GDGLU9eUl-3" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="152" y="951" as="sourcePoint" />
+            <mxPoint x="707" y="954" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

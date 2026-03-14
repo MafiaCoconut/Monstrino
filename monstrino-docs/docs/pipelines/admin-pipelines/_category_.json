@@ -1,0 +1,10 @@
+{
+  "label": "Admin Pipelines",
+  "position": 3,
+  "collapsed": true,
+  "collapsible": true,
+  "link": {
+    "type": "doc",
+    "id": "pipelines/admin-pipelines/overview"
+  }
+}

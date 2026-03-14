@@ -18,10 +18,9 @@ Produced by `catalog-content-collector`.
 Contains everything the source exposes directly — nothing invented.
 
 ```python
-# ingest_item.parsed_payload → ReleaseParsedContentRef
 ReleaseParsedContentRef(
     title           = "Monster High Skulltimate Secrets Gore-Geous Oasis Playset, Jinafire Long Doll And Accessories",
-    description     = "Reveal a Monster High doll, unlock accessories ..."
+    description     = "Reveal a Monster High doll, unlock accessories ...",
     mpn             = "JDR52",
     gtin            = "0194735288892",
     year_raw        = "2025",
@@ -45,7 +44,7 @@ ReleaseParsedContentRef(
 ## Stage 2 — ingest_item.enriched_payload
 
 Produced by `catalog-data-enricher` (scripts + AI Orchestrator).
-All previously unknown attributes are now resolved.
+Previously unknown attributes are now resolved.
 
 This is the same `ReleaseParsedContentRef` type as `parsed_payload` —
 the difference is that the `None` fields are now filled. These are still
@@ -53,17 +52,16 @@ raw strings and lists, not domain objects. Resolver services have not
 run yet.
 
 ```python
-# ingest_item.enriched_payload → ReleaseParsedContentRef
 ReleaseParsedContentRef(
     title           = "Monster High Skulltimate Secrets Gore-Geous Oasis Playset, Jinafire Long Doll And Accessories",
-    description     = "Reveal a Monster High doll, unlock accessories ..."
+    description     = "Reveal a Monster High doll, unlock accessories ...",
     mpn             = "JDR52",
     gtin            = "0194735288892",
     year_raw        = "2025",
     images          = ["...", "..."],    
 
+    pets            = [],
     characters      = ["Jinafire Long"],
-    pets            = None, 
     gender          = ["ghoul"],
     series          = ["Skulltimate Secrets", "Destination: Gore-geous Oasis"],
     
@@ -142,7 +140,7 @@ Release(
     series=[
         Series(
             series_kind="line",
-            series_tags=[]
+            series_tags=[],
             name="Skulltimate Secrets",
             slug="skulltimate-secrets"
         ),
@@ -200,13 +198,13 @@ Release(
     ],
 
     media=ReleaseMedia(
-        primary_image=MediaAsset(original_url="...", hosted_url=None),
+        primary_image=MediaAsset(original_url="...", hosted_url=None), # hosted_url populated by media-ingest pipeline (async)
         gallery=[
-            MediaAsset(original_url="...", hosted_url=None),
-            MediaAsset(original_url="...", hosted_url=None),
-            MediaAsset(original_url="...", hosted_url=None),
-            MediaAsset(original_url="...", hosted_url=None),
-            MediaAsset(original_url="...", hosted_url=None),
+            MediaAsset(original_url="...", hosted_url=None), # hosted_url populated by media-ingest pipeline (async)
+            MediaAsset(original_url="...", hosted_url=None), # hosted_url populated by media-ingest pipeline (async)
+            MediaAsset(original_url="...", hosted_url=None), # hosted_url populated by media-ingest pipeline (async)
+            MediaAsset(original_url="...", hosted_url=None), # hosted_url populated by media-ingest pipeline (async)
+            MediaAsset(original_url="...", hosted_url=None), # hosted_url populated by media-ingest pipeline (async)
         ],
     ),
 )
