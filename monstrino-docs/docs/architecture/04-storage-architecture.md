@@ -29,7 +29,7 @@ Monstrino currently uses the following storage technologies:
 | Storage | Technology | Purpose |
 |-------|-------|-------|
 | Relational database | PostgreSQL | primary structured data storage |
-| Object storage | S3 compatible | media assets |
+| Object storage | S3 compatible | media assets, source payload snapshots |
 | Event streaming | Kafka | processing events |
 | Cache | Redis | API response caching |
 
@@ -84,22 +84,68 @@ This schema provides shared reference values used by other schemas.
 
 ---
 
-### Ingestion Storage
+### Ingestion (Cross-Cutting Technical Infrastructure)
 
-Stores raw and parsed data collected from external sources before normalization.
+The `ingest` schema is reserved for **cross-cutting technical infrastructure** shared across pipelines.
 
 Typical stored data includes:
 
-- raw scraped data
-- parsed entities
-- temporary ingestion results
+- outbox events
+- worker leases
+- scheduler bookkeeping
+- dead-letter records
 
-External sources include:
+The `ingest` schema does **not** store operational pipeline tables such as `source_discovered_entry`, `source_payload_snapshot`, `ingest_item`, or `ingest_item_step` — these belong in the `catalog` schema alongside canonical catalog entities.
 
-- official Mattel websites
-- Monster High Fandom wiki
+---
 
-The ingestion layer acts as the **entry point of the data pipeline**.
+### Catalog Pipeline Operational Tables
+
+All catalog pipeline lifecycle objects live in the **`catalog` schema** alongside canonical entities.
+
+These objects include:
+
+- `source_discovered_entry` — records of discovered release candidates
+- `source_payload_snapshot` — raw source payloads fetched by the collector
+- `ingest_item` — normalized work unit with `parsed_payload` and `enriched_payload`
+- `ingest_item_step` — tracks stage progression through the enrichment pipeline
+
+This co-location reflects the fact that the pipeline is a domain-internal concern of the catalog domain, not a separate technical layer.
+
+---
+
+### AI Domain
+
+Stores AI pipeline execution state for all AI jobs.
+
+Tables include:
+
+- `ai_job` — top-level job record per enrichment request
+- `ai_text_job` / `ai_image_job` — modality-specific job records
+- `ai_job_model_call` — individual LLM/model call records
+- `ai_job_action_log` — action-level execution log
+- `ai_job_status_history` — status transition log
+- `ai_job_intake_log` — intake validation log
+- `ai_job_dispatch` — dispatch state for result delivery
+
+The `ai` schema is **entirely private to the AI pipeline**. No other domain accesses these tables directly. Coordination with the catalog pipeline happens exclusively through Kafka.
+
+---
+
+### Admin Domain
+
+Stores admin alert and review workflow records.
+
+Tables include:
+
+- `admin_alert` — materialized admin alert
+- `admin_alert_delivery` — delivery state per alert
+- `admin_alert_suppression_rule` — suppression rules for deduplication
+- `admin_review_request` — review request records requiring human decision
+- `admin_review_option` — available decision options per request
+- `admin_review_response` — human decision responses
+- `admin_review_dispatch` — dispatch state for decision propagation
+- `admin_review_application` — application status of applied decisions
 
 ---
 
@@ -150,6 +196,7 @@ The object storage contains:
 - normalized images
 - resized variants
 - optimized web formats
+- source payload snapshots (raw payloads collected from external sources)
 
 Images are processed by the **media-normalizator service** before being stored.
 
@@ -183,15 +230,26 @@ All processed images remain linked to the same internal media asset identifier.
 
 Monstrino uses **Kafka** for asynchronous communication between ingestion and processing pipelines.
 
-Typical events include:
+Kafka is used across multiple platform pipelines:
 
-- new media detected
-- image ready for processing
-- pipeline stage completed
+**Media ingestion**
+- `catalog-importer` → `media-rehosting-subscriber`: new image events triggering media ingestion
 
-These events trigger downstream services such as the media ingestion pipeline.
+**AI enrichment**
+- `catalog-data-enricher` → `ai-intake-service`: `ai.job.requested`
+- `ai-intake-service`: `ai.job.requested.dlq` (dead-letter)
+- `ai-job-dispatcher-service` → `catalog-data-enricher`: `catalog-enricher.attribute-result`
 
-Event-driven processing will be expanded in future platform versions.
+**Admin alert pipeline**
+- `admin.alert.required`
+- `admin.message.dispatch.required`
+- `admin.message.dispatch.completed`
+
+**Admin review pipeline**
+- `admin.review.required`
+- `admin.review.decision.submit`
+- `admin.review.decided`
+- `admin.review.applied`
 
 ---
 

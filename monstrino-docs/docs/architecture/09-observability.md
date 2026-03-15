@@ -159,18 +159,27 @@ It is a deliberate design choice to embed observability into the domain workflow
 
 ## Processing States
 
-Across Monstrino pipelines, the following processing states are used:
+Processing states differ per pipeline object. Each domain uses its own state machine appropriate to its role.
 
-- `init`
-- `claimed`
-- `ready-to-import`
-- `failed`
-- `required-admin`
-- `imported`
+**`ingest_item_step` (catalog enrichment stage)**
+- `pending` — step created, not yet claimed
+- `claimed_for_enrichment` — worker has claimed the step
+- `running_enrichment` — enrichment in progress
+- `completed` — enrichment finished, next step created
 
-These states are used across all major processing flows.
+**Media ingestion jobs**
+- `init` → `claimed` → `processing` → `completed` / `failed`
 
-Because they are visible directly in the database, they provide immediate insight into system behavior even without dedicated dashboards.
+**AI pipeline — orchestration axis (`ai_job`)**
+- `pending` → `running` → `completed` / `no_result` / `failed`
+
+**AI pipeline — dispatch axis**
+- `pending_dispatch` → `dispatched` / `dispatch_failed`
+
+**AI pipeline — modality job axis (`ai_text_job` / `ai_image_job`)**
+- `pending` → `picked_up` → `running` → `completed` / `failed`
+
+Because these states are stored in the database, SQL queries are a first-line tool for inspecting pipeline health across all of these objects.
 
 ---
 
@@ -246,6 +255,12 @@ Alerting in Monstrino should focus on situations that require real human action.
 
 The purpose of alerting is not to report every unusual condition.  
 It is to surface the specific cases where a person must intervene or where operational action is required.
+
+## Admin Alert Pipeline as an Observability Mechanism
+
+The admin alert pipeline (`platform-alerting-service` → `admin-alert-service` → `admin-telegram-gateway`) is itself a platform-level observability mechanism. Pipeline services call `platform-alerting-service` via HTTP when a failure or review-required condition occurs. The alert is materialized, delivered through Telegram, and tracked for confirmation.
+
+This means operational failures surface to the operator in near real-time without requiring manual log inspection or dashboard monitoring. The admin pipeline is therefore part of the observability architecture, not just an operational tool.
 
 ## What Should Trigger Alerts
 

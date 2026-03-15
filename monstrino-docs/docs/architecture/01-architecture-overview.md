@@ -107,7 +107,7 @@ The architecture is shaped by a few explicit priorities:
 :::
 
 ### Architecture Diagram
-![](/img/architecture/architecture-overview-new.jpg)
+![](/img/architecture/architecture-overview-v5.jpg)
 
 
 
@@ -119,7 +119,7 @@ The architecture follows a staged pipeline model with clear responsibility bound
 |-------|-----------|----------------|
 | **Discovery** | `catalog-source-discovery` | source pages → `source_discovered_entry` |
 | **Collection** | `catalog-content-collector` | eligible entries → `ingest_item` with `parsed_payload` |
-| **Enrichment** | `catalog-data-enricher` + `ai-orchestrator` | `parsed_payload` → `enriched_payload` |
+| **Enrichment** | `catalog-data-enricher` + `ai-intake-service` + `ai-orchestrator` + `ai-job-dispatcher-service` | `ingest_item_step` (enrichment) → `enriched_payload` |
 | **Import** | `catalog-importer` | `enriched_payload` → canonical catalog entities + Kafka events |
 | **Media** | media services | Kafka events → stored & normalized image variants |
 | **Delivery** | `public-api-service` → API services | canonical data → UI-ready DTOs |
@@ -134,8 +134,10 @@ The architecture follows a staged pipeline model with clear responsibility bound
 
 ### Enrichment and Processing
 
-- `catalog-data-enricher` - **In Progress**. Processes each `ingest_item` through an attribute resolution loop — built-in scripts first; for unresolved attributes, delegates to `ai-orchestrator` via the `enrichment_job` table state machine. Persists the final result to `ingest_item.enriched_payload` after all attributes are settled.
-- `ai-orchestrator` - **In Progress**. Executes AI workflows for individual catalog attributes. Coordinates with `catalog-data-enricher` exclusively through the `enrichment_job` table state machine — not through direct service calls.
+- `catalog-data-enricher` - **In Progress**. Processes each `ingest_item` through `ingest_item_step` records — built-in scripts first; for unresolved attributes, publishes `ai.job.requested` to Kafka and waits for results on the `catalog-enricher.attribute-result` topic. Persists the final result to `ingest_item.enriched_payload` after all attributes are settled.
+- `ai-intake-service` - **In Progress**. Consumes `ai.job.requested` Kafka events, validates them, and creates internal `ai_job` + modality records (`ai_text_job` / `ai_image_job`) in the `ai` schema.
+- `ai-orchestrator` - **In Progress**. Claims and executes AI workflows against modality job records. Uses `SELECT FOR UPDATE SKIP LOCKED` for concurrency. No shared tables with the catalog pipeline — all coordination is via internal `ai` schema state.
+- `ai-job-dispatcher-service` - **In Progress**. Picks up completed AI jobs and publishes results back to `catalog-enricher.attribute-result` Kafka topic. No direct API calls to catalog services.
 - `catalog-importer` - **Ready**. Reads `ingest_item.enriched_payload`, resolves canonical releases by MPN, synchronizes domain relations, and publishes media events to Kafka.
 
 ### Media
@@ -149,6 +151,14 @@ The architecture follows a staged pipeline model with clear responsibility bound
 - `catalog-api-service` - **Ready**. Internal read API for catalog domain data.
 - `market-api-service` - **Planned**. Internal read API for market and pricing data.
 - `public-api-service` - **Ready**. Single external-facing facade for the frontend.
+
+### Admin and Alerting
+
+- `platform-alerting-service` - **In Progress**. Receives alert requests from pipeline services (via HTTP API) on failures or review-required conditions, and forwards them into the admin pipeline.
+- `admin-alert-service` - **In Progress**. Materializes admin alerts, manages delivery state, and publishes dispatch events to Kafka.
+- `admin-telegram-gateway` - **In Progress**. Consumes dispatch events and sends notifications to Telegram. Publishes delivery confirmations back to Kafka. Initiates outbound connections to an external system (Telegram).
+- `admin-review-service` - **In Progress**. Stores and manages admin review requests and decisions.
+- `admin-api-service` - **In Progress**. Unified admin-facing read API; publishes review decision commands to Kafka.
 
 ### Internal Tooling
 
@@ -194,7 +204,7 @@ Additional supporting models are used for enrichment, exclusivity, external refe
 ### Pipeline summary
 
 1. **Acquisition** - `catalog-source-discovery` scans country-specific source surfaces, applies domain rules, and persists `source_discovered_entry` records. `catalog-content-collector` claims eligible entries, fetches source payloads, stores snapshots, and creates `ingest_item` work units with a structured `parsed_payload`.
-2. **Enrichment** - `catalog-data-enricher` processes each `ingest_item` through an attribute resolution loop — built-in scripts first, with unresolved attributes delegated to `ai-orchestrator` via the `enrichment_job` table state machine. After all attributes are settled the final model is persisted to `ingest_item.enriched_payload`.
+2. **Enrichment** - `catalog-data-enricher` claims an `ingest_item_step`, processes each attribute through built-in scripts first. For unresolved attributes it publishes `ai.job.requested` to Kafka. `ai-intake-service` creates internal AI jobs; `ai-orchestrator` executes them; `ai-job-dispatcher-service` publishes results back via the `catalog-enricher.attribute-result` topic. There are no shared tables between the catalog pipeline and the AI domain. After all attributes are settled the final model is persisted to `ingest_item.enriched_payload`.
 3. **Domain import** - `catalog-importer` reads `ingest_item.enriched_payload`, resolves canonical releases by MPN, synchronizes domain relations, and writes normalized domain entities into the canonical catalog schema.
 4. **Media handoff** - media-related work can be emitted for downstream handling. Kafka is planned as the transport for transient media processing events.
 5. **Media rehosting and attachment** - `media-rehosting-service` stores original images in object storage and creates corresponding media asset and attachment records.
@@ -249,13 +259,15 @@ Monstrino currently uses two PostgreSQL instances:
 
 Within PostgreSQL, the data is logically separated into multiple schemas:
 
-- `catalog`
-- `core`
-- `ingest`
-- `media`
-- `market`
+- `catalog` — canonical domain entities (releases, characters, pets, series) **and** all catalog pipeline operational tables (`source_discovered_entry`, `source_payload_snapshot`, `ingest_item`, `ingest_item_step`)
+- `core` — shared reference data (countries, currencies, source types)
+- `ingest` — cross-cutting technical infrastructure (outbox events, worker leases, scheduler bookkeeping, dead-letter records); not for operational pipeline tables
+- `media` — media asset metadata and ingestion job records
+- `market` — price observations and market references
+- `ai` — AI pipeline state (`ai_job`, `ai_text_job`, `ai_image_job`, `ai_job_model_call`, `ai_job_action_log`, and related log/dispatch tables)
+- `admin` — admin alert and review records
 
-This schema split reflects responsibility boundaries in the system and keeps parsed data, normalized domain data, media metadata, and market observations distinct.
+This schema split reflects responsibility boundaries in the system and keeps parsed data, normalized domain data, media metadata, market observations, AI execution state, and admin workflow data distinct.
 
 ### Object storage
 
@@ -289,7 +301,7 @@ The system is designed to remain operable on modest self-hosted infrastructure w
 - Bearer tokens are used for protection
 - `monstrino-api` standardizes API setup across services
 - `monstrino-contracts` defines shared service contracts and helps prevent schema drift
-- Kafka is part of the planned architecture for transient inter-service payloads where direct API calls or direct storage are not the right fit
+- Kafka is used for asynchronous inter-service communication: media ingestion events, AI enrichment requests/results (`ai.job.requested`, `catalog-enricher.attribute-result`), and admin pipeline events (alert dispatch, review decisions)
 
 ### External access boundary
 
@@ -376,7 +388,7 @@ The current architecture is designed to support future additions without radical
 
 - second-hand market data ingestion
 - full activation of Kafka-based event flow where appropriate
-- completion of the enrichment pipeline through `catalog-data-enricher` and `ai-orchestrator`
+- completion of the enrichment pipeline through `catalog-data-enricher`, `ai-intake-service`, `ai-orchestrator`, and `ai-job-dispatcher-service`
 - completion of the media subsystem, including media delivery APIs
 - implementation of `market-api-service`
 - possible separation of test and production into different Kubernetes clusters

@@ -346,7 +346,7 @@ All catalog lookups follow a consistent request envelope:
 }
 ```
 
-Filters are route-specific. See [catalog-api-service](../../services/catalog-api-service.md)
+Filters are route-specific. See [catalog-api-service](../../services/catalog/catalog-api-service.md)
 for the full filter contracts per route.
 
 ### Standard response envelope

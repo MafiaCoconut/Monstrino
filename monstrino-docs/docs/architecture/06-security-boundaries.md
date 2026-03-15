@@ -176,14 +176,21 @@ Its role is limited to caching responses for UI-related traffic.
 
 ## Kafka Boundary
 
-Kafka is currently used only by specific internal processing services.
+Kafka is used by multiple internal processing services across several pipelines.
 
-At the moment, the main participating services are:
+Participating services:
 
-- **catalog-importer**
-- **media-rehosting-subscriber**
+- **catalog-importer** — publishes media image events
+- **media-rehosting-subscriber** — consumes media image events
+- **catalog-data-enricher** — publishes `ai.job.requested`, consumes `catalog-enricher.attribute-result`
+- **ai-intake-service** — consumes `ai.job.requested`
+- **ai-job-dispatcher-service** — publishes `catalog-enricher.attribute-result`
+- **admin-alert-service** — publishes/consumes admin alert and dispatch topics
+- **admin-telegram-gateway** — consumes dispatch events, publishes delivery confirmations
+- **admin-review-service** — publishes/consumes admin review topics
+- **admin-api-service** — publishes review decision commands
 
-Kafka is therefore part of the internal pipeline boundary, not the public request path.
+Kafka is part of the internal pipeline boundary, not the public request path.
 
 ---
 
@@ -198,26 +205,27 @@ Externally exposed components include:
 - media.monstrino.com
 - collector services that intentionally communicate with external platforms
 
-Collector services form a special boundary because they initiate outbound communication to external sources.
+Collector services and the Telegram gateway form a special boundary because they initiate outbound communication to external systems.
 
-Typical external sources include:
+Typical external targets include:
 
-- official product websites
-- community-maintained data sources
+- official product websites (collector services)
+- community-maintained data sources (collector services)
+- Telegram API (`admin-telegram-gateway` — dispatches operational notifications)
 
-<Admonition type="warning" title="Outbound Collectors">
-Collector services are internal components, but they interact with untrusted external systems. They should be treated as boundary-crossing services.
+<Admonition type="warning" title="Outbound Services">
+Collector services and `admin-telegram-gateway` are internal components, but they interact with untrusted external systems. They should be treated as boundary-crossing services.
 </Admonition>
 
 ---
 
-# Trust Boundary Diagram
+<!-- # Trust Boundary Diagram
 
 The following diagram illustrates the main trust boundaries of the platform.
 
 ![TrustBoundaryDiagram](/img/architecture/trust-boundary-diagram.jpg)
 
----
+--- -->
 
 # Boundary Rules
 

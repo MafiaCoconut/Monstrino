@@ -237,19 +237,52 @@ Typical internal services include:
 
 # Event Communication
 
-Monstrino uses **Kafka** for event-driven communication.
+Monstrino uses **Kafka** for event-driven communication across multiple pipelines.
 
-Currently Kafka is primarily used for the **media ingestion pipeline**.
-
-Example:
+## Media ingestion
 
 ```mermaid
 flowchart LR
-    CatalogIngestion -->|New Image Event| Kafka
-    Kafka --> MediaPipeline
+    catalog-importer -->|image event| Kafka
+    Kafka --> media-rehosting-subscriber
 ```
 
-This mechanism allows newly discovered images to be processed asynchronously.
+`catalog-importer` publishes image events after writing canonical entities. `media-rehosting-subscriber` consumes them to create media ingestion jobs.
+
+## AI enrichment
+
+```mermaid
+flowchart LR
+    catalog-data-enricher -->|ai.job.requested| Kafka
+    Kafka --> ai-intake-service
+    ai-job-dispatcher-service -->|catalog-enricher.attribute-result| Kafka
+    Kafka --> catalog-data-enricher
+```
+
+`catalog-data-enricher` delegates unresolved attributes to the AI pipeline via Kafka. Results are returned through a dedicated result topic. There are no shared database tables between the catalog pipeline and the AI domain.
+
+## Admin alert pipeline
+
+```mermaid
+flowchart LR
+    pipeline-services -->|admin.alert.required| Kafka
+    Kafka --> admin-alert-service
+    admin-alert-service -->|admin.message.dispatch.required| Kafka
+    Kafka --> admin-telegram-gateway
+    admin-telegram-gateway -->|admin.message.dispatch.completed| Kafka
+```
+
+## Admin review pipeline
+
+```mermaid
+flowchart LR
+    admin-alert-service -->|admin.review.required| Kafka
+    Kafka --> admin-review-service
+    admin-api-service -->|admin.review.decision.submit| Kafka
+    Kafka --> admin-review-service
+    admin-review-service -->|admin.review.decided| Kafka
+    admin-review-service -->|admin.review.applied| Kafka
+```
 
 ---
 

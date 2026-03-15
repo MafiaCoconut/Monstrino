@@ -1,4 +1,5 @@
 import React, { type ReactNode, useState, useCallback, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import styles from './ImageLightbox.module.css';
 
 interface ImageLightboxProps {
@@ -19,7 +20,7 @@ interface ImageLightboxProps {
 }
 
 const MIN_SCALE = 0.1;
-const MAX_SCALE = 5;
+const MAX_SCALE = 10;
 const SCALE_STEP = 0.25;
 
 const CLOSE_BTN_HEIGHT = 125; // navbar (~60px) + offset (12px) + btn (44px) + gap (8px)
@@ -149,7 +150,7 @@ export default function ImageLightbox({
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     dragging.current = true;
     lastPos.current = { x: e.clientX, y: e.clientY };
-    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   }, []);
 
   const onPointerMove = useCallback((e: React.PointerEvent) => {
@@ -185,22 +186,39 @@ export default function ImageLightbox({
       {/* Trigger image */}
       {(() => {
         const lightboxDisabled = disableLightboxOnMobile && isMobile;
+        if (lightboxDisabled) {
+          return (
+            <img
+              src={activeSrc}
+              alt={alt}
+              className={className ?? ''}
+              style={style}
+            />
+          );
+        }
+
         return (
-          <img
-            src={activeSrc}
-            alt={alt}
-            className={`${lightboxDisabled ? '' : styles.trigger} ${className ?? ''}`}
-            style={style}
-            onClick={lightboxDisabled ? undefined : openLightbox}
-            role={lightboxDisabled ? undefined : 'button'}
-            tabIndex={lightboxDisabled ? undefined : 0}
-            onKeyDown={lightboxDisabled ? undefined : (e) => e.key === 'Enter' && openLightbox()}
-          />
+          <div
+            className={styles.trigger}
+            onClick={openLightbox}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Enter' && openLightbox()}
+            title="Click to zoom"
+          >
+            <img
+              src={activeSrc}
+              alt={alt}
+              className={className ?? ''}
+              style={style}
+            />
+            <span className={styles.expandHint}>⤢</span>
+          </div>
         );
       })()}
 
       {/* Lightbox overlay */}
-      {open && (
+      {open && typeof document !== 'undefined' && createPortal(
         <div className={styles.overlay} onClick={closeLightbox}>
           {/* Close */}
           <button
@@ -210,6 +228,15 @@ export default function ImageLightbox({
           >
             ✕
           </button>
+
+          {/* Keyboard shortcuts hint */}
+          <div className={styles.shortcutsHint} onClick={(e) => e.stopPropagation()}>
+            <span><kbd>scroll</kbd> zoom</span>
+            <span><kbd>drag</kbd> pan</span>
+            <span><kbd>+</kbd><kbd>−</kbd> zoom</span>
+            <span><kbd>0</kbd> fit</span>
+            <span><kbd>Esc</kbd> close</span>
+          </div>
 
           {/* Image */}
           <div
@@ -245,7 +272,8 @@ export default function ImageLightbox({
               ⊡
             </button>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );

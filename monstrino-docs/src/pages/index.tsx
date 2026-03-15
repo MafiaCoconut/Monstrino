@@ -260,8 +260,8 @@ export default function Home(): JSX.Element {
 
           <div className={styles.archDiagram}>
             <ImageLightbox
-              src={useBaseUrl("/img/architecture/architecture-overview-new.jpg")}
-              mobileSrc={useBaseUrl("/img/architecture/architecture-overview-new.jpg")}
+              src={useBaseUrl("/img/architecture/architecture-overview-mini-v5.jpg")}
+              mobileSrc={useBaseUrl("/img/architecture/architecture-overview-mini-v5.jpg")}
               alt="Monstrino Architecture Diagram"
               className={styles.archImage}
               disableLightboxOnMobile
@@ -279,95 +279,70 @@ export default function Home(): JSX.Element {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Project at a Glance</h2>
 
-          <div className={styles.statsRow}>
+          <div className={styles.statsBar}>
 
-            {/* Catalog Scope */}
-
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>12+</span>
-              <span className={styles.statLabel}>Data Sources</span>
+            <div className={styles.statsBarGroup}>
+              <div className={styles.statsBarGroupLabel}>Catalog</div>
+              <div className={styles.statsBarItems}>
+                <div className={styles.statsBarItem}>
+                  <span className={styles.statsBarNumber}>1,000+</span>
+                  <span className={styles.statsBarItemLabel}>Catalog Entities</span>
+                </div>
+                <div className={styles.statsBarItem}>
+                  <span className={styles.statsBarNumber}>4</span>
+                  <span className={styles.statsBarItemLabel}>Entity Types</span>
+                </div>
+              </div>
             </div>
 
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>10k+</span>
-              <span className={styles.statLabel}>Catalog Records</span>
+            <div className={styles.statsBarGroup}>
+              <div className={styles.statsBarGroupLabel}>Data Collection</div>
+              <div className={styles.statsBarItems}>
+                <div className={styles.statsBarItem}>
+                  <span className={styles.statsBarNumber}>35+</span>
+                  <span className={styles.statsBarItemLabel}>Integrations</span>
+                </div>
+                <div className={styles.statsBarItem}>
+                  <span className={styles.statsBarNumber}>20</span>
+                  <span className={styles.statsBarItemLabel}>Countries</span>
+                </div>
+                <div className={styles.statsBarItem}>
+                  <span className={styles.statsBarNumber}>4</span>
+                  <span className={styles.statsBarItemLabel}>Source Types</span>
+                </div>
+              </div>
             </div>
 
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>4</span>
-              <span className={styles.statLabel}>Source Types</span>
+            <div className={styles.statsBarGroup}>
+              <div className={styles.statsBarGroupLabel}>Platform</div>
+              <div className={styles.statsBarItems}>
+                <div className={styles.statsBarItem}>
+                  <span className={styles.statsBarNumber}>20+</span>
+                  <span className={styles.statsBarItemLabel}>Microservices</span>
+                </div>
+                <div className={styles.statsBarItem}>
+                  <span className={styles.statsBarNumber}>7</span>
+                  <span className={styles.statsBarItemLabel}>Packages</span>
+                </div>
+                <div className={styles.statsBarItem}>
+                  <span className={styles.statsBarNumber}>7</span>
+                  <span className={styles.statsBarItemLabel}>DB Schemas</span>
+                </div>
+              </div>
             </div>
 
-            {/* Platform Architecture */}
-{/* 
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>9</span>
-              <span className={styles.statLabel}>Microservices</span>
+            <div className={styles.statsBarGroup}>
+              <div className={styles.statsBarGroupLabel}>AI</div>
+              <div className={styles.statsBarItems}>
+                <div className={styles.statsBarItem}>
+                  <span className={styles.statsBarNumber}>10+</span>
+                  <span className={styles.statsBarItemLabel}>AI Scenarios</span>
+                </div>
+              </div>
             </div>
-
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>5+</span>
-              <span className={styles.statLabel}>Data Pipelines</span>
-            </div>
-
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>30+</span>
-              <span className={styles.statLabel}>Tables</span>
-            </div>
-
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>7</span>
-              <span className={styles.statLabel}>Internal Packages</span>
-            </div>
-
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>5</span>
-              <span className={styles.statLabel}>DB Schemas</span>
-            </div>
-
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>2</span>
-              <span className={styles.statLabel}>Storage Systems</span>
-            </div>
-
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>1</span>
-              <span className={styles.statLabel}>Public API Facade</span>
-            </div>
-
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>3</span>
-              <span className={styles.statLabel}>Active Source Families</span>
-            </div>
-
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>3</span>
-              <span className={styles.statLabel}>Data States</span>
-            </div>
-
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>4</span>
-              <span className={styles.statLabel}>Canonical Entity Types</span>
-            </div>
-
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>4</span>
-              <span className={styles.statLabel}>AI Enrichment Scenarios</span>
-            </div>
-
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>5</span>
-              <span className={styles.statLabel}>Ingestion Stages</span>
-            </div>
-
-            <div className={styles.statCard}>
-              <span className={styles.statNumber}>2</span>
-              <span className={styles.statLabel}>Internal AI Services</span>
-            </div> */}
 
           </div>
         </section>
-
 
         {/* QUICK LINKS */}
         <section className={styles.section}>

@@ -2,15 +2,42 @@
 /* ImageLightbox – reusable component */
 /* ================================== */
 
-/* ---------- Trigger image ---------- */
+/* ---------- Inline trigger ---------- */
 .trigger {
+  position: relative;
+  display: inline-block;
+  width: 100%;
   cursor: zoom-in;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: box-shadow 0.2s ease;
+  border-radius: 8px;
 }
 
 .trigger:hover {
-  transform: scale(1.02);
-  box-shadow: 0 8px 28px rgba(255, 44, 168, 0.25);
+  box-shadow: 0 4px 20px rgba(255, 44, 168, 0.18);
+}
+
+.expandHint {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: rgba(30, 30, 36, 0.75);
+  border: 1px solid rgba(255, 44, 168, 0.3);
+  color: #bbb;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+  user-select: none;
+}
+
+.trigger:hover .expandHint {
+  opacity: 1;
 }
 
 /* ---------- Overlay ---------- */
@@ -89,6 +116,45 @@
   min-width: 42px;
   justify-content: center;
   user-select: none;
+}
+
+/* ---------- Keyboard shortcuts hint ---------- */
+.shortcutsHint {
+  position: absolute;
+  top: calc(var(--ifm-navbar-height, 3.75rem) + 0.75rem + 44px + 0.75rem);
+  right: 1rem;
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  background: rgba(30, 30, 36, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+}
+
+.shortcutsHint span {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #999;
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.shortcutsHint kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  padding: 0.05rem 0.3rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #ccc;
+  font-size: 0.68rem;
+  font-family: var(--ifm-font-family-monospace, monospace);
+  line-height: 1.5;
 }
 
 /* ---------- Image wrapper ---------- */

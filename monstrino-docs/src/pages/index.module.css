@@ -229,7 +229,64 @@
 }
 
 /* ---------------------------------- */
-/* PROJECT STATS */
+/* PROJECT STATS BAR */
+.statsBar {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1.5fr 0.8fr;
+  background: var(--monstrino-stat-card-bg);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 44, 168, 0.2);
+  overflow: hidden;
+}
+
+.statsBarGroup {
+  padding: 1.75rem 2rem;
+  border-right: 1px solid rgba(255, 44, 168, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.statsBarGroup:last-child {
+  border-right: none;
+}
+
+.statsBarGroupLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  color: #ff2ca8;
+}
+
+.statsBarItems {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.statsBarItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.statsBarNumber {
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(135deg, #ff2ca8, #8c3bff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.statsBarItemLabel {
+  font-size: 0.78rem;
+  color: var(--monstrino-text-muted);
+  white-space: nowrap;
+}
+
+/* legacy - kept for potential reuse */
 .statsRow {
   display: flex;
   justify-content: center;
@@ -281,7 +338,7 @@
 
 .archImage {
   width: 100%;
-  max-width: 720px;
+  max-width: 920px;
   border-radius: 16px;
 }
 
@@ -391,6 +448,20 @@
 
   .problemsGrid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .statsBar {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .statsBarGroup {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 44, 168, 0.12);
+    padding: 1.25rem 1.5rem;
+  }
+
+  .statsBarGroup:last-child {
+    border-bottom: none;
   }
 
   .statsRow {

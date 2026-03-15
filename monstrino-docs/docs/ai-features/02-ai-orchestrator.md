@@ -87,7 +87,7 @@ flowchart LR
 The AI Client knows nothing about business rules. The Use Case is where all
 scenario intelligence lives.
 
-![Internal execution flow](/img/ai-features/ai-orchestrator-internal-execution-flow.jpg)
+<!-- ![Internal execution flow](/img/ai-features/ai-orchestrator-internal-execution-flow.jpg) -->
 
 ---
 
@@ -160,8 +160,6 @@ continues the loop. All side effects remain in deterministic backend code.
 
 A maximum of **4 action calls** are permitted per job. Exceeding this sets
 `failure_code = max_steps_exceeded`.
-
-![Multi-step command loop](/img/ai-features/ai-orchestrator-multi-step-command-loop.jpg)
 
 ---
 

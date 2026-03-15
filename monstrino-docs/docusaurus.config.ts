@@ -135,6 +135,11 @@ const config: Config = {
         {to: 'dev-notes/intro', label: 'Dev Notes', position: 'left'},
         // {to: '/blog', label: 'Blog', position: 'left'},
         {
+          href: 'https://monstrino.com',
+          label: 'Monstrino',
+          position: 'right',
+        },
+        {
           href: 'https://github.com/MafiaCoconut/Monstrino',
           label: 'GitHub',
           position: 'right',
