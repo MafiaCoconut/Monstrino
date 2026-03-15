@@ -113,8 +113,8 @@ flowchart LR
     Series["Series"]
 
     Character --> Release
-    Release --> Pet
-    Release --> Series
+    Pet --> Release
+    Series --> Release
 ```
 
 - all releases belonging to a character
@@ -125,12 +125,13 @@ flowchart LR
 
 ## How It Addresses Each Problem
 
-| Ecosystem Problem              | Monstrino Solution                      |
-| ------------------------------ | --------------------------------------- |
-| Fragmented sources             | Automated ingestion pipelines           |
-| Inconsistent product names     | Normalization into canonical entities   |
-| Incomplete metadata            | Enrichment from multiple sources        |
-| Evolving information           | Continuous pipeline updates             |
+| Ecosystem Problem              | Monstrino Solution                                  |
+| ------------------------------ | --------------------------------------------------- |
+| Fragmented sources             | Automated ingestion pipelines                       |
+| Inconsistent product names     | Normalization into canonical entities               |
+| Missing package contents       | AI enrichment from reviews, blogs, community sources|
+| No aggregated pricing          | Multi-platform price ingestion and aggregation      |
+| Evolving information           | Continuous pipeline updates                         |
 
 ---
 

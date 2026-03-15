@@ -56,10 +56,9 @@ flowchart TD
 
     M --> N[catalog-data-enricher]
     N --> N1[Scripts resolve attributes]
-    N1 -->|unresolved| N2[enrichment_job table]
-    N2 --> N3[ai-orchestrator picks job]
-    N3 --> N2
-    N2 -->|result| N1
+    N1 -->|unresolved| N2[Publish ai.job.requested\nto Kafka]
+    N2 --> N3[AI pipeline\nai-intake / ai-orchestrator\nai-job-dispatcher]
+    N3 -->|result via Kafka| N1
     N1 --> N4[ingest_item.enriched_payload]
 
     N4 --> O[catalog-importer]
@@ -98,8 +97,10 @@ The redesigned model separates the lifecycle into explicit objects:
   by the enricher after all attributes are processed)
 - `ingest_item_step` — the work unit progressed through explicit
   processing stages with tracked status transitions
-- `ai_orchestrator.enrichment_job` — a delegated AI enrichment task for
-  one attribute, coordinated entirely through its own state machine
+- `ai.ai_job` — an internal AI job created by `ai-intake-service` after
+  `catalog-data-enricher` publishes `ai.job.requested` to Kafka; result is
+  delivered back to the enricher via the `catalog-enricher.attribute-result`
+  Kafka topic
 - canonical catalog tables — the final normalized catalog state
 
 ## Core Architectural Principle
@@ -269,7 +270,7 @@ flowchart TD
     EN --> EN1[Read parsed_payload<br/>Deserialize → ReleaseParsedContentRef]
     EN1 --> EN2[Per-attribute: run script]
     EN2 -->|resolved| EN4[Write value into model]
-    EN2 -->|unresolved| EN3[Create enrichment_job<br/>AI Orchestrator processes via state machine]
+    EN2 -->|unresolved| EN3[Publish ai.job.requested to Kafka<br/>AI pipeline returns result via Kafka]
     EN3 --> EN4
     EN4 --> EN5{All attributes done?}
     EN5 -- No --> EN2
@@ -381,11 +382,12 @@ catalog.ingest_item_step
 deserializing it into a `ReleaseParsedContentRef` model.
 
 For each attribute the enricher first attempts resolution via built-in
-scripts. If the script cannot resolve the attribute, it creates an
-`enrichment_job` record in `ai_orchestrator.enrichment_job` with
-`status = pending_ai_processing`. The AI Orchestrator independently picks
-up the job, runs the AI workflow, and writes the result back to the table.
-The enricher reads the result and evaluates it through the same validation
+scripts. If the script cannot resolve the attribute, it publishes
+`ai.job.requested` to Kafka and continues processing other attributes. The
+AI pipeline — `ai-intake-service`, `ai-orchestrator`, and
+`ai-job-dispatcher-service` — handles execution independently and returns
+the result via the `catalog-enricher.attribute-result` Kafka topic. The
+enricher consumes the result and evaluates it through the same validation
 and policy pipeline as script-resolved values.
 
 After all attributes are settled, the enricher persists the final model
@@ -415,7 +417,7 @@ flowchart TD
     E --> F[ingest_item.parsed_payload]
     F --> G[catalog-data-enricher]
     G --> G1[scripts]
-    G --> G2[ai_orchestrator.enrichment_job]
+    G --> G2[Kafka / AI pipeline]
     G1 --> G3[ingest_item.enriched_payload]
     G2 --> G3
     G3 --> H[catalog-importer]
@@ -563,8 +565,10 @@ The following rules should hold in the redesigned pipeline:
 - an ingest item must reference a concrete payload snapshot
 - `ingest_item.enriched_payload` is written exactly once — after all
   attributes of the enrichment session are settled
-- `catalog-data-enricher` does not call AI Orchestrator directly — all
-  coordination happens through the `enrichment_job` table state machine
+- `catalog-data-enricher` does not call AI services directly — it publishes
+  `ai.job.requested` to Kafka and consumes results from
+  `catalog-enricher.attribute-result`; no shared tables exist between the
+  catalog pipeline and the AI domain
 - the `ingest_item_step` for enrichment does not advance to the next stage
   until every attribute has been processed
 - `catalog-importer` reads only `enriched_payload` — it does not interact
@@ -610,9 +614,9 @@ The flow is:
 10. `catalog-data-enricher` claims the step and deserializes
     `parsed_payload` into a `ReleaseParsedContentRef` working model
 11. for each attribute the enricher runs built-in scripts first; if
-    unresolved it creates an `enrichment_job` record — the AI Orchestrator
-    picks it up via the state machine independently and writes the result
-    back
+    unresolved it publishes `ai.job.requested` to Kafka — the AI pipeline
+    runs independently and returns the result via the
+    `catalog-enricher.attribute-result` topic
 12. after all attributes are settled the enricher persists the final model
     to `ingest_item.enriched_payload` and marks the step as `completed`
 13. `catalog-importer` reads `enriched_payload`, resolves the canonical

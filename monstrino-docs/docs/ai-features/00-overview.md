@@ -8,9 +8,62 @@ import Admonition from '@theme/Admonition';
 
 # AI Features
 
-Monstrino uses large language models to convert incomplete product descriptions
-into structured, queryable catalog data. AI handles interpretation and
-enrichment only — every other part of the platform runs on deterministic logic.
+Product pages on external stores are unstructured. A description might mention three
+character names in free text, say "includes accessories" without listing them, or omit
+pack type entirely. At thousands of releases, manual resolution is not viable.
+
+Monstrino uses large language models to read those descriptions and convert them into
+structured, queryable catalog data — automatically, at scale. AI handles interpretation
+and enrichment only. Every other part of the platform runs on deterministic logic.
+
+---
+
+## The Problem
+
+A typical product listing looks like this:
+
+> *"This Walmart exclusive features Draculaura who is only available in this 3-pack.
+> It also includes two previously released dolls, Clawdeen Wolf and Frankie Stein..."*
+
+The catalog needs:
+
+```json
+{
+  "characters": ["draculaura", "clawdeen-wolf", "frankie-stein"],
+  "content_type": "doll",
+  "exclusive_vendor": ["Walmart"]
+}
+```
+
+Scripts handle deterministic cases — extracting a year from an MPN, normalizing a
+region code from a URL. For semantic interpretation at scale, Monstrino uses AI.
+
+---
+
+## Three Design Principles
+
+These are the architectural decisions that make AI safe to run in production.
+
+### 1. Scripts first — AI is the last resort
+
+Built-in scripts attempt every attribute before AI is ever invoked. AI is only
+triggered when a script cannot resolve a value. This keeps AI usage bounded,
+cost-efficient, and predictable.
+
+### 2. Every result is validated before entering the catalog
+
+AI never writes to the database directly. Results pass through the same validation
+pipeline used for script-resolved values — structural correctness, consistency with
+existing catalog data, and confidence thresholds. Malformed or inconsistent outputs
+are rejected and flagged for administrator review. Nothing is written silently.
+
+### 3. The platform is independent of AI availability
+
+<Admonition type="info" title="Operational isolation">
+If AI services are unavailable, ingestion, collection, import, media processing, and
+public APIs continue unaffected. Enrichment pauses — no other pipeline depends on AI
+availability.
+</Admonition>
 
 ---
 
@@ -18,35 +71,33 @@ enrichment only — every other part of the platform runs on deterministic logic
 
 ```mermaid
 flowchart LR
-    A[External source\nproduct page] -->|collector fetches| B[ingest_item\nparsed_payload]
+    A[External source<br/>product page] -->|collector fetches| B[ingest_item<br/>parsed_payload]
     B --> C[catalog-data-enricher]
-    C --> D{Script resolves\nattribute?}
-    D -->|yes| E[Write value\ninto model]
-    D -->|no| F[enrichment_job\npending_ai_processing]
-    F -->|polled by| G[ai-orchestrator\nruns AI scenario]
-    G -->|writes result| F
-    F -->|awaiting_enricher_review| C
-    E --> H[ingest_item\nenriched_payload]
-    C --> H
+    C --> D{Script resolves<br/>attribute?}
+    D -->|yes| E[Write value<br/>into model]
+    D -->|no| F[Publish ai.job.requested<br/>to Kafka]
+    F --> G[ai-intake-service<br/>validates + creates ai_job]
+    G -->|orchestration_status = pending| H[ai-orchestrator<br/>runs AI scenario]
+    H -->|result stored| I[ai-job-dispatcher-service<br/>publishes result back]
+    I -->|result_route_key topic| C
+    E --> J[ingest_item<br/>enriched_payload]
+    C --> J
 ```
 
-`catalog-data-enricher` and `ai-orchestrator` never call each other directly.
-All coordination goes through the `enrichment_job` table state machine.
-AI is invoked only when a built-in script cannot resolve an attribute.
+`catalog-data-enricher` and `ai-orchestrator` never call each other directly. The
+enricher publishes a Kafka message and later consumes the result. Three dedicated AI
+services handle the rest — each owning one phase of the lifecycle, with no knowledge
+of the phases before or after it.
 
 ---
 
-## Two Services, One Boundary
+## Three Services, One Pipeline
 
 | Service | What it does |
 | --- | --- |
-| `catalog-data-enricher` | Reads `parsed_payload` → runs scripts per attribute → creates `enrichment_job` for unresolved ones → validates results → persists `enriched_payload` |
-| `ai-orchestrator` | Polls `enrichment_job` table → executes named AI scenarios → manages prompts and multi-step loops → writes structured result back to the table |
-
-<Admonition type="info" title="If ai-orchestrator is unavailable">
-Ingestion, collection, import, media processing, and public APIs continue
-unaffected. Enrichment pauses — no other pipeline depends on AI availability.
-</Admonition>
+| `ai-intake-service` | Consumes `ai.job.requested` from Kafka, validates the request, deduplicates on `event_id`, creates internal `ai_job` and modality rows |
+| `ai-orchestrator` | Claims pending jobs via `orchestration_status`, runs named AI scenarios, manages multi-step reasoning loops, stores normalized results |
+| `ai-job-dispatcher-service` | Picks up completed jobs, promotes image assets to permanent storage, publishes results back to the requesting domain via `result_route_key` |
 
 ---
 
@@ -63,43 +114,18 @@ unaffected. Enrichment pauses — no other pipeline depends on AI availability.
 
 ---
 
-## Architectural Decisions
+## Controlled by Design
 
-### Scenario-based execution
+The AI layer is bounded by explicit contracts at every step:
 
-`ai-orchestrator` exposes named business scenarios — `ReleaseCharactersEnrichment`,
-`ReleaseSeriesEnrichment`, `image-recognition` — not generic model endpoints.
-Each scenario encapsulates its own prompt logic, model settings, and structured
-response handling.
+- **Input** — the enricher controls what context is sent and in which format; external services never write AI-domain tables directly
+- **Execution** — named scenarios define which model, which actions, and which external lookups are allowed; a hard limit of 4 action calls per job prevents runaway loops
+- **Output** — model responses are validated against scenario-specific schemas before any value is accepted; invalid responses are terminal failures, not retries
+- **Retries** — transient failures (model errors, timeouts) retry automatically with backoff; structural failures do not retry regardless of remaining attempts
+- **Audit** — every model call, action lookup, status transition, and dispatch attempt is logged to the database
 
-### Model abstraction
-
-All AI clients implement a common `LLMClientInterface` Protocol defined in
-`src/ports`. Switching the underlying model backend requires changes only inside
-`ai-orchestrator` — no other service is affected.
-
-### Multi-step command loop
-
-When a model needs additional information during reasoning, it returns a
-structured command rather than a final answer:
-
-```json
-{ "action": "request_action", "command": "lookup-character", "name": "Draculaura" }
-```
-
-The Use Case validates the command, calls the appropriate backend service,
-injects the result, and continues. The model never calls services directly.
-
-### Result validation before acceptance
-
-Before any enriched value enters the catalog, `catalog-data-enricher` validates
-it for structural correctness and consistency — through the same pipeline used
-for script-resolved values. Failures are flagged for administrator review.
-
-### Operational isolation
-
-`ai-orchestrator` has no role in ingestion, collection, import, or media
-processing. If unavailable, those pipelines continue unaffected.
+The model is a reasoning component, not a system actor. All side effects remain in
+deterministic backend code.
 
 ---
 
@@ -121,20 +147,19 @@ processing. If unavailable, those pipelines continue unaffected.
 
 <br/>
 
-**[AI Strategy](/docs/ai-features/ai-strategy/)**
+**[AI Strategy](/docs/ai-features/01-ai-strategy)**
 
-The full responsibility model: where AI is used, where it is explicitly
-excluded, controlled workflow design, source-of-truth rules, and validation
-policy.
+The full responsibility model: where AI is used, where it is explicitly excluded,
+controlled workflow design, source-of-truth rules, and validation policy.
 
-**[AI Orchestrator](/docs/ai-features/ai-orchestrator/)**
+**[AI Orchestrator](/docs/ai-features/02-ai-orchestrator)**
 
-Internal architecture of the `ai-orchestrator` service: scenario-based
-execution model, Job → Use Case → AIClient composition, prompt isolation,
-structured output parsing, and multi-step command loop.
+Internal architecture of the `ai-orchestrator` service: scenario-based execution
+model, job claiming via state machine, prompt isolation, structured output parsing,
+and multi-step command loop.
 
-**[LLM Enrichment Walkthrough](/docs/ai-features/llm-enrichment-walkthrough/)**
+**[LLM Enrichment Walkthrough](/docs/ai-features/03-llm-enrichment-walkthrough)**
 
-A step-by-step trace of a real enrichment run using the *Dawn of the Dance
-3-Pack* release — from raw parsed input through multi-step AI interaction to
-validated structured output ready for import.
+A step-by-step trace of a real enrichment run using the *Dawn of the Dance 3-Pack*
+release — from raw parsed input through multi-step AI interaction to validated
+structured output ready for import.

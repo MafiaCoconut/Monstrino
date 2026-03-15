@@ -119,7 +119,7 @@ const config: Config = {
     image: 'img/monstrino_icon.svg',
     colorMode: {
       defaultMode: 'dark',
-      respectPrefersColorScheme: true,
+      respectPrefersColorScheme: false,
       disableSwitch: false,
     },
     navbar: {

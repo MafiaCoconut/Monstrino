@@ -39,7 +39,7 @@ The system is built as a service-oriented architecture with explicit responsibil
   How Monstrino uses AI for catalog enrichment - strategy and orchestration.
 </DocCard>
 
-<DocCard title="Custom Packages" href="/docs/architecture/custom-packages/overview/">
+<DocCard title="Custom Packages" href="/docs/custom-packages/overview/">
   The 7 internal Python packages - architectural layers and dependency rules.
 </DocCard>
 

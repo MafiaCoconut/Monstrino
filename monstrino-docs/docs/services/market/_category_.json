@@ -1,0 +1,10 @@
+{
+  "label": "Market Domain",
+  "position": 2,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "doc",
+    "id": "services/market/overview"
+  }
+}

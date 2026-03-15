@@ -29,7 +29,7 @@ This section covers the reasoning behind Monstrino — from the
 real-world problems it addresses, to the nature of catalog data,
 to the platform architecture that makes it work.
 
-### [Problem Space →](./01-problem-space)
+### [Problem Space →](./problem-space)
 
 Five structural problems that exist in the collector ecosystem today:
 fragmented sources, unstructured data, missing package contents, no

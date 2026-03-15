@@ -1,6 +1,6 @@
 ---
 title: AI Strategy
-sidebar_position: 2
+sidebar_position: 1
 description: How AI is used in Monstrino — what it does, where it is used, and why it is designed as an assistive layer rather than a system dependency.
 ---
 
@@ -41,15 +41,16 @@ semantic interpretation.
 flowchart TD
     A[Attribute requires enrichment] --> B[Run built-in script]
     B --> C{Resolved?}
-    C -->|yes| D[Candidate enters\nvalidation pipeline]
-    C -->|no| E[Create enrichment_job\nstatus = pending_ai_processing]
-    E --> F[ai-orchestrator picks up\njob from table]
-    F --> G[AI workflow runs]
-    G --> H[Result written to table\nstatus = awaiting_enricher_review]
-    H --> D
-    D --> I[Policy decision]
-    I -->|accepted| J[Write into\nReleaseParsedContentRef]
-    I -->|rejected| K[Keep existing value]
+    C -->|yes| D[Candidate enters validation pipeline]
+    C -->|no| E[Publish ai.job.requested to Kafka source_request_id + scenario_type + context]
+    E --> F[ai-intake-service validates creates ai_job + ai_text_job]
+    F --> G[ai-orchestrator claims job orchestration_status = pending]
+    G --> H[AI workflow runs]
+    H --> I[ai-job-dispatcher-service publishes result to result_route_key]
+    I --> D
+    D --> J[Policy decision]
+    J -->|accepted| K[Write into ReleaseParsedContentRef]
+    J -->|rejected| L[Keep existing value]
 ```
 
 Scripts handle deterministic cases: extracting a year from an MPN, mapping a
@@ -74,27 +75,38 @@ services. The model is a reasoning component, not a system actor.
 
 ## Controlled Workflow
 
-`catalog-data-enricher` and `ai-orchestrator` do not call each other.
-Coordination is exclusively through the `enrichment_job` table state machine.
+`catalog-data-enricher` submits an AI job by publishing `ai.job.requested` to
+Kafka and later consumes the result from a dedicated topic. The enricher and
+`ai-orchestrator` never call each other — the Kafka pipeline and the `ai_job`
+state machine mediate all coordination.
 
 If the model needs additional data mid-reasoning, it returns a structured
-command — not a free-form action:
+action request — not a free-form action:
 
 ```json
 {
-  "command": "get-more-info-about-characters",
-  "characters": ["Draculaura"]
+  "status": "request_action",
+  "is_final": false,
+  "requested_action": {
+    "action_name": "catalog_search_characters",
+    "action_params": {
+      "filters": { "search": "Draculaura" },
+      "page": { "limit": 5, "offset": 0 }
+    }
+  }
 }
 ```
 
 The AI Orchestrator then:
 
-1. validates the command against an allowlist
+1. validates the action name against a per-scenario allowlist
 2. calls the appropriate backend service (e.g. `catalog-api-service`)
 3. injects the result into the AI context
 4. continues the reasoning loop
 
-All system actions remain in backend code.
+A maximum of **4 action calls** are permitted per job. Exceeding this marks
+the job as `failed` with `failure_code = max_steps_exceeded`. All system
+actions remain in backend code.
 
 ---
 

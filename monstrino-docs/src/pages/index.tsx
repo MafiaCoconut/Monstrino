@@ -46,19 +46,73 @@ export default function Home(): JSX.Element {
           <h2 className={styles.sectionTitle}>Why Monstrino Exists</h2>
 
           <p className={styles.sectionText}>
-            Product data for collectible markets is fragmented across fan databases,
-            retailer listings, and community-maintained sources. Identifiers are inconsistent,
-            metadata quality varies dramatically, and historical pricing information is rarely preserved.
-            Monstrino explores how reliable catalog records can be reconstructed from those uncontrolled
-            sources through structured ingestion, reconciliation, and canonical modeling.
+            Collector data for franchises like Monster High is scattered across wikis,
+            marketplaces, and community blogs — each holding a different piece of the puzzle,
+            none of it structured or connected.
           </p>
 
-          <Link
-            className={styles.secondaryButton}
-            to={useBaseUrl("docs/architecture/catalog-as-master-data")}
-          >
-            Learn More
-          </Link>
+          <div className={styles.problemsGrid}>
+            <div className={styles.pillar}>
+              <div className={styles.pillarHeader}>
+                <div className={styles.pillarIcon}>🗂️</div>
+              </div>
+              <div className={styles.pillarTitle}>Fragmented Sources</div>
+              <p className={styles.pillarText}>
+                The same product appears across wikis, retailers, and marketplaces —
+                each with different, partial, or conflicting data.
+              </p>
+            </div>
+
+            <div className={styles.pillar}>
+              <div className={styles.pillarHeader}>
+                <div className={styles.pillarIcon}>📄</div>
+              </div>
+              <div className={styles.pillarTitle}>Unstructured Data</div>
+              <p className={styles.pillarText}>
+                Product details are buried inside prose descriptions instead of structured fields —
+                impossible to compare or automate.
+              </p>
+            </div>
+
+            <div className={styles.pillar}>
+              <div className={styles.pillarHeader}>
+                <div className={styles.pillarIcon}>📦</div>
+              </div>
+              <div className={styles.pillarTitle}>Missing Contents</div>
+              <p className={styles.pillarText}>
+                Which accessories were in the box? Which clothes? This almost never
+                exists in structured form — only in reviews and forum threads.
+              </p>
+            </div>
+
+            <div className={styles.pillar}>
+              <div className={styles.pillarHeader}>
+                <div className={styles.pillarIcon}>💰</div>
+              </div>
+              <div className={styles.pillarTitle}>No Pricing Aggregation</div>
+              <p className={styles.pillarText}>
+                Real market value requires checking eBay, Vinted, and official retailers
+                simultaneously. No catalog does this automatically.
+              </p>
+            </div>
+
+            <div className={styles.pillar}>
+              <div className={styles.pillarHeader}>
+                <div className={styles.pillarIcon}>🕸️</div>
+              </div>
+              <div className={styles.pillarTitle}>No Knowledge Graph</div>
+              <p className={styles.pillarText}>
+                Each release is an isolated entry. Relationships between characters,
+                pets, and series are never mapped — no catalog supports this.
+              </p>
+            </div>
+          </div>
+
+          <div className={styles.sectionCta}>
+            <Link className={styles.secondaryButton} to={useBaseUrl("why-monstrino/intro")}>
+              Why Monstrino →
+            </Link>
+          </div>
         </section>
 
 

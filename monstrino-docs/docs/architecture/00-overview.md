@@ -35,7 +35,7 @@ Architecture documentation here is organized from high-level to low-level:
 
 Beyond runtime architecture, this section also covers the code-level structure that keeps services consistent:
 
-- **[Custom Packages](/docs/architecture/custom-packages/overview/)** - the 7 internal Python libraries that form the platform foundation
+- **[Custom Packages](/docs/custom-packages/overview/)** - the 7 internal Python libraries that form the platform foundation
 - **[Architecture Patterns](/docs/architecture/patterns/overview/)** - clean architecture, repository pattern, unit of work, and dependency inversion as applied in Monstrino
 
 ---

@@ -31,12 +31,12 @@ Monstrino fixes this by building one canonical, structured catalog.
 The same product exists across many sources —
 each with different, partial, or conflicting data:
 
-| Source         | Title                   | MPN   | Accessories         |
-| -------------- | ----------------------- | ----- | ------------------- |
-| Community Wiki | Draculaura Doll         | —     | described in text   |
-| Amazon         | Draculaura Fashion Doll | HKY70 | not listed          |
-| eBay           | MH Draculaura 2022      | HKY70 | unknown             |
-| Collector Blog | Draculaura Review       | —     | partially described |
+| Source         | Title                   | MPN   | Accessories         | Clothes |
+| -------------- | ----------------------- | ----- | ------------------- | ------- |
+| Community Wiki | Draculaura Doll         | -     | described in text   | -       |
+| Amazon         | Draculaura Fashion Doll | -     | described in text   | -       |
+| eBay           | MH Draculaura 2022      | HKY70 | unknown             | -       |
+| Collector Blog | Draculaura Review       | -     | partially described | -       |
 
 Collectors must manually combine all of these to understand a single release.
 
@@ -64,7 +64,7 @@ Product details are buried inside prose, not structured fields.
 **Typical product description:**
 
 ```text
-Includes a brush, purse and a diary accessory.
+Includes a brush, purse and 19+ accessories.
 ```
 
 **What it should look like:**
@@ -74,6 +74,7 @@ accessories:
   - brush
   - purse
   - diary
+  - ...
 ```
 
 Without structured data, you can't compare releases, analyze contents,

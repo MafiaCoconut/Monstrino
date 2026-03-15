@@ -30,10 +30,10 @@ The pipeline is intentionally separated from catalog ingestion so that:
 
 ```mermaid
 flowchart TD
-    A[catalog-importer] -->|Kafka: image event| B[Stage 1\nMedia Rehosting Subscriber]
-    B -->|MediaIngestionJob\nprocessing_state = init| C[Stage 2\nMedia Rehosting Processor]
-    C -->|MediaAsset + MediaAttachment\nstored in S3| D[Stage 3\nMedia Normalization]
-    D --> E[media_asset_variant\nformat · size · AI-derived]
+    A[catalog-importer] -->|Kafka: image event| B[Stage 1<br/>Media Rehosting Subscriber]
+    B -->|MediaIngestionJob<br/>processing_state = init| C[Stage 2<br/>Media Rehosting Processor]
+    C -->|MediaAsset + MediaAttachment<br/>stored in S3| D[Stage 3<br/>Media Normalization]
+    D --> E[media_asset_variant<br/>format · size · AI-derived]
 
     C -->|ai image operation needed| F[enrichment_job table]
     D -->|ai image operation needed| F

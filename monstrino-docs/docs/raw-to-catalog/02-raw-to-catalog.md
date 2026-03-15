@@ -35,10 +35,9 @@ F --> F1[ingest_item_step<br/>enrichment.orchestrate · pending]
 
 F1 --> G[catalog-data-enricher]
 G -->|built-in script| G1[attribute resolved]
-G -->|unresolved| G2[(enrichment_job<br/>pending_ai_processing)]
-G2 --> H[ai-orchestrator]
-H --> G2
-G2 -->|awaiting_enricher_review| G
+G -->|unresolved| G2[Publish ai.job.requested<br/>to Kafka]
+G2 --> H[AI pipeline<br/>ai-intake · ai-orchestrator<br/>ai-job-dispatcher]
+H -->|result via Kafka| G
 G1 --> I[ingest_item.enriched_payload<br/>ReleaseParsedContentRef]
 G --> I
 
@@ -241,6 +240,7 @@ ReleaseParsedContentRef(
     tier_type=None,
     exclusive_vendor=None,
     reissue_of=None,
+    items=None,
 
     primary_image_url="https://shopping.mattel.com/cdn/shop/files/ab46c79b5...",
     images=["..."],
@@ -274,27 +274,35 @@ For each attribute that is `None` or insufficient, the enricher first attempts a
 flowchart TD
     A[Attribute: characters = None] --> B[Run built-in script]
     B -->|resolved| C[Enter validation pipeline]
-    B -->|unresolved| D[Create enrichment_job<br/>status = pending_ai_processing]
-    D --> E[AI Orchestrator picks up independently<br/>via table poll]
-    E --> F[status = awaiting_enricher_review]
-    F --> G[Enricher reads result from table]
-    G --> C
+    B -->|unresolved| D[Publish ai.job.requested to Kafka<br/>result_route_key = catalog-enricher.attribute-result]
+    D --> E[AI pipeline handles independently<br/>ai-intake → ai-orchestrator → ai-job-dispatcher]
+    E --> F[Consume result from Kafka<br/>catalog-enricher.attribute-result]
+    F --> C
     C --> H[Write into in-memory ReleaseParsedContentRef]
 ```
 
 Scripts can handle deterministic cases — extracting a year from a structured MPN, normalizing a `language` field from source metadata, mapping a known tag to a canonical `content_type` value. For `characters`, `series`, `pack_type`, and `tier_type`, the source data is too ambiguous for scripted resolution.
 
-For each unresolved attribute the enricher creates one `enrichment_job` record in the `ai_orchestrator` schema:
+For each unresolved attribute the enricher publishes one `ai.job.requested` message to Kafka:
 
-```text
-target_domain      = catalog
-target_entity_type = ingest_item
-target_entity_id   = <uuid>
-target_attribute   = characters
-status             = pending_ai_processing
+```json
+{
+  "source_request_id": "<uuid>",
+  "job_type": "text",
+  "result_route_key": "catalog-enricher.attribute-result",
+  "text_job": {
+    "attribute_name": "characters",
+    "scenario_type": "character_resolution",
+    "input_context": {
+      "title": "Monster High Skulltimate Secrets Gore-Geous Oasis Playset...",
+      "description": "Reveal a Monster High doll, unlock accessories...",
+      "year": 2025
+    }
+  }
+}
 ```
 
-The enricher does **not** call the AI Orchestrator directly. It writes the record to the table and the AI Orchestrator picks it up independently via its own polling loop.
+The enricher does **not** call AI services directly. It publishes to Kafka, continues processing other attributes, and later consumes the result from `catalog-enricher.attribute-result`.
 
 The `ingest_item_step` does not advance until every attribute is either resolved, skipped, or failed with a logged decision record.
 
@@ -302,18 +310,31 @@ The `ingest_item_step` does not advance until every attribute is either resolved
 
 ## Step 5 — AI Orchestration
 
-The AI Orchestrator polls the `enrichment_job` table for pending jobs and executes an attribute-specific scenario — in this case `ReleaseCharactersEnrichment`.
+Three dedicated services handle the job after `catalog-data-enricher` publishes
+to Kafka. `ai-intake-service` consumes the message, validates it, and creates
+`ai_job` + `ai_text_job` records in the `ai` schema with
+`orchestration_status = pending`. `ai-orchestrator` claims the modality row
+and executes the `character_resolution` scenario. `ai-job-dispatcher-service`
+picks up the completed job and publishes the result back to
+`catalog-enricher.attribute-result`.
 
-### Job State Machine
+### AI Pipeline Sequence
 
 ```mermaid
-stateDiagram-v2
-    [*] --> pending_ai_processing: enricher creates job
-    pending_ai_processing --> running_ai_workflow: AI Orchestrator picks up
-    running_ai_workflow --> awaiting_enricher_review: result written
-    running_ai_workflow --> completed_no_suggestion: no result possible
-    running_ai_workflow --> failed: unrecoverable error
-    awaiting_enricher_review --> consumed_by_enricher: enricher reads result
+sequenceDiagram
+    participant Enricher as catalog-data-enricher
+    participant Kafka as Kafka
+    participant Intake as ai-intake-service
+    participant Orch as ai-orchestrator
+    participant Disp as ai-job-dispatcher-service
+
+    Enricher->>Kafka: publish ai.job.requested
+    Kafka->>Intake: consume + validate
+    Intake->>Intake: create ai_job + ai_text_job<br/>orchestration_status = pending
+    Orch->>Orch: claim ai_text_job<br/>run character_resolution scenario
+    Orch->>Orch: store result<br/>orchestration_status = completed
+    Disp->>Kafka: publish to catalog-enricher.attribute-result
+    Kafka->>Enricher: consume result
 ```
 
 ### Multi-Step Reasoning
@@ -327,13 +348,12 @@ For character extraction, the model detects candidate names in the description b
   "status": "request_action",
   "is_final": false,
   "requested_action": {
-    "command_name": "lookup_characters_by_names",
-    "command_params": {
-      "character_names": ["Draculaura", "Clawdeen Wolf", "Jinafire Long"]
+    "action_name": "catalog_search_characters",
+    "action_params": {
+      "filters": { "search": "Jinafire Long" },
+      "page": { "limit": 5, "offset": 0 },
+      "context": { "locale": "en" }
     }
-  },
-  "metadata": {
-    "reasoning_stage": "character_lookup_requested"
   }
 }
 ```
@@ -368,7 +388,12 @@ This is exactly the kind of distinction a rule-based parser cannot make reliably
 The AI model **cannot call services directly**. It returns structured commands. The AI Orchestrator validates the command against an allowlist, calls the appropriate service, and injects the result into the next reasoning step. AI remains a reasoning component, not an autonomous actor.
 :::
 
-The result is written to `enrichment_job.result_payload` and the job status becomes `awaiting_enricher_review`. The enricher polls the table, reads the result, and applies the same validation and policy pipeline as for script-resolved values before writing the accepted value into the in-memory model.
+`ai-orchestrator` validates the structured output, writes the result to
+`ai_text_job.result_payload_json`, and sets `orchestration_status = completed`.
+`ai-job-dispatcher-service` picks up the completed `ai_job` and publishes the
+result to `catalog-enricher.attribute-result`. The enricher consumes the
+message, applies the same validation and policy pipeline as for
+script-resolved values, and writes the accepted value into the in-memory model.
 
 ---
 
@@ -402,16 +427,49 @@ ReleaseParsedContentRef(
         "https://shopping.mattel.com/cdn/shop/files/24b105f77cbe4d29a57df7955f37710105365b38_94620675-d65b-449e-a9b6-5f281f8503f6.jpg?v=1766004361",
     ],
 
-    # Resolved by enrichment (scripts + AI Orchestrator)
+    # Resolved by enrichment (scripts + AI pipeline)
     gender=["ghoul"],
     characters=["Jinafire Long"],
-    pets=None,
+    pets=[],
     series=["Skulltimate Secrets", "Destination: Gore-geous Oasis"],
     content_type=["doll-figure", "playset"],
     pack_type=["1-pack"],
     tier_type="standard",
     exclusive_vendor=None,
     reissue_of=None,
+    items=[
+        { "category": "wearables",    "subcategory": "clothing",    "type": "dress",        "title": "Fashion dress" },
+        { "category": "wearables",    "subcategory": "clothing",    "type": "skirt",        "title": "Fashion skirt" },
+        { "category": "wearables",    "subcategory": "clothing",    "type": "tank_top",     "title": "Tank top" },
+        { "category": "wearables",    "subcategory": "clothing",    "type": "sweater",      "title": "Fashion sweater" },
+        { "category": "wearables",    "subcategory": "clothing",    "type": "belt",         "title": "Waist belt" },
+        { "category": "wearables",    "subcategory": "clothing",    "type": "breastplate",  "title": "Decorative breastplate armor" },
+
+        { "category": "wearables",    "subcategory": "footwear",    "type": "boots",        "title": "Knee-high boots" },
+        { "category": "wearables",    "subcategory": "footwear",    "type": "sandals",      "title": "Platform strappy sandals" },
+        { "category": "wearables",    "subcategory": "footwear",    "type": "ankle_boots",  "title": "Cutout ankle boots" },
+
+        { "category": "wearables",    "subcategory": "jewelry",     "type": "earrings",     "title": "Earrings" },
+        { "category": "wearables",    "subcategory": "headwear",    "type": "headscarf",    "title": "Head scarf" },
+
+        { "category": "bags",         "subcategory": "bags",        "type": "backpack",     "title": "School backpack" },
+        { "category": "bags",         "subcategory": "bags",        "type": "suitcase",     "title": "Travel suitcase" },
+        { "category": "bags",         "subcategory": "handbags",    "type": "handbag",      "title": "Fashion handbag" },
+
+        { "category": "accessories",  "subcategory": "glasses",     "type": "glasses",      "title": "Fashion glasses" },
+        { "category": "accessories",  "subcategory": "fashion",     "type": "fan",          "title": "Folding hand fan" },
+
+        { "category": "playset",      "subcategory": "storage",             "type": "storage_box",  "title": "Suitcase-shaped storage trunk" },
+        { "category": "playset",      "subcategory": "storage_components",  "type": "shelf",        "title": "Storage shelve 1" },
+        { "category": "playset",      "subcategory": "storage_components",  "type": "shelf",        "title": "Storage shelve 2" },
+        { "category": "playset",      "subcategory": "display_components",  "type": "hanger",       "title": "Clothes hanger 1" },
+        { "category": "playset",      "subcategory": "display_components",  "type": "hanger",       "title": "Clothes hanger 2" },
+
+        { "category": "functional",   "subcategory": "keys_and_locks",      "type": "key",          "title": "Trunk box key" },
+        { "category": "functional",   "subcategory": "keys_and_locks",      "type": "key",          "title": "Suitcase key" },
+        { "category": "functional",   "subcategory": "keys_and_locks",      "type": "key",          "title": "Backpack key" },
+        { "category": "functional",   "subcategory": "key_accessories",     "type": "keychain",     "title": "Decorative keychain" },
+    ],
 )
 ```
 
@@ -476,31 +534,81 @@ After the importer completes, the canonical domain record looks like this:
 Release(
     mpn="JDR52",
     gtin="0194735288892",
-    title="Monster High Skulltimate Secrets Gore-Geous Oasis Playset",
+    title="Monster High Skulltimate Secrets Gore-Geous Oasis Playset, Jinafire Long Doll And Accessories",
+    description="Reveal a Monster High doll, unlock accessories ...",
     year=2025,
     gender=GenderType.GHOUL,
     tier=TierType.STANDARD,
+    exclusive_vendor=None,
+    reissue_of=None,
 
     characters=[Character(name="Jinafire Long", slug="jinafire-long")],
+    pets=[],
     series=[
-        Series(name="Skulltimate Secrets",           slug="skulltimate-secrets"),
-        Series(name="Destination: Gore-geous Oasis", slug="destination-gore-geous-oasis"),
+        Series(
+            series_kind="line",
+            series_tags=[],
+            name="Skulltimate Secrets",
+            slug="skulltimate-secrets"
+        ),
+        Series(
+            series_kind="subseries",
+            series_tags=["beach_theme", "playset_included"],
+            name="Destination: Gore-geous Oasis",
+            slug="destination-gore-geous-oasis"
+        ),
     ],
     release_types=[ReleaseType(slug="doll-figure"), ReleaseType(slug="playset")],
     pack_types=[PackType(slug="1-pack")],
+
     items=[
-        ReleaseItem(title="storage case",   category="item"),
-        ReleaseItem(title="key_1",          category="item"),
-        ReleaseItem(title="key_2",          category="item"),
-        ReleaseItem(title="key_3",          category="item"),
-        ReleaseItem(title="suitcase_1",     category="clothes"),
-        ReleaseItem(title="suitcase_2",     category="clothes"),
+        ReleaseItem(category="wearables",   subcategory="clothing", type="dress",       title="Fashion dress"               ),
+        ReleaseItem(category="wearables",   subcategory="clothing", type="skirt",       title="Fashion skirt"               ),
+        ReleaseItem(category="wearables",   subcategory="clothing", type="tank_top",    title="Tank top"                    ),
+        ReleaseItem(category="wearables",   subcategory="clothing", type="sweater",     title="Fashion sweater"             ),
+        ReleaseItem(category="wearables",   subcategory="clothing", type="belt",        title="Waist belt"                  ),
+        ReleaseItem(category="wearables",   subcategory="clothing", type="breastplate", title="Decorative breastplate armor"),
+
+        ReleaseItem(category="wearables",   subcategory="footwear", type="boots",       title="Knee-high boots"             ),
+        ReleaseItem(category="wearables",   subcategory="footwear", type="sandals",     title="Platform strappy sandals"    ),
+        ReleaseItem(category="wearables",   subcategory="footwear", type="ankle_boots", title="Cutout ankle boots"          ),
+
+        ReleaseItem(category="wearables",   subcategory="jewelry",  type="earrings",    title="Earrings"                    ),
+        ReleaseItem(category="wearables",   subcategory="headwear", type="headscarf",   title="Head scarf"                  ),
+
+        ReleaseItem(category="bags",        subcategory="bags",     type="backpack",    title="School backpack"             ),
+        ReleaseItem(category="bags",        subcategory="bags",     type="suitcase",    title="Travel suitcase"             ),
+        ReleaseItem(category="bags",        subcategory="handbags", type="handbag",     title="Fashion handbag"             ),
+
+        ReleaseItem(category="accessories", subcategory="glasses",  type="glasses",     title="Fashion glasses"             ),
+        ReleaseItem(category="accessories", subcategory="fashion",  type="fan",         title="Folding hand fan"            ),
+
+        ReleaseItem(category="playset",     subcategory="storage",              type="storage_box", title="Suitcase-shaped storage trunk"  ),
+        ReleaseItem(category="playset",     subcategory="storage_components",   type="shelf",       title="Storage shelve 1"               ),
+        ReleaseItem(category="playset",     subcategory="storage_components",   type="shelf",       title="Storage shelve 2"               ),
+        ReleaseItem(category="playset",     subcategory="display_components",   type="hanger",      title="Clothes hanger 1"               ),
+        ReleaseItem(category="playset",     subcategory="display_components",   type="hanger",      title="Clothes hanger 2"               ),
+
+        ReleaseItem(category="functional",  subcategory="keys_and_locks",       type="key",         title="Trunk box key"                  ),
+        ReleaseItem(category="functional",  subcategory="keys_and_locks",       type="key",         title="Suitcase key"                   ),
+        ReleaseItem(category="functional",  subcategory="keys_and_locks",       type="key",         title="Backpack key"                   ),
+        ReleaseItem(category="functional",  subcategory="key_accessories",      type="keychain",    title="Decorative keychain"            ),
     ],
+
+    # hosted_url fields are populated asynchronously by the media-ingest pipeline
+    # after catalog-importer emits Kafka media events — not present at initial import time
     media=ReleaseMedia(
         primary_image=MediaAsset(
             original_url="https://shopping.mattel.com/cdn/shop/files/ab46c79b5...",
             hosted_url="https://media.monstrino.com/assets/image/sha256/ab/46/ab46c79b5...jpg",
         ),
+        gallery=[
+            MediaAsset(original_url="...", hosted_url="https://media.monstrino.com/assets/image/sha256/...jpg"),
+            MediaAsset(original_url="...", hosted_url="https://media.monstrino.com/assets/image/sha256/...jpg"),
+            MediaAsset(original_url="...", hosted_url="https://media.monstrino.com/assets/image/sha256/...jpg"),
+            MediaAsset(original_url="...", hosted_url="https://media.monstrino.com/assets/image/sha256/...jpg"),
+            MediaAsset(original_url="...", hosted_url="https://media.monstrino.com/assets/image/sha256/...jpg"),
+        ],
     ),
 )
 ```
@@ -517,7 +625,7 @@ This is a fully normalized, queryable, relational catalog entry — created with
 | Shopify JSON | — | — | + `mpn=JDR52`, `gtin`, tags |
 | Discovered | `catalog-source-discovery` | `source_discovered_entry` | Reference stored, `domain_decision = ELIGIBLE` |
 | Collected | `catalog-content-collector` | `ingest_item.parsed_payload` | + normalized metadata; `characters=None`, `series=None`, `gender=None` |
-| Enriched | `catalog-data-enricher` + `ai-orchestrator` | `ingest_item.enriched_payload` | + `characters`, `series`, `gender`, `pack_type`, `content_type`, `tier_type` (strings) |
+| Enriched | `catalog-data-enricher` + AI pipeline | `ingest_item.enriched_payload` | + `characters`, `series`, `gender`, `pack_type`, `content_type`, `tier_type`, `items` (strings/dicts) |
 | Imported | `catalog-importer` | `catalog.release` | Fully structured canonical entity with resolved domain relationships |
 
 This transformation allows the system to convert **thousands of inconsistent product pages** into a reliable, structured, queryable catalog — automatically.

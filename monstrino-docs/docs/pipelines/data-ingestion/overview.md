@@ -29,13 +29,13 @@ flowchart TD
         A[source_country] --> B[catalog-source-discovery]
         B --> C[source_discovered_entry]
         C --> D[catalog-content-collector]
-        D --> E[ingest_item\nparsed_payload]
+        D --> E[ingest_item<br/>parsed_payload]
         E --> F[catalog-data-enricher]
         F -->|unresolved attributes| G[enrichment_job table]
         G --> H[ai-orchestrator]
         H --> G
         G -->|result| F
-        F --> I[ingest_item\nenriched_payload]
+        F --> I[ingest_item<br/>enriched_payload]
         I --> J[catalog-importer]
         J --> K[Canonical catalog tables]
         J --> L[Kafka: image events]
@@ -45,7 +45,7 @@ flowchart TD
         L --> M[media-rehosting-subscriber]
         M --> N[MediaIngestionJob]
         N --> O[media-rehosting-processor]
-        O --> P[MediaAsset\nMediaAttachment\nS3]
+        O --> P[MediaAsset<br/>MediaAttachment<br/>S3]
         P --> Q[media-normalization]
         Q --> R[media_asset_variant]
     end

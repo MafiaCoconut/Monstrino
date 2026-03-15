@@ -171,6 +171,21 @@
 }
 
 /* ---------------------------------- */
+/* PROBLEMS GRID */
+.problemsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.sectionCta {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+/* ---------------------------------- */
 /* QUICK LINKS */
 .quickLinksGroup {
   margin-bottom: 2rem;
@@ -372,6 +387,10 @@
   .quickLinkItem {
     padding: 0.6rem 0.9rem;
     font-size: 0.9rem;
+  }
+
+  .problemsGrid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .statsRow {

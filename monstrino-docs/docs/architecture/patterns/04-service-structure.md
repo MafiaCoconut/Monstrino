@@ -550,7 +550,7 @@ At startup and assembly time, `bootstrap` connects all required pieces:
 
 ```mermaid
 flowchart TD
-    A[Bootstrap] --> B["Builds adapters, repositories,\nservices, jobs, and factories"]
+    A[Bootstrap] --> B["Builds adapters, repositories,<br/>services, jobs, and factories"]
     B --> C[Injects into use cases and delivery components]
 ```
 

@@ -121,7 +121,7 @@ review.
 
 ```mermaid
 flowchart TD
-    A[source_discovered_entry] --> B[Resolve port from PortsRegistry\nsource + ParseReleasePort]
+    A[source_discovered_entry] --> B[Resolve port from PortsRegistry<br/>source + ParseReleasePort]
     B --> C{Port registered?}
     C -- No --> D[Persist configuration error]
     D --> DA[Send alert to platform-alerting-service]

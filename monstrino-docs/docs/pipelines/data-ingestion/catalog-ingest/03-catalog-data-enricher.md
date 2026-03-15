@@ -24,8 +24,9 @@ During execution the service:
    `ReleaseParsedContentRef` model
 3. plans which attributes of the model require enrichment
 4. for each attribute — attempts resolution via built-in scripts first
-5. for attributes that scripts cannot resolve — creates one `enrichment_job`
-   and delegates to AI Orchestrator
+5. for attributes that scripts cannot resolve — publishes `ai.job.requested`
+   to Kafka; the AI pipeline handles execution independently and returns the
+   result via Kafka topic `catalog-enricher.attribute-result`
 6. evaluates candidate results from scripts or AI
 7. writes accepted values back into the in-memory `ReleaseParsedContentRef`
 8. after all attributes are processed — persists the final model to
@@ -33,11 +34,13 @@ During execution the service:
 9. stores execution history and decision logs
 10. marks the `ingest_item_step` as completed and advances to the next stage
 
-Script-based resolution runs first and is the preferred path. AI
-Orchestrator is invoked only when built-in logic is insufficient.
+Script-based resolution runs first and is the preferred path. When a script
+cannot resolve an attribute, the enricher publishes `ai.job.requested` to
+Kafka and later consumes the result from the
+`catalog-enricher.attribute-result` topic. The enricher and the AI pipeline
+share no database tables — all coordination is via Kafka.
 
-The AI logic itself is implemented in a separate subsystem. This document
-focuses only on the `catalog-data-enricher` service pipeline.
+The AI pipeline is documented in [AI Pipeline](./04-ai-orchestrator.md).
 
 ---
 
@@ -58,11 +61,11 @@ E --> F[Attempt script-based enrichment]
 
 F -->|resolved by script| J[Policy Decision]
 
-F -->|unresolved| G[Create enrichment_job<br/>status = pending_ai_processing]
+F -->|unresolved| G[Publish ai.job.requested to Kafka<br/>result_route_key = catalog-enricher.attribute-result]
 
-G --> H[AI Orchestrator picks job<br/>via state machine]
+G --> H[AI pipeline runs independently<br/>ai-intake → ai-orchestrator → ai-job-dispatcher]
 
-H --> I[Read result from enrichment_job<br/>status = awaiting_enricher_review]
+H --> I[Consume result from Kafka<br/>catalog-enricher.attribute-result]
 
 I --> J
 
@@ -88,10 +91,10 @@ The `catalog-data-enricher` service:
 
 - orchestrates attribute enrichment for catalog items
 - attempts attribute resolution via built-in scripts before delegating to AI
-- creates `enrichment_job` records for unresolved attributes and monitors
-  their status via the state machine
-- does not call AI Orchestrator directly — all coordination happens
-  through the `enrichment_job` table
+- publishes `ai.job.requested` to Kafka for unresolved attributes and
+  consumes results from `catalog-enricher.attribute-result`
+- does not call AI services directly — all coordination is via Kafka;
+  no shared tables exist between the catalog pipeline and the AI domain
 - validates and evaluates candidate values from AI
 - updates the canonical working snapshot of the item
 - records execution attempts and decision outcomes
@@ -136,8 +139,7 @@ sequenceDiagram
 participant Pipeline
 participant Enricher
 participant ItemDB
-participant JobTable
-participant AIOrchestrator
+participant Kafka
 participant DecisionLog
 
 Pipeline->>Enricher: ingest_item_step (enrichment.orchestrate, status=pending)
@@ -157,13 +159,10 @@ loop for each attribute requiring enrichment
     alt attribute resolved by script
         Enricher->>Enricher: validation + normalization
         Enricher->>Enricher: policy evaluation
-    else attribute unresolved — delegate to AI via state machine
-        Enricher->>JobTable: create enrichment_job (status = pending_ai_processing)
-        Note over JobTable,AIOrchestrator: AI Orchestrator polls table for pending jobs
-        AIOrchestrator->>JobTable: claim job (status = running_ai_workflow)
-        AIOrchestrator->>JobTable: write result (status = awaiting_enricher_review)
-        Enricher->>JobTable: poll job until awaiting_enricher_review
-        JobTable-->>Enricher: structured result
+    else attribute unresolved — publish to AI pipeline via Kafka
+        Enricher->>Kafka: publish ai.job.requested (attribute_name, scenario_type, input_context)
+        Note over Kafka: AI pipeline runs independently
+        Kafka-->>Enricher: result on catalog-enricher.attribute-result
         Enricher->>Enricher: validation + normalization
         Enricher->>Enricher: policy evaluation
     end
@@ -221,45 +220,45 @@ D -->|no| F[Attempt script-based enrichment]
 B -->|no| F
 
 F -->|resolved| G[Apply resolved value]
-F -->|unresolved| H[Create enrichment_job → delegate to AI]
+F -->|unresolved| H[Publish ai.job.requested to Kafka]
 ```
 
 ---
 
-## Attribute Job Creation
+## Attribute AI Job Submission
 
-Each unresolved attribute gets its own `enrichment_job` record. The
-enricher writes this record to the table and sets its initial status.
-The AI Orchestrator picks it up independently via the state machine —
-no direct call is made.
+Each unresolved attribute triggers a Kafka message `ai.job.requested`. The
+enricher publishes the message with the attribute context and continues
+processing other attributes. No database record is created in the AI domain
+at this point — `ai-intake-service` handles that after consuming the message.
 
 ```mermaid
 flowchart TD
 
-A[Attribute unresolved by script] --> B[Create enrichment_job<br/>status = pending_ai_processing]
+A[Attribute unresolved by script] --> B[Publish ai.job.requested to Kafka]
 
-B --> C[target_domain]
-B --> D[target_entity_type]
-B --> E[target_entity_id]
-B --> F[target_attribute]
+B --> C[attribute_name]
+B --> D[scenario_type]
+B --> E[source_request_id]
+B --> F[input_context]
 
-C --> G[AI Orchestrator picks job from table]
+C --> G[AI pipeline receives via ai-intake-service]
 ```
 
-Example target reference:
+Example message fields set by the enricher:
 
 ```text
-target_domain = catalog
-target_entity_type = ingest_item
-target_entity_id = <uuid>
-target_attribute = characters
+attribute_name    = characters
+scenario_type     = character_resolution
+source_request_id = <uuid>   ← used to match the inbound result
+result_route_key  = catalog-enricher.attribute-result
 ```
 
 ---
 
 ## Script-Based Enrichment
 
-Before creating an `enrichment_job` and delegating to AI Orchestrator,
+Before publishing to Kafka and delegating to the AI pipeline,
 the service attempts to resolve each attribute using built-in scripts.
 
 Scripts can handle cases where the answer is deterministic or can be
@@ -278,8 +277,8 @@ written directly without evaluation.
 
 If the script cannot resolve the attribute — because the data is
 ambiguous, absent, or requires semantic interpretation — the enricher
-creates an `enrichment_job` record with `status = pending_ai_processing`
-and waits for the AI Orchestrator to process it via the state machine.
+publishes `ai.job.requested` to Kafka and continues processing other
+attributes while the AI pipeline runs independently.
 
 ```mermaid
 flowchart TD
@@ -289,45 +288,51 @@ A[Attribute requires enrichment] --> B[Run built-in script]
 B --> C{Script resolved?}
 
 C -->|yes| D[Candidate enters validation pipeline]
-C -->|no| E[Create enrichment_job<br/>status = pending_ai_processing]
-E --> F[AI Orchestrator picks up job<br/>from table independently]
-F --> G[Read result from table<br/>status = awaiting_enricher_review]
+C -->|no| E[Publish ai.job.requested to Kafka<br/>result_route_key = catalog-enricher.attribute-result]
+E --> F[AI pipeline handles independently<br/>ai-intake → ai-orchestrator → ai-job-dispatcher]
+F --> G[Consume result from Kafka<br/>catalog-enricher.attribute-result]
 G --> D
 ```
 
 ---
 
-## Interaction With AI Orchestrator
+## Interaction With the AI Pipeline
 
-The enricher does not call the AI Orchestrator directly. All interaction
-happens through the `enrichment_job` table and its state machine.
+The enricher does not call AI services directly and shares no database tables
+with the AI domain. All interaction is via Kafka.
 
-When a script cannot resolve an attribute, the enricher creates an
-`enrichment_job` record with `status = pending_ai_processing` and
-continues its polling loop. The AI Orchestrator independently picks up
-pending jobs from the table, executes the AI workflow, writes the result
-back, and sets `status = awaiting_enricher_review`. The enricher then
-reads the result from the table.
+When a script cannot resolve an attribute, the enricher publishes
+`ai.job.requested` to Kafka and continues processing other attributes.
+Three dedicated AI services handle the rest — `ai-intake-service` validates
+and creates the internal job, `ai-orchestrator` executes the scenario, and
+`ai-job-dispatcher-service` publishes the result back to
+`catalog-enricher.attribute-result`. The enricher consumes from this topic
+and identifies the matching attribute by `source_request_id`.
 
-Attribute-specific scenarios used by the AI Orchestrator:
+Named AI scenarios used for catalog enrichment:
 
-- `ReleaseCharactersEnrichment`
-- `ReleaseSeriesEnrichment`
-- `ReleasePackTypeEnrichment`
-- `ReleaseTierTypeEnrichment`
+| `scenario_type` | Attribute |
+| --- | --- |
+| `character_resolution` | `characters` |
+| `pet_resolution` | `pets` |
+| `series_classification` | `series` |
+| `content_type_classification` | `content_type` |
+| `pack_type_classification` | `pack_type` |
+| `tier_type_classification` | `tier_type` |
 
 ```mermaid
 flowchart TD
 
-A[Script cannot resolve attribute] --> B[Create enrichment_job<br/>status = pending_ai_processing]
-B --> C[AI Orchestrator polls table<br/>picks up job independently]
-C --> D[AI Orchestrator writes result<br/>status = awaiting_enricher_review]
-D --> E[Enricher polls job table<br/>reads result]
-E --> F[Candidate enters evaluation pipeline]
+A[Script cannot resolve attribute] --> B[Publish ai.job.requested to Kafka<br/>result_route_key = catalog-enricher.attribute-result]
+B --> C[ai-intake-service validates<br/>creates ai_job + ai_text_job]
+C --> D[ai-orchestrator runs scenario<br/>stores result in ai_text_job]
+D --> E[ai-job-dispatcher-service<br/>publishes to result_route_key]
+E --> F[Enricher consumes result<br/>matches by source_request_id]
+F --> G[Candidate enters evaluation pipeline]
 ```
 
-The internal AI pipeline is documented separately in
-AI Orchestrator Pipeline documentation.
+The full AI pipeline internals are documented in
+[AI Pipeline](./04-ai-orchestrator.md).
 
 ---
 
@@ -425,30 +430,36 @@ This allows the platform to audit and explain enrichment behavior.
 
 ## Failure Handling
 
-Each enrichment job has its own lifecycle.
+### Enrichment step failures
 
-Possible states:
+If the enrichment step itself fails (crash, timeout, unhandled exception),
+the `ingest_item_step` remains in its current status. The pipeline alerting
+model applies — the failure is persisted and an alert is sent for operator
+review before manual retry.
 
-- `pending`
-- `running`
-- `completed`
-- `retry_scheduled`
-- `manual_review_required`
-- `dead_lettered`
+### AI pipeline failures
+
+If the AI pipeline returns `ai.job.result.failed` or `ai.job.result.no_result`
+for an attribute, the enricher treats the attribute as unresolved:
+
+- `no_result` — model completed normally but produced no usable value; the
+  enricher keeps the existing value and logs the outcome
+- `failed` — terminal AI execution error; the enricher logs the failure and
+  flags the step for administrator review
 
 ```mermaid
 flowchart TD
 
-A[Job running] --> B{Error?}
+A[Consume result from Kafka] --> B{event_type?}
 
-B -->|temporary| C[Retry scheduled]
-
-B -->|non-retriable| D[Dead letter]
-
-B -->|resolved| E[Completed]
+B -->|ai.text.result.completed| C[Candidate enters evaluation pipeline]
+B -->|ai.job.result.no_result| D[Keep existing value<br/>log outcome]
+B -->|ai.job.result.failed| E[Log failure<br/>flag step for review]
 ```
 
-Terminal failures generate events for the platform alerting system.
+AI-side retry logic (backoff, attempt limits, structural vs transient
+failures) is handled entirely within the AI pipeline and is transparent
+to the enricher.
 
 ---
 
@@ -489,8 +500,8 @@ The `catalog-data-enricher` pipeline:
 - reads `ingest_item.parsed_payload` and deserializes it into a
   `ReleaseParsedContentRef` working model
 - processes each attribute — via built-in scripts first; for unresolved
-  attributes creates an `enrichment_job` and waits for AI Orchestrator
-  to process it via the state machine
+  attributes publishes `ai.job.requested` to Kafka and consumes the result
+  from `catalog-enricher.attribute-result`
 - evaluates all candidate values through the same validation and policy
   pipeline
 - accumulates resolved values in-memory until all attributes are settled
