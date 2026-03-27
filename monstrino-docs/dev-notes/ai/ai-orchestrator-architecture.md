@@ -17,9 +17,9 @@ It is written as an engineering reference, not as API documentation.
 
 ## Purpose
 
-The `ai-orchestrator` service provides a **centralized interface for all AI operations** in the Monstrino platform.
+The `ai-orchestrator` service is the centralized AI execution engine in the Monstrino platform.
 
-Instead of allowing multiple services to communicate directly with local models, the orchestrator acts as a unified abstraction layer that shields the rest of the platform from model infrastructure details.
+It owns all prompt logic, model configuration, and scenario execution. No other service knows how AI is implemented. Consuming services interact with the AI pipeline exclusively through Kafka — they never call `ai-orchestrator` directly.
 
 ---
 
@@ -27,32 +27,35 @@ Instead of allowing multiple services to communicate directly with local models,
 
 | Responsibility | Notes |
 |---|---|
-| Execute text and multimodal prompts | single point of model invocation |
-| Manage model configuration | all model settings live here |
-| Provide a stable API for internal services | consumers are model-agnostic |
+| Execute text and image AI scenarios | single point of model invocation |
+| Manage model configuration and prompt files | all model settings live here |
+| Claim pending jobs via state machine | `SELECT FOR UPDATE SKIP LOCKED` on modality tables |
 | Route requests to local models | via Ollama in the homelab environment |
 
 ---
 
 ## Architecture
 
-The typical request flow:
+`ai-orchestrator` is the middle service in a three-service AI pipeline. It discovers work through the `orchestration_status` state machine — not through Kafka or a direct API:
 
 ```
-Internal Service
-    → ai-orchestrator
-        → Ollama
-            → Local Model
-                → Response
+catalog-data-enricher (or other service)
+    → Kafka: ai.job.requested
+        → ai-intake-service (validates, creates ai_job + modality row)
+            → ai-orchestrator (claims pending row, runs scenario)
+                → Ollama → Local Model → Response
+            → ai-job-dispatcher-service (picks up completed job, publishes result)
+        → Kafka: result_route_key topic
+    → catalog-data-enricher (consumes result)
 ```
 
-No internal service should communicate with Ollama directly. All AI-related calls go through `ai-orchestrator`.
+No internal service communicates with Ollama directly. All AI execution goes through `ai-orchestrator`.
 
 ---
 
-## Gateway Pattern Rationale
+## Centralization Rationale
 
-> Centralizing AI access in a single service means **model changes never affect consumers**.
+> Centralizing AI execution in a single service means **model changes never affect consumers**.
 
 This becomes important when:
 

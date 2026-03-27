@@ -107,7 +107,7 @@ The architecture is shaped by a few explicit priorities:
 :::
 
 ### Architecture Diagram
-![](/img/architecture/architecture-overview-v5.jpg)
+![](/img/architecture/architecture-overview-v7.jpg)
 
 
 

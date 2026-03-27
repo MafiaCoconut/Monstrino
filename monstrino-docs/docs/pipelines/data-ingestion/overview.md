@@ -31,10 +31,9 @@ flowchart TD
         C --> D[catalog-content-collector]
         D --> E[ingest_item<br/>parsed_payload]
         E --> F[catalog-data-enricher]
-        F -->|unresolved attributes| G[enrichment_job table]
-        G --> H[ai-orchestrator]
-        H --> G
-        G -->|result| F
+        F -->|unresolved attributes| G[Publish ai.job.requested<br/>to Kafka]
+        G --> H[AI pipeline<br/>ai-intake · ai-orchestrator<br/>ai-job-dispatcher]
+        H -->|result via Kafka| F
         F --> I[ingest_item<br/>enriched_payload]
         I --> J[catalog-importer]
         J --> K[Canonical catalog tables]
@@ -62,7 +61,7 @@ Transforms external source pages into canonical catalog records.
 | 1 — Discovery | `catalog-source-discovery` | `source_discovered_entry` |
 | 2 — Collection | `catalog-content-collector` | `source_payload_snapshot` · `ingest_item` |
 | 3 — Enrichment | `catalog-data-enricher` | `ingest_item.enriched_payload` |
-| 4 — AI Enrichment | `ai-orchestrator` | enriched attribute values via `enrichment_job` |
+| 4 — AI Enrichment | AI pipeline (`ai-intake-service` · `ai-orchestrator` · `ai-job-dispatcher-service`) | enriched attribute values via Kafka |
 | 5 — Import | `catalog-importer` | canonical catalog tables · Kafka media events |
 
 → [Catalog Ingest Overview](./catalog-ingest/overview.md)

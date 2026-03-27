@@ -80,7 +80,7 @@ This separation is an architectural decision. See [ADR-DI-001](../decisions/data
 
 ## Related Documents
 
-- [Pipelines Overview](../pipelines/pipelines-overview) - detailed pipeline mechanics and conventions,
-- [Catalog Ingestion Pipeline](../pipelines/catalog-ingestion-pipeline) - the specific pipeline for catalog data,
+- [Pipelines Overview](/docs/pipelines/overview) - detailed pipeline mechanics and conventions,
+- [Catalog Ingestion Pipeline](/docs/pipelines/data-ingestion/catalog-ingest/overview) - the specific pipeline for catalog data,
 - [Service Boundaries](./service-boundaries) - how domain ownership applies to ingestion stages,
 - [AI Data Enrichment Strategy](../ai/ai-data-enrichment) - how the enrichment stage works.

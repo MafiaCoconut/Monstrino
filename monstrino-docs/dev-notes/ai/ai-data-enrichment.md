@@ -96,6 +96,6 @@ If AI enrichment fails or returns low-confidence results:
 
 ## Related Documents
 
-- [Catalog Ingestion Pipeline](../pipelines/catalog-ingestion-pipeline) - the full ingestion flow this enrichment step belongs to,
+- [Catalog Ingestion Pipeline](/docs/pipelines/data-ingestion/catalog-ingest/overview) - the full ingestion flow this enrichment step belongs to,
 - [AI Command Execution Schema](./ai-command-schema) - how enrichment commands are structured,
 - [AI Orchestrator Architecture](./ai-orchestrator-architecture) - the service that executes enrichment requests.

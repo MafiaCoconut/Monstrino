@@ -154,9 +154,9 @@ A scheduler invokes `ProcessNewImageUseCase` for `MediaAsset` records with `proc
 
 ### AI-Assisted Processing
 
-Certain image operations delegate work to the `ai-orchestrator` service via a shared job table.
+Certain image operations delegate work to the AI pipeline via Kafka.
 
-The media normalization service creates an `enrichment_job` record in the `ai_orchestrator` schema, setting it to `pending_ai_processing`. The `ai-orchestrator` picks up the job on its own schedule, executes the AI workflow, and writes the result back to the job record. The media normalization service then reads the result and applies it.
+The media normalization service publishes an `ai.job.requested` event with `job_type: "image"`. `ai-intake-service` consumes the event, creates `ai_job` and `ai_image_job` records. `ai-orchestrator` claims and executes the image scenario. `ai-job-dispatcher-service` promotes the result to permanent storage and publishes the result back via the `result_route_key` topic. The media normalization service consumes that result and applies it.
 
 This can be used for:
 
@@ -164,7 +164,7 @@ This can be used for:
 - improving image quality
 - extracting multiple objects from a single image
 
-Each AI operation is an independent job. The `ai-orchestrator` logs every AI call in `ai_enrichment_call` and does not modify media asset records directly — that responsibility stays with the media normalization service.
+Each AI operation is an independent job. The AI pipeline logs every model call in `ai_job_model_call` and every action in `ai_job_action_log`. It does not modify media asset records directly — that responsibility stays with the media normalization service.
 
 ### Output
 

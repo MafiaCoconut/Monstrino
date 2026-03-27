@@ -12,6 +12,16 @@ const CLOSE_BTN_HEIGHT = 125; // navbar (~60px) + offset (12px) + btn (44px) + g
 const CONTROLS_HEIGHT = 72;
 
 function MermaidWithLightbox(props: Props): React.JSX.Element {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
   const [open, setOpen] = useState(false);
   const [scale, setScale] = useState(1);
   const [fitScale, setFitScale] = useState(1);
@@ -39,10 +49,11 @@ function MermaidWithLightbox(props: Props): React.JSX.Element {
 
   // ---------- open / close ----------
   const openLightbox = useCallback(() => {
+    if (isMobile) return;
     setTranslate({ x: 0, y: 0 });
     setScale(1);
     setOpen(true);
-  }, []);
+  }, [isMobile]);
 
   const closeLightbox = useCallback(() => setOpen(false), []);
 
@@ -135,6 +146,10 @@ function MermaidWithLightbox(props: Props): React.JSX.Element {
       if (footer) footer.style.visibility = '';
     };
   }, [open]);
+
+  if (isMobile) {
+    return <MermaidOriginal {...props} />;
+  }
 
   return (
     <>

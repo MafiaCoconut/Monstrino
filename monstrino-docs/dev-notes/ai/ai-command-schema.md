@@ -1,36 +1,57 @@
 ---
 id: ai-command-schema
-title: AI Command Execution Schema
-sidebar_label: AI Command Execution Schema
+title: AI Action Request Schema
+sidebar_label: AI Action Request Schema
 sidebar_position: 3
-description: Schema and conventions for the structured command responses returned by the AI orchestrator.
+description: Schema and conventions for the structured action responses returned by the AI orchestrator during multi-step reasoning.
 ---
 
-# AI Command Execution Schema
+# AI Action Request Schema
 
 :::info
-This document describes the structured response format used when AI models return actionable commands rather than plain text.
+This document describes the structured response format used when AI models request intermediate actions rather than returning a final result.
 :::
 
 ---
 
 ## Motivation
 
-AI responses in Monstrino may trigger internal actions in the system.
+AI responses in Monstrino may request controlled lookups before returning a final result.
 
-Instead of returning plain text that consuming services must interpret ad hoc, the model returns a **structured response** describing the requested operation. This creates a stable, machine-readable interface between the AI layer and the rest of the platform.
+Instead of returning plain text that consuming services must interpret ad hoc, the model returns a **structured response** describing the next action. The orchestrator's Use Case validates the action name against an allowlist, executes the lookup, and injects the result back into the conversation context.
 
 ---
 
-## Response Schema
+## Response Schema — Action Request
 
 ```json
 {
-  "command": "extract_entities",
-  "params": {
-    "text": "..."
-  },
-  "is_final": false
+  "status": "request_action",
+  "is_final": false,
+  "requested_action": {
+    "action_name": "catalog_search_characters",
+    "action_params": {
+      "filters": { "search": "Draculaura" },
+      "page": { "limit": 5, "offset": 0 },
+      "context": { "locale": "en" }
+    }
+  }
+}
+```
+
+## Response Schema — Final Result
+
+```json
+{
+  "status": "final",
+  "is_final": true,
+  "final_payload": {
+    "characters": [
+      { "name": "Draculaura", "slug": "draculaura" }
+    ],
+    "confidence": 0.96,
+    "reasoning_summary": "Matched extracted names against catalog lookup results."
+  }
 }
 ```
 
@@ -40,9 +61,11 @@ Instead of returning plain text that consuming services must interpret ad hoc, t
 
 | Field | Type | Description |
 |---|---|---|
-| `command` | `string` | the operation the model is requesting to execute |
-| `params` | `object` | parameters required for that operation |
+| `status` | `string` | `"request_action"` or `"final"` |
 | `is_final` | `boolean` | whether this is the last step or more steps follow |
+| `requested_action.action_name` | `string` | the lookup operation being requested (must be in scenario allowlist) |
+| `requested_action.action_params` | `object` | parameters for that lookup |
+| `final_payload` | `object` | present only when `status = "final"` — the resolved result |
 
 ---
 
@@ -51,25 +74,25 @@ Instead of returning plain text that consuming services must interpret ad hoc, t
 :::note
 `is_final` enables **multi-step reasoning pipelines**.
 
-When `is_final: false`, the orchestrator should execute the command, observe the result, and continue the conversation with the model.  
-When `is_final: true`, processing is complete and the result can be passed to the consumer.
+When `is_final: false`, the Use Case executes the requested action, injects the result into context, and calls the model again.
+When `is_final: true`, processing is complete and the result is written to the modality row.
 :::
+
+A maximum of **4 action calls** are permitted per job. Exceeding this limit sets `failure_code = max_steps_exceeded` and terminates the job.
 
 ---
 
 ## Multi-Step Flow Example
 
 ```
-Model returns:  { "command": "extract_entities", "params": {...}, "is_final": false }
-    → orchestrator executes extract_entities
-    → result is passed back to the model as context
+Model returns:  { "status": "request_action", "requested_action": { "action_name": "catalog_search_characters", ... } }
+    → Use Case validates action_name is in allowlist
+    → calls catalog-api-service
+    → result injected into conversation context
 
-Model returns:  { "command": "validate_fields", "params": {...}, "is_final": false }
-    → orchestrator executes validate_fields
-    → result is passed back to the model as context
-
-Model returns:  { "command": "finalize", "params": { "result": {...} }, "is_final": true }
-    → orchestrator returns final result to the caller
+Model returns:  { "status": "final", "final_payload": { "characters": [...], "confidence": 0.96 } }
+    → Use Case validates structured output
+    → result written to ai_text_job, orchestration_status = completed
 ```
 
 ---

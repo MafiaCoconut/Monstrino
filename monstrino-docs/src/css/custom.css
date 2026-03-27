@@ -104,16 +104,13 @@
 [data-theme='dark'] .main-wrapper,
 [data-theme='dark'] article,
 [data-theme='dark'] .theme-doc-markdown,
+[data-theme='dark'] .container,
 [data-theme='dark'] [class*='docItemContainer'],
 [data-theme='dark'] [class*='docPage'],
 [data-theme='dark'] [class*='docMainContainer'],
 [data-theme='dark'] [class*='docRootLayout'],
 [data-theme='dark'] [class*='sidebarViewport'],
 [data-theme='dark'] aside {
-  background-color: #0d0d0f !important;
-}
-
-[data-theme='dark'] .main-wrapper .container {
   background-color: #0d0d0f !important;
 }
 
@@ -203,13 +200,6 @@ footer {
 [data-theme='dark'] footer {
   background-color: #111114 !important;
   border-color: rgba(255,44,168,0.15) !important;
-}
-
-.footer,
-footer {
-  position: relative;
-  z-index: 1;
-  isolation: isolate;
 }
 
 /* Mobile sidebar width (hamburger menu) */
@@ -346,10 +336,4 @@ footer {
   background: radial-gradient(circle, rgba(140,59,255,0.25) 0%, rgba(0,0,0,0) 70%);
   pointer-events: none;
   z-index: 0;
-}
-
-/* Content above background glow circles */
-[data-theme='dark'] .main-wrapper {
-  position: relative;
-  z-index: 1;
 }

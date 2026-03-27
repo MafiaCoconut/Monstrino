@@ -58,7 +58,7 @@ Every pipeline should expose enough structured logging to answer:
 - what was retried,
 - how long processing took.
 
-See [Pipelines Overview - Observability](../pipelines/pipelines-overview#observability) for details.
+See [Pipelines Overview](/docs/pipelines/overview) for details.
 :::
 
 ---
@@ -82,4 +82,4 @@ Each log entry for pipeline operations should include:
 ## Related Documents
 
 - [Kubernetes Cluster Architecture](./kubernetes-cluster-architecture) - the infrastructure being observed,
-- [Pipeline Patterns and Conventions](../pipelines/pipeline-patterns) - logging conventions for pipeline operations.
+- [Pipeline Patterns and Conventions](/docs/pipelines/overview) - logging conventions for pipeline operations.

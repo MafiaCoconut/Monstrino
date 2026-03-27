@@ -51,6 +51,6 @@ multiple sources into a single canonical catalog.
 
 :::tip Where to Start
 If you're new here, start with
-[Problem Space](./01-problem-space) —
+[Problem Space](./problem-space) —
 it explains the core issues in plain terms.
 :::

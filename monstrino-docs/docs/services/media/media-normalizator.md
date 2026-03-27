@@ -31,7 +31,7 @@ The service:
 - may run segmentation-oriented derivations for multi-object source images
 
 The service also coordinates optional AI-assisted operations through
-`ai-orchestrator` using `enrichment_job` records.
+the AI pipeline via Kafka (`ai.job.requested` / result topic).
 
 The service does not:
 
@@ -70,10 +70,11 @@ flowchart TD
 
 When AI operations are needed, `media-normalizator`:
 
-1. creates an `enrichment_job` in `ai_orchestrator` schema
-2. sets job status for AI pickup (`pending_ai_processing`)
-3. waits for `ai-orchestrator` to execute and persist result
-4. reads the result and applies it to media variant generation
+1. publishes `ai.job.requested` to Kafka with `job_type: "image"`
+2. `ai-intake-service` creates `ai_job` + `ai_image_job` records
+3. `ai-orchestrator` claims and executes the image scenario
+4. `ai-job-dispatcher-service` promotes the result and publishes it back via `result_route_key`
+5. reads the Kafka result and applies it to media variant generation
 
 Typical AI-assisted use cases:
 
@@ -120,7 +121,7 @@ All variants stay linked to one canonical asset.
 | Scheduler | drives normalization job execution |
 | PostgreSQL (`media` schema) | reads assets, writes `media_asset_variant` |
 | Object storage (MinIO/S3) | stores generated derivatives |
-| `ai-orchestrator` + `enrichment_job` | optional AI-based transformations |
+| AI pipeline (Kafka) | optional AI-based transformations |
 | `monstrino-contracts` (`media_normalization`) | shared contracts |
 
 ---

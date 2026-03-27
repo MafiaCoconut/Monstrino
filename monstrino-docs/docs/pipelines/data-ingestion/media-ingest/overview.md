@@ -35,10 +35,11 @@ flowchart TD
     C -->|MediaAsset + MediaAttachment<br/>stored in S3| D[Stage 3<br/>Media Normalization]
     D --> E[media_asset_variant<br/>format · size · AI-derived]
 
-    C -->|ai image operation needed| F[enrichment_job table]
+    C -->|ai image operation needed| F[Publish ai.job.requested<br/>to Kafka]
     D -->|ai image operation needed| F
-    F --> G[ai-orchestrator]
-    G -->|result written back| F
+    F --> G[AI pipeline<br/>ai-intake · ai-orchestrator<br/>ai-job-dispatcher]
+    G -->|result via Kafka| C
+    G -->|result via Kafka| D
 ```
 
 ## Stages

@@ -297,6 +297,6 @@ processed elsewhere in the platform.
 
 ## Related Documents
 
-- [AI Strategy](/docs/ai-features/01-ai-strategy)
-- [AI Orchestrator](/docs/ai-features/02-ai-orchestrator)
+- [AI Strategy](/docs/ai-features/ai-strategy)
+- [AI Orchestrator](/docs/ai-features/ai-orchestrator)
 - [AI Pipelines Overview](/docs/pipelines/ai-pipelines/overview)

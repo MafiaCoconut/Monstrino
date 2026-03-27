@@ -66,13 +66,13 @@ This strategy is implemented by two pipeline categories:
 
 | Pipeline | Role |
 |---|---|
-| [Market Release Discovery](../pipelines/market-release-discovery-pipeline) | registers new source listings as they are found |
-| [Market Price Collection](../pipelines/market-price-collection-pipeline) | revisits known listings and stores fresh price snapshots |
+| [Market Release Discovery](/docs/pipelines/market-ingestion/market-release-discovery-pipeline) | registers new source listings as they are found |
+| [Market Price Collection](/docs/pipelines/market-ingestion/market-price-collection-pipeline) | revisits known listings and stores fresh price snapshots |
 
 ---
 
 ## Related Documents
 
 - [Platform Architecture Evolution](./platform-evolution) - where data collection fits in the broader roadmap,
-- [Market Release Discovery Pipeline](../pipelines/market-release-discovery-pipeline),
-- [Market Price Collection Pipeline](../pipelines/market-price-collection-pipeline).
+- [Market Release Discovery Pipeline](/docs/pipelines/market-ingestion/market-release-discovery-pipeline),
+- [Market Price Collection Pipeline](/docs/pipelines/market-ingestion/market-price-collection-pipeline).

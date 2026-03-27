@@ -57,7 +57,7 @@ This allows:
 
 ## Integration with the Media Pipeline
 
-MinIO is the upload target for the [media rehosting pipeline](../pipelines/media-rehosting-pipeline).
+MinIO is the upload target for the [media rehosting pipeline](/docs/pipelines/data-ingestion/media-ingest/media-ingestion-pipeline).
 
 After a file is downloaded and validated, it is uploaded to MinIO and the resulting storage key is stored alongside the media record in the database.
 
@@ -73,5 +73,5 @@ MinIO should be treated as append-mostly storage. Objects representing processed
 
 ## Related Documents
 
-- [Media Rehosting Pipeline](../pipelines/media-rehosting-pipeline) - the pipeline that uploads files into this storage,
+- [Media Rehosting Pipeline](/docs/pipelines/data-ingestion/media-ingest/media-ingestion-pipeline) - the pipeline that uploads files into this storage,
 - [Kubernetes Cluster Architecture](./kubernetes-cluster-architecture) - the cluster MinIO runs in.

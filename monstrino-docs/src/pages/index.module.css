@@ -406,25 +406,23 @@
     flex-direction: column;
     align-items: center;
     gap: 0.75rem;
+    width: 100%;
   }
 
   .buttonsRow {
     flex-direction: column;
+    align-items: center;
     width: 100%;
+    gap: 0.75rem;
   }
 
   .primaryButton,
   .secondaryButton,
   .tertiaryButton {
     width: 100%;
+    max-width: 300px;
     text-align: center;
-  }
-
-  .primaryButton,
-  .secondaryButton {
-    width: 100%;
-    max-width: 280px;
-    text-align: center;
+    box-sizing: border-box;
   }
 
   .sectionTitle {
@@ -450,18 +448,30 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
+  /* Stats bar: 2×2 grid with correct dividers */
   .statsBar {
     grid-template-columns: 1fr 1fr;
   }
 
   .statsBarGroup {
+    padding: 1.25rem 1.5rem;
     border-right: none;
     border-bottom: 1px solid rgba(255, 44, 168, 0.12);
-    padding: 1.25rem 1.5rem;
   }
 
+  /* Vertical divider between left and right columns */
+  .statsBarGroup:nth-child(odd) {
+    border-right: 1px solid rgba(255, 44, 168, 0.12);
+  }
+
+  /* Remove bottom border from last row (items 3 & 4) */
+  .statsBarGroup:nth-child(3),
   .statsBarGroup:last-child {
     border-bottom: none;
+  }
+
+  .statsBarNumber {
+    font-size: 1.6rem;
   }
 
   .statsRow {
@@ -488,6 +498,11 @@
   .architecturePillars {
     grid-template-columns: 1fr;
   }
+
+  /* Pillars: force single column when minmax can't fit two */
+  .pillars {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 480px) {
@@ -497,6 +512,33 @@
 
   .subtitle {
     font-size: 0.95rem;
+  }
+
+  /* Problems grid: single column on very small screens */
+  .problemsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Stats bar: single column on very small screens */
+  .statsBar {
+    grid-template-columns: 1fr;
+  }
+
+  .statsBarGroup {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 44, 168, 0.12);
+  }
+
+  .statsBarGroup:nth-child(odd) {
+    border-right: none;
+  }
+
+  .statsBarGroup:nth-child(3) {
+    border-bottom: 1px solid rgba(255, 44, 168, 0.12);
+  }
+
+  .statsBarGroup:last-child {
+    border-bottom: none;
   }
 
   .statCard {

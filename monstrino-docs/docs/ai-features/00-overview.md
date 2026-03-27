@@ -147,18 +147,18 @@ deterministic backend code.
 
 <br/>
 
-**[AI Strategy](/docs/ai-features/01-ai-strategy)**
+**[AI Strategy](/docs/ai-features/ai-strategy)**
 
 The full responsibility model: where AI is used, where it is explicitly excluded,
 controlled workflow design, source-of-truth rules, and validation policy.
 
-**[AI Orchestrator](/docs/ai-features/02-ai-orchestrator)**
+**[AI Orchestrator](/docs/ai-features/ai-orchestrator)**
 
 Internal architecture of the `ai-orchestrator` service: scenario-based execution
 model, job claiming via state machine, prompt isolation, structured output parsing,
 and multi-step command loop.
 
-**[LLM Enrichment Walkthrough](/docs/ai-features/03-llm-enrichment-walkthrough)**
+**[LLM Enrichment Walkthrough](/docs/ai-features/llm-enrichment-walkthrough)**
 
 A step-by-step trace of a real enrichment run using the *Dawn of the Dance 3-Pack*
 release — from raw parsed input through multi-step AI interaction to validated

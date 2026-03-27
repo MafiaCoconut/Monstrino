@@ -39,11 +39,11 @@ const CONTROLS_HEIGHT = 72;
 export default function ImageLightbox({
   src,
   mobileSrc,
-  mobileSrcBreakpoint = 900,
+  mobileSrcBreakpoint = 768,
   alt = '',
   className,
   style,
-  disableLightboxOnMobile = false,
+  disableLightboxOnMobile = true,
 }: ImageLightboxProps): ReactNode {
   const [isMobile, setIsMobile] = useState(false);
 

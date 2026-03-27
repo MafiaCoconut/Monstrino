@@ -260,16 +260,15 @@ export default function Home(): JSX.Element {
 
           <div className={styles.archDiagram}>
             <ImageLightbox
-              src={useBaseUrl("/img/architecture/architecture-overview-mini-v5.jpg")}
-              mobileSrc={useBaseUrl("/img/architecture/architecture-overview-mini-v5.jpg")}
+              src={useBaseUrl("/img/architecture/architecture-overview-mini-v7.jpg")}
+              mobileSrc={useBaseUrl("/img/architecture/architecture-overview-mini-v7.jpg")}
               alt="Monstrino Architecture Diagram"
               className={styles.archImage}
               disableLightboxOnMobile
             />
 
             <p className={styles.archCaption}>
-              High-level overview of the Monstrino platform, showing ingestion pipelines,
-              domain services, and the canonical catalog model.
+              High-level overview of the Monstrino platform
             </p>
           </div>
         </section>
@@ -322,7 +321,7 @@ export default function Home(): JSX.Element {
                 </div>
                 <div className={styles.statsBarItem}>
                   <span className={styles.statsBarNumber}>7</span>
-                  <span className={styles.statsBarItemLabel}>Packages</span>
+                  <span className={styles.statsBarItemLabel}>Custom Packages</span>
                 </div>
                 <div className={styles.statsBarItem}>
                   <span className={styles.statsBarNumber}>7</span>

@@ -5,11 +5,16 @@
 
 SHELL := /usr/bin/env bash
 .DEFAULT_GOAL := help
+# ======== Include Makefiles ==========
+
+include ../Makefiles/common.mk
+
+# ========== Kubernetes ==========
 
 # --- Project meta ---
 PROJECT_NAME ?= docusaurus
 NODE_ENV ?= development
-
+# ==================================
 # --- Detect package manager ---
 # Priority: pnpm > yarn > npm, but respects lockfiles first.
 PKG_MANAGER :=
