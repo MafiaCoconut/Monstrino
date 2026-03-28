@@ -35,3 +35,8 @@ define assert-var
 		exit 1; \
 	fi
 endef
+
+ifneq (,$(wildcard $(ROOT_DIR)/monstrino-configurations/kubernetes/registry/registry.env))
+include $(ROOT_DIR)/monstrino-configurations/kubernetes/registry/registry.env
+export
+endif
