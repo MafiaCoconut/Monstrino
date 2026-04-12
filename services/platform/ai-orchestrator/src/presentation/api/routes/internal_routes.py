@@ -1,16 +1,20 @@
-from monstrino_api.v1.shared.requests import GenerateTextRequest
-
-from app.use_cases.ollama import RequestLLMTextUseCase
 from fastapi import APIRouter, Response, BackgroundTasks, FastAPI, Request
 from fastapi.params import Depends
-
 from fastapi.security import HTTPBearer
+from pydantic import BaseModel
 
-# from application.services.processing_service import ProcessingService
 from app.use_cases.auth.verify_token_use_case import VerifyToken
+from app.use_cases.ollama import RequestLLMTextUseCase
+
 from presentation.api.deps import get_request_llm_text_uc
 from presentation.api.responces.default_codes import responses
 from presentation.api.responces.templates import get_success_json_response
+
+
+class GenerateTextRequest(BaseModel):
+    prompt: str
+    system: str | None = None
+    response_format: dict | None = None
 
 # from presentation.deps import get_processing_service
 #

@@ -3,19 +3,22 @@
 ## Project Overview
 
 **Monstrino** is a production-grade automated collector platform for the Monster High universe.
-It continuously discovers, parses, enriches, and stores structured data about Monster High releases.
+It continuously discovers, parses, enriches, and stores structured data about Monster High releases
+from multiple external sources (Mattel, Shopify, Fandom Wiki, etc.).
 
-Official site: https://monstrino.com | Docs: https://documentation.monstrino.com
+Platform concerns: Catalog Acquisition → AI Enrichment → Import → Media Processing → API Delivery
+
+Official site: <https://monstrino.com> | Docs: <https://documentation.monstrino.com>
 
 ---
 
 ## Monorepo Structure
 
-```
+```text
 Monstrino/
 ├── services/                    # Microservices grouped by domain
 │   ├── catalog/
-│   │   ├── catalog-api-service/ # REST API for release catalog (port 8003)
+│   │   ├── catalog-api-service/     # REST API for release catalog (port 8003)
 │   │   └── catalog-importer/
 │   ├── media/
 │   │   ├── media-normalization/
@@ -33,16 +36,16 @@ Monstrino/
 │   │   └── testing-service/
 │   └── user/
 │       └── users-service/
-├── packages/                    # Shared internal packages (installed via uv/SSH git)
-│   ├── monstrino-api/           # API base classes / response schemas
-│   ├── monstrino-contracts/     # Kafka event contracts
-│   ├── monstrino-core/          # Core utilities, base config
-│   ├── monstrino-infra/         # Infrastructure helpers
-│   ├── monstrino-models/        # SQLAlchemy models
-│   ├── monstrino-repositories/  # Repository pattern implementations
-│   └── monstrino-testing/       # Shared test fixtures/helpers
+├── packages/                    # Shared internal Python packages (git SSH sources)
+│   ├── monstrino-core/          # Domain foundation: value objects, enums, ports, UoW interface
+│   ├── monstrino-models/        # SQLAlchemy ORM models + Pydantic DTOs + AutoMapper
+│   ├── monstrino-repositories/  # CRUD base, domain repo interfaces/implementations, UoW
+│   ├── monstrino-api/           # FastAPI exception handlers, RequestContextMiddleware, ResponseFactory
+│   ├── monstrino-contracts/     # Versioned cross-service request/response schemas (v1/)
+│   ├── monstrino-infra/         # HttpClient (circuit breaker), DBSettings, SchedulerAdapter, LLM gateway
+│   └── monstrino-testing/       # Pytest plugin, fixtures, real DB fixtures, deterministic UUID builder
 ├── Makefiles/                   # Shared Makefile fragments
-│   ├── common.mk                # ROOT_DIR discovery, shared vars
+│   ├── common.mk                # ROOT_DIR auto-discovery, shared vars
 │   ├── docker.mk
 │   ├── monstrino-packages.mk    # dev-mode-on/off, dep management
 │   ├── pytest.mk
@@ -55,45 +58,130 @@ Monstrino/
 
 ---
 
+## Package Dependency Hierarchy
+
+Strict layering — each package may only import from packages below it:
+
+```text
+monstrino-testing  (cross-cuts, imports all for fixtures — exception to the rule)
+      ↑
+monstrino-api   monstrino-infra          (leaf packages, import core+models+repos)
+      ↑               ↑
+monstrino-repositories  monstrino-contracts  (import core+models)
+      ↑
+monstrino-models                         (imports core)
+      ↑
+monstrino-core                           (root — no internal imports)
+```
+
+Never import a package that is above the current package in the hierarchy.
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
 | Backend | Python 3.14, FastAPI, SQLAlchemy, Pydantic v2, Alembic |
 | Frontend | Next.js, React, TypeScript, MUI |
-| Database | PostgreSQL (asyncpg + psycopg3) |
-| Messaging | Apache Kafka |
-| Storage | MinIO |
-| AI/ML | HuggingFace, OpenCV |
+| Database | PostgreSQL with schema separation (asyncpg + psycopg3) |
+| Messaging | Apache Kafka (event-driven pipelines) |
+| Storage | MinIO (S3-compatible) |
+| AI/ML | HuggingFace, OpenCV, LLM gateway in monstrino-infra |
 | Package manager | `uv` (Python), `npm` (JS) |
-| Containers | Docker + Kubernetes (kubectl, Helm) |
+| Containers | Docker + Kubernetes |
 | Registry | registry.monstrino.com |
 | Observability | Prometheus, Grafana |
-| Proxy | Traefik |
+| Proxy | Traefik + Cloudflare ingress |
 | Cloud | STACKIT |
 
 ---
 
-## Service Architecture
+## Clean Architecture Layers (every Python service)
 
-Each Python service follows this internal layout:
-```
+Each service strictly follows this internal layout:
+
+```text
 src/
-├── app/           # FastAPI app factory, routers
-├── bootstrap/     # DI container setup
-├── domain/        # Business logic, use cases, entities
-├── infra/         # DB, Kafka, external clients
-├── presentation/  # API handlers, schemas
-└── main.py        # Entrypoint
+├── domain/        # Entities, value objects, use case interfaces — NO external deps
+├── app/           # Use case implementations — orchestrates domain, calls ports
+├── infra/         # DB sessions, Kafka producers/consumers, HTTP clients, schedulers
+├── presentation/  # FastAPI routers, request/response schemas, error mapping
+├── bootstrap/     # DI container: wires everything together
+└── main.py        # Entrypoint — creates app via bootstrap
 ```
 
-Services depend on shared `packages/` installed as git SSH sources in `pyproject.toml`.
+**Dependency rule:** domain ← app ← infra ← presentation ← bootstrap (outer imports inner, never reverse)
+
+---
+
+## Repository Pattern Layers
+
+```text
+CrudRepoInterface        (monstrino-core: abstract CRUD contract)
+       ↑
+Domain Repo Interfaces   (monstrino-core: domain-specific read/write contracts)
+       ↑
+CrudDelegationMixin      (monstrino-repositories: delegates to CrudRepo)
+       ↑
+CrudRepo                 (monstrino-repositories: generic typed implementation)
+       ↑
+SqlAlchemyBaseRepo       (monstrino-repositories: session + model binding)
+```
+
+---
+
+## Database Schema Separation
+
+PostgreSQL uses named schemas per domain — services only access their own schema:
+
+| Schema | Owner | Contents |
+|--------|-------|---------|
+| `catalog` | catalog services | releases, series, characters, pets, reference data |
+| `ingest` | acquisition services | raw scraped data, source tracking, claim records |
+| `media` | media services | assets, variants, moderation state |
+| `market` | market services | listings, prices, platforms |
+| `ai` | AI services | ai_jobs, modality tables, processing logs |
+| `admin` | admin services | alerts, review queues |
+| `core` | shared | users, sessions, shared reference tables |
+
+---
+
+## API Response Envelope
+
+All internal services return a unified envelope:
+
+```json
+{
+  "success": true,
+  "data": { ... },
+  "error": null,
+  "meta": { "request_id": "...", "version": "v1" }
+}
+```
+
+Versioned routes: `/api/v1/...` — never break existing response shapes, use new versions for breaking changes.
+
+---
+
+## Pipeline Overview
+
+Monstrino processes data through staged pipelines:
+
+1. **Source Discovery** → finds catalog sources (URLs, shops, listings)
+2. **Content Collection** → scrapes raw product data
+3. **Data Enrichment** → normalizes + enriches via scripts, AI as fallback
+4. **AI Orchestration** → dispatches LLM jobs (characters, pets, series, content-type modalities)
+5. **Catalog Import** → validates + inserts canonical releases into catalog schema
+6. **Media Ingest** → downloads, normalizes, rehosts media assets
+7. **Market Collection** → scrapes prices and listings from secondary market
 
 ---
 
 ## Common Commands
 
 ### Run a service (catalog-api-service example)
+
 ```bash
 cd services/catalog/catalog-api-service
 make run                    # local DB
@@ -101,6 +189,7 @@ make run-with-test-bd       # test DB
 ```
 
 ### Dependency management
+
 ```bash
 make dev-mode-on            # switch to pyproject.dev.toml (local packages)
 make dev-mode-off           # restore pyproject.toml
@@ -109,17 +198,19 @@ uv sync                     # sync dependencies
 ```
 
 ### Tests
+
 ```bash
 make pytest                 # quiet run
 make pytest-with-logs       # verbose with logs
 ```
 
 ### Docker / Kubernetes
+
 ```bash
 make build                  # docker build
 make push-service           # build + push to registry
-make deploy-catalog-importer-test   # deploy to test namespace
-make deploy-catalog-importer-prod   # deploy to prod namespace
+make deploy-*-test          # deploy to monstrino-test namespace
+make deploy-*-prod          # deploy to monstrino-prod namespace
 ```
 
 ---
@@ -128,30 +219,20 @@ make deploy-catalog-importer-prod   # deploy to prod namespace
 
 - All shared Makefile logic lives in `Makefiles/` and is included via `include ../../../Makefiles/common.mk`
 - `ROOT_DIR` is auto-detected by walking up from `SELF_DIR` until `Makefiles/` is found
-- Internal packages are consumed via `uv` with SSH git sources pinned to git tags (`rev = "v0.1.x"`)
-- In dev mode (`pyproject.dev.toml`), packages point to local paths instead of git
-- Kubernetes namespaces: `monstrino-test`, `monstrino-prod`
+- Internal packages consumed via `uv` with SSH git sources pinned to git tags (`rev = "v0.1.x"`)
+- In dev mode (`pyproject.dev.toml`), packages point to local paths
+- K8s namespaces: `monstrino-test`, `monstrino-prod`
 - Docker registry: `registry.monstrino.com`
+- `pyproject.dev.toml` is locked from git via `make git-lock` — never commit it
 
 ---
 
-## Key Files
+## Key Design Invariants
 
-| File | Purpose |
-|------|---------|
-| `Makefiles/common.mk` | ROOT_DIR, shared vars for all services |
-| `Makefiles/monstrino-packages.mk` | dev-mode-on/off, local dep management |
-| `packages/*/pyproject.toml` | Package definitions |
-| `monstrino-configurations/kubernetes/` | K8s manifests |
-| `monstrino-docs/` | Docusaurus docs site |
-
----
-
-## Development Notes
-
-- Python requires `>=3.14`
-- Services use `uv run --no-sync` to avoid auto-syncing during run
-- `.env` files are loaded automatically by Makefile via `include .env`
-- `ENV ?= dev` — default environment is dev
-- Logging config: `src/infra/logging/logging_config.json`
-- `pyproject.dev.toml` is git-ignored via `make git-lock` — never commit it directly
+- **Scripts first, AI fallback**: enrichment scripts run first; AI kicks in only if scripts return no result
+- **AI results always validated**: LLM output must pass validation before insertion
+- **Catalog is master data**: canonical identity resolves conflicts from multiple sources
+- **Services own their schema**: no cross-schema direct DB access — only through APIs
+- **Strict package hierarchy**: never import a higher-level package (see hierarchy above)
+- **Kafka contracts are versioned**: all events use `monstrino-contracts` schemas
+- **Response shapes are stable**: never remove/rename fields in existing API versions
