@@ -1,2 +1,4 @@
 from .base_llm_text_client_request import BaseLLMClientRequest
+
 from .ollama_client_request import OllamaClientRequest
+from .ki_connect import KIConnectClientRequest

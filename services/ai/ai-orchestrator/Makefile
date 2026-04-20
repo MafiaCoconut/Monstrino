@@ -37,6 +37,10 @@ LOCAL_DEPS := \
 
 
 # =========== Commands ===========
+local-setup:
+	uv sync
+
+
 run:
 	cd src && poetry run uvicorn main:app --reload --port 8434 --log-config infra/logging/logging_config.json
 

@@ -62,7 +62,10 @@ class HttpClient:
         json_body: Optional[dict[str, Any]] = None,
     ) -> httpx.Response:
         async with self._semaphore:
-            resp = await self._client.request(method, url, json=json_body)
+            resp = await self._client.request(
+                method,
+                url,
+                json=json_body)
             # resp.raise_for_status()
             return resp
 
@@ -70,7 +73,8 @@ class HttpClient:
         self,
         url: str,
         payload: BaseModel | dict[str, Any],
-        response_model: Type[T],
+        headers: Optional[dict[str, str]] = None,
+        response_model: Type[T] = None,
     ) -> T:
         """
         Отправка POST на ЛЮБОЙ URL.
@@ -85,12 +89,17 @@ class HttpClient:
 
         @_wrap_breaker(self._breaker)
         async def run():
-            resp = await self._raw_request("POST", url, json_body=json_body)
+            resp = await self._raw_request(
+                "POST",
+                url,
+                headers=,
+                json_body=json_body)
             data = resp.json()
             if resp.status_code == 200:
                 try:
-
-                    return response_model.model_validate(data)
+                    if response_model:
+                        return response_model.model_validate(data)
+                    return json.loads(data)
                 except Exception as e:
                     print("[HTTPCLIENT] Response validation error:", e)
                     print(json.dumps(data, ensure_ascii=False, indent=2))
