@@ -6,7 +6,7 @@ import aiohttp
 from dotenv import load_dotenv
 from icecream import ic
 from monstrino_contracts.v1.domains.catalog.catalog_api_service.responses import GetReleaseTypesResponse
-from monstrino_core.catalog.errors import RequestIsBlockedError
+from monstrino_core.kernel.errors.api_service import RequestIsBlockedError
 from monstrino_infra.debug import ic_model
 
 load_dotenv()

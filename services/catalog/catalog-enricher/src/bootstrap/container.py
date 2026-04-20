@@ -1,15 +1,14 @@
 from dataclasses import dataclass
 from typing import Any
 
-from monstrino_core.interfaces import UnitOfWorkFactoryInterface
+from monstrino_core.kernel import UnitOfWorkFactoryInterface
 
-from app.ports import Repositories
-from bootstrap.container_components import Adapters, Gateways, Services
-
+from app.ports.repositories import Repositories
+from bootstrap.container_components.services import Services
+from monstrino_core.kernel import PortsRegistry
 
 @dataclass
 class AppContainer:
-    adapters: Adapters
+    registry: PortsRegistry
     services: Services
     uow_factory: UnitOfWorkFactoryInterface[Any, Repositories]
-

@@ -23,11 +23,11 @@ RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh \
 
 COPY --from=uvbin /uv /usr/local/bin/uv
 
-COPY pyproject.toml uv.lock ./
+COPY pyproject.toml ./
 
 RUN uv venv /opt/venv
 
-RUN --mount=type=ssh uv sync --frozen --no-dev --active
+RUN --mount=type=ssh uv sync --no-dev --active
 
 
 FROM python:3.13-slim AS runtime
