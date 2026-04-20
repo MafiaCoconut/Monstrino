@@ -1,0 +1,33 @@
+[project]
+name = "template-service-v2"
+version = "0.1.0"
+description = ""
+readme = "README.md"
+requires-python = ">=3.14"
+authors = [{name = "MafiaCoconut"}]
+
+dependencies = []
+
+[tool.poetry]
+package-mode = false
+
+[tool.mypy]
+plugins = ["sqlalchemy.ext.mypy.plugin"]
+
+[tool.pytest.ini_options]
+pythonpath = [
+    "src"
+]
+
+[tool.uv.sources]
+monstrino-core         = { path = "../../../packages/monstrino-core",         editable = true }
+monstrino-models       = { path = "../../../packages/monstrino-models",       editable = true }
+monstrino-repositories = { path = "../../../packages/monstrino-repositories", editable = true }
+monstrino-api          = { path = "../../../packages/monstrino-api",          editable = true }
+monstrino-infra        = { path = "../../../packages/monstrino-infra",        editable = true }
+monstrino-contracts    = { path = "../../../packages/monstrino-contracts",    editable = true }
+
+[dependency-groups]
+dev = [
+    "mypy>=1.19.1",
+]
