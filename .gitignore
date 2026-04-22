@@ -175,7 +175,7 @@ test.json
 jwt-private.pem
 jwt-public.pem
 packages/*
-pyproject.dev.toml
+# pyproject.dev.toml
 
 */monstrino-acquisition
 monstrino-ui/
