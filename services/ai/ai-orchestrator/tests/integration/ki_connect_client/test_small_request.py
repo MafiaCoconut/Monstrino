@@ -1,14 +1,19 @@
+import os
+
 import pytest
 from icecream import ic
-
+from dotenv import load_dotenv
 from domain.enum import KIConnectModels, KIConnectMessageRoles
 from domain.vault_obj.requests import KIConnectClientRequest
 from domain.vault_obj.requests.ki_connect import ChatMessageData
 from infra.llm_clients.ki_connect_client import KIConnectClient
 
+load_dotenv()
+API_KEY = os.getenv("KI_CONNECT_API_KEY")
+
 
 def get_client():
-    return KIConnectClient()
+    return KIConnectClient(API_KEY)
 
 @pytest.mark.asyncio
 async def test_small_request():

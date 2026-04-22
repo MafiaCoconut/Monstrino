@@ -4,3 +4,5 @@ class IntakeUseCase:
 
     def execute(self):
         ...
+
+    AIJob

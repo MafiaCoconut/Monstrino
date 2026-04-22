@@ -12,11 +12,16 @@ endif
 
 ENV ?= dev
 
+# ======== Paths ==========
+ROOT_DIR      	:= ../../..
+MAKEFILES_DIR 	:= $(ROOT_DIR)/Makefiles
+PACKAGES_DIR  	:= $(ROOT_DIR)/packages
+KUBERNETES_DIR 	:= $(ROOT_DIR)/monstrino-configurations/kubernetes/
+
 # ======== Include Makefiles ==========
-include ../../../Makefiles/common.mk
-include $(ROOT_DIR)/Makefiles/monstrino-packages.mk
-include $(ROOT_DIR)/Makefiles/run.mk
-include $(ROOT_DIR)/Makefiles/pytest.mk
+include $(MAKEFILES_DIR)/monstrino-packages.mk
+include $(MAKEFILES_DIR)/run.mk
+include $(MAKEFILES_DIR)/pytest.mk
 
 # ========== Kubernetes ==========
 NAMESPACE := ""
@@ -30,17 +35,14 @@ SERVICE_IMAGE_NAME := $(REGISTRY)/monstrino/monstrino-template-service
 GIT_SHA1 := $(shell git rev-parse --short=10 --verify HEAD)
 SERVICE_TAG_IMAGE_NAME := $(SERVICE_IMAGE_NAME):$(GIT_SHA1)
 
-KUBERNETES_FOLDER := $(ROOT_DIR)/monstrino-configurations/kubernetes/
-K8S_TEST_FOLDER := $(KUBERNETES_FOLDER).test/services/acquisition/template-service
-K8S_PROD_FOLDER := $(KUBERNETES_FOLDER).prod/services/acquisition/template-service
+K8S_TEST_DIR := $(KUBERNETES_DIR).test/services/acquisition/template-service
+K8S_PROD_DIR := $(KUBERNETES_DIR).prod/services/acquisition/template-service
 
 # ========== Service Name ==========
 SERVICE_NAME := template-service
 
 
 # ========== Monstrino Packages ==========
-PACKAGES_DIR := ../../../packages
-
 LOCAL_DEPS := \
     $(PACKAGES_DIR)/monstrino-core \
     $(PACKAGES_DIR)/monstrino-models \
@@ -88,13 +90,13 @@ push-service: build
 
 
 deploy-template-service-test: use-tc-m70q-context push-service
-	kubectl apply -f $(K8S_TEST_FOLDER)/deployment.yaml -n $(NAMESPACE_TEST)
-	kubectl apply -f $(K8S_TEST_FOLDER)/service.yaml    -n $(NAMESPACE_TEST)
+	kubectl apply -f $(K8S_TEST_DIR)/deployment.yaml -n $(NAMESPACE_TEST)
+	kubectl apply -f $(K8S_TEST_DIR)/service.yaml    -n $(NAMESPACE_TEST)
 	kubectl set image deployment/monstrino-template-service -n $(NAMESPACE_TEST) monstrino-template-service=$(SERVICE_TAG_IMAGE_NAME)
 
 deploy-template-service-prod: use-tc-m70q-context push-service
-	kubectl apply -f $(K8S_PROD_FOLDER)/deployment.yaml -n $(NAMESPACE_PROD)
-	kubectl apply -f $(K8S_PROD_FOLDER)/service.yaml    -n $(NAMESPACE_PROD)
+	kubectl apply -f $(K8S_PROD_DIR)/deployment.yaml -n $(NAMESPACE_PROD)
+	kubectl apply -f $(K8S_PROD_DIR)/service.yaml    -n $(NAMESPACE_PROD)
 	kubectl set image deployment/monstrino-template-service -n $(NAMESPACE_PROD) monstrino-template-service=$(SERVICE_TAG_IMAGE_NAME)
 
 

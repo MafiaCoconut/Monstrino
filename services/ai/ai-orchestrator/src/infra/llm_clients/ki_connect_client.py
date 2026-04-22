@@ -1,4 +1,5 @@
 import httpx
+from icecream import ic
 
 from domain.vault_obj.requests import KIConnectClientRequest
 
@@ -18,7 +19,9 @@ class KIConnectClient:
             json=request.model_dump(exclude_none=True),
         )
         resp.raise_for_status()
-        return resp.json()["choices"][0]["message"]["content"]
+        result = resp.json()
+        ic(result)
+        # return resp.json()["choices"][0]["message"]["content"]
 
     async def close(self) -> None:
         await self._client.aclose()
