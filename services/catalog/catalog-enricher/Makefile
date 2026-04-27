@@ -12,11 +12,15 @@ endif
 
 ENV ?= dev
 
+# ======== Paths ==========
+ROOT_DIR       := ../../..
+MAKEFILES_PATH := $(ROOT_DIR)/Makefiles
+PACKAGES_DIR   := $(ROOT_DIR)/packages
+
 # ======== Include Makefiles ==========
-include ../../../Makefiles/common.mk
-include $(ROOT_DIR)/Makefiles/monstrino-packages.mk
-include $(ROOT_DIR)/Makefiles/run.mk
-include $(ROOT_DIR)/Makefiles/pytest.mk
+include $(MAKEFILES_PATH)/monstrino-packages.mk
+include $(MAKEFILES_PATH)/run.mk
+include $(MAKEFILES_PATH)/pytest.mk
 
 # ========== Kubernetes ==========
 NAMESPACE := ""
@@ -38,9 +42,7 @@ K8S_PROD_FOLDER := $(KUBERNETES_FOLDER).prod/services/acquisition/template-servi
 SERVICE_NAME := template-service
 
 
-# ========== Monstrino Packages ==========
-PACKAGES_DIR := ../../../packages
-
+# ========== Monstrino Packages (LOCAL_DEPS) ==========
 LOCAL_DEPS := \
     $(PACKAGES_DIR)/monstrino-core \
     $(PACKAGES_DIR)/monstrino-models \

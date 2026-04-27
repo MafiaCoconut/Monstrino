@@ -15,16 +15,18 @@ ENV ?= dev
 # ========== Service Name ==========
 SERVICE_NAME := llm-gateway
 
+# ======== Paths ==========
+ROOT_DIR       := ../../..
+MAKEFILES_PATH := $(ROOT_DIR)/Makefiles
+PACKAGES_DIR   := $(ROOT_DIR)/packages
+
 # ======== Include Makefiles ==========
-include ../../../Makefiles/common.mk
-include $(ROOT_DIR)/Makefiles/monstrino-packages.mk
-include $(ROOT_DIR)/Makefiles/run.mk
-include $(ROOT_DIR)/Makefiles/pytest.mk
+include $(MAKEFILES_PATH)/monstrino-packages.mk
+include $(MAKEFILES_PATH)/run.mk
+include $(MAKEFILES_PATH)/pytest.mk
 
 
-
-# ========== Monstrino Packages ==========
-PACKAGES_DIR := ../../../packages
+# ========== Monstrino Packages (LOCAL_DEPS) ==========
 
 LOCAL_DEPS := \
     $(PACKAGES_DIR)/monstrino-core \
