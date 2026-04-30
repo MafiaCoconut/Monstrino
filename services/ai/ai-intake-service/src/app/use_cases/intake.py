@@ -53,3 +53,12 @@ class IntakeUseCase:
 
 
 
+<<<<<<< HEAD
+=======
+    def execute(self):
+        """
+        Get kafka message
+        Create AI JOB
+        """
+
+>>>>>>> 7dfe617 (Some changes)

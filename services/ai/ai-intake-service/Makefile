@@ -1,6 +1,6 @@
-# =========================================
-# ‖  Monstrino Template Service Makefile  ‖
-# =========================================
+# ==========================================
+# ‖  Monstrino AI Intake Service Makefile  ‖
+# ==========================================
 DOTENV := .env
 SHELL := /bin/bash
 .PHONY: run dev prod pytest

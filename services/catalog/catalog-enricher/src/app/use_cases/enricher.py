@@ -7,6 +7,7 @@ from icecream import ic
 from monstrino_core.catalog.catalog_data_ingestion.shared import IngestItemStepType, IngestItemStepStatus, ReleaseParsedContentRef
 from monstrino_core.kernel import UnitOfWorkFactoryInterface, UnitOfWorkInterface
 from monstrino_infra.debug import ic_model
+from monstrino_infra.messaging.kafka import KafkaPublisher
 from monstrino_models.dto import IngestItemStep, IngestItem
 from monstrino_repositories.base import QuerySpec
 
@@ -21,6 +22,10 @@ class EnricherUseCase:
             uow_factory: UnitOfWorkFactoryInterface[Any, Repositories],
     ):
         self.uow_factory = uow_factory
+        self.message_publisher = KafkaPublisher(
+            bootstrap_servers="localhost:9092",
+            client_id="catalog-enricher",
+        )
 
 
     async def execute(self, ingest_item_step_id: Optional[UUID] = None):
@@ -65,7 +70,12 @@ class EnricherUseCase:
             ingest_item = await uow.repos.ingest_item.get_one_by_id(step.ingest_item_id)
 
 
-    async def _handle_attributes(self, uow: UnitOfWorkInterface[Any, Repositories], payload: ReleaseParsedContentRef):
+    async def _handle_attributes(
+        self,
+        uow: UnitOfWorkInterface[Any, Repositories],
+        ingest_item: IngestItem,
+        payload: ReleaseParsedContentRef
+    ):
         log_base = f"MPN: {payload.mpn} | "
         logger.info(f"{log_base}Starting handling attributes")
 
@@ -75,9 +85,13 @@ class EnricherUseCase:
             # FOR FUTURE VERSION, DO NOT USED FOR CURRENT SOURCES
         else:
             logger.info(f"{log_base}Characters not found")
-            # ingest_item_step = IngestItemStep(
-            #     step_type=IngestItemStepType.AI_ENRICHMENT
-            # )
+            ingest_item_step = IngestItemStep(
+                ingest_item_id=ingest_item.id,
+
+                step_type=IngestItemStepType.AI_ENRICHMENT,
+                status=IngestItemStepStatus.IN_PROGRESS,
+            )
+            request =
 
 
 
