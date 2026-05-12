@@ -9,14 +9,6 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from bootstrap.builders import build_adapters
 from bootstrap.container_components.adapters import Adapters
-from infra.adapters.kafka_producer_adapter import KafkaProducerAdapter
-from infra.parsers import *
-
-@pytest.fixture
-async def kafka_adapter():
-    adapter = KafkaProducerAdapter(servers=os.getenv("KAFKA_SERVERS"))
-    yield adapter
-    await adapter.stop()
 
 @pytest.fixture
 async def adapters(kafka_adapter):

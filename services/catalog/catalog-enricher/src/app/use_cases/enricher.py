@@ -1,31 +1,36 @@
+import logging
 from datetime import datetime
 from typing import Any, Optional
 from uuid import UUID
-import logging
 
 from icecream import ic
+from monstrino_contracts.v1.channels.kafka import KafkaTopics
+from monstrino_contracts.v1.domains.ai import AIEventEnvelope, AIJobType
+from monstrino_contracts.v1.domains.ai.events.contracts.requests import AICharactersEnrichment
+from monstrino_contracts.v1.service_maps.service_name import ServiceName
+from monstrino_core.ai.ai_job_pipeline import AIEventType
 from monstrino_core.catalog.catalog_data_ingestion.shared import IngestItemStepType, IngestItemStepStatus, ReleaseParsedContentRef
 from monstrino_core.kernel import UnitOfWorkFactoryInterface, UnitOfWorkInterface
-from monstrino_infra.debug import ic_model
+from monstrino_core.kernel.interfaces.kafka.publisher import KafkaPublisherInterface
 from monstrino_infra.messaging.kafka import KafkaPublisher
 from monstrino_models.dto import IngestItemStep, IngestItem
 from monstrino_repositories.base import QuerySpec
 
 from app.ports.repositories import Repositories
+from domain.dto.ingest_item.input_ref_json import IngestItemStepInputRefData, IngestItemStepInputRef
+
 
 logger = logging.getLogger(__name__)
 
 
 class EnricherUseCase:
     def __init__(
-            self,
-            uow_factory: UnitOfWorkFactoryInterface[Any, Repositories],
+        self,
+        uow_factory: UnitOfWorkFactoryInterface[Any, Repositories],
+        kafka_publisher: KafkaPublisherInterface
     ):
         self.uow_factory = uow_factory
-        self.message_publisher = KafkaPublisher(
-            bootstrap_servers="localhost:9092",
-            client_id="catalog-enricher",
-        )
+        self.message_publisher = kafka_publisher
 
 
     async def execute(self, ingest_item_step_id: Optional[UUID] = None):
@@ -68,30 +73,86 @@ class EnricherUseCase:
                     return
 
             ingest_item = await uow.repos.ingest_item.get_one_by_id(step.ingest_item_id)
-
+            await self._handle_attributes(uow, ingest_item)
 
     async def _handle_attributes(
         self,
         uow: UnitOfWorkInterface[Any, Repositories],
         ingest_item: IngestItem,
-        payload: ReleaseParsedContentRef
     ):
-        log_base = f"MPN: {payload.mpn} | "
+        # payload = ingest_item.parsed_payload
+        ingest_item_payload = ReleaseParsedContentRef(**ingest_item.parsed_payload)
+
+        log_base = f"MPN: {ingest_item_payload.mpn} | "
         logger.info(f"{log_base}Starting handling attributes")
 
         logger.info(f"{log_base}Processing characters")
-        if payload.characters is not None:
-            logger.info(f"{log_base}Characters found: {len(payload.characters)}")
+        if ingest_item_payload.characters is not None:
+            logger.info(f"{log_base}Characters found: {len(ingest_item_payload.characters)}")
             # FOR FUTURE VERSION, DO NOT USED FOR CURRENT SOURCES
         else:
             logger.info(f"{log_base}Characters not found")
-            ingest_item_step = IngestItemStep(
-                ingest_item_id=ingest_item.id,
+            await self._handle_characters(uow, ingest_item, ingest_item_payload)
 
-                step_type=IngestItemStepType.AI_ENRICHMENT,
-                status=IngestItemStepStatus.IN_PROGRESS,
-            )
-            request =
+
+    async def _handle_characters(
+        self,
+        uow: UnitOfWorkInterface[Any, Repositories],
+        ingest_item: IngestItem,
+        ingest_item_payload: ReleaseParsedContentRef
+    ):
+        payload =  AICharactersEnrichment(
+            title=ingest_item_payload.title,
+            description=ingest_item_payload.description,
+            content_description=ingest_item_payload.content_description,
+        )
+
+
+        ingest_item_step = IngestItemStep(
+            ingest_item_id=ingest_item.id,
+
+            step_type=IngestItemStepType.AI_ENRICHMENT,
+            status=IngestItemStepStatus.IN_PROGRESS,
+
+            input_ref_json=IngestItemStepInputRef(
+                kind="attribute_enrichment",
+                entity="characters",
+                data=[
+                    IngestItemStepInputRefData(
+                        attribute="title",
+                        value=payload.title,
+                    ),
+                    IngestItemStepInputRefData(
+                        attribute="description",
+                        value=payload.description,
+                    ),
+                    IngestItemStepInputRefData(
+                        attribute="content_description",
+                        value=payload.content_description,
+                    )
+                ]
+            ).model_dump(),
+        )
+        ingest_item_step = await uow.repos.ingest_item_step.add_one(ingest_item_step)
+
+        envelope = AIEventEnvelope(
+            event_type=AIEventType.AI_JOB_REQUESTED,
+
+            actor_service=ServiceName.CATALOG_ENRICHER,
+            actor_correlation_id=str(ingest_item_step.id),
+
+            payload=payload
+        )
+        ic(envelope)
+
+        self.message_publisher.publish(
+            topic=KafkaTopics.AI_JOB_REQUESTED,
+            key=str(ingest_item_step.id),
+            value=envelope.model_dump_json()
+        )
+        self.message_publisher.flush()
+
+
 
 
 

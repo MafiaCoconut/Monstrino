@@ -2,6 +2,7 @@ import time
 from uuid import UUID
 
 import pytest
+from monstrino_core.kernel.interfaces.kafka import KafkaPublisherInterface
 from monstrino_repositories.unit_of_work import UnitOfWorkFactory
 
 from app.ports.repositories import Repositories
@@ -12,10 +13,12 @@ from app.use_cases.enricher import EnricherUseCase
 async def test_collector(
     # uow_factory_with_reset_db: UnitOfWorkFactory[Repositories],
     uow_factory_without_reset_db: UnitOfWorkFactory[Repositories],
+    kafka_publisher: KafkaPublisherInterface
     # seed_core_graph,
 ):
     uc = EnricherUseCase(
         uow_factory_without_reset_db,
+        kafka_publisher
     )
     # await process_multiple(uc)
     await process_single(uc)
